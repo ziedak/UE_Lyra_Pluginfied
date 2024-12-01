@@ -1,0 +1,16 @@
+/.git
+/.idea
+/.vs
+/.vscode
+/DerivedDataCache
+/Intermediate
+/Saved
+/Plugins/AbilitySystem/Intermediate
+/Plugins/CommonGame/Intermediate
+/Plugins/CommonLoadingScreen/Intermediate
+/Plugins/CommonUser/Intermediate
+/Plugins/CustomCore/Intermediate
+/Plugins/GameplayMessageRouter/Intermediate
+/Plugins/InputConfig/Intermediate
+/Plugins/ModularGameplayActors/Intermediate
+/Plugins/vc-ue-extensions
