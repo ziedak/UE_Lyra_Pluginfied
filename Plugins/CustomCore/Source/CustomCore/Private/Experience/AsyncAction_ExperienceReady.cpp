@@ -13,7 +13,9 @@ UAsyncAction_ExperienceReady* UAsyncAction_ExperienceReady::WaitForExperienceRea
 		EGetWorldErrorMode::LogAndReturnNull);
 
 	if (!World)
+	{
 		return nullptr;
+	}
 
 	const auto Action = NewObject<UAsyncAction_ExperienceReady>();
 	Action->WorldPtr = World;
@@ -43,7 +45,9 @@ void UAsyncAction_ExperienceReady::Activate()
 void UAsyncAction_ExperienceReady::Step1_HandleGameStateSet(AGameStateBase* GameState)
 {
 	if (UWorld* World = WorldPtr.Get())
+	{
 		World->GameStateSetEvent.RemoveAll(this);
+	}
 
 	Step2_ListenToExperienceLoading(GameState);
 }

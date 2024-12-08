@@ -5,12 +5,14 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(DamageExecution)
 
-struct FDamageStatics {
+struct FDamageStatics
+{
 	FGameplayEffectAttributeCaptureDefinition BaseDamageDef;
+
 	FDamageStatics()
 	{
 		BaseDamageDef = FGameplayEffectAttributeCaptureDefinition(UCombatSet::GetBaseDamageAttribute(),
-			EGameplayEffectAttributeCaptureSource::Source, true);
+		                                                          EGameplayEffectAttributeCaptureSource::Source, true);
 	};
 };
 
@@ -58,7 +60,7 @@ UDamageExecution::UDamageExecution()
 */
 
 void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+                                              FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	// This is the implementation of the damage execution. It is called when the damage effect is executed.
 	// It is responsible for calculating the final damage and setting the execution output.
@@ -80,8 +82,8 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Attempt to capture the base damage attribute. If it fails, the base damage will be 0.
 	// This is important for cases where the attribute is not set, but the execution still needs to continue.
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BaseDamageDef,
-		EvaluationParameters,
-		BaseDamage);
+	                                                           EvaluationParameters,
+	                                                           BaseDamage);
 
 	const AActor* EffectCauser = TypedContext->GetEffectCauser();
 	const FHitResult* HitActorResult = TypedContext->GetHitResult();
@@ -128,7 +130,7 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	}
 
 	// Apply rules for team damage/self damage/etc...
-	const float DamageInteractionAllowedMultiplier = 0.0f;
+	constexpr float DamageInteractionAllowedMultiplier = 0.0f;
 	/*
 	if (HitActor)
 	{
@@ -143,12 +145,23 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//This is important for determining the falloff of damage based on distance.
 	double Distance = WORLD_MAX;
 	if (TypedContext->HasOrigin())
+	{
 		Distance = FVector::Dist(TypedContext->GetOrigin(), ImpactLocation);
+	}
 	else if (EffectCauser)
+	{
 		Distance = FVector::Dist(EffectCauser->GetActorLocation(), ImpactLocation);
+	}
 	else
-		// If we don't have a source location, we default to WORLD_MAX distance.
-		ensureMsgf(false, TEXT("Damage Calculation cannot deduce a source location for damage coming from %s; Falling back to WORLD_MAX dist!"), *GetPathNameSafe(Spec.Def));
+	{
+		ensureMsgf(
+			false,
+			TEXT(
+				"Damage Calculation cannot deduce a source location for damage coming from %s; Falling back to WORLD_MAX dist!"
+			), *GetPathNameSafe(Spec.Def))
+			// If we don't have a source location, we default to WORLD_MAX distance.
+			;
+	}
 
 	// Apply ability source modifiers
 	// This is where we apply the ability source modifiers to the base damage.
@@ -163,7 +176,8 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	{
 		if (const UPhysicalMaterial* PhysMat = TypedContext->GetPhysicalMaterial())
 		{
-			PhysicalMaterialAttenuation = AbilitySource->GetPhysicalMaterialAttenuation(PhysMat, SourceTags, TargetTags);
+			PhysicalMaterialAttenuation = AbilitySource->
+				GetPhysicalMaterialAttenuation(PhysMat, SourceTags, TargetTags);
 		}
 		DistanceAttenuation = AbilitySource->GetDistanceAttenuation(Distance);
 	}
@@ -176,8 +190,8 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	{
 		//Apply a damage modifier , this gets turned int -health on the target
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UCombatSet::GetBaseDamageAttribute(),
-			EGameplayModOp::Additive,
-			-DamageDone));
+		                                                                    EGameplayModOp::Additive,
+		                                                                    -DamageDone));
 	}
 #endif
 }

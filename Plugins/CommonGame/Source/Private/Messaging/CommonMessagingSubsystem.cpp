@@ -35,12 +35,12 @@ bool UCommonMessagingSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 	return false;
 }
 
-void UCommonMessagingSubsystem::ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback)
+void UCommonMessagingSubsystem::ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor,
+                                                 FCommonMessagingResultDelegate ResultCallback)
 {
-	
 }
 
-void UCommonMessagingSubsystem::ShowError(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback)
+void UCommonMessagingSubsystem::ShowError(UCommonGameDialogDescriptor* DialogDescriptor,
+                                          FCommonMessagingResultDelegate ResultCallback)
 {
-	
 }

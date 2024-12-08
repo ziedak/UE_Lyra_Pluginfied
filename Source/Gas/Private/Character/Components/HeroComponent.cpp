@@ -3,7 +3,7 @@
 
 #include "Character/Components/HeroComponent.h"
 
-#include "LyraInputComponent.h"
+#include "InputConfig/LyraInputComponent.h"
 
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Character/Components/PawnExtensionComponent.h"

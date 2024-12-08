@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "AttributeSet.h"
@@ -38,7 +37,9 @@ struct FGameplayEffectSpec;
  * @param OldValue			The value of the attribute before it was changed
  * @param NewValue			The value after it was changed
 */
-DECLARE_MULTICAST_DELEGATE_SixParams(FBaseAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
+DECLARE_MULTICAST_DELEGATE_SixParams(FBaseAttributeEvent, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/,
+                                     const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/,
+                                     float /*OldValue*/, float /*NewValue*/);
 
 
 /**
@@ -52,10 +53,9 @@ class ABILITYSYSTEM_API UBaseAttributeSet : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-
 	UBaseAttributeSet();
 
-	UWorld* GetWorld() const override;
+	virtual UWorld* GetWorld() const override;
 
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const;
 };

@@ -14,19 +14,22 @@
 
 class UObject;
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer(const UObject* WorldContextObject)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer(const UObject* WorldContextObject)
 {
 	UGameInstance* GameInstance = UGameplayStatics::GetGameInstance(WorldContextObject);
 	APlayerController* PlayerController = GameInstance->GetPrimaryPlayerController(false);
 	return GetPrimaryGameLayout(PlayerController);
 }
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(APlayerController* PlayerController)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(APlayerController* PlayerController)
 {
 	return PlayerController ? GetPrimaryGameLayout(Cast<UCommonLocalPlayer>(PlayerController->Player)) : nullptr;
 }
 
-/*static*/ UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(ULocalPlayer* LocalPlayer)
+/*static*/
+UPrimaryGameLayout* UPrimaryGameLayout::GetPrimaryGameLayout(ULocalPlayer* LocalPlayer)
 {
 	if (LocalPlayer)
 	{
@@ -63,7 +66,8 @@ void UPrimaryGameLayout::SetIsDormant(bool InDormant)
 		const TCHAR* OldDormancyStr = bIsDormant ? TEXT("Dormant") : TEXT("Not-Dormant");
 		const TCHAR* NewDormancyStr = InDormant ? TEXT("Dormant") : TEXT("Not-Dormant");
 		const TCHAR* PrimaryPlayerStr = LP && LP->IsPrimaryPlayer() ? TEXT("[Primary]") : TEXT("[Non-Primary]");
-		UE_LOG(LogCommonGame, Display, TEXT("%s PrimaryGameLayout Dormancy changed for [%d] from [%s] to [%s]"), PrimaryPlayerStr, PlayerId, OldDormancyStr, NewDormancyStr);
+		UE_LOG(LogCommonGame, Display, TEXT("%s PrimaryGameLayout Dormancy changed for [%d] from [%s] to [%s]"),
+		       PrimaryPlayerStr, PlayerId, OldDormancyStr, NewDormancyStr);
 
 		bIsDormant = InDormant;
 		OnIsDormantChanged();
@@ -74,7 +78,7 @@ void UPrimaryGameLayout::OnIsDormantChanged()
 {
 	//@TODO NDarnell Determine what to do with dormancy, in the past we treated dormancy as a way to shutoff rendering
 	//and the view for the other local players when we force multiple players to use the player view of a single player.
-	
+
 	//if (UCommonLocalPlayer* LocalPlayer = GetOwningLocalPlayer<UCommonLocalPlayer>())
 	//{
 	//	// When the root layout is dormant, we don't want to render anything from the owner's view either
@@ -100,11 +104,13 @@ void UPrimaryGameLayout::RegisterLayer(FGameplayTag LayerTag, UCommonActivatable
 	}
 }
 
-void UPrimaryGameLayout::OnWidgetStackTransitioning(UCommonActivatableWidgetContainerBase* Widget, bool bIsTransitioning)
+void UPrimaryGameLayout::OnWidgetStackTransitioning(UCommonActivatableWidgetContainerBase* Widget,
+                                                    bool bIsTransitioning)
 {
 	if (bIsTransitioning)
 	{
-		const FName SuspendToken = UCommonUIExtensions::SuspendInputForPlayer(GetOwningLocalPlayer(), TEXT("GlobalStackTransion"));
+		const FName SuspendToken = UCommonUIExtensions::SuspendInputForPlayer(
+			GetOwningLocalPlayer(), TEXT("GlobalStackTransion"));
 		SuspendInputTokens.Add(SuspendToken);
 	}
 	else

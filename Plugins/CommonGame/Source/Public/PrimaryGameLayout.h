@@ -42,49 +42,65 @@ public:
 	static UPrimaryGameLayout* GetPrimaryGameLayout(APlayerController* PlayerController);
 	static UPrimaryGameLayout* GetPrimaryGameLayout(ULocalPlayer* LocalPlayer);
 
-public:
 	UPrimaryGameLayout(const FObjectInitializer& ObjectInitializer);
 
 	/** A dormant root layout is collapsed and responds only to persistent actions registered by the owning player */
 	void SetIsDormant(bool Dormant);
 	bool IsDormant() const { return bIsDormant; }
 
-public:
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
-	TSharedPtr<FStreamableHandle> PushWidgetToLayerStackAsync(FGameplayTag LayerName, bool bSuspendInputUntilComplete, TSoftClassPtr<UCommonActivatableWidget> ActivatableWidgetClass)
+	TSharedPtr<FStreamableHandle> PushWidgetToLayerStackAsync(FGameplayTag LayerName, bool bSuspendInputUntilComplete,
+	                                                          TSoftClassPtr<UCommonActivatableWidget>
+	                                                          ActivatableWidgetClass)
 	{
-		return PushWidgetToLayerStackAsync<ActivatableWidgetT>(LayerName, bSuspendInputUntilComplete, ActivatableWidgetClass, [](EAsyncWidgetLayerState, ActivatableWidgetT*) {});
+		return PushWidgetToLayerStackAsync<ActivatableWidgetT>(LayerName, bSuspendInputUntilComplete,
+		                                                       ActivatableWidgetClass,
+		                                                       [](EAsyncWidgetLayerState, ActivatableWidgetT*)
+		                                                       {
+		                                                       });
 	}
 
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
-	TSharedPtr<FStreamableHandle> PushWidgetToLayerStackAsync(FGameplayTag LayerName, bool bSuspendInputUntilComplete, TSoftClassPtr<UCommonActivatableWidget> ActivatableWidgetClass, TFunction<void(EAsyncWidgetLayerState, ActivatableWidgetT*)> StateFunc)
+	TSharedPtr<FStreamableHandle> PushWidgetToLayerStackAsync(FGameplayTag LayerName, bool bSuspendInputUntilComplete,
+	                                                          TSoftClassPtr<UCommonActivatableWidget>
+	                                                          ActivatableWidgetClass,
+	                                                          TFunction<void(
+		                                                          EAsyncWidgetLayerState,
+		                                                          ActivatableWidgetT*)> StateFunc)
 	{
-		static_assert(TIsDerivedFrom<ActivatableWidgetT, UCommonActivatableWidget>::IsDerived, "Only CommonActivatableWidgets can be used here");
+		static_assert(TIsDerivedFrom<ActivatableWidgetT, UCommonActivatableWidget>::IsDerived,
+		              "Only CommonActivatableWidgets can be used here");
 
 		static FName NAME_PushingWidgetToLayer("PushingWidgetToLayer");
-		const FName SuspendInputToken = bSuspendInputUntilComplete ? UCommonUIExtensions::SuspendInputForPlayer(GetOwningPlayer(), NAME_PushingWidgetToLayer) : NAME_None;
+		const FName SuspendInputToken = bSuspendInputUntilComplete
+			                                ? UCommonUIExtensions::SuspendInputForPlayer(
+				                                GetOwningPlayer(), NAME_PushingWidgetToLayer)
+			                                : NAME_None;
 
 		FStreamableManager& StreamableManager = UAssetManager::Get().GetStreamableManager();
-		TSharedPtr<FStreamableHandle> StreamingHandle = StreamableManager.RequestAsyncLoad(ActivatableWidgetClass.ToSoftObjectPath(), FStreamableDelegate::CreateWeakLambda(this,
-			[this, LayerName, ActivatableWidgetClass, StateFunc, SuspendInputToken]()
-			{
-				UCommonUIExtensions::ResumeInputForPlayer(GetOwningPlayer(), SuspendInputToken);
+		TSharedPtr<FStreamableHandle> StreamingHandle = StreamableManager.RequestAsyncLoad(
+			ActivatableWidgetClass.ToSoftObjectPath(), FStreamableDelegate::CreateWeakLambda(this,
+				[this, LayerName, ActivatableWidgetClass, StateFunc, SuspendInputToken]()
+				{
+					UCommonUIExtensions::ResumeInputForPlayer(GetOwningPlayer(), SuspendInputToken);
 
-				ActivatableWidgetT* Widget = PushWidgetToLayerStack<ActivatableWidgetT>(LayerName, ActivatableWidgetClass.Get(), [StateFunc](ActivatableWidgetT& WidgetToInit) {
-					StateFunc(EAsyncWidgetLayerState::Initialize, &WidgetToInit);
-				});
+					ActivatableWidgetT* Widget = PushWidgetToLayerStack<ActivatableWidgetT>(
+						LayerName, ActivatableWidgetClass.Get(), [StateFunc](ActivatableWidgetT& WidgetToInit)
+						{
+							StateFunc(EAsyncWidgetLayerState::Initialize, &WidgetToInit);
+						});
 
-				StateFunc(EAsyncWidgetLayerState::AfterPush, Widget);
-			})
+					StateFunc(EAsyncWidgetLayerState::AfterPush, Widget);
+				})
 		);
 
 		// Setup a cancel delegate so that we can resume input if this handler is canceled.
 		StreamingHandle->BindCancelDelegate(FStreamableDelegate::CreateWeakLambda(this,
-			[this, StateFunc, SuspendInputToken]()
-			{
-				UCommonUIExtensions::ResumeInputForPlayer(GetOwningPlayer(), SuspendInputToken);
-				StateFunc(EAsyncWidgetLayerState::Canceled, nullptr);
-			})
+				[this, StateFunc, SuspendInputToken]()
+				{
+					UCommonUIExtensions::ResumeInputForPlayer(GetOwningPlayer(), SuspendInputToken);
+					StateFunc(EAsyncWidgetLayerState::Canceled, nullptr);
+				})
 		);
 
 		return StreamingHandle;
@@ -93,13 +109,17 @@ public:
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
 	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass)
 	{
-		return PushWidgetToLayerStack<ActivatableWidgetT>(LayerName, ActivatableWidgetClass, [](ActivatableWidgetT&) {});
+		return PushWidgetToLayerStack<ActivatableWidgetT>(LayerName, ActivatableWidgetClass, [](ActivatableWidgetT&)
+		{
+		});
 	}
 
 	template <typename ActivatableWidgetT = UCommonActivatableWidget>
-	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass, TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
+	ActivatableWidgetT* PushWidgetToLayerStack(FGameplayTag LayerName, UClass* ActivatableWidgetClass,
+	                                           TFunctionRef<void(ActivatableWidgetT&)> InitInstanceFunc)
 	{
-		static_assert(TIsDerivedFrom<ActivatableWidgetT, UCommonActivatableWidget>::IsDerived, "Only CommonActivatableWidgets can be used here");
+		static_assert(TIsDerivedFrom<ActivatableWidgetT, UCommonActivatableWidget>::IsDerived,
+		              "Only CommonActivatableWidgets can be used here");
 
 		if (UCommonActivatableWidgetContainerBase* Layer = GetLayerWidget(LayerName))
 		{
@@ -118,12 +138,13 @@ public:
 protected:
 	/** Register a layer that widgets can be pushed onto. */
 	UFUNCTION(BlueprintCallable, Category="Layer")
-	void RegisterLayer(UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerTag, UCommonActivatableWidgetContainerBase* LayerWidget);
-	
+	void RegisterLayer(UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerTag,
+	                   UCommonActivatableWidgetContainerBase* LayerWidget);
+
 	virtual void OnIsDormantChanged();
 
 	void OnWidgetStackTransitioning(UCommonActivatableWidgetContainerBase* Widget, bool bIsTransitioning);
-	
+
 private:
 	bool bIsDormant = false;
 

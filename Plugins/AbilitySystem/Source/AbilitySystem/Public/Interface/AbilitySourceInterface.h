@@ -10,7 +10,7 @@ struct FGameplayTagContainer;
 
 /** Base interface for anything acting as an ability calculation source */
 UINTERFACE(MinimalAPI)
-class  UAbilitySourceInterface : public UInterface
+class UAbilitySourceInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -18,6 +18,7 @@ class  UAbilitySourceInterface : public UInterface
 class ABILITYSYSTEM_API IAbilitySourceInterface
 {
 	GENERATED_BODY()
+
 public:
 	/**
 	 * Compute the multiplier for effect falloff with distance
@@ -28,7 +29,10 @@ public:
 	 *
 	 * @return Multiplier to apply to the base attribute value due to distance
 	 */
-	virtual float GetDistanceAttenuation(float Distance, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr) const = 0;
+	virtual float GetDistanceAttenuation(float Distance, const FGameplayTagContainer* SourceTags = nullptr,
+	                                     const FGameplayTagContainer* TargetTags = nullptr) const = 0;
 
-	virtual float GetPhysicalMaterialAttenuation(const UPhysicalMaterial* PhysicalMaterial, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr) const = 0;
+	virtual float GetPhysicalMaterialAttenuation(const UPhysicalMaterial* PhysicalMaterial,
+	                                             const FGameplayTagContainer* SourceTags = nullptr,
+	                                             const FGameplayTagContainer* TargetTags = nullptr) const = 0;
 };

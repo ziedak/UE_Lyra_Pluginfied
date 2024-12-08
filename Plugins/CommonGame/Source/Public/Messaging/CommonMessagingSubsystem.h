@@ -36,15 +36,16 @@ class COMMONGAME_API UCommonMessagingSubsystem : public ULocalPlayerSubsystem
 	GENERATED_BODY()
 
 public:
-	UCommonMessagingSubsystem() { }
+	UCommonMessagingSubsystem()
+	{
+	}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
-	virtual void ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
-	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
-
-private:
-
+	virtual void ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor,
+	                              FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
+	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor,
+	                       FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate());
 };

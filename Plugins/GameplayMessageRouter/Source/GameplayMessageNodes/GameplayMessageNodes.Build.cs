@@ -9,7 +9,7 @@ public class GameplayMessageNodes : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				"CoreUObject",
@@ -22,9 +22,9 @@ public class GameplayMessageNodes : ModuleRules
 		);
 
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
-				"BlueprintGraph",
+				"BlueprintGraph"
 			}
 		);
 

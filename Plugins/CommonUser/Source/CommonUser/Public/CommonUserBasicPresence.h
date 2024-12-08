@@ -54,6 +54,7 @@ public:
 	UPROPERTY(Config)
 	FString PresenceKeyMapName;
 
-	void OnNotifySessionInformationChanged(ECommonSessionInformationState SessionStatus, const FString& GameMode, const FString& MapName);
+	void OnNotifySessionInformationChanged(ECommonSessionInformationState SessionStatus, const FString& GameMode,
+	                                       const FString& MapName);
 	FString SessionStateToBackendKey(ECommonSessionInformationState SessionStatus);
 };

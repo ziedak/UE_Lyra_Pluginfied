@@ -23,14 +23,16 @@ UCLASS(Abstract, config = Game)
 class COMMONGAME_API UGameUIManagerSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
-	
+
 public:
-	UGameUIManagerSubsystem() { }
-	
+	UGameUIManagerSubsystem()
+	{
+	}
+
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	
+
 	const UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
 	UGameUIPolicy* GetCurrentUIPolicy() { return CurrentPolicy; }
 

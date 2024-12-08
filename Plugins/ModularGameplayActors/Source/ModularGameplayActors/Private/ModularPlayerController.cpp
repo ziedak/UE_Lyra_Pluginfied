@@ -24,7 +24,8 @@ void AModularPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AModularPlayerController::ReceivedPlayer()
 {
 	// Player controllers always get assigned a player and can't do much until then
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::ReceivedPlayer();
 

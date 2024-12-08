@@ -7,13 +7,11 @@
 #include "AbilitySimpleFailureMessage.generated.h"
 
 
-
 USTRUCT(BlueprintType)
 struct FAbilitySimpleFailureMessage
 {
 	GENERATED_BODY()
 
-public:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 

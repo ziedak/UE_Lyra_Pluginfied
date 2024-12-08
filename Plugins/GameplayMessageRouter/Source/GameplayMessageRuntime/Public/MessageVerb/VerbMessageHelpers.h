@@ -20,10 +20,11 @@ UCLASS()
 class GAMEPLAYMESSAGERUNTIME_API UVerbMessageHelpers : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Helpers")
 	static APlayerState* GetPlayerStateFromObject(UObject* Object);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Helpers")
 	static APlayerController* GetPlayerControllerFromObject(UObject* Object);
 
@@ -33,5 +34,3 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Helpers")
 	static FVerbMessage CueParametersToVerbMessage(const FGameplayCueParameters& Params);
 };
-
-

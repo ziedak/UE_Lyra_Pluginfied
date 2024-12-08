@@ -21,14 +21,12 @@ class ABILITYSYSTEM_API UCombatSet : public UBaseAttributeSet
 	GENERATED_BODY()
 
 public:
-
 	UCombatSet();
 
 	ATTRIBUTE_ACCESSORS(UCombatSet, BaseDamage);
 	ATTRIBUTE_ACCESSORS(UCombatSet, BaseHeal);
 
 protected:
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
@@ -38,12 +36,13 @@ protected:
 	void OnRep_BaseHeal(const FGameplayAttributeData& OldValue) const;
 
 private:
-
 	// The base amount of damage to apply in the damage execution.
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "AttributeSet|Combat", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseDamage, Category = "AttributeSet|Combat",
+		Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData BaseDamage;
 
 	// The base amount of healing to apply in the heal execution.
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseHeal, Category = "AttributeSet|Combat", Meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BaseHeal, Category = "AttributeSet|Combat",
+		Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData BaseHeal;
 };

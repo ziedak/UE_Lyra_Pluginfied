@@ -16,7 +16,7 @@ ACommonPlayerController::ACommonPlayerController(const FObjectInitializer& Objec
 void ACommonPlayerController::ReceivedPlayer()
 {
 	Super::ReceivedPlayer();
-	
+
 	if (UCommonLocalPlayer* LocalPlayer = Cast<UCommonLocalPlayer>(Player))
 	{
 		LocalPlayer->OnPlayerControllerSet.Broadcast(LocalPlayer, this);
@@ -41,7 +41,7 @@ void ACommonPlayerController::SetPawn(APawn* InPawn)
 void ACommonPlayerController::OnPossess(APawn* APawn)
 {
 	Super::OnPossess(APawn);
-	
+
 	if (UCommonLocalPlayer* LocalPlayer = Cast<UCommonLocalPlayer>(Player))
 	{
 		LocalPlayer->OnPlayerPawnSet.Broadcast(LocalPlayer, APawn);

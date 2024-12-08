@@ -10,7 +10,7 @@
 #include "Engine/LocalPlayer.h"
 // #include "Character/LyraHeroComponent.h"
 #include "GameFeatures/GameFeatureAction_WorldActionBase.h"
-#include "InputConfig/Public/LyraInputConfig.h"
+#include "InputConfig/LyraInputConfig.h"
 
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"

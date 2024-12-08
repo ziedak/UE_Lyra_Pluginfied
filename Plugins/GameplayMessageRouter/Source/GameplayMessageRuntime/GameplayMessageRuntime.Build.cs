@@ -6,22 +6,22 @@ public class GameplayMessageRuntime : ModuleRules
 {
 	public GameplayMessageRuntime(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;				
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				"Engine",
 				"GameplayTags"
 			});
-		
+
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
-				"CoreUObject", "GameplayAbilities",
+				"CoreUObject", "GameplayAbilities"
 			});
-		
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

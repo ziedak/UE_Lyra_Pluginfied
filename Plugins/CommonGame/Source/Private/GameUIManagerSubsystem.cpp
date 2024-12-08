@@ -73,4 +73,3 @@ void UGameUIManagerSubsystem::SwitchToPolicy(UGameUIPolicy* InPolicy)
 		CurrentPolicy = InPolicy;
 	}
 }
-

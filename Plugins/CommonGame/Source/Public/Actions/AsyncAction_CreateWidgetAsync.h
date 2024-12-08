@@ -23,22 +23,21 @@ UCLASS(BlueprintType)
 class COMMONGAME_API UAsyncAction_CreateWidgetAsync : public UCancellableAsyncAction
 {
 	GENERATED_UCLASS_BODY()
-
-public:
 	virtual void Cancel() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintCosmetic, meta=(WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
-	static UAsyncAction_CreateWidgetAsync* CreateWidgetAsync(UObject* WorldContextObject, TSoftClassPtr<UUserWidget> UserWidgetSoftClass, APlayerController* OwningPlayer, bool bSuspendInputUntilComplete = true);
+	UFUNCTION(BlueprintCallable, BlueprintCosmetic,
+		meta=(WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
+	static UAsyncAction_CreateWidgetAsync* CreateWidgetAsync(UObject* WorldContextObject,
+	                                                         TSoftClassPtr<UUserWidget> UserWidgetSoftClass,
+	                                                         APlayerController* OwningPlayer,
+	                                                         bool bSuspendInputUntilComplete = true);
 
 	virtual void Activate() override;
-
-public:
 
 	UPROPERTY(BlueprintAssignable)
 	FCreateWidgetAsyncDelegate OnComplete;
 
 private:
-	
 	void OnWidgetLoaded();
 
 	FName SuspendInputToken;

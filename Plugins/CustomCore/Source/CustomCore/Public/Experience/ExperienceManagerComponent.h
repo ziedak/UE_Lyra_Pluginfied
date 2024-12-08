@@ -68,7 +68,7 @@ public:
 	// Returns true if the experience is fully loaded
 	FORCEINLINE bool IsExperienceLoaded() const
 	{
-		return (LoadState == EExperienceLoadState::Loaded) && (CurrentExperience != nullptr);
+		return LoadState == EExperienceLoadState::Loaded && CurrentExperience;
 	}
 
 private:
@@ -78,14 +78,15 @@ private:
 	TSharedPtr<FStreamableHandle> CreateStreamableHandle(const TSet<FPrimaryAssetId>& BundleAssetList,
 	                                                     const TSet<FSoftObjectPath>& RawAssetList,
 	                                                     const TArray<FName>& BundlesToLoad) const;
-	void PrepareAssetLists(TSet<FPrimaryAssetId>& BundleAssetList, const TSet<FSoftObjectPath>& RawAssetList);
+	TSet<FPrimaryAssetId> PrepareAssetLists(const TSet<FSoftObjectPath>& RawAssetList) const;
 	TArray<FName> PrepareBundlesToLoad() const;
 	void PreloadAssets(const TArray<FName>& BundlesToLoad) const;
 	void StartExperienceLoad();
 	void OnExperienceLoadComplete();
-	TArray<FString> CollectGameFeaturePluginURLs(const UPrimaryDataAsset* Context, const TArray<FString>& FeaturePluginList) const;
+	TArray<FString> CollectGameFeaturePluginURLs(const UPrimaryDataAsset* Context,
+	                                             const TArray<FString>& FeaturePluginList) const;
 	void OnGameFeaturePluginLoadComplete(const UE::GameFeatures::FResult& Result);
-	void ExecuteActions();
+	void ExecuteActions() const;
 	void BroadcastExperienceLoaded();
 	void ApplyScalabilitySettings();
 	void OnExperienceFullLoadCompleted();
@@ -101,7 +102,6 @@ private:
 	void DeactivateLoadedFeatures();
 	void HandlePartiallyLoadedState();
 
-private:
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentExperience)
 	TObjectPtr<const UExperienceDefinition_DA> CurrentExperience;
 

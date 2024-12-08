@@ -25,7 +25,8 @@
     {
       "Name": "ModularGameplayActors",
       "Enabled": true
-    }, {
+    },
+    {
       "Name": "DTLSHandlerComponent",
       "Enabled": true
     },

@@ -46,7 +46,9 @@ void UExperienceActionSet_DA::UpdateAssetBundleData()
 	for (UGameFeatureAction* Action : GameFeatureActions)
 	{
 		if (Action)
+		{
 			Action->AddAdditionalAssetBundleData(AssetBundleData);
+		}
 	}
 }
 #endif // WITH_EDITORONLY_DATA

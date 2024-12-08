@@ -10,11 +10,10 @@
 class FCommonStartupLoadingScreenModule : public IModuleInterface
 {
 public:
-
 	/** IModuleInterface implementation */
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
-	bool IsGameModule() const override;
+	virtual bool IsGameModule() const override;
 
 private:
 	void OnPreLoadScreenManagerCleanUp();
@@ -35,7 +34,8 @@ void FCommonStartupLoadingScreenModule::StartupModule()
 		if (!GIsEditor && FApp::CanEverRender() && FPreLoadScreenManager::Get())
 		{
 			FPreLoadScreenManager::Get()->RegisterPreLoadScreen(PreLoadingScreen);
-			FPreLoadScreenManager::Get()->OnPreLoadScreenManagerCleanUp.AddRaw(this, &FCommonStartupLoadingScreenModule::OnPreLoadScreenManagerCleanUp);
+			FPreLoadScreenManager::Get()->OnPreLoadScreenManagerCleanUp.AddRaw(
+				this, &FCommonStartupLoadingScreenModule::OnPreLoadScreenManagerCleanUp);
 		}
 	}
 }
@@ -49,7 +49,6 @@ void FCommonStartupLoadingScreenModule::OnPreLoadScreenManagerCleanUp()
 
 void FCommonStartupLoadingScreenModule::ShutdownModule()
 {
-
 }
 
 bool FCommonStartupLoadingScreenModule::IsGameModule() const
@@ -58,5 +57,5 @@ bool FCommonStartupLoadingScreenModule::IsGameModule() const
 }
 
 #undef LOCTEXT_NAMESPACE
-	
+
 IMPLEMENT_MODULE(FCommonStartupLoadingScreenModule, CommonStartupLoadingScreen)

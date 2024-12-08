@@ -47,7 +47,9 @@ void UBaseAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AAc
 	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
 
 	if (!bHasNewPawnAvatar)
+	{
 		return;
+	}
 
 	NotifyAbilitiesOfNewPawnAvatar();
 	RegisterWithGlobalSystem();
@@ -62,7 +64,9 @@ void UBaseAbilitySystemComponent::NotifyAbilitiesOfNewPawnAvatar()
 	{
 		UBaseGameplayAbility* AbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability);
 		if (!AbilityCDO)
+		{
 			continue;
+		}
 
 		if (AbilityCDO->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
 		{
@@ -129,7 +133,7 @@ void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbili
 		if (!BaseAbilityCDO)
 		{
 			LOG_ERROR(LogGAS, "CancelAbilitiesByFunc: Non - BaseGameplayAbility %s was Granted to ASC.Skipping.",
-			                 *AbilitySpec.Ability.GetName());
+			          *AbilitySpec.Ability.GetName());
 			continue;
 		}
 		/*
@@ -176,7 +180,7 @@ void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbili
 			if (!ShouldCancelFunc(BaseAbilityInstance, AbilitySpec.Handle))
 			{
 				LOG_ERROR(LogGAS, "CancelAbilitiesByFunc: ShouldCancelFunc returned false for ability [%s].",
-				                 *BaseAbilityInstance->GetName());
+				          *BaseAbilityInstance->GetName());
 				continue;
 			}
 
@@ -194,6 +198,7 @@ void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbili
 		}
 	}
 }
+
 // This function cancels all abilities that are currently active.
 void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bReplicateCancelAbility)
 {
@@ -206,11 +211,14 @@ void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bRepl
 
 	CancelAbilitiesByFunc(ShouldCancelFunc, bReplicateCancelAbility);
 }
+
 // This function sets the ability input tag that was pressed.
 void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid())
+	{
 		return;
+	}
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -221,11 +229,14 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& 
 		}
 	}
 }
+
 // This function sets the ability input tag as released.
 void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag& InputTag)
 {
 	if (!InputTag.IsValid())
+	{
 		return;
+	}
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -236,6 +247,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag&
 		}
 	}
 }
+
 // This function processes the ability input.
 void UBaseAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
@@ -245,7 +257,7 @@ void UBaseAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGam
 		ClearAbilityInput();
 		return;
 	}
-// Process all abilities that are held, pressed, and released.
+	// Process all abilities that are held, pressed, and released.
 	TSet<FGameplayAbilitySpecHandle> AbilitiesToActivate;
 	AbilitiesToActivate.Append(ProcessHeldAbilities());
 	AbilitiesToActivate.Append(ProcessPressedAbilities());
@@ -261,6 +273,7 @@ void UBaseAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGam
 	InputPressedSpecHandlesList.Reset();
 	InputReleasedSpecHandlesList.Reset();
 }
+
 // This function processes all abilities that are held.
 TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessHeldAbilities()
 {
@@ -288,6 +301,7 @@ TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessHeldAbiliti
 
 	return AbilitiesToActivate;
 }
+
 // This function processes all abilities that had their input pressed this frame.
 TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessPressedAbilities()
 {
@@ -323,6 +337,7 @@ TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessPressedAbil
 
 	return AbilitiesToActivate;
 }
+
 // This function processes all abilities that had their input released this frame.
 void UBaseAbilitySystemComponent::ProcessReleasedAbilities()
 {
@@ -331,7 +346,9 @@ void UBaseAbilitySystemComponent::ProcessReleasedAbilities()
 	{
 		FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle);
 		if (!AbilitySpec)
+		{
 			continue;
+		}
 
 		AbilitySpec->InputPressed = false;
 
@@ -349,6 +366,7 @@ void UBaseAbilitySystemComponent::ClearAbilityInput()
 	InputReleasedSpecHandlesList.Reset();
 	InputHeldSpecHandlesList.Reset();
 }
+
 // This function checks if the specified activation group is blocked.
 bool UBaseAbilitySystemComponent::IsActivationGroupBlocked(EAbilityActivationGroup Group) const
 {
@@ -366,6 +384,7 @@ bool UBaseAbilitySystemComponent::IsActivationGroupBlocked(EAbilityActivationGro
 		return false;
 	}
 }
+
 // This function adds the ability to the specified activation group.
 void UBaseAbilitySystemComponent::AddAbilityToActivationGroup(EAbilityActivationGroup Group,
                                                               UBaseGameplayAbility* BaseAbility)
@@ -392,6 +411,7 @@ void UBaseAbilitySystemComponent::AddAbilityToActivationGroup(EAbilityActivation
 		LOG_ERROR(LogGAS, "AddAbilityToActivationGroup: Multiple exclusive abilities are running.");
 	}
 }
+
 // This function removes the ability from the specified activation group.
 void UBaseAbilitySystemComponent::RemoveAbilityFromActivationGroup(EAbilityActivationGroup Group,
                                                                    const UBaseGameplayAbility* Ability)
@@ -401,6 +421,7 @@ void UBaseAbilitySystemComponent::RemoveAbilityFromActivationGroup(EAbilityActiv
 
 	ActivationGroupCounts[static_cast<uint8>(Group)]--;
 }
+
 // This function cancels all abilities in the specified activation group.
 void UBaseAbilitySystemComponent::CancelActivationGroupAbilities(EAbilityActivationGroup Group,
                                                                  UBaseGameplayAbility* IgnoreAbility,
@@ -414,8 +435,10 @@ void UBaseAbilitySystemComponent::CancelActivationGroupAbilities(EAbilityActivat
 
 	CancelAbilitiesByFunc(ShouldCancelFunc, bReplicateCancelAbility);
 }
+
 // This function adds the dynamic tag gameplay effect with the specified tag.
-void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect,const FGameplayTag& Tag)
+void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(
+	const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect, const FGameplayTag& Tag)
 {
 	// const TSubclassOf<UGameplayEffect> DynamicTagGE = UBaseAssetManager::GetSubclass(
 	// 	UGasGameData::Get().DynamicTagGameplayEffect);
@@ -425,7 +448,7 @@ void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(const TSoftClassPt
 		// LOG_WARNING(LogGAS, "AddDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s].",
 		//                    *UGasGameData::Get().DynamicTagGameplayEffect.GetAssetName());
 		LOG_WARNING(LogGAS, "AddDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s].",
-					   *DynamicTagGameplayEffect.GetAssetName());
+		            *DynamicTagGameplayEffect.GetAssetName());
 		return;
 	}
 
@@ -435,7 +458,7 @@ void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(const TSoftClassPt
 	if (!Spec)
 	{
 		LOG_WARNING(LogGAS, "AddDynamicTagGameplayEffect: Unable to make outgoing spec for [%s].",
-		                   *GetNameSafe(DynamicTagGE));
+		            *GetNameSafe(DynamicTagGE));
 		return;
 	}
 
@@ -443,8 +466,10 @@ void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(const TSoftClassPt
 
 	ApplyGameplayEffectSpecToSelf(*Spec);
 }
+
 // This function removes the dynamic tag gameplay effect with the specified tag.
-void UBaseAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect,const FGameplayTag& Tag)
+void UBaseAbilitySystemComponent::RemoveDynamicTagGameplayEffect(
+	const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect, const FGameplayTag& Tag)
 {
 	// Find the DynamicTagGameplayEffect.
 	// const TSubclassOf<UGameplayEffect> DynamicTagGE = UBaseAssetManager::GetSubclass(
@@ -455,7 +480,7 @@ void UBaseAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const TSoftClas
 		// LOG_WARNING(LogGAS, "RemoveDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s].",
 		//                    *UGasGameData::Get().DynamicTagGameplayEffect.GetAssetName());
 		LOG_WARNING(LogGAS, "RemoveDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s].",
-						   *DynamicTagGameplayEffect.GetAssetName());
+		            *DynamicTagGameplayEffect.GetAssetName());
 		return;
 	}
 
@@ -465,6 +490,7 @@ void UBaseAbilitySystemComponent::RemoveDynamicTagGameplayEffect(const TSoftClas
 	// Remove any active GEs that match the query.
 	RemoveActiveEffects(Query);
 }
+
 //
 void UBaseAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
                                                        const FGameplayAbilityActivationInfo& ActivationInfo,
@@ -478,6 +504,7 @@ void UBaseAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpe
 		OutTargetDataHandle = RepData->TargetData;
 	}
 }
+
 // This function is called when an ability's target data is set.
 void UBaseAbilitySystemComponent::GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
                                                                          FGameplayTagContainer& OutActivationRequired,
@@ -485,11 +512,14 @@ void UBaseAbilitySystemComponent::GetAdditionalActivationTagRequirements(const F
 const
 {
 	if (!TagRelationshipMapping)
+	{
 		return;
-// Get the required and blocked activation tags from the tag relationship mapping.
+	}
+	// Get the required and blocked activation tags from the tag relationship mapping.
 	TagRelationshipMapping->GetRequiredAndBlockedActivationTags(AbilityTags, &OutActivationRequired,
 	                                                            &OutActivationBlocked);
 }
+
 // This function is called when an ability's input is pressed.
 void UBaseAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& Spec)
 {
@@ -500,7 +530,7 @@ void UBaseAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& 
 	if (!Spec.IsActive())
 	{
 		LOG_WARNING(LogGAS, "AbilityInputTagPressed: AbilitySpec is not active. Ability [%s] ",
-		                   *Spec.Ability->GetName());
+		            *Spec.Ability->GetName());
 		return;
 	}
 	// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
@@ -508,6 +538,7 @@ void UBaseAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& 
 	                      Spec.Handle,
 	                      Spec.ActivationInfo.GetActivationPredictionKey());
 }
+
 // This function is called when an ability's input is released.
 void UBaseAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec& Spec)
 {
@@ -516,7 +547,7 @@ void UBaseAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec&
 	if (!Spec.IsActive())
 	{
 		LOG_WARNING(LogGAS, "AbilityInputTagReleased: AbilitySpec is not active. Ability [%s] ",
-		                   *Spec.Ability->GetName());
+		            *Spec.Ability->GetName());
 	}
 
 	// We don't support UGameplayAbility::bReplicateInputDirectly.
@@ -527,6 +558,7 @@ void UBaseAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec&
 	                      Spec.Handle,
 	                      Spec.ActivationInfo.GetActivationPredictionKey());
 }
+
 // This function is called when an ability is activated.
 void UBaseAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilitySpecHandle Handle,
                                                          UGameplayAbility* Ability)
@@ -538,6 +570,7 @@ void UBaseAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilityS
 		AddAbilityToActivationGroup(BaseAbility->GetActivationGroup(), BaseAbility);
 	}
 }
+
 // This function is called when an ability fails to activate.
 void UBaseAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpecHandle Handle,
                                                       UGameplayAbility* Ability,
@@ -556,12 +589,13 @@ void UBaseAbilitySystemComponent::NotifyAbilityFailed(const FGameplayAbilitySpec
 	{
 		ClientNotifyAbilityFailed(Ability, FailureReason);
 		LOG_WARNING(LogGAS, "NotifyAbilityFailed: Ability [%s] failed. Replicating to client. ",
-		                   *Ability->GetName());
+		            *Ability->GetName());
 		return;
 	}
-	
+
 	HandleAbilityFailed(Ability, FailureReason);
 }
+
 // This function is called when an ability ends.
 void UBaseAbilitySystemComponent::NotifyAbilityEnded(const FGameplayAbilitySpecHandle Handle, UGameplayAbility* Ability,
                                                      const bool bWasCancelled)
@@ -585,7 +619,9 @@ void UBaseAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplay
 	FGameplayTagContainer ModifierCancelTags;
 
 	if (TagRelationshipMapping)
+	{
 		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifierBlockTags, &ModifierCancelTags);
+	}
 
 	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,
 	                                      bExecuteCancelTags, CancelTags);

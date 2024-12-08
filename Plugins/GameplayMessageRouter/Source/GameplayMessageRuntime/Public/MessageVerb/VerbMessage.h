@@ -6,7 +6,7 @@
 #include "VerbMessage.generated.h"
 
 // Represents a generic message of the form Instigator Verb Target (in Context, with Magnitude)
-USTRUCT(BlueprintType) 
+USTRUCT(BlueprintType)
 struct FVerbMessage
 {
 	GENERATED_BODY()
@@ -36,12 +36,12 @@ struct FVerbMessage
 	FString ToString() const
 	{
 		FString HumanReadableMessage;
-		FVerbMessage::StaticStruct()->ExportText(/*out*/ HumanReadableMessage,
-		                                                 this,
-		                                                 /*Defaults=*/ nullptr,
-		                                                 /*OwnerObject=*/ nullptr,
-		                                                 PPF_None,
-		                                                 /*ExportRootScope=*/ nullptr);
+		StaticStruct()->ExportText(/*out*/ HumanReadableMessage,
+		                                   this,
+		                                   /*Defaults=*/ nullptr,
+		                                   /*OwnerObject=*/ nullptr,
+		                                   PPF_None,
+		                                   /*ExportRootScope=*/ nullptr);
 		return HumanReadableMessage;
 	};
 };

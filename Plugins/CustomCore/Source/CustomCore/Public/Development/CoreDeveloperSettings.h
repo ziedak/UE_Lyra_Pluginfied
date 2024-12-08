@@ -45,9 +45,8 @@ public:
 	virtual FName GetCategoryName() const override;
 	//~End of UDeveloperSettings interface
 
-public:
 	// The experience override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Lyra,meta=(AllowedTypes="ExperienceDefinition_DA"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Lyra, meta=(AllowedTypes="ExperienceDefinition_DA"))
 	FPrimaryAssetId ExperienceOverride;
 
 	UPROPERTY(BlueprintReadOnly, config, Category=LyraBots)
@@ -91,7 +90,6 @@ public:
 
 #if WITH_EDITOR
 
-public:
 	// Called by the editor engine to let us pop reminder notifications when cheats are active
 	CUSTOMCORE_API void OnPlayInEditorStarted() const;
 

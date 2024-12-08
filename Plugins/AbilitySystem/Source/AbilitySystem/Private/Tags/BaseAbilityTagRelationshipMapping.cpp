@@ -12,13 +12,19 @@ void UBaseAbilityTagRelationshipMapping::GetAbilityTagsToBlockAndCancel(
 	{
 		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
 		if (!AbilityTags.HasTag(Tags.AbilityTag))
+		{
 			continue;
+		}
 
 		if (OutTagsToBlock)
+		{
 			OutTagsToBlock->AppendTags(Tags.AbilityTagsToBlock);
+		}
 
 		if (OutTagsToCancel)
+		{
 			OutTagsToCancel->AppendTags(Tags.AbilityTagsToCancel);
+		}
 	}
 }
 
@@ -31,13 +37,19 @@ void UBaseAbilityTagRelationshipMapping::GetRequiredAndBlockedActivationTags(
 	{
 		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
 		if (!AbilityTags.HasTag(Tags.AbilityTag))
+		{
 			continue;
+		}
 
 		if (OutActivationRequired)
+		{
 			OutActivationRequired->AppendTags(Tags.ActivationRequiredTags);
+		}
 
 		if (OutActivationBlocked)
+		{
 			OutActivationBlocked->AppendTags(Tags.ActivationBlockedTags);
+		}
 	}
 }
 
@@ -50,7 +62,9 @@ bool UBaseAbilityTagRelationshipMapping::IsAbilityCancelledByTag(
 		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
 
 		if (Tags.AbilityTag == ActionTag && Tags.AbilityTagsToCancel.HasAny(AbilityTags))
+		{
 			return true;
+		}
 	}
 
 	return false;

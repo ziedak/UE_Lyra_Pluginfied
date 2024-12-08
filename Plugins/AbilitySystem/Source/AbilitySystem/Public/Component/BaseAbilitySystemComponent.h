@@ -33,8 +33,8 @@ private:
 	void InitializeAnimInstance();
 
 public:
-	typedef TFunctionRef<bool(const UBaseGameplayAbility* BaseAbility, FGameplayAbilitySpecHandle Handle)>
-	TShouldCancelAbilityFunc;
+	using TShouldCancelAbilityFunc = TFunctionRef<bool(const UBaseGameplayAbility* BaseAbility,
+	                                                   FGameplayAbilitySpecHandle Handle)>;
 	void CancelAbilitiesByFunc(const TShouldCancelAbilityFunc& ShouldCancelFunc, bool bReplicateCancelAbility);
 
 	void CancelInputActivatedAbilities(bool bReplicateCancelAbility);
@@ -110,7 +110,6 @@ protected:
 
 	void HandleAbilityFailed(const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason) const;
 
-protected:
 	// If set, this table is used to look up tag relationships for activate and cancel
 	UPROPERTY()
 	TObjectPtr<UBaseAbilityTagRelationshipMapping> TagRelationshipMapping;

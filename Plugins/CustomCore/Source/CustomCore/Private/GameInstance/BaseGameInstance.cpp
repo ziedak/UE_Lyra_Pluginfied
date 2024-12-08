@@ -106,13 +106,17 @@ void UBaseGameInstance::Init()
 	}
 
 	if (UCommonSessionSubsystem* SessionSubsystem = GetSubsystem<UCommonSessionSubsystem>())
+	{
 		SessionSubsystem->OnPreClientTravelEvent.AddUObject(this, &UBaseGameInstance::OnPreClientTravelToSession);
+	}
 }
 
 void UBaseGameInstance::Shutdown()
 {
 	if (UCommonSessionSubsystem* SessionSubsystem = GetSubsystem<UCommonSessionSubsystem>())
+	{
 		SessionSubsystem->OnPreClientTravelEvent.RemoveAll(this);
+	}
 
 	Super::Shutdown();
 }
@@ -137,7 +141,9 @@ void UBaseGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, 
 
 	// If login succeeded, tell the local player to load their settings
 	if (!bSuccess || !(ensure(UserInfo)))
+	{
 		return;
+	}
 
 	//@TODO: Implement this
 	// There will not be a local player attached to the dedicated server user

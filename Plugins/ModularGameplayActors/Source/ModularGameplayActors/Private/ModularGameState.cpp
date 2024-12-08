@@ -16,7 +16,8 @@ void AModularGameStateBase::PreInitializeComponents()
 
 void AModularGameStateBase::BeginPlay()
 {
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::BeginPlay();
 }
@@ -38,7 +39,8 @@ void AModularGameState::PreInitializeComponents()
 
 void AModularGameState::BeginPlay()
 {
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::BeginPlay();
 }
@@ -61,4 +63,3 @@ void AModularGameState::HandleMatchHasStarted()
 		Component->HandleMatchHasStarted();
 	}
 }
-

@@ -15,13 +15,11 @@ struct FGameplayEffectData
 {
 	GENERATED_BODY()
 
-public:
-
 	// Gameplay effect to grant.
-UPROPERTY(EditDefaultsOnly)
-TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> GameplayEffect = nullptr;
 
-// Level of gameplay effect to grant.
-UPROPERTY(EditDefaultsOnly)
-float EffectLevel = 1.0f;
+	// Level of gameplay effect to grant.
+	UPROPERTY(EditDefaultsOnly)
+	float EffectLevel = 1.0f;
 };

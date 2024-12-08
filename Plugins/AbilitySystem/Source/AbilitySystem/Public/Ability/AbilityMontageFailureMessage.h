@@ -10,8 +10,6 @@ struct FAbilityMontageFailureMessage
 {
 	GENERATED_BODY()
 
-public:
-	
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
 

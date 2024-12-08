@@ -13,9 +13,10 @@ UCLASS()
 class CUSTOMCORE_API UExperienceManager : public UEngineSubsystem
 {
 	GENERATED_BODY()
+
 public:
 #if WITH_EDITOR
-	 void OnPlayInEditorBegun();
+	void OnPlayInEditorBegun();
 
 	static void NotifyOfPluginActivation(const FString PluginURL);
 	static bool RequestToDeactivatePlugin(const FString PluginURL);
@@ -29,4 +30,3 @@ private:
 	// (to allow first in, last out activation management during PIE)
 	TMap<FString, int32> GameFeaturePluginRequestCountMap;
 };
-

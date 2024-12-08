@@ -17,8 +17,6 @@ struct ABILITYSYSTEM_API FGameplayAbilityData
 {
 	GENERATED_BODY()
 
-public:
-
 	// Gameplay ability to grant.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UBaseGameplayAbility> Ability = nullptr;

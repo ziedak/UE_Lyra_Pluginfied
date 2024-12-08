@@ -9,4 +9,3 @@ UCommonLoadingScreenSettings::UCommonLoadingScreenSettings()
 {
 	CategoryName = TEXT("Game");
 }
-

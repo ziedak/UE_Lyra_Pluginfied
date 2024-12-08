@@ -31,8 +31,10 @@ void UExperienceManager::NotifyOfPluginActivation(const FString PluginURL)
 bool UExperienceManager::RequestToDeactivatePlugin(const FString PluginURL)
 {
 	if (!GIsEditor)
+	{
 		return true;
-	
+	}
+
 	UExperienceManager* ExperienceManagerSubsystem = GEngine->GetEngineSubsystem<UExperienceManager>();
 	check(ExperienceManagerSubsystem);
 
@@ -41,8 +43,10 @@ bool UExperienceManager::RequestToDeactivatePlugin(const FString PluginURL)
 	--Count;
 
 	if (Count != 0)
+	{
 		return false;
-	
+	}
+
 	ExperienceManagerSubsystem->GameFeaturePluginRequestCountMap.Remove(PluginURL);
 	return true;
 }

@@ -12,8 +12,7 @@ class CUSTOMCORE_API ABaseGameSession : public AGameSession
 	GENERATED_BODY()
 
 public:
-	ABaseGameSession(const FObjectInitializer& ObjectInitializer)
-		: Super(ObjectInitializer)
+	ABaseGameSession(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 	{
 	}
 

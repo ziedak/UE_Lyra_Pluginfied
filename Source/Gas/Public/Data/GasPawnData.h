@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "LyraInputConfig.h"
+#include "InputConfig/LyraInputConfig.h"
 #include "Engine/DataAsset.h"
 #include "GasPawnData.generated.h"
 

@@ -4,8 +4,11 @@
 #include "Logging/LogMacros.h"
 
 CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogGAS, Log, All);
+
 CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogCORE, Log, All);
+
 CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogExperience, Log, All);
+
 //CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogGASAbilitySystem, Log, All);
 //CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogGASTeams, Log, All);
 
@@ -68,8 +71,8 @@ void ConsoleLog(const FString& Message);
 	}
 
 #if WITH_EDITOR
-	/* Log macro. Style: ClassName::FunctionName (Line) Message. */
-	#define LOG(CategoryName,Verbosity, FormatString , ...) UE_LOG(CategoryName, Verbosity, TEXT("[%s] [%s -> %s] %s : %s"), *CLIENT_SERVER_CONTEXT, *OBJECT_OWNER, *CLASS_OWNER, *CURRENT_CLASS_FUNCTION_LINE, *FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ) )
+/* Log macro. Style: ClassName::FunctionName (Line) Message. */
+#define LOG(CategoryName,Verbosity, FormatString , ...) UE_LOG(CategoryName, Verbosity, TEXT("[%s] [%s -> %s] %s : %s"), *CLIENT_SERVER_CONTEXT, *OBJECT_OWNER, *CLASS_OWNER, *CURRENT_CLASS_FUNCTION_LINE, *FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ) )
 #else
 	#define LOG(CategoryName, Verbosity, FormatString, ...) {}
 #endif
@@ -92,7 +95,7 @@ void ConsoleLog(const FString& Message);
  * Screen Messages macros
  */
 #if WITH_EDITOR
-	#define LOG_SCREEN(Color, FormatString , ...) if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, Color, *(CURRENT_CLASS_FUNCTION_LINE + ": [ INFO ] " + (FString::Printf(TEXT(FormatString), ##__VA_ARGS__ )))) 
+#define LOG_SCREEN(Color, FormatString , ...) if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.0f, Color, *(CURRENT_CLASS_FUNCTION_LINE + ": [ INFO ] " + (FString::Printf(TEXT(FormatString), ##__VA_ARGS__ ))))
 #else
 	#define LOG_SCREEN(Color, Message) {}
 #endif
@@ -100,4 +103,3 @@ void ConsoleLog(const FString& Message);
 #define LOG_SCREEN_INFO(FormatString , ...) LOG_SCREEN(FColor::Cyan, FormatString , ##__VA_ARGS__)
 #define LOG_SCREEN_WARNING(FormatString , ...) LOG_SCREEN(FColor::Yellow, FormatString , ##__VA_ARGS__)
 #define LOG_SCREEN_ERROR(FormatString , ...) LOG_SCREEN(FColor::Red, FormatString , ##__VA_ARGS__)
-

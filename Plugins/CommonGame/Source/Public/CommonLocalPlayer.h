@@ -23,11 +23,13 @@ public:
 	UCommonLocalPlayer();
 
 	/** Called when the local player is assigned a player controller */
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerControllerSetDelegate, UCommonLocalPlayer* LocalPlayer,
+	                                     APlayerController* PlayerController);
 	FPlayerControllerSetDelegate OnPlayerControllerSet;
 
 	/** Called when the local player is assigned a player state */
-	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerStateSetDelegate, UCommonLocalPlayer* LocalPlayer, APlayerState* PlayerState);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerStateSetDelegate, UCommonLocalPlayer* LocalPlayer,
+	                                     APlayerState* PlayerState);
 	FPlayerStateSetDelegate OnPlayerStateSet;
 
 	/** Called when the local player is assigned a player pawn */
@@ -38,8 +40,8 @@ public:
 	FDelegateHandle CallAndRegister_OnPlayerStateSet(FPlayerStateSetDelegate::FDelegate Delegate);
 	FDelegateHandle CallAndRegister_OnPlayerPawnSet(FPlayerPawnSetDelegate::FDelegate Delegate);
 
-public:
-	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData, int32 StereoViewIndex) const override;
+	virtual bool GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
+	                               int32 StereoViewIndex) const override;
 
 	bool IsPlayerViewEnabled() const { return bIsPlayerViewEnabled; }
 	void SetIsPlayerViewEnabled(bool bInIsPlayerViewEnabled) { bIsPlayerViewEnabled = bInIsPlayerViewEnabled; }

@@ -6,57 +6,58 @@ public class AbilitySystem : ModuleRules
 {
 	public AbilitySystem(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-		
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PublicIncludePaths.AddRange(
-			new string[] {
-				
+			new string[]
+			{
 			}
-			);
-				
-		
+		);
+
+
 		PrivateIncludePaths.AddRange(
-			new string[] {
+			new string[]
+			{
 				// ... add other private include paths required here ...
 			}
-			);
-			
-		
+		);
+
+
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				"GameplayAbilities",
 				"GameplayTags",
-				"GameplayTasks", 
+				"GameplayTasks",
 				"CustomCore",
 				"GameplayMessageRuntime"
 				// ... add other public dependencies that you statically link with here ...
 			}
-			);
-			
-		
+		);
+
+
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"CoreUObject",
 				"Engine",
 				"Slate",
 				"SlateCore",
 				"PhysicsCore",
-				"NetCore",
+				"NetCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
-			);
-		
-		
+		);
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
 				// ... add any modules that your module loads dynamically here ...
 			}
-			);
-		
+		);
+
 		SetupGameplayDebuggerSupport(Target);
 
 		// Enable Iris support.

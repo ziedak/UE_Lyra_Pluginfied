@@ -33,7 +33,10 @@ public:
 	 * @param bCanUseGuestLogin	If true, this player can be a guest without a real system net id
 	 */
 	UFUNCTION(BlueprintCallable, Category = CommonUser, meta = (BlueprintInternalUseOnly = "true"))
-	static UAsyncAction_CommonUserInitialize* InitializeForLocalPlay(UCommonUserSubsystem* Target, int32 LocalPlayerIndex, FInputDeviceId PrimaryInputDevice, bool bCanUseGuestLogin);
+	static UAsyncAction_CommonUserInitialize* InitializeForLocalPlay(UCommonUserSubsystem* Target,
+	                                                                 int32 LocalPlayerIndex,
+	                                                                 FInputDeviceId PrimaryInputDevice,
+	                                                                 bool bCanUseGuestLogin);
 
 	/**
 	 * Attempts to log an existing user into the platform-specific online backend to enable full online play
@@ -53,7 +56,9 @@ public:
 
 	/** Wrapper delegate, will pass on to OnInitializationComplete if appropriate */
 	UFUNCTION()
-	virtual void HandleInitializationComplete(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
+	virtual void HandleInitializationComplete(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error,
+	                                          ECommonUserPrivilege RequestedPrivilege,
+	                                          ECommonUserOnlineContext OnlineContext);
 
 protected:
 	/** Actually start the initialization */

@@ -11,16 +11,16 @@ class FReferenceCollector;
 class SCommonPreLoadingScreenWidget : public SCompoundWidget, public FGCObject
 {
 public:
-	SLATE_BEGIN_ARGS(SCommonPreLoadingScreenWidget) {}
-    SLATE_END_ARGS()
+	SLATE_BEGIN_ARGS(SCommonPreLoadingScreenWidget)
+		{
+		}
 
-    void Construct(const FArguments& InArgs);
+	SLATE_END_ARGS()
+
+	void Construct(const FArguments& InArgs);
 
 	//~ Begin FGCObject interface
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
 	virtual FString GetReferencerName() const override;
 	//~ End FGCObject interface
-
-private:
-
 };

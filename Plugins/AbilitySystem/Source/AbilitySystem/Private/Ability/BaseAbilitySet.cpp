@@ -18,7 +18,9 @@ void UBaseAbilitySet::GiveToAbilitySystem(UBaseAbilitySystemComponent* BaseAsc, 
 	//must be authoritative to grant abilities, effects, and attributes
 	// to give or take ability sets
 	if (!BaseAsc->IsOwnerActorAuthoritative())
+	{
 		return;
+	}
 
 	// Grant the gameplay abilities.
 	GrantGameplayAbilities(BaseAsc, OutGrantedHandles, SourceObject);
@@ -40,7 +42,7 @@ void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAS
 		if (!IsValid(AbilityToGrant.Ability))
 		{
 			ULOG_ERROR(LogGAS, "GrantedGameplayAbilities[%d] on ability set [%s] is not valid.", AbilityIndex,
-			                 *GetNameSafe(this));
+			           *GetNameSafe(this));
 			continue;
 		}
 
@@ -69,7 +71,7 @@ void UBaseAbilitySet::GrantGameplayEffects(UBaseAbilitySystemComponent* BaseAsc,
 		if (!IsValid(GameplayEffect))
 		{
 			ULOG_ERROR(LogGAS, "GrantedGameplayEffects[%d] on ability set [%s] is not valid", EffectIndex,
-			                 *GetNameSafe(this));
+			           *GetNameSafe(this));
 			continue;
 		}
 
@@ -94,7 +96,7 @@ void UBaseAbilitySet::GrantAttributeSets(UBaseAbilitySystemComponent* BaseASC,
 		if (!IsValid(AttributeSet))
 		{
 			ULOG_ERROR(LogGAS, "GrantedAttributes[%d] on ability set [%s] is not valid", SetIndex,
-			                 *GetNameSafe(this));
+			           *GetNameSafe(this));
 			continue;
 		}
 

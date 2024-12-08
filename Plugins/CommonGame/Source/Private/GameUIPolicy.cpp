@@ -46,20 +46,21 @@ UPrimaryGameLayout* UGameUIPolicy::GetRootLayout(const UCommonLocalPlayer* Local
 
 void UGameUIPolicy::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
 {
-	LocalPlayer->OnPlayerControllerSet.AddWeakLambda(this, [this](UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController)
-	{
-		NotifyPlayerRemoved(LocalPlayer);
+	LocalPlayer->OnPlayerControllerSet.AddWeakLambda(
+		this, [this](UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController)
+		{
+			NotifyPlayerRemoved(LocalPlayer);
 
-		if (FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer))
-		{
-			AddLayoutToViewport(LocalPlayer, LayoutInfo->RootLayout);
-			LayoutInfo->bAddedToViewport = true;
-		}
-		else
-		{
-			CreateLayoutWidget(LocalPlayer);
-		}
-	});
+			if (FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer))
+			{
+				AddLayoutToViewport(LocalPlayer, LayoutInfo->RootLayout);
+				LayoutInfo->bAddedToViewport = true;
+			}
+			else
+			{
+				CreateLayoutWidget(LocalPlayer);
+			}
+		});
 
 	if (FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer))
 	{
@@ -79,7 +80,8 @@ void UGameUIPolicy::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer)
 		RemoveLayoutFromViewport(LocalPlayer, LayoutInfo->RootLayout);
 		LayoutInfo->bAddedToViewport = false;
 
-		if (LocalMultiplayerInteractionMode == ELocalMultiplayerInteractionMode::SingleToggle && !LocalPlayer->IsPrimaryPlayer())
+		if (LocalMultiplayerInteractionMode == ELocalMultiplayerInteractionMode::SingleToggle && !LocalPlayer->
+			IsPrimaryPlayer())
 		{
 			UPrimaryGameLayout* RootLayout = LayoutInfo->RootLayout;
 			if (RootLayout && !RootLayout->IsDormant())
@@ -119,7 +121,8 @@ void UGameUIPolicy::NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPlayer)
 
 void UGameUIPolicy::AddLayoutToViewport(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout)
 {
-	UE_LOG(LogCommonGame, Log, TEXT("[%s] is adding player [%s]'s root layout [%s] to the viewport"), *GetName(), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
+	UE_LOG(LogCommonGame, Log, TEXT("[%s] is adding player [%s]'s root layout [%s] to the viewport"), *GetName(),
+	       *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
 
 	Layout->SetPlayerContext(FLocalPlayerContext(LocalPlayer));
 	Layout->AddToPlayerScreen(1000);
@@ -132,12 +135,16 @@ void UGameUIPolicy::RemoveLayoutFromViewport(UCommonLocalPlayer* LocalPlayer, UP
 	TWeakPtr<SWidget> LayoutSlateWidget = Layout->GetCachedWidget();
 	if (LayoutSlateWidget.IsValid())
 	{
-		UE_LOG(LogCommonGame, Log, TEXT("[%s] is removing player [%s]'s root layout [%s] from the viewport"), *GetName(), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
+		UE_LOG(LogCommonGame, Log, TEXT("[%s] is removing player [%s]'s root layout [%s] from the viewport"),
+		       *GetName(), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
 
 		Layout->RemoveFromParent();
 		if (LayoutSlateWidget.IsValid())
 		{
-			UE_LOG(LogCommonGame, Log, TEXT("Player [%s]'s root layout [%s] has been removed from the viewport, but other references to its underlying Slate widget still exist. Noting in case we leak it."), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
+			UE_LOG(LogCommonGame, Log,
+			       TEXT(
+				       "Player [%s]'s root layout [%s] has been removed from the viewport, but other references to its underlying Slate widget still exist. Noting in case we leak it."
+			       ), *GetNameSafe(LocalPlayer), *GetNameSafe(Layout));
 		}
 
 		OnRootLayoutRemovedFromViewport(LocalPlayer, Layout);
@@ -157,12 +164,10 @@ void UGameUIPolicy::OnRootLayoutAddedToViewport(UCommonLocalPlayer* LocalPlayer,
 
 void UGameUIPolicy::OnRootLayoutRemovedFromViewport(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout)
 {
-	
 }
 
 void UGameUIPolicy::OnRootLayoutReleased(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout)
 {
-	
 }
 
 void UGameUIPolicy::RequestPrimaryControl(UPrimaryGameLayout* Layout)
@@ -191,7 +196,7 @@ void UGameUIPolicy::CreateLayoutWidget(UCommonLocalPlayer* LocalPlayer)
 		{
 			UPrimaryGameLayout* NewLayoutObject = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass);
 			RootViewportLayouts.Emplace(LocalPlayer, NewLayoutObject, true);
-			
+
 			AddLayoutToViewport(LocalPlayer, NewLayoutObject);
 		}
 	}

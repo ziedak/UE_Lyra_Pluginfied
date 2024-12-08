@@ -18,8 +18,6 @@ struct ABILITYSYSTEM_API FGrantedHandlesData
 {
 	GENERATED_BODY()
 
-public:
-
 	void AddAbilitySpecHandle(const FGameplayAbilitySpecHandle& Handle);
 	void AddGameplayEffectHandle(const FActiveGameplayEffectHandle& Handle);
 	void AddAttributeSet(UAttributeSet* Set);
@@ -27,7 +25,6 @@ public:
 	void TakeFromAbilitySystem(UBaseAbilitySystemComponent* BaseASC);
 
 protected:
-
 	// Handles to the granted abilities.
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;

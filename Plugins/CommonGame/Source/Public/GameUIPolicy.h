@@ -31,7 +31,6 @@ USTRUCT()
 struct FRootViewportLayoutInfo
 {
 	GENERATED_BODY()
-public:
 	UPROPERTY(Transient)
 	TObjectPtr<ULocalPlayer> LocalPlayer = nullptr;
 
@@ -41,12 +40,16 @@ public:
 	UPROPERTY(Transient)
 	bool bAddedToViewport = false;
 
-	FRootViewportLayoutInfo() {}
+	FRootViewportLayoutInfo()
+	{
+	}
+
 	FRootViewportLayoutInfo(ULocalPlayer* InLocalPlayer, UPrimaryGameLayout* InRootLayout, bool bIsInViewport)
 		: LocalPlayer(InLocalPlayer)
-		, RootLayout(InRootLayout)
-		, bAddedToViewport(bIsInViewport)
-	{}
+		  , RootLayout(InRootLayout)
+		  , bAddedToViewport(bIsInViewport)
+	{
+	}
 
 	bool operator==(const ULocalPlayer* OtherLocalPlayer) const { return LocalPlayer == OtherLocalPlayer; }
 };
@@ -65,12 +68,14 @@ public:
 
 	static UGameUIPolicy* GetGameUIPolicy(const UObject* WorldContextObject);
 
-public:
 	virtual UWorld* GetWorld() const override;
 	UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const;
 
-	ELocalMultiplayerInteractionMode GetLocalMultiplayerInteractionMode() const { return LocalMultiplayerInteractionMode; }
+	ELocalMultiplayerInteractionMode GetLocalMultiplayerInteractionMode() const
+	{
+		return LocalMultiplayerInteractionMode;
+	}
 
 	void RequestPrimaryControl(UPrimaryGameLayout* Layout);
 
@@ -94,7 +99,6 @@ private:
 	UPROPERTY(Transient)
 	TArray<FRootViewportLayoutInfo> RootViewportLayouts;
 
-private:
 	void NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer);
 	void NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer);
 	void NotifyPlayerDestroyed(UCommonLocalPlayer* LocalPlayer);

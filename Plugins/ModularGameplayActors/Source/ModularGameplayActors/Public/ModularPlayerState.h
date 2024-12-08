@@ -6,7 +6,10 @@
 
 #include "ModularPlayerState.generated.h"
 
-namespace EEndPlayReason { enum Type : int; }
+namespace EEndPlayReason
+{
+	enum Type : int;
+}
 
 class UObject;
 
@@ -26,6 +29,6 @@ public:
 
 protected:
 	//~ Begin APlayerState interface
-	virtual void CopyProperties(APlayerState* PlayerState);
+	virtual void CopyProperties(APlayerState* PlayerState) override;
 	//~ End APlayerState interface
 };

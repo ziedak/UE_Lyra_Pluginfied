@@ -17,7 +17,6 @@
 UCommonGameInstance::UCommonGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-
 }
 
 void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message)
@@ -33,18 +32,25 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 	}
 }
 
-void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability, ECommonUserAvailability NewAvailability)
+void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege,
+                                                 ECommonUserAvailability OldAvailability,
+                                                 ECommonUserAvailability NewAvailability)
 {
 	// By default show errors and disconnect if play privilege for first player is lost
-	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable && NewAvailability != ECommonUserAvailability::NowAvailable)
+	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable &&
+		NewAvailability != ECommonUserAvailability::NowAvailable)
 	{
-		UE_LOG(LogCommonGame, Error, TEXT("HandlePrivilegeChanged: Player %d no longer has permission to play the game!"), UserInfo->LocalPlayerIndex);
+		UE_LOG(LogCommonGame, Error,
+		       TEXT("HandlePrivilegeChanged: Player %d no longer has permission to play the game!"),
+		       UserInfo->LocalPlayerIndex);
 		// TODO: Games can do something specific in subclass
 		// ReturnToMainMenu();
 	}
 }
 
-void UCommonGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext)
+void UCommonGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error,
+                                                 ECommonUserPrivilege RequestedPrivilege,
+                                                 ECommonUserOnlineContext OnlineContext)
 {
 	// Subclasses can override this
 }
@@ -61,9 +67,11 @@ int32 UCommonGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUser
 		}
 
 		if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>())
+		{
 			UIManager->NotifyPlayerAdded(Cast<UCommonLocalPlayer>(NewPlayer));
+		}
 	}
-	
+
 	return ReturnVal;
 }
 
@@ -73,11 +81,14 @@ bool UCommonGameInstance::RemoveLocalPlayer(ULocalPlayer* ExistingPlayer)
 	{
 		//TODO: do we want to fall back to another player?
 		PrimaryPlayer.Reset();
-		UE_LOG(LogCommonGame, Log, TEXT("RemoveLocalPlayer: Unsetting Primary Player from %s"), *ExistingPlayer->GetName());
+		UE_LOG(LogCommonGame, Log, TEXT("RemoveLocalPlayer: Unsetting Primary Player from %s"),
+		       *ExistingPlayer->GetName());
 	}
-	
+
 	if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>())
+	{
 		UIManager->NotifyPlayerDestroyed(Cast<UCommonLocalPlayer>(ExistingPlayer));
+	}
 
 	return Super::RemoveLocalPlayer(ExistingPlayer);
 }
@@ -128,7 +139,9 @@ void UCommonGameInstance::ReturnToMainMenu()
 	Super::ReturnToMainMenu();
 }
 
-void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* InRequestedSession, const FOnlineResultInformation& RequestedSessionResult)
+void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& PlatformUserId,
+                                                 UCommonSession_SearchResult* InRequestedSession,
+                                                 const FOnlineResultInformation& RequestedSessionResult)
 {
 	if (InRequestedSession)
 	{
@@ -136,7 +149,9 @@ void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& Platform
 	}
 	else
 	{
-		HandleSystemMessage(FCommonUserTags::SystemMessage_Error, NSLOCTEXT("CommonGame", "Warning_RequestedSessionFailed", "Requested Session Failed"), RequestedSessionResult.ErrorText);
+		HandleSystemMessage(FCommonUserTags::SystemMessage_Error,
+		                    NSLOCTEXT("CommonGame", "Warning_RequestedSessionFailed", "Requested Session Failed"),
+		                    RequestedSessionResult.ErrorText);
 	}
 }
 

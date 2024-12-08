@@ -31,8 +31,6 @@ struct ABILITYSYSTEM_API FBaseGameplayEffectContext : public FGameplayEffectCont
 	{
 	}
 
-public:
-
 	virtual FGameplayAbilityTargetDataHandle GetTargetData()
 	{
 		return TargetData;
@@ -45,7 +43,7 @@ public:
 
 
 	/** Returns the wrapped FLyraGameplayEffectContext from the handle, or nullptr if it doesn't exist or is the wrong type */
-	static  FBaseGameplayEffectContext* ExtractEffectContext(struct FGameplayEffectContextHandle Handle);
+	static FBaseGameplayEffectContext* ExtractEffectContext(struct FGameplayEffectContextHandle Handle);
 
 	/** Sets the object used as the ability source */
 	void SetAbilitySource(const IAbilitySourceInterface* InObject, float InSourceLevel);
@@ -64,7 +62,7 @@ public:
 
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
-		return FBaseGameplayEffectContext::StaticStruct();
+		return StaticStruct();
 	}
 
 	virtual FBaseGameplayEffectContext* Duplicate() const override
@@ -82,7 +80,7 @@ public:
 
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 
-#pragma endregion 
+#pragma endregion
 
 protected:
 	FGameplayAbilityTargetDataHandle TargetData;
@@ -92,12 +90,12 @@ protected:
 	TWeakObjectPtr<const UObject> AbilitySourceObject;
 };
 
-template<>
-struct TStructOpsTypeTraits<FBaseGameplayEffectContext> : public TStructOpsTypeTraitsBase2<FBaseGameplayEffectContext>
+template <>
+struct TStructOpsTypeTraits<FBaseGameplayEffectContext> : TStructOpsTypeTraitsBase2<FBaseGameplayEffectContext>
 {
 	enum
 	{
 		WithNetSerializer = true,
-		WithCopy = true		// Necessary so that TSharedPtr<FHitResult> Data is copied around
+		WithCopy = true // Necessary so that TSharedPtr<FHitResult> Data is copied around
 	};
 };

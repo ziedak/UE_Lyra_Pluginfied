@@ -180,18 +180,19 @@ void UGameplayMessageSubsystem::UnregisterListener(const FGameplayMessageListene
 		UE_LOG(LogGameplayMessageSubsystem, Warning, TEXT("Trying to unregister an invalid Handle."));
 		return;
 	}
-	
-		check(Handle.Subsystem == this);
-		UnregisterListenerInternal(Handle.Channel, Handle.ID);
-	
+
+	check(Handle.Subsystem == this);
+	UnregisterListenerInternal(Handle.Channel, Handle.ID);
 }
 
 void UGameplayMessageSubsystem::UnregisterListenerInternal(FGameplayTag Channel, int32 HandleID)
 {
 	FChannelListenerList* pList = ListenerMap.Find(Channel);
 	if (!pList)
+	{
 		return;
-	
+	}
+
 	const int32 MatchIndex = pList->Listeners.IndexOfByPredicate(
 		[ID = HandleID](const FGameplayMessageListenerData& Other) { return Other.HandleID == ID; });
 	if (MatchIndex != INDEX_NONE)

@@ -13,8 +13,11 @@ UCLASS()
 class ABILITYSYSTEM_API UDamageExecution : public UGameplayEffectExecutionCalculation
 {
 	GENERATED_BODY()
+
 public:
 	UDamageExecution();
+
 protected:
-	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
+	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+	                                    FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };

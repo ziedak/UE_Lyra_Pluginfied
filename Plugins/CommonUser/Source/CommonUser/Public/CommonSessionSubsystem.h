@@ -11,7 +11,12 @@
 
 class APlayerController;
 class ULocalPlayer;
-namespace ETravelFailure { enum Type : int; }
+
+namespace ETravelFailure
+{
+	enum Type : int;
+}
+
 struct FOnlineResultInformation;
 
 #if COMMONUSER_OSSV1
@@ -79,7 +84,6 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category=Session)
 	int32 MaxPlayerCount = 16;
 
-public:
 	/** Returns the maximum players that should actually be used, could be overridden in child classes */
 	virtual int32 GetMaxPlayers() const;
 
@@ -132,14 +136,12 @@ public:
 	UFUNCTION(BlueprintPure, Category=Sessions)
 	int32 GetPingInMs() const;
 
-public:
 	/** Pointer to the platform-specific implementation */
 #if COMMONUSER_OSSV1
 	FOnlineSessionSearchResult Result;
 #else
 	TSharedPtr<const UE::Online::FLobby> Lobby;
 #endif // COMMONUSER_OSSV1
-
 };
 
 
@@ -148,7 +150,8 @@ public:
 
 /** Delegates called when a session search completes */
 DECLARE_MULTICAST_DELEGATE_TwoParams(FCommonSession_FindSessionsFinished, bool bSucceeded, const FText& ErrorMessage);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCommonSession_FindSessionsFinishedDynamic, bool, bSucceeded, FText, ErrorMessage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCommonSession_FindSessionsFinishedDynamic, bool, bSucceeded, FText,
+                                             ErrorMessage);
 
 /** Request object describing a session search, this object will be updated once the search has completed */
 UCLASS(BlueprintType)
@@ -177,7 +180,8 @@ public:
 
 private:
 	/** Delegate called when a session search completes */
-	UPROPERTY(BlueprintAssignable, Category = "Events", meta = (DisplayName = "On Search Finished", AllowPrivateAccess = true))
+	UPROPERTY(BlueprintAssignable, Category = "Events",
+		meta = (DisplayName = "On Search Finished", AllowPrivateAccess = true))
 	FCommonSession_FindSessionsFinishedDynamic K2_OnSearchFinished;
 };
 
@@ -192,8 +196,13 @@ private:
  * @param RequestedSession the requested session. Can be null if there was an error processing the request.
  * @param RequestedSessionResult result of the requested session processing
  */
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnUserRequestedSession, const FPlatformUserId& /*LocalPlatformUserId*/, UCommonSession_SearchResult* /*RequestedSession*/, const FOnlineResultInformation& /*RequestedSessionResult*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnUserRequestedSession_Dynamic, const FPlatformUserId&, LocalPlatformUserId, UCommonSession_SearchResult*, RequestedSession, const FOnlineResultInformation&, RequestedSessionResult);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnUserRequestedSession,
+                                       const FPlatformUserId& /*LocalPlatformUserId*/,
+                                       UCommonSession_SearchResult* /*RequestedSession*/,
+                                       const FOnlineResultInformation& /*RequestedSessionResult*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnUserRequestedSession_Dynamic, const FPlatformUserId&,
+                                               LocalPlatformUserId, UCommonSession_SearchResult*, RequestedSession,
+                                               const FOnlineResultInformation&, RequestedSessionResult);
 
 /**
  * Event triggered when a session join has completed, after joining the underlying session and before traveling to the server if it was successful.
@@ -201,7 +210,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnUserRequestedSess
  * @param Result result of the session join
  */
 DECLARE_MULTICAST_DELEGATE_OneParam(FCommonSessionOnJoinSessionComplete, const FOnlineResultInformation& /*Result*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnJoinSessionComplete_Dynamic, const FOnlineResultInformation&, Result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnJoinSessionComplete_Dynamic,
+                                            const FOnlineResultInformation&, Result);
 
 /**
  * Event triggered when a session creation for hosting has completed, right before it travels to the map.
@@ -209,7 +219,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnJoinSessionComplete_
  * @param Result result of the session join
  */
 DECLARE_MULTICAST_DELEGATE_OneParam(FCommonSessionOnCreateSessionComplete, const FOnlineResultInformation& /*Result*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnCreateSessionComplete_Dynamic, const FOnlineResultInformation&, Result);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnCreateSessionComplete_Dynamic,
+                                            const FOnlineResultInformation&, Result);
 
 /**
  * Event triggered when a session join has completed, after resolving the connect string and prior to the client traveling.
@@ -228,8 +239,13 @@ enum class ECommonSessionInformationState : uint8
 	Matchmaking,
 	InGame
 };
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnSessionInformationChanged, ECommonSessionInformationState /*SessionStatus*/, const FString& /*GameMode*/, const FString& /*MapName*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnSessionInformationChanged_Dynamic, ECommonSessionInformationState, SessionStatus, const FString&, GameMode, const FString&, MapName);
+
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnSessionInformationChanged,
+                                       ECommonSessionInformationState /*SessionStatus*/, const FString& /*GameMode*/,
+                                       const FString& /*MapName*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonSessionOnSessionInformationChanged_Dynamic,
+                                               ECommonSessionInformationState, SessionStatus, const FString&, GameMode,
+                                               const FString&, MapName);
 
 //////////////////////////////////////////////////////////////////////
 // UCommonSessionSubsystem
@@ -245,7 +261,9 @@ class COMMONUSER_API UCommonSessionSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	UCommonSessionSubsystem() { }
+	UCommonSessionSubsystem()
+	{
+	}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
@@ -265,7 +283,8 @@ public:
 
 	/** Starts a process to look for existing sessions or create a new one if no viable sessions are found */
 	UFUNCTION(BlueprintCallable, Category=Session)
-	virtual void QuickPlaySession(APlayerController* JoiningOrHostingPlayer, UCommonSession_HostSessionRequest* Request);
+	virtual void QuickPlaySession(APlayerController* JoiningOrHostingPlayer,
+	                              UCommonSession_HostSessionRequest* Request);
 
 	/** Starts process to join an existing session, if successful this will connect to the specified server */
 	UFUNCTION(BlueprintCallable, Category=Session)
@@ -319,13 +338,17 @@ protected:
 	// Functions called during the process of creating or joining a session, these can be overidden for game-specific behavior
 
 	/** Called to fill in a session request from quick play host settings, can be overridden for game-specific behavior */
-	virtual TSharedRef<FCommonOnlineSearchSettings> CreateQuickPlaySearchSettings(UCommonSession_HostSessionRequest* Request, UCommonSession_SearchSessionRequest* QuickPlayRequest);
+	virtual TSharedRef<FCommonOnlineSearchSettings> CreateQuickPlaySearchSettings(
+		UCommonSession_HostSessionRequest* Request, UCommonSession_SearchSessionRequest* QuickPlayRequest);
 
 	/** Called when a quick play search finishes, can be overridden for game-specific behavior */
-	virtual void HandleQuickPlaySearchFinished(bool bSucceeded, const FText& ErrorMessage, TWeakObjectPtr<APlayerController> JoiningOrHostingPlayer, TStrongObjectPtr<UCommonSession_HostSessionRequest> HostRequest);
+	virtual void HandleQuickPlaySearchFinished(bool bSucceeded, const FText& ErrorMessage,
+	                                           TWeakObjectPtr<APlayerController> JoiningOrHostingPlayer,
+	                                           TStrongObjectPtr<UCommonSession_HostSessionRequest> HostRequest);
 
 	/** Called when traveling to a session fails */
-	virtual void TravelLocalSessionFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ReasonString);
+	virtual void TravelLocalSessionFailure(UWorld* World, ETravelFailure::Type FailureType,
+	                                       const FString& ReasonString);
 
 	/** Called when a new session is either created or fails to be created */
 	virtual void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
@@ -336,18 +359,21 @@ protected:
 	/** Called after traveling to the new hosted session map */
 	virtual void HandlePostLoadMap(UWorld* World);
 
-protected:
 	// Internal functions for initializing and handling results from the online systems
 
 	void BindOnlineDelegates();
 	void CreateOnlineSessionInternal(ULocalPlayer* LocalPlayer, UCommonSession_HostSessionRequest* Request);
-	void FindSessionsInternal(APlayerController* SearchingPlayer, const TSharedRef<FCommonOnlineSearchSettings>& InSearchSettings);
+	void FindSessionsInternal(APlayerController* SearchingPlayer,
+	                          const TSharedRef<FCommonOnlineSearchSettings>& InSearchSettings);
 	void JoinSessionInternal(ULocalPlayer* LocalPlayer, UCommonSession_SearchResult* Request);
 	void InternalTravelToSession(const FName SessionName);
-	void NotifyUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* RequestedSession, const FOnlineResultInformation& RequestedSessionResult);
+	void NotifyUserRequestedSession(const FPlatformUserId& PlatformUserId,
+	                                UCommonSession_SearchResult* RequestedSession,
+	                                const FOnlineResultInformation& RequestedSessionResult);
 	void NotifyJoinSessionComplete(const FOnlineResultInformation& Result);
 	void NotifyCreateSessionComplete(const FOnlineResultInformation& Result);
-	void NotifySessionInformationUpdated(ECommonSessionInformationState SessionStatusStr, const FString& GameMode = FString(), const FString& MapName = FString());
+	void NotifySessionInformationUpdated(ECommonSessionInformationState SessionStatusStr,
+	                                     const FString& GameMode = FString(), const FString& MapName = FString());
 	void SetCreateSessionError(const FText& ErrorText);
 
 #if COMMONUSER_OSSV1
@@ -355,13 +381,17 @@ protected:
 	void CreateOnlineSessionInternalOSSv1(ULocalPlayer* LocalPlayer, UCommonSession_HostSessionRequest* Request);
 	void FindSessionsInternalOSSv1(ULocalPlayer* LocalPlayer);
 	void JoinSessionInternalOSSv1(ULocalPlayer* LocalPlayer, UCommonSession_SearchResult* Request);
-	TSharedRef<FCommonOnlineSearchSettings> CreateQuickPlaySearchSettingsOSSv1(UCommonSession_HostSessionRequest* Request, UCommonSession_SearchSessionRequest* QuickPlayRequest);
+	TSharedRef<FCommonOnlineSearchSettings> CreateQuickPlaySearchSettingsOSSv1(
+		UCommonSession_HostSessionRequest* Request, UCommonSession_SearchSessionRequest* QuickPlayRequest);
 	void CleanUpSessionsOSSv1();
 
 	void HandleSessionFailure(const FUniqueNetId& NetId, ESessionFailure::Type FailureType);
-	void HandleSessionUserInviteAccepted(const bool bWasSuccessful, const int32 LocalUserIndex, FUniqueNetIdPtr AcceptingUserId, const FOnlineSessionSearchResult& SearchResult);
+	void HandleSessionUserInviteAccepted(const bool bWasSuccessful, const int32 LocalUserIndex,
+	                                     FUniqueNetIdPtr AcceptingUserId,
+	                                     const FOnlineSessionSearchResult& SearchResult);
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
-	void OnRegisterLocalPlayerComplete_CreateSession(const FUniqueNetId& PlayerId, EOnJoinSessionCompleteResult::Type Result);
+	void OnRegisterLocalPlayerComplete_CreateSession(const FUniqueNetId& PlayerId,
+	                                                 EOnJoinSessionCompleteResult::Type Result);
 	void OnUpdateSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnEndSessionComplete(FName SessionName, bool bWasSuccessful);
 	void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
@@ -389,7 +419,6 @@ protected:
 	UE::Online::FOnlineEventDelegateHandle LobbyJoinRequestedHandle;
 #endif // COMMONUSER_OSSV1
 
-protected:
 	/** The travel URL that will be used after session operations are complete */
 	FString PendingTravelURL;
 

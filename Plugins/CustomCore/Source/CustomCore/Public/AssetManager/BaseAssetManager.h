@@ -42,11 +42,11 @@ public:
 				return *Singleton;
 			}
 		}
-		
+
 		// Fatal error above prevents this from being called.
 		return *NewObject<AssetManager>();
 	}
-	
+
 	static UBaseAssetManager& Get();
 
 	// Returns the asset referenced by a TSoftObjectPtr.  This will synchronously load the asset if it's not already loaded.
@@ -68,18 +68,18 @@ protected:
 	template <typename GameDataClass>
 	const GameDataClass& GetOrLoadTypedGameData(const TSoftObjectPtr<GameDataClass>& DataPath)
 	{
-		if (TObjectPtr<UPrimaryDataAsset> const* PResult = GameDataMap.Find(GameDataClass::StaticClass()))
+		if (const TObjectPtr<UPrimaryDataAsset>* PResult = GameDataMap.Find(GameDataClass::StaticClass()))
 		{
 			return *CastChecked<GameDataClass>(*PResult);
 		}
-		
+
 		// Does a blocking load if needed
 		auto LoadedData = LoadGameDataOfClass(GameDataClass::StaticClass(),
-																  DataPath,
-																  GameDataClass::StaticClass()->GetFName());
+		                                      DataPath,
+		                                      GameDataClass::StaticClass()->GetFName());
 		if (LoadedData)
 		{
-			return *CastChecked< GameDataClass>(LoadedData);
+			return *CastChecked<GameDataClass>(LoadedData);
 		}
 
 		// Handle the case where the data could not be loaded
@@ -93,20 +93,19 @@ protected:
 	// Thread safe way of adding a loaded asset to keep in memory.
 	void AddLoadedAsset(const UObject* Asset);
 
-// #pragma region UAssetManager interface
-//
-// 	// virtual void StartInitialLoading() override;
-// #if WITH_EDITOR
-// 	virtual void PreBeginPIE(bool bStartSimulate) override;
-// #endif
-//
-// #pragma endregion
+	// #pragma region UAssetManager interface
+	//
+	// 	// virtual void StartInitialLoading() override;
+	// #if WITH_EDITOR
+	// 	virtual void PreBeginPIE(bool bStartSimulate) override;
+	// #endif
+	//
+	// #pragma endregion
 
 	UPrimaryDataAsset* LoadGameDataOfClass(const TSubclassOf<UPrimaryDataAsset>& DataClass,
 	                                       const TSoftObjectPtr<UPrimaryDataAsset>& DataClassPath,
 	                                       FPrimaryAssetType PrimaryAssetType);
 
-protected:
 	// // Global game data asset to use (DefaultGame.ini).
 	// UPROPERTY(Config)
 	// TSoftObjectPtr<UGasGameData> BaseGameDataPath;
@@ -119,20 +118,19 @@ protected:
 	UPROPERTY(Transient)
 	// This means that the property's value is not saved to disk and is not replicated over the network.
 	TMap<TObjectPtr<UClass>, TObjectPtr<UPrimaryDataAsset>> GameDataMap;
-protected:
 	// Flushes the StartupJobs array. Processes all startup work.
 	void DoAllStartupJobs();
-	
+
 	// The list of tasks to execute on startup. Used to track startup progress.
 	TArray<FBaseAssetManagerStartupJob> StartupJobs;
-private:
 
+private:
 	// Sets up the ability system
 	// void InitializeGameplayCueManager() const;
 
 	// Called periodically during loads, could be used to feed the status to a loading screen
 	void UpdateInitialGameContentLoadPercent(float GameContentPercent);
-	
+
 	// Assets loaded and tracked by the asset manager.
 	UPROPERTY()
 	TSet<TObjectPtr<const UObject>> LoadedAssets;
@@ -142,7 +140,7 @@ private:
 };
 
 template <typename AssetType>
-	AssetType* UBaseAssetManager::GetAsset(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory)
+AssetType* UBaseAssetManager::GetAsset(const TSoftObjectPtr<AssetType>& AssetPointer, bool bKeepInMemory)
 {
 	AssetType* LoadedAsset = nullptr;
 

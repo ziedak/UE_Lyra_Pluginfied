@@ -45,7 +45,7 @@ public:
 	// SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
 
 	// We never want to use the start spot, always use the spawn management component.
-	virtual bool ShouldSpawnAtStartSpot(AController* Player) override{ return false;};
+	virtual bool ShouldSpawnAtStartSpot(AController* Player) override { return false; };
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 	virtual void FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation) override;
@@ -53,7 +53,10 @@ public:
 	virtual void InitGameState() override;
 	// Do nothing, we'll wait until PostLogin when we try to spawn the player for real.
 	// Doing anything right now is no good, systems like team assignment haven't even occurred yet.
-	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override{ return false;};
+	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override
+	{
+		return false;
+	};
 	virtual void RestartPlayer(AController* NewPlayer) override;
 	virtual void FailedToRestartPlayer(AController* NewPlayer) override;
 #pragma  endregion
@@ -82,7 +85,7 @@ protected:
 	FPrimaryAssetId GetExperienceFromEditor(const UWorld* World, FString& ExperienceIdSource) const;
 	FPrimaryAssetId GetExperienceFromCommandLine(FString& ExperienceIdSource) const;
 	FPrimaryAssetId GetExperienceFromWorldSettings(UWorld* World, FString& ExperienceIdSource) const;
-	FPrimaryAssetId GetDefaultExperience(FString& ExperienceIdSource) ;
+	FPrimaryAssetId GetDefaultExperience(FString& ExperienceIdSource);
 	bool ValidateExperienceAssetData(const FPrimaryAssetId& ExperienceId) const;
 
 	bool TryDedicatedServerLogin();
@@ -91,10 +94,13 @@ protected:
 	FPrimaryAssetId GetUserExperienceIdFromCommandLine(const FPrimaryAssetType& UserExperienceType) const;
 	UUserFacingExperienceDefinition_DA* FindUserExperience(const FPrimaryAssetType& UserExperienceType,
 	                                                       const FPrimaryAssetId& UserExperienceId) const;
-	UCommonSession_HostSessionRequest* CreateHostSessionRequest(const UUserFacingExperienceDefinition_DA* UserExperience,
-	                                                            ECommonSessionOnlineMode OnlineMode) const;
+	UCommonSession_HostSessionRequest* CreateHostSessionRequest(
+		const UUserFacingExperienceDefinition_DA* UserExperience,
+		ECommonSessionOnlineMode OnlineMode) const;
 	void HostGameSession(UCommonSession_HostSessionRequest* HostRequest) const;
 
 	UFUNCTION()
-	void OnUserInitializedForDedicatedServer(const UCommonUserInfo* UserInfo,const bool bSuccess, FText Error, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext OnlineContext);
+	void OnUserInitializedForDedicatedServer(const UCommonUserInfo* UserInfo, const bool bSuccess, FText Error,
+	                                         ECommonUserPrivilege RequestedPrivilege,
+	                                         ECommonUserOnlineContext OnlineContext);
 };

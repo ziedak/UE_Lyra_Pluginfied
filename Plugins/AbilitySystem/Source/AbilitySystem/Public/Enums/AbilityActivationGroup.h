@@ -17,5 +17,5 @@ enum class EAbilityActivationGroup : uint8
 	// Ability blocks all other exclusive abilities from activating.
 	Exclusive_Blocking,
 
-	Max	UMETA(Hidden)
+	Max UMETA(Hidden)
 };

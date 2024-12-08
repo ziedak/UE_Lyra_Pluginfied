@@ -16,7 +16,8 @@ void AModularPlayerState::PreInitializeComponents()
 
 void AModularPlayerState::BeginPlay()
 {
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::BeginPlay();
 }
@@ -48,7 +49,9 @@ void AModularPlayerState::CopyProperties(APlayerState* PlayerState)
 	GetComponents(PlayerStateComponents);
 	for (UPlayerStateComponent* SourcePSComp : PlayerStateComponents)
 	{
-		if (UPlayerStateComponent* TargetComp = Cast<UPlayerStateComponent>(static_cast<UObject*>(FindObjectWithOuter(PlayerState, SourcePSComp->GetClass(), SourcePSComp->GetFName()))))
+		if (UPlayerStateComponent* TargetComp = Cast<UPlayerStateComponent>(
+			static_cast<UObject*>(FindObjectWithOuter(PlayerState, SourcePSComp->GetClass(),
+			                                          SourcePSComp->GetFName()))))
 		{
 			SourcePSComp->CopyProperties(TargetComp);
 		}

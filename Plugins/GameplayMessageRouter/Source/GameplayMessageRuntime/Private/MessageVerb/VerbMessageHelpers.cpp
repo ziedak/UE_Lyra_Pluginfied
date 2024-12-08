@@ -12,32 +12,45 @@
 APlayerState* UVerbMessageHelpers::GetPlayerStateFromObject(UObject* Object)
 {
 	if (APlayerController* PC = Cast<APlayerController>(Object))
+	{
 		return PC->PlayerState;
-	
+	}
+
 	if (APlayerState* TargetPS = Cast<APlayerState>(Object))
+	{
 		return TargetPS;
-	
+	}
+
 	APawn* TargetPawn = Cast<APawn>(Object);
 	if (!TargetPawn)
+	{
 		return nullptr;
-	
-	if (APlayerState* TargetPS = TargetPawn->GetPlayerState())
-		return TargetPS;
-	
-	return nullptr;
+	}
 
+	if (APlayerState* TargetPS = TargetPawn->GetPlayerState())
+	{
+		return TargetPS;
+	}
+
+	return nullptr;
 }
 
 APlayerController* UVerbMessageHelpers::GetPlayerControllerFromObject(UObject* Object)
 {
 	if (APlayerController* PC = Cast<APlayerController>(Object))
+	{
 		return PC;
+	}
 
 	if (APlayerState* TargetPS = Cast<APlayerState>(Object))
+	{
 		return TargetPS->GetPlayerController();
+	}
 
 	if (APawn* TargetPawn = Cast<APawn>(Object))
+	{
 		return Cast<APlayerController>(TargetPawn->GetController());
+	}
 
 	return nullptr;
 }
@@ -60,7 +73,7 @@ FGameplayCueParameters UVerbMessageHelpers::VerbMessageToCueParameters(const FVe
 FVerbMessage UVerbMessageHelpers::CueParametersToVerbMessage(const FGameplayCueParameters& Params)
 {
 	FVerbMessage Result;
-	
+
 	Result.Verb = Params.OriginalTag;
 	Result.Instigator = Params.Instigator.Get();
 	Result.Target = Params.EffectCauser.Get();

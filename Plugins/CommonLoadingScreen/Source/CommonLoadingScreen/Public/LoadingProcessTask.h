@@ -13,13 +13,15 @@ UCLASS(BlueprintType)
 class COMMONLOADINGSCREEN_API ULoadingProcessTask : public UObject, public ILoadingProcessInterface
 {
 	GENERATED_BODY()
-	
-public:
-	UFUNCTION(BlueprintCallable, meta=(WorldContext = "WorldContextObject"))
-	static ULoadingProcessTask* CreateLoadingScreenProcessTask(UObject* WorldContextObject, const FString& ShowLoadingScreenReason);
 
 public:
-	ULoadingProcessTask() { }
+	UFUNCTION(BlueprintCallable, meta=(WorldContext = "WorldContextObject"))
+	static ULoadingProcessTask* CreateLoadingScreenProcessTask(UObject* WorldContextObject,
+	                                                           const FString& ShowLoadingScreenReason);
+
+	ULoadingProcessTask()
+	{
+	}
 
 	UFUNCTION(BlueprintCallable)
 	void Unregister();
@@ -28,6 +30,6 @@ public:
 	void SetShowLoadingScreenReason(const FString& InReason);
 
 	virtual bool ShouldShowLoadingScreen(FString& OutReason) const override;
-	
+
 	FString Reason;
 };

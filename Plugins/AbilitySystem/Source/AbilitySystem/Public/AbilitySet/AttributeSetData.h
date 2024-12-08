@@ -16,8 +16,6 @@ struct FAttributeSetData
 {
 	GENERATED_BODY()
 
-public:
-
 	// Gameplay effect to grant.
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UAttributeSet> AttributeSet;

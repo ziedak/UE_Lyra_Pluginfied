@@ -39,7 +39,7 @@ void UBaseAssetManager::DumpLoadedAssets()
 	ULOG_INFO(LogGAS, "========== Start Dumping Loaded Assets ==========");
 
 	for (const UObject* LoadedAsset : Get().LoadedAssets)
-		ULOG_INFO(LogGAS,"%s", *GetNameSafe(LoadedAsset));
+		ULOG_INFO(LogGAS, "%s", *GetNameSafe(LoadedAsset));
 
 	ULOG_INFO(LogGAS, "... %d assets unloaded pool", Get().LoadedAssets.Num());
 	ULOG_INFO(LogGAS, "========== Finish Dumping Loaded Assets ==========");
@@ -64,7 +64,9 @@ void UBaseAssetManager::DumpLoadedAssets()
 UObject* UBaseAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPath)
 {
 	if (!AssetPath.IsValid())
+	{
 		return nullptr;
+	}
 
 	const FString AssetName = AssetPath.GetAssetName();
 	const FString AssetPathString = AssetPath.ToString();
@@ -81,9 +83,9 @@ UObject* UBaseAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPat
 			FScopeLogTime::ScopeLog_Seconds);
 	}
 
-	if (UAssetManager::IsInitialized())
+	if (IsInitialized())
 	{
-		if (UObject* LoadedAsset = UAssetManager::GetStreamableManager().LoadSynchronous(
+		if (UObject* LoadedAsset = GetStreamableManager().LoadSynchronous(
 			AssetPath, ShouldLogAssetLoads()))
 		{
 			return LoadedAsset;
@@ -107,7 +109,9 @@ void UBaseAssetManager::AddLoadedAsset(const UObject* Asset)
 {
 	FScopeLock LoadedAssetsLock(&LoadedAssetsCritical);
 	if (!ensureAlways(Asset))
+	{
 		return;
+	}
 	// Lock the critical section to prevent multiple threads from accessing the loaded assets array at the same time.
 	LoadedAssets.Add(Asset);
 }
@@ -163,8 +167,8 @@ UPrimaryDataAsset* UBaseAssetManager::LoadGameDataOfClass(
 	FScopedSlowTask SlowTask(0, FText::Format(
 		                         NSLOCTEXT("GASEditor", "BeginLoadingGameDataTask", "Loading GameData %s"),
 		                         FText::FromName(DataClass->GetFName())));
-	const bool bShowCancelButton = false;
-	const bool bAllowInPIE = true;
+	constexpr bool bShowCancelButton = false;
+	constexpr bool bAllowInPIE = true;
 	SlowTask.MakeDialog(bShowCancelButton, bAllowInPIE);
 #endif
 
@@ -197,7 +201,7 @@ UPrimaryDataAsset* UBaseAssetManager::LoadGameDataOfClass(
 	if (!AssetToLoad)
 	{
 		ULOG_WARNING(LogGAS, "Failed to load GameData of class %s from path %s", *DataClass->GetName(),
-		                   *DataClassPath.ToString());
+		             *DataClassPath.ToString());
 		return nullptr;
 	}
 
@@ -215,7 +219,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 	if (IsRunningDedicatedServer())
 	{
 		// no need for periodic progress updates, just run the jobs
-		for ( FBaseAssetManagerStartupJob& StartupJob : StartupJobs)
+		for (FBaseAssetManagerStartupJob& StartupJob : StartupJobs)
 		{
 			StartupJob.DoJob();
 		}
@@ -252,7 +256,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 				});
 
 			StartupJob.DoJob();
-			
+
 			StartupJob.SubstepProgressDelegate.Unbind();
 			AccumulatedJobValue += JobValue;
 			UpdateInitialGameContentLoadPercent(AccumulatedJobValue / TotalJobValue);
@@ -261,7 +265,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 
 	StartupJobs.Empty();
 	ULOG_INFO(LogGAS, "All startup jobs took %.2f seconds to complete",
-	           FPlatformTime::Seconds() - AllStartupJobsStartTime);
+	          FPlatformTime::Seconds() - AllStartupJobsStartTime);
 }
 
 void UBaseAssetManager::UpdateInitialGameContentLoadPercent(float GameContentPercent)

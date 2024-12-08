@@ -12,7 +12,6 @@ struct FConfirmationDialogAction
 {
 	GENERATED_BODY()
 
-public:
 	/** Required: The dialog option to provide. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECommonMessagingResult Result = ECommonMessagingResult::Unknown;
@@ -32,18 +31,17 @@ UCLASS()
 class COMMONGAME_API UCommonGameDialogDescriptor : public UObject
 {
 	GENERATED_BODY()
-	
+
 public:
 	static UCommonGameDialogDescriptor* CreateConfirmationOk(const FText& Header, const FText& Body);
 	static UCommonGameDialogDescriptor* CreateConfirmationOkCancel(const FText& Header, const FText& Body);
 	static UCommonGameDialogDescriptor* CreateConfirmationYesNo(const FText& Header, const FText& Body);
 	static UCommonGameDialogDescriptor* CreateConfirmationYesNoCancel(const FText& Header, const FText& Body);
 
-public:
 	/** The header of the message to display */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Header;
-	
+
 	/** The body of the message to display */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText Body;
@@ -58,10 +56,10 @@ UCLASS(Abstract)
 class COMMONGAME_API UCommonGameDialog : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 	UCommonGameDialog();
-	
+
 	virtual void SetupDialog(UCommonGameDialogDescriptor* Descriptor, FCommonMessagingResultDelegate ResultCallback);
 
 	virtual void KillDialog();

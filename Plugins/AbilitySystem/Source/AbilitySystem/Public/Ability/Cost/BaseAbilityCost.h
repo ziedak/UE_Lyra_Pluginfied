@@ -21,7 +21,9 @@ class ABILITYSYSTEM_API UBaseAbilityCost : public UObject
 	GENERATED_BODY()
 
 public:
-	UBaseAbilityCost() {}
+	UBaseAbilityCost()
+	{
+	}
 
 	/**
 	 * Checks if we can afford this cost.
@@ -33,7 +35,9 @@ public:
 	 *
 	 * @return true if we can pay for the ability, false otherwise.
 	 */
-	virtual bool CheckCost(const UBaseGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
+	virtual bool CheckCost(const UBaseGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle,
+	                       const FGameplayAbilityActorInfo* ActorInfo,
+	                       FGameplayTagContainer* OptionalRelevantTags) const
 	{
 		return true;
 	}
@@ -45,7 +49,9 @@ public:
 	 * - Your implementation don't need to check ShouldOnlyApplyCostOnHit(), the caller does that for you.
 	 * - Ability and ActorInfo are guaranteed to be non-null on entry.
 	 */
-	virtual void ApplyCost(const UBaseGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+	virtual void ApplyCost(const UBaseGameplayAbility* Ability, const FGameplayAbilitySpecHandle Handle,
+	                       const FGameplayAbilityActorInfo* ActorInfo,
+	                       const FGameplayAbilityActivationInfo ActivationInfo)
 	{
 	}
 

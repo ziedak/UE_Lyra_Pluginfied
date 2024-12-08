@@ -14,7 +14,8 @@ void AModularCharacter::PreInitializeComponents()
 
 void AModularCharacter::BeginPlay()
 {
-	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, UGameFrameworkComponentManager::NAME_GameActorReady);
+	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
+		this, UGameFrameworkComponentManager::NAME_GameActorReady);
 
 	Super::BeginPlay();
 }
@@ -25,4 +26,3 @@ void AModularCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	Super::EndPlay(EndPlayReason);
 }
-

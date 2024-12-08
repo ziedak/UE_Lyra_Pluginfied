@@ -25,7 +25,7 @@ enum class EGameplayMessageMatch : uint8
 /**
  * Struct used to specify advanced behavior when registering a listener for gameplay messages
  */
-template<typename FMessageStructType>
+template <typename FMessageStructType>
 struct FGameplayMessageListenerParams
 {
 	/** Whether Callback should be called for broadcasts of more derived channels or if it will only be called for exact matches. */
@@ -35,8 +35,8 @@ struct FGameplayMessageListenerParams
 	TFunction<void(FGameplayTag, const FMessageStructType&)> OnMessageReceivedCallback;
 
 	/** Helper to bind weak member function to OnMessageReceivedCallback */
-	template<typename TOwner = UObject>
-	void SetMessageReceivedCallback(TOwner* Object, void(TOwner::* Function)(FGameplayTag, const FMessageStructType&))
+	template <typename TOwner = UObject>
+	void SetMessageReceivedCallback(TOwner* Object, void (TOwner::*Function)(FGameplayTag, const FMessageStructType&))
 	{
 		TWeakObjectPtr<TOwner> WeakObject(Object);
 		OnMessageReceivedCallback = [WeakObject, Function](FGameplayTag Channel, const FMessageStructType& Payload)

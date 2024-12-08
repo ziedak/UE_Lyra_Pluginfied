@@ -8,7 +8,8 @@
 
 #include "LoadingScreenManager.generated.h"
 
-template <typename InterfaceType> class TScriptInterface;
+template <typename InterfaceType>
+class TScriptInterface;
 
 class FSubsystemCollectionBase;
 class IInputProcessor;
@@ -56,11 +57,14 @@ public:
 
 	/** Called when the loading screen visibility changes  */
 	DECLARE_MULTICAST_DELEGATE_OneParam(FOnLoadingScreenVisibilityChangedDelegate, bool);
-	FORCEINLINE FOnLoadingScreenVisibilityChangedDelegate& OnLoadingScreenVisibilityChangedDelegate() { return LoadingScreenVisibilityChanged; }
+	FORCEINLINE FOnLoadingScreenVisibilityChangedDelegate& OnLoadingScreenVisibilityChangedDelegate()
+	{
+		return LoadingScreenVisibilityChanged;
+	}
 
 	void RegisterLoadingProcessor(TScriptInterface<ILoadingProcessInterface> Interface);
 	void UnregisterLoadingProcessor(TScriptInterface<ILoadingProcessInterface> Interface);
-	
+
 private:
 	void HandlePreLoadMap(const FWorldContext& WorldContext, const FString& MapName);
 	void HandlePostLoadMap(UWorld* World);
@@ -94,7 +98,6 @@ private:
 
 	void ChangePerformanceSettings(bool bEnabingLoadingScreen);
 
-private:
 	/** Delegate broadcast when the loading screen visibility changes */
 	FOnLoadingScreenVisibilityChangedDelegate LoadingScreenVisibilityChanged;
 

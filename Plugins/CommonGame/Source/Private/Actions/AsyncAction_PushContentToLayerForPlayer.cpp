@@ -9,16 +9,20 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_PushContentToLayerForPlayer)
 
-UAsyncAction_PushContentToLayerForPlayer::UAsyncAction_PushContentToLayerForPlayer(const FObjectInitializer& ObjectInitializer)
+UAsyncAction_PushContentToLayerForPlayer::UAsyncAction_PushContentToLayerForPlayer(
+	const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 }
 
-UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlayer::PushContentToLayerForPlayer(APlayerController* InOwningPlayer, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass, FGameplayTag InLayerName, bool bSuspendInputUntilComplete)
+UAsyncAction_PushContentToLayerForPlayer* UAsyncAction_PushContentToLayerForPlayer::PushContentToLayerForPlayer(
+	APlayerController* InOwningPlayer, TSoftClassPtr<UCommonActivatableWidget> InWidgetClass, FGameplayTag InLayerName,
+	bool bSuspendInputUntilComplete)
 {
 	if (InWidgetClass.IsNull())
 	{
-		FFrame::KismetExecutionMessage(TEXT("PushContentToLayerForPlayer was passed a null WidgetClass"), ELogVerbosity::Error);
+		FFrame::KismetExecutionMessage(
+			TEXT("PushContentToLayerForPlayer was passed a null WidgetClass"), ELogVerbosity::Error);
 		return nullptr;
 	}
 
@@ -53,11 +57,14 @@ void UAsyncAction_PushContentToLayerForPlayer::Activate()
 	if (UPrimaryGameLayout* RootLayout = UPrimaryGameLayout::GetPrimaryGameLayout(OwningPlayerPtr.Get()))
 	{
 		TWeakObjectPtr<UAsyncAction_PushContentToLayerForPlayer> WeakThis = this;
-		StreamingHandle = RootLayout->PushWidgetToLayerStackAsync<UCommonActivatableWidget>(LayerName, bSuspendInputUntilComplete, WidgetClass, [this, WeakThis](EAsyncWidgetLayerState State, UCommonActivatableWidget* Widget) {
-			if (WeakThis.IsValid())
+		StreamingHandle = RootLayout->PushWidgetToLayerStackAsync<UCommonActivatableWidget>(
+			LayerName, bSuspendInputUntilComplete, WidgetClass,
+			[this, WeakThis](EAsyncWidgetLayerState State, UCommonActivatableWidget* Widget)
 			{
-				switch (State)
+				if (WeakThis.IsValid())
 				{
+					switch (State)
+					{
 					case EAsyncWidgetLayerState::Initialize:
 						BeforePush.Broadcast(Widget);
 						break;
@@ -68,14 +75,13 @@ void UAsyncAction_PushContentToLayerForPlayer::Activate()
 					case EAsyncWidgetLayerState::Canceled:
 						SetReadyToDestroy();
 						break;
+					}
 				}
-			}
-			SetReadyToDestroy();
-		});
+				SetReadyToDestroy();
+			});
 	}
 	else
 	{
 		SetReadyToDestroy();
 	}
 }
-

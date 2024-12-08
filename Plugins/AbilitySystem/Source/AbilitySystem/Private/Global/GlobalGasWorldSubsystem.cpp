@@ -10,6 +10,7 @@
 UGlobalGasWorldSubsystem::UGlobalGasWorldSubsystem()
 {
 }
+
 void UGlobalGasWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);

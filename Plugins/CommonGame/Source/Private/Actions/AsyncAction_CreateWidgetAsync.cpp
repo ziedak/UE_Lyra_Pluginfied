@@ -19,15 +19,18 @@ static const FName InputFilterReason_Template = FName(TEXT("CreatingWidgetAsync"
 
 UAsyncAction_CreateWidgetAsync::UAsyncAction_CreateWidgetAsync(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, bSuspendInputUntilComplete(true)
+	  , bSuspendInputUntilComplete(true)
 {
 }
 
-UAsyncAction_CreateWidgetAsync* UAsyncAction_CreateWidgetAsync::CreateWidgetAsync(UObject* InWorldContextObject, TSoftClassPtr<UUserWidget> InUserWidgetSoftClass, APlayerController* InOwningPlayer, bool bSuspendInputUntilComplete)
+UAsyncAction_CreateWidgetAsync* UAsyncAction_CreateWidgetAsync::CreateWidgetAsync(
+	UObject* InWorldContextObject, TSoftClassPtr<UUserWidget> InUserWidgetSoftClass, APlayerController* InOwningPlayer,
+	bool bSuspendInputUntilComplete)
 {
 	if (InUserWidgetSoftClass.IsNull())
 	{
-		FFrame::KismetExecutionMessage(TEXT("CreateWidgetAsync was passed a null UserWidgetSoftClass"), ELogVerbosity::Error);
+		FFrame::KismetExecutionMessage(
+			TEXT("CreateWidgetAsync was passed a null UserWidgetSoftClass"), ELogVerbosity::Error);
 		return nullptr;
 	}
 
@@ -46,7 +49,9 @@ UAsyncAction_CreateWidgetAsync* UAsyncAction_CreateWidgetAsync::CreateWidgetAsyn
 
 void UAsyncAction_CreateWidgetAsync::Activate()
 {
-	SuspendInputToken = bSuspendInputUntilComplete ? UCommonUIExtensions::SuspendInputForPlayer(OwningPlayer.Get(), InputFilterReason_Template) : NAME_None;
+	SuspendInputToken = bSuspendInputUntilComplete
+		                    ? UCommonUIExtensions::SuspendInputForPlayer(OwningPlayer.Get(), InputFilterReason_Template)
+		                    : NAME_None;
 
 	TWeakObjectPtr<UAsyncAction_CreateWidgetAsync> LocalWeakThis(this);
 	StreamingHandle = UAssetManager::Get().GetStreamableManager().RequestAsyncLoad(
@@ -57,10 +62,12 @@ void UAsyncAction_CreateWidgetAsync::Activate()
 
 	// Setup a cancel delegate so that we can resume input if this handler is canceled.
 	StreamingHandle->BindCancelDelegate(FStreamableDelegate::CreateWeakLambda(this,
-		[this]()
-		{
-			UCommonUIExtensions::ResumeInputForPlayer(OwningPlayer.Get(), SuspendInputToken);
-		})
+	                                                                          [this]()
+	                                                                          {
+		                                                                          UCommonUIExtensions::ResumeInputForPlayer(
+			                                                                          OwningPlayer.Get(),
+			                                                                          SuspendInputToken);
+	                                                                          })
 	);
 }
 
@@ -94,4 +101,3 @@ void UAsyncAction_CreateWidgetAsync::OnWidgetLoaded()
 
 	SetReadyToDestroy();
 }
-

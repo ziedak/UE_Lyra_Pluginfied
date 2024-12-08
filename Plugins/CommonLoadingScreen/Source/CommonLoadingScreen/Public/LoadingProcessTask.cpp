@@ -10,11 +10,15 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LoadingProcessTask)
 
-/*static*/ ULoadingProcessTask* ULoadingProcessTask::CreateLoadingScreenProcessTask(UObject* WorldContextObject, const FString& ShowLoadingScreenReason)
+/*static*/
+ULoadingProcessTask* ULoadingProcessTask::CreateLoadingScreenProcessTask(
+	UObject* WorldContextObject, const FString& ShowLoadingScreenReason)
 {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
-	ULoadingScreenManager* LoadingScreenManager = GameInstance ? GameInstance->GetSubsystem<ULoadingScreenManager>() : nullptr;
+	ULoadingScreenManager* LoadingScreenManager = GameInstance
+		                                              ? GameInstance->GetSubsystem<ULoadingScreenManager>()
+		                                              : nullptr;
 
 	if (LoadingScreenManager)
 	{
@@ -22,7 +26,7 @@
 		NewLoadingTask->SetShowLoadingScreenReason(ShowLoadingScreenReason);
 
 		LoadingScreenManager->RegisterLoadingProcessor(NewLoadingTask);
-		
+
 		return NewLoadingTask;
 	}
 

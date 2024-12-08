@@ -16,7 +16,7 @@ class FArchive;
 FBaseGameplayEffectContext* FBaseGameplayEffectContext::ExtractEffectContext(FGameplayEffectContextHandle Handle)
 {
 	FGameplayEffectContext* BaseEffectContext = Handle.Get();
-	if ((BaseEffectContext != nullptr) && BaseEffectContext->GetScriptStruct()->IsChildOf(FBaseGameplayEffectContext::StaticStruct()))
+	if ((BaseEffectContext != nullptr) && BaseEffectContext->GetScriptStruct()->IsChildOf(StaticStruct()))
 	{
 		return static_cast<FBaseGameplayEffectContext*>(BaseEffectContext);
 	}
@@ -52,6 +52,7 @@ namespace UE::Net
 {
 	// Forward to FGameplayEffectContextNetSerializer
 	// Note: If FFBaseGameplayEffectContext::NetSerialize() is modified, a custom Net Serializer must be implemented as the current fallback will no longer be sufficient.
-	UE_NET_IMPLEMENT_FORWARDING_NETSERIALIZER_AND_REGISTRY_DELEGATES(FBaseGameplayEffectContext, FGameplayEffectContextNetSerializer);
+	UE_NET_IMPLEMENT_FORWARDING_NETSERIALIZER_AND_REGISTRY_DELEGATES(FBaseGameplayEffectContext,
+	                                                                 FGameplayEffectContextNetSerializer);
 }
 #endif

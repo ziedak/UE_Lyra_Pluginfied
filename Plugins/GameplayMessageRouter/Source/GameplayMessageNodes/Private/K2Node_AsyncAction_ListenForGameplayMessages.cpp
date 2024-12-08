@@ -49,41 +49,46 @@ void UK2Node_AsyncAction_ListenForGameplayMessages::GetPinHoverText(const UEdGra
 	Super::GetPinHoverText(Pin, HoverTextOut);
 	if (Pin.PinName == UK2Node_AsyncAction_ListenForGameplayMessagesHelper::PayloadPinName)
 	{
-		HoverTextOut = HoverTextOut + LOCTEXT("PayloadOutTooltip", "\n\nThe message structure that we received").ToString();
+		HoverTextOut = HoverTextOut + LOCTEXT("PayloadOutTooltip", "\n\nThe message structure that we received").
+			ToString();
 	}
 }
 
-void UK2Node_AsyncAction_ListenForGameplayMessages::GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
+void UK2Node_AsyncAction_ListenForGameplayMessages::GetMenuActions(
+	FBlueprintActionDatabaseRegistrar& ActionRegistrar) const
 {
 	struct GetMenuActions_Utils
 	{
 		static void SetNodeFunc(UEdGraphNode* NewNode, bool /*bIsTemplateNode*/, TWeakObjectPtr<UFunction> FunctionPtr)
 		{
-			UK2Node_AsyncAction_ListenForGameplayMessages* AsyncTaskNode = CastChecked<UK2Node_AsyncAction_ListenForGameplayMessages>(NewNode);
+			UK2Node_AsyncAction_ListenForGameplayMessages* AsyncTaskNode = CastChecked<
+				UK2Node_AsyncAction_ListenForGameplayMessages>(NewNode);
 			if (FunctionPtr.IsValid())
 			{
 				UFunction* Func = FunctionPtr.Get();
 				FObjectProperty* ReturnProp = CastFieldChecked<FObjectProperty>(Func->GetReturnProperty());
-						
+
 				AsyncTaskNode->ProxyFactoryFunctionName = Func->GetFName();
-				AsyncTaskNode->ProxyFactoryClass        = Func->GetOuterUClass();
-				AsyncTaskNode->ProxyClass               = ReturnProp->PropertyClass;
+				AsyncTaskNode->ProxyFactoryClass = Func->GetOuterUClass();
+				AsyncTaskNode->ProxyClass = ReturnProp->PropertyClass;
 			}
 		}
 	};
 
 	UClass* NodeClass = GetClass();
-	ActionRegistrar.RegisterClassFactoryActions<UAsyncAction_ListenForGameplayMessage>(FBlueprintActionDatabaseRegistrar::FMakeFuncSpawnerDelegate::CreateLambda([NodeClass](const UFunction* FactoryFunc)->UBlueprintNodeSpawner*
-	{
-		UBlueprintNodeSpawner* NodeSpawner = UBlueprintFunctionNodeSpawner::Create(FactoryFunc);
-		check(NodeSpawner != nullptr);
-		NodeSpawner->NodeClass = NodeClass;
+	ActionRegistrar.RegisterClassFactoryActions<UAsyncAction_ListenForGameplayMessage>(
+		FBlueprintActionDatabaseRegistrar::FMakeFuncSpawnerDelegate::CreateLambda(
+			[NodeClass](const UFunction* FactoryFunc)-> UBlueprintNodeSpawner* {
+				UBlueprintNodeSpawner* NodeSpawner = UBlueprintFunctionNodeSpawner::Create(FactoryFunc);
+				check(NodeSpawner != nullptr);
+				NodeSpawner->NodeClass = NodeClass;
 
-		TWeakObjectPtr<UFunction> FunctionPtr = MakeWeakObjectPtr(const_cast<UFunction*>(FactoryFunc));
-		NodeSpawner->CustomizeNodeDelegate = UBlueprintNodeSpawner::FCustomizeNodeDelegate::CreateStatic(GetMenuActions_Utils::SetNodeFunc, FunctionPtr);
+				TWeakObjectPtr<UFunction> FunctionPtr = MakeWeakObjectPtr(const_cast<UFunction*>(FactoryFunc));
+				NodeSpawner->CustomizeNodeDelegate = UBlueprintNodeSpawner::FCustomizeNodeDelegate::CreateStatic(
+					GetMenuActions_Utils::SetNodeFunc, FunctionPtr);
 
-		return NodeSpawner;
-	}) );
+				return NodeSpawner;
+			}));
 }
 
 void UK2Node_AsyncAction_ListenForGameplayMessages::AllocateDefaultPins()
@@ -98,31 +103,46 @@ void UK2Node_AsyncAction_ListenForGameplayMessages::AllocateDefaultPins()
 		DelegateProxyPin->bHidden = true;
 	}
 
-	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Wildcard, UK2Node_AsyncAction_ListenForGameplayMessagesHelper::PayloadPinName);
+	CreatePin(EGPD_Output, UEdGraphSchema_K2::PC_Wildcard,
+	          UK2Node_AsyncAction_ListenForGameplayMessagesHelper::PayloadPinName);
 }
 
-bool UK2Node_AsyncAction_ListenForGameplayMessages::HandleDelegates(const TArray<FBaseAsyncTaskHelper::FOutputPinAndLocalVariable>& VariableOutputs, UEdGraphPin* ProxyObjectPin, UEdGraphPin*& InOutLastThenPin, UEdGraph* SourceGraph, FKismetCompilerContext& CompilerContext)
+bool UK2Node_AsyncAction_ListenForGameplayMessages::HandleDelegates(
+	const TArray<FBaseAsyncTaskHelper::FOutputPinAndLocalVariable>& VariableOutputs, UEdGraphPin* ProxyObjectPin,
+	UEdGraphPin*& InOutLastThenPin, UEdGraph* SourceGraph, FKismetCompilerContext& CompilerContext)
 {
 	bool bIsErrorFree = true;
 
 	if (VariableOutputs.Num() != 3)
 	{
-		ensureMsgf(false, TEXT("UK2Node_AsyncAction_ListenForGameplayMessages::HandleDelegates - Variable output array not valid. Output delegates must only have the single proxy object output and than must have pin for payload."));
+		ensureMsgf(
+			false,
+			TEXT(
+				"UK2Node_AsyncAction_ListenForGameplayMessages::HandleDelegates - Variable output array not valid. Output delegates must only have the single proxy object output and than must have pin for payload."
+			));
 		return false;
 	}
 
 	for (TFieldIterator<FMulticastDelegateProperty> PropertyIt(ProxyClass); PropertyIt && bIsErrorFree; ++PropertyIt)
 	{
 		UEdGraphPin* LastActivatedThenPin = nullptr;
-		bIsErrorFree &= FBaseAsyncTaskHelper::HandleDelegateImplementation(*PropertyIt, VariableOutputs, ProxyObjectPin, InOutLastThenPin, LastActivatedThenPin, this, SourceGraph, CompilerContext);
+		bIsErrorFree &= FBaseAsyncTaskHelper::HandleDelegateImplementation(
+			*PropertyIt, VariableOutputs, ProxyObjectPin, InOutLastThenPin, LastActivatedThenPin, this, SourceGraph,
+			CompilerContext);
 
-		bIsErrorFree &= HandlePayloadImplementation(*PropertyIt, VariableOutputs[0], VariableOutputs[2], VariableOutputs[1], LastActivatedThenPin, SourceGraph, CompilerContext);
+		bIsErrorFree &= HandlePayloadImplementation(*PropertyIt, VariableOutputs[0], VariableOutputs[2],
+		                                            VariableOutputs[1], LastActivatedThenPin, SourceGraph,
+		                                            CompilerContext);
 	}
 
 	return bIsErrorFree;
 }
 
-bool UK2Node_AsyncAction_ListenForGameplayMessages::HandlePayloadImplementation(FMulticastDelegateProperty* CurrentProperty, const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& ProxyObjectVar, const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& PayloadVar, const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& ActualChannelVar, UEdGraphPin*& InOutLastActivatedThenPin, UEdGraph* SourceGraph, FKismetCompilerContext& CompilerContext)
+bool UK2Node_AsyncAction_ListenForGameplayMessages::HandlePayloadImplementation(
+	FMulticastDelegateProperty* CurrentProperty, const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& ProxyObjectVar,
+	const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& PayloadVar,
+	const FBaseAsyncTaskHelper::FOutputPinAndLocalVariable& ActualChannelVar, UEdGraphPin*& InOutLastActivatedThenPin,
+	UEdGraph* SourceGraph, FKismetCompilerContext& CompilerContext)
 {
 	bool bIsErrorFree = true;
 	const UEdGraphPin* PayloadPin = GetPayloadPin();
@@ -139,16 +159,15 @@ bool UK2Node_AsyncAction_ListenForGameplayMessages::HandlePayloadImplementation(
 			// If no payload type is specified and we're not trying to connect the output to anything ignore the rest of this step
 			return true;
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 
 	UK2Node_TemporaryVariable* TempVarOutput = CompilerContext.SpawnInternalVariable(
-		this, PinType.PinCategory, PinType.PinSubCategory, PinType.PinSubCategoryObject.Get(), PinType.ContainerType, PinType.PinValueType);
+		this, PinType.PinCategory, PinType.PinSubCategory, PinType.PinSubCategoryObject.Get(), PinType.ContainerType,
+		PinType.PinValueType);
 
-	UK2Node_CallFunction* const CallGetPayloadNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(this, SourceGraph);
+	UK2Node_CallFunction* const CallGetPayloadNode = CompilerContext.SpawnIntermediateNode<UK2Node_CallFunction>(
+		this, SourceGraph);
 	CallGetPayloadNode->FunctionReference.SetExternalMember(TEXT("GetPayload"), CurrentProperty->GetOwnerClass());
 	CallGetPayloadNode->AllocateDefaultPins();
 
@@ -167,7 +186,8 @@ bool UK2Node_AsyncAction_ListenForGameplayMessages::HandlePayloadImplementation(
 		bIsErrorFree &= Schema->TryCreateConnection(TempVarOutput->GetVariablePin(), GetPayloadPin);
 
 
-		UK2Node_AssignmentStatement* AssignNode = CompilerContext.SpawnIntermediateNode<UK2Node_AssignmentStatement>(this, SourceGraph);
+		UK2Node_AssignmentStatement* AssignNode = CompilerContext.SpawnIntermediateNode<UK2Node_AssignmentStatement>(
+			this, SourceGraph);
 		AssignNode->AllocateDefaultPins();
 		bIsErrorFree &= Schema->TryCreateConnection(GetPayloadThenPin, AssignNode->GetExecPin());
 		bIsErrorFree &= Schema->TryCreateConnection(PayloadVar.TempVar->GetVariablePin(), AssignNode->GetVariablePin());
@@ -176,12 +196,15 @@ bool UK2Node_AsyncAction_ListenForGameplayMessages::HandlePayloadImplementation(
 		AssignNode->NotifyPinConnectionListChanged(AssignNode->GetValuePin());
 
 
-		bIsErrorFree &= CompilerContext.MovePinLinksToIntermediate(*InOutLastActivatedThenPin, *AssignNode->GetThenPin()).CanSafeConnect();
+		bIsErrorFree &= CompilerContext.MovePinLinksToIntermediate(*InOutLastActivatedThenPin,
+		                                                           *AssignNode->GetThenPin()).CanSafeConnect();
 		bIsErrorFree &= Schema->TryCreateConnection(InOutLastActivatedThenPin, GetPayloadExecPin);
 
 		// Hook up the actual channel connection
 		UEdGraphPin* OutActualChannelPin = GetOutputChannelPin();
-		bIsErrorFree &= CompilerContext.MovePinLinksToIntermediate(*OutActualChannelPin, *ActualChannelVar.TempVar->GetVariablePin()).CanSafeConnect();
+		bIsErrorFree &= CompilerContext.MovePinLinksToIntermediate(*OutActualChannelPin,
+		                                                           *ActualChannelVar.TempVar->GetVariablePin()).
+		                                CanSafeConnect();
 	}
 
 	return bIsErrorFree;
@@ -200,7 +223,9 @@ void UK2Node_AsyncAction_ListenForGameplayMessages::RefreshOutputPayloadType()
 		}
 
 		PayloadPin->PinType.PinSubCategoryObject = PayloadTypePin->DefaultObject;
-		PayloadPin->PinType.PinCategory = (PayloadTypePin->DefaultObject == nullptr) ? UEdGraphSchema_K2::PC_Wildcard : UEdGraphSchema_K2::PC_Struct;
+		PayloadPin->PinType.PinCategory = (PayloadTypePin->DefaultObject == nullptr)
+			                                  ? UEdGraphSchema_K2::PC_Wildcard
+			                                  : UEdGraphSchema_K2::PC_Struct;
 	}
 }
 
@@ -226,4 +251,3 @@ UEdGraphPin* UK2Node_AsyncAction_ListenForGameplayMessages::GetOutputChannelPin(
 }
 
 #undef LOCTEXT_NAMESPACE
-

@@ -9,7 +9,7 @@ public class Gas : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
         PublicDependencyModuleNames.AddRange(new string[]
-        {    
+        {
             "Core",
             "CoreUObject",
             "Engine",
@@ -20,28 +20,28 @@ public class Gas : ModuleRules
             "ModularGameplayActors",
             "NetCore",
             "PhysicsCore",
-            "InputConfig",
             "AbilitySystem",
             "CustomCore"
-          
+
         });
 
         PrivateDependencyModuleNames.AddRange(new string[] {
             "CommonGame",
             "CommonUser",
+           "GameLocalSettings",
             "GameplayAbilities",
-            "GameplayMessageRuntime", 
+            "GameplayMessageRuntime",
             "GameplayTags",
-            "GameplayTasks", 
-            "SignificanceManager", 
+            "GameplayTasks",
+            "SignificanceManager",
             "Slate",
             "SlateCore",
-           
+
         });
 
         //custom plugin dependencies
         PrivateDependencyModuleNames.AddRange(new string[] {
-        
+
          });
 
         // Generate compile errors if using DrawDebug functions in test/shipping builds.

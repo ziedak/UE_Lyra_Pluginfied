@@ -16,5 +16,5 @@ void FCustomCoreModule::ShutdownModule()
 }
 
 #undef LOCTEXT_NAMESPACE
-	
+
 IMPLEMENT_MODULE(FCustomCoreModule, CustomCore)

@@ -40,6 +40,7 @@ public:
 
 	// Updates the bundles for the singular gameplay cue primary asset
 	void RefreshGameplayCuePrimaryAsset();
+
 private:
 	void OnGameplayTagLoaded(const FGameplayTag& Tag);
 	void HandlePostGarbageCollect();
@@ -51,17 +52,21 @@ private:
 	void UpdateDelayLoadDelegateListeners();
 	bool ShouldDelayLoadGameplayCues() const;
 
-private:
 	struct FLoadedGameplayTagToProcessData
 	{
 		FGameplayTag Tag;
 		TWeakObjectPtr<UObject> WeakOwner;
 
-		FLoadedGameplayTagToProcessData() {}
-		FLoadedGameplayTagToProcessData(const FGameplayTag& InTag, const TWeakObjectPtr<UObject>& InWeakOwner) : Tag(InTag), WeakOwner(InWeakOwner) {}
+		FLoadedGameplayTagToProcessData()
+		{
+		}
+
+		FLoadedGameplayTagToProcessData(const FGameplayTag& InTag,
+		                                const TWeakObjectPtr<UObject>& InWeakOwner) : Tag(InTag), WeakOwner(InWeakOwner)
+		{
+		}
 	};
 
-private:
 	// Cues that were preloaded on the client due to being referenced by content
 	UPROPERTY(transient)
 	TSet<TObjectPtr<UClass>> PreloadedCues;

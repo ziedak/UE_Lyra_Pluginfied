@@ -50,13 +50,13 @@ enum class ECommonUserOnlineContext : uint8
 
 	/** The default engine online system, this will always exist and will be the same as either Service or Platform */
 	Default,
-	
+
 	/** Explicitly ask for the external service, which may not exist */
 	Service,
 
 	/** Looks for external service first, then falls back to default */
 	ServiceOrDefault,
-	
+
 	/** Explicitly ask for the platform system, which may not exist */
 	Platform,
 
@@ -83,7 +83,7 @@ enum class ECommonUserInitializationState : uint8
 	/** Player failed to log in at all */
 	FailedtoLogin,
 
-	
+
 	/** Player is logged in and has access to online functionality */
 	LoggedInOnline,
 
@@ -118,7 +118,7 @@ enum class ECommonUserPrivilege : uint8
 	CanUseCrossPlay,
 
 	/** Invalid privilege (also the count of valid ones) */
-	Invalid_Count					UMETA(Hidden)
+	Invalid_Count UMETA(Hidden)
 };
 
 /** Enum specifying the general availability of a feature or privilege, this combines information from multiple sources */

@@ -60,7 +60,7 @@ void UExperienceManagerComponent::SetCurrentExperience(const FPrimaryAssetId& Ex
 	const UBaseAssetManager& AssetManager = UBaseAssetManager::Get();
 	check(AssetManager.IsInitialized());
 	const FSoftObjectPath AssetPath = AssetManager.GetPrimaryAssetPath(ExperienceId);
-	 const TSubclassOf<UExperienceDefinition_DA> AssetClass = Cast<UClass>(AssetPath.TryLoad());
+	const TSubclassOf<UExperienceDefinition_DA> AssetClass = Cast<UClass>(AssetPath.TryLoad());
 	check(AssetClass);
 	const UExperienceDefinition_DA* ExperienceDef = GetDefault<UExperienceDefinition_DA>(AssetClass);
 
@@ -215,12 +215,8 @@ void UExperienceManagerComponent::StartExperienceLoad()
 
 	LoadState = EExperienceLoadState::Loading;
 
-
-	TSet<FPrimaryAssetId> BundleAssetList;
 	const TSet<FSoftObjectPath> RawAssetList;
-
-	PrepareAssetLists(BundleAssetList, RawAssetList);
-
+	const TSet<FPrimaryAssetId> BundleAssetList = PrepareAssetLists(RawAssetList);
 	const TArray<FName> BundlesToLoad = PrepareBundlesToLoad();
 
 	const TSharedPtr<FStreamableHandle> Handle = CreateStreamableHandle(BundleAssetList, RawAssetList,
@@ -238,22 +234,26 @@ void UExperienceManagerComponent::StartExperienceLoad()
 		Handle->BindCompleteDelegate(OnAssetsLoadedDelegate);
 		Handle->BindCancelDelegate(FStreamableDelegate::CreateLambda([OnAssetsLoadedDelegate]()
 		{
-			OnAssetsLoadedDelegate.ExecuteIfBound();
+			auto _ = OnAssetsLoadedDelegate.ExecuteIfBound();
 		}));
 	}
 
 	PreloadAssets(BundlesToLoad);
 }
 
-void UExperienceManagerComponent::PrepareAssetLists(TSet<FPrimaryAssetId>& BundleAssetList,
-                                                    const TSet<FSoftObjectPath>& RawAssetList)
+TSet<FPrimaryAssetId> UExperienceManagerComponent::PrepareAssetLists(const TSet<FSoftObjectPath>& RawAssetList) const
 {
-	BundleAssetList.Add(CurrentExperience->GetPrimaryAssetId());
+	TSet<FPrimaryAssetId> BundleAssetListIds;
+	BundleAssetListIds.Add(CurrentExperience->GetPrimaryAssetId());
 	for (const TObjectPtr<UExperienceActionSet_DA>& ActionSet : CurrentExperience->ExperienceActionSets)
 	{
 		if (!ActionSet)
-			BundleAssetList.Add(ActionSet->GetPrimaryAssetId());
+		{
+			BundleAssetListIds.Add(ActionSet->GetPrimaryAssetId());
+		}
 	}
+
+	return BundleAssetListIds;
 }
 
 TArray<FName> UExperienceManagerComponent::PrepareBundlesToLoad() const
@@ -265,9 +265,13 @@ TArray<FName> UExperienceManagerComponent::PrepareBundlesToLoad() const
 	const bool bLoadClient = GIsEditor || (OwnerNetMode != NM_DedicatedServer);
 	const bool bLoadServer = GIsEditor || (OwnerNetMode != NM_Client);
 	if (bLoadClient)
+	{
 		BundlesToLoad.Add(UGameFeaturesSubsystemSettings::LoadStateClient);
+	}
 	if (bLoadServer)
+	{
 		BundlesToLoad.Add(UGameFeaturesSubsystemSettings::LoadStateServer);
+	}
 
 	return BundlesToLoad;
 }
@@ -277,30 +281,40 @@ TSharedPtr<FStreamableHandle> UExperienceManagerComponent::CreateStreamableHandl
 	const TSet<FSoftObjectPath>& RawAssetList, const TArray<FName>& BundlesToLoad) const
 {
 	UAssetManager& AssetManager = UAssetManager::Get();
-	TSharedPtr<FStreamableHandle> BundleLoadHandle = nullptr;
+	check(AssetManager.IsInitialized());
 
+	TSharedPtr<FStreamableHandle> BundleLoadHandle = nullptr;
 	if (BundleAssetList.Num() > 0)
-		BundleLoadHandle = AssetManager.ChangeBundleStateForPrimaryAssets(BundleAssetList.Array(),
-		                                                                  BundlesToLoad,
-		                                                                  {},
-		                                                                  false,
-		                                                                  FStreamableDelegate(),
-		                                                                  FStreamableManager::AsyncLoadHighPriority);
+	{
+		BundleLoadHandle = AssetManager
+			.ChangeBundleStateForPrimaryAssets(BundleAssetList.Array(),
+			                                   BundlesToLoad,
+			                                   {},
+			                                   false,
+			                                   FStreamableDelegate(),
+			                                   FStreamableManager::AsyncLoadHighPriority);
+	}
 
 	TSharedPtr<FStreamableHandle> RawLoadHandle = nullptr;
 	if (RawAssetList.Num() > 0)
+	{
 		RawLoadHandle = AssetManager.LoadAssetList(RawAssetList.Array(),
 		                                           FStreamableDelegate(),
 		                                           FStreamableManager::AsyncLoadHighPriority,
 		                                           TEXT("StartExperienceLoad()"));
+	}
 
 	// If both async loads are running, combine them
 	TSharedPtr<FStreamableHandle> Handle = nullptr;
 	if (BundleLoadHandle.IsValid() && RawLoadHandle.IsValid())
+	{
 		Handle = AssetManager.GetStreamableManager()
 		                     .CreateCombinedHandle({BundleLoadHandle, RawLoadHandle});
+	}
 	else
+	{
 		Handle = BundleLoadHandle.IsValid() ? BundleLoadHandle : RawLoadHandle;
+	}
 
 	return Handle;
 }
@@ -311,9 +325,11 @@ void UExperienceManagerComponent::PreloadAssets(const TArray<FName>& BundlesToLo
 	const TSet<FPrimaryAssetId> PreloadAssetList;
 	//@TODO: Determine assets to preload (but not blocking-ly)
 	if (PreloadAssetList.Num() > 0)
+	{
 		AssetManager.ChangeBundleStateForPrimaryAssets(PreloadAssetList.Array(),
 		                                               BundlesToLoad,
 		                                               {});
+	}
 }
 
 void UExperienceManagerComponent::OnExperienceLoadComplete()
@@ -328,12 +344,14 @@ void UExperienceManagerComponent::OnExperienceLoadComplete()
 	GameFeaturePluginURLs.Reset();
 
 	GameFeaturePluginURLs.Append(
-		CollectGameFeaturePluginURLs(CurrentExperience,CurrentExperience->GameFeaturesToEnableList));
+		CollectGameFeaturePluginURLs(CurrentExperience, CurrentExperience->GameFeaturesToEnableList));
 
 	for (const TObjectPtr<UExperienceActionSet_DA>& ActionSet : CurrentExperience->ExperienceActionSets)
 	{
 		if (ActionSet != nullptr)
-			GameFeaturePluginURLs.Append(CollectGameFeaturePluginURLs(ActionSet,ActionSet->GameFeaturesToEnableList));
+		{
+			GameFeaturePluginURLs.Append(CollectGameFeaturePluginURLs(ActionSet, ActionSet->GameFeaturesToEnableList));
+		}
 	}
 
 	// Load and activate the features	
@@ -356,7 +374,8 @@ void UExperienceManagerComponent::OnExperienceLoadComplete()
 	}
 }
 
-TArray<FString> UExperienceManagerComponent::CollectGameFeaturePluginURLs(const UPrimaryDataAsset* Context, const TArray<FString>& FeaturePluginList) const
+TArray<FString> UExperienceManagerComponent::CollectGameFeaturePluginURLs(
+	const UPrimaryDataAsset* Context, const TArray<FString>& FeaturePluginList) const
 {
 	// find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
 	TArray<FString> PluginURLs;
@@ -394,7 +413,9 @@ void UExperienceManagerComponent::OnGameFeaturePluginLoadComplete(const UE::Game
 	NumGameFeaturePluginsLoading--;
 
 	if (NumGameFeaturePluginsLoading == 0)
+	{
 		OnExperienceFullLoadCompleted();
+	}
 }
 
 // void UExperienceManagerComponent::OnExperienceFullLoadCompleted()
@@ -454,22 +475,25 @@ void UExperienceManagerComponent::OnExperienceFullLoadCompleted()
 	BroadcastExperienceLoaded();
 
 	// Apply any necessary scalability settings
-	 ApplyScalabilitySettings();
+	ApplyScalabilitySettings();
 }
 
-void UExperienceManagerComponent::ExecuteActions()
+void UExperienceManagerComponent::ExecuteActions() const
 {
 	FGameFeatureActivatingContext Context;
 
-	const FWorldContext* ExistingWorldContext = GEngine->GetWorldContextFromWorld(GetWorld());
-	if (ExistingWorldContext)
+	if (const auto ExistingWorldContext = GEngine->GetWorldContextFromWorld(GetWorld()))
+	{
 		Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
+	}
 
 	ActivateListOfActions(CurrentExperience->GameFeatureActions, Context);
 	for (const TObjectPtr<UExperienceActionSet_DA>& ActionSet : CurrentExperience->ExperienceActionSets)
 	{
 		if (ActionSet != nullptr)
+		{
 			ActivateListOfActions(ActionSet->GameFeatureActions, Context);
+		}
 	}
 }
 
@@ -495,7 +519,9 @@ void UExperienceManagerComponent::ApplyScalabilitySettings()
 void UExperienceManagerComponent::InsertRandomDelayForTesting(const float DelaySecs)
 {
 	if (LoadState == EExperienceLoadState::LoadingChaosTestingDelay || DelaySecs <= 0.0f)
+	{
 		return;
+	}
 
 	FTimerHandle DummyHandle;
 
@@ -510,7 +536,9 @@ void UExperienceManagerComponent::ActivateListOfActions(const TArray<UGameFeatur
 	for (UGameFeatureAction* Action : ActionList)
 	{
 		if (!Action)
+		{
 			continue;
+		}
 
 		//@TODO: The fact that these don't take a world are potentially problematic in client-server PIE
 		// The current behavior matches systems like gameplay tags where loading and registering apply to the entire process,
@@ -527,7 +555,9 @@ void UExperienceManagerComponent::OnActionDeactivationCompleted()
 	++NumObservedPausers;
 
 	if (NumObservedPausers == NumExpectedPausers)
+	{
 		OnAllActionsDeactivated();
+	}
 }
 
 void UExperienceManagerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -551,14 +581,18 @@ void UExperienceManagerComponent::DeactivateLoadedFeatures()
 	for (const FString& PluginURL : GameFeaturePluginURLs)
 	{
 		if (UExperienceManager::RequestToDeactivatePlugin(PluginURL))
+		{
 			UGameFeaturesSubsystem::Get().DeactivateGameFeaturePlugin(PluginURL);
+		}
 	}
 }
 
 void UExperienceManagerComponent::HandlePartiallyLoadedState()
 {
 	if (LoadState != EExperienceLoadState::Loaded)
+	{
 		return;
+	}
 
 	LoadState = EExperienceLoadState::Deactivating;
 	NumExpectedPausers = INDEX_NONE;
@@ -567,14 +601,18 @@ void UExperienceManagerComponent::HandlePartiallyLoadedState()
 	FGameFeatureDeactivatingContext Context(TEXT(""), [this](FStringView) { this->OnActionDeactivationCompleted(); });
 
 	if (const FWorldContext* ExistingWorldContext = GEngine->GetWorldContextFromWorld(GetWorld()))
+	{
 		Context.SetRequiredWorldContextHandle(ExistingWorldContext->ContextHandle);
+	}
 
 	DeactivateListOfActions(CurrentExperience->GameFeatureActions, Context);
 
 	for (const TObjectPtr<UExperienceActionSet_DA>& ActionSet : CurrentExperience->ExperienceActionSets)
 	{
 		if (!ActionSet)
+		{
 			continue;
+		}
 
 		DeactivateListOfActions(ActionSet->GameFeatureActions, Context);
 	}
@@ -586,7 +624,9 @@ void UExperienceManagerComponent::HandlePartiallyLoadedState()
 	           "Actions that have asynchronous deactivation aren't fully supported yet in experiences");
 
 	if (NumExpectedPausers == NumObservedPausers)
+	{
 		OnAllActionsDeactivated();
+	}
 }
 
 
@@ -596,7 +636,9 @@ void UExperienceManagerComponent::DeactivateListOfActions(const TArray<UGameFeat
 	for (UGameFeatureAction* Action : ActionList)
 	{
 		if (!Action)
+		{
 			continue;
+		}
 
 		Action->OnGameFeatureDeactivating(Context);
 		Action->OnGameFeatureUnregistering();
@@ -606,7 +648,9 @@ void UExperienceManagerComponent::DeactivateListOfActions(const TArray<UGameFeat
 bool UExperienceManagerComponent::ShouldShowLoadingScreen(FString& OutReason) const
 {
 	if (LoadState == EExperienceLoadState::Loaded)
+	{
 		return false;
+	}
 
 	OutReason = TEXT("Experience still loading");
 	return true;

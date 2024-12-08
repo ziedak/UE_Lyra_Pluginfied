@@ -13,7 +13,8 @@ UAsyncAction_ShowConfirmation::UAsyncAction_ShowConfirmation(const FObjectInitia
 {
 }
 
-UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationYesNo(UObject* InWorldContextObject, FText Title, FText Message)
+UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationYesNo(
+	UObject* InWorldContextObject, FText Title, FText Message)
 {
 	UAsyncAction_ShowConfirmation* Action = NewObject<UAsyncAction_ShowConfirmation>();
 	Action->WorldContextObject = InWorldContextObject;
@@ -23,7 +24,8 @@ UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationYe
 	return Action;
 }
 
-UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationOkCancel(UObject* InWorldContextObject, FText Title, FText Message)
+UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationOkCancel(
+	UObject* InWorldContextObject, FText Title, FText Message)
 {
 	UAsyncAction_ShowConfirmation* Action = NewObject<UAsyncAction_ShowConfirmation>();
 	Action->WorldContextObject = InWorldContextObject;
@@ -33,7 +35,8 @@ UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationOk
 	return Action;
 }
 
-UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationCustom(UObject* InWorldContextObject, UCommonGameDialogDescriptor* Descriptor)
+UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationCustom(
+	UObject* InWorldContextObject, UCommonGameDialogDescriptor* Descriptor)
 {
 	UAsyncAction_ShowConfirmation* Action = NewObject<UAsyncAction_ShowConfirmation>();
 	Action->WorldContextObject = InWorldContextObject;
@@ -68,12 +71,13 @@ void UAsyncAction_ShowConfirmation::Activate()
 	{
 		if (UCommonMessagingSubsystem* Messaging = TargetLocalPlayer->GetSubsystem<UCommonMessagingSubsystem>())
 		{
-			FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate::CreateUObject(this, &UAsyncAction_ShowConfirmation::HandleConfirmationResult);
+			FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate::CreateUObject(
+				this, &UAsyncAction_ShowConfirmation::HandleConfirmationResult);
 			Messaging->ShowConfirmation(Descriptor, ResultCallback);
 			return;
 		}
 	}
-	
+
 	// If we couldn't make the confirmation, just handle an unknown result and broadcast nothing
 	HandleConfirmationResult(ECommonMessagingResult::Unknown);
 }
@@ -84,5 +88,3 @@ void UAsyncAction_ShowConfirmation::HandleConfirmationResult(ECommonMessagingRes
 
 	SetReadyToDestroy();
 }
-
-

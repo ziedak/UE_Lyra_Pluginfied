@@ -33,15 +33,13 @@ struct FMeasuredText
 {
 	GENERATED_BODY()
 
-public:
 	FText GetText() const { return CachedText; }
 	void SetText(const FText& InText);
 
 	FVector2D GetTextSize() const { return CachedTextSize; }
-	FVector2D UpdateTextSize(const FSlateFontInfo &InFontInfo, float FontScale = 1.0f) const;
+	FVector2D UpdateTextSize(const FSlateFontInfo& InFontInfo, float FontScale = 1.0f) const;
 
 private:
-
 	FText CachedText;
 	mutable FVector2D CachedTextSize;
 	mutable bool bTextDirty = true;
@@ -68,7 +66,8 @@ public:
 	void SetBoundAction(FName NewBoundAction);
 
 	/** Force this keybind to be a hold keybind */
-	UFUNCTION(BlueprintCallable, Category = "Keybind Widget", meta=(DeprecatedFunction, DeprecationMessage = "Use SetForcedHoldKeybindStatus instead"))
+	UFUNCTION(BlueprintCallable, Category = "Keybind Widget",
+		meta=(DeprecatedFunction, DeprecationMessage = "Use SetForcedHoldKeybindStatus instead"))
 	void SetForcedHoldKeybind(bool InForcedHoldKeybind);
 
 	/** Force this keybind to be a hold keybind */
@@ -129,14 +128,17 @@ public:
 protected:
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
+	virtual int32 NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
+	                          const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId,
+	                          const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const override;
 	void RecalculateDesiredSize();
 
 	/** Overridden to destroy our MID */
 	virtual void NativeDestruct() override;
 
 	/** Whether or not this keybind widget is currently set to be a hold keybind */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Keybind Widget", meta=(ScriptName = "IsHoldKeybindValue"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Keybind Widget",
+		meta=(ScriptName = "IsHoldKeybindValue"))
 	bool bIsHoldKeybind;
 
 	/**  */
@@ -187,7 +189,7 @@ protected:
 
 	/** The material parameter name for hold percentage in the HoldKeybindImage */
 	UPROPERTY(EditDefaultsOnly, Category = "Keybind Widget")
-	FName PercentageMaterialParameterName;	
+	FName PercentageMaterialParameterName;
 
 	/** MID for the progress percentage */
 	UPROPERTY(Transient)

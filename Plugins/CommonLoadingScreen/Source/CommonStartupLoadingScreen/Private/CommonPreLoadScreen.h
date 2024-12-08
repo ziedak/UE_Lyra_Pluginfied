@@ -9,12 +9,16 @@ class SWidget;
 class FCommonPreLoadScreen : public FPreLoadScreenBase
 {
 public:
-	
-    /*** IPreLoadScreen Implementation ***/
+	/*** IPreLoadScreen Implementation ***/
 	virtual void Init() override;
-    virtual EPreLoadScreenTypes GetPreLoadScreenType() const override { return EPreLoadScreenTypes::EngineLoadingScreen; }
-    virtual TSharedPtr<SWidget> GetWidget() override { return EngineLoadingWidget; }
-private:
 
-    TSharedPtr<SWidget> EngineLoadingWidget;
+	virtual EPreLoadScreenTypes GetPreLoadScreenType() const override
+	{
+		return EPreLoadScreenTypes::EngineLoadingScreen;
+	}
+
+	virtual TSharedPtr<SWidget> GetWidget() override { return EngineLoadingWidget; }
+
+private:
+	TSharedPtr<SWidget> EngineLoadingWidget;
 };

@@ -10,8 +10,8 @@ struct FHealStatics
 	FHealStatics()
 	{
 		BaseHealDef = FGameplayEffectAttributeCaptureDefinition(UCombatSet::GetBaseHealAttribute(),
-			EGameplayEffectAttributeCaptureSource::Source,
-			true);
+		                                                        EGameplayEffectAttributeCaptureSource::Source,
+		                                                        true);
 	}
 };
 
@@ -27,7 +27,7 @@ UHealExecution::UHealExecution()
 }
 
 void UHealExecution::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+                                            FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 #if WITH_SERVER_CODE
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
@@ -41,14 +41,14 @@ void UHealExecution::Execute_Implementation(const FGameplayEffectCustomExecution
 
 	float BaseHeal = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealStatics().BaseHealDef,
-		EvaluateParameters,
-		BaseHeal);
+	                                                           EvaluateParameters,
+	                                                           BaseHeal);
 
 	if (const float HealingDone = FMath::Max(BaseHeal, 0.f))
 	{
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UHealthSet::GetHealingAttribute(),
-			EGameplayModOp::Additive,
-			HealingDone));
+		                                                                    EGameplayModOp::Additive,
+		                                                                    HealingDone));
 	}
 #endif // #if WITH_SERVER_CODE
 }

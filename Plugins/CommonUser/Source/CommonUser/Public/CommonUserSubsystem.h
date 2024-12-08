@@ -25,18 +25,20 @@ struct COMMONUSER_API FCommonUserTags
 {
 	// General severity levels and specific system messages
 
-	static FNativeGameplayTag SystemMessage_Error;	// SystemMessage.Error
+	static FNativeGameplayTag SystemMessage_Error; // SystemMessage.Error
 	static FNativeGameplayTag SystemMessage_Warning; // SystemMessage.Warning
 	static FNativeGameplayTag SystemMessage_Display; // SystemMessage.Display
 
 	/** All attempts to initialize a player failed, user has to do something before trying again */
-	static FNativeGameplayTag SystemMessage_Error_InitializeLocalPlayerFailed; // SystemMessage.Error.InitializeLocalPlayerFailed
+	static FNativeGameplayTag SystemMessage_Error_InitializeLocalPlayerFailed;
+	// SystemMessage.Error.InitializeLocalPlayerFailed
 
 
 	// Platform trait tags, it is expected that the game instance or other system calls SetTraitTags with these tags for the appropriate platform
 
 	/** This tag means it is a console platform that directly maps controller IDs to different system users. If false, the same user can have multiple controllers */
-	static FNativeGameplayTag Platform_Trait_RequiresStrictControllerMapping; // Platform.Trait.RequiresStrictControllerMapping
+	static FNativeGameplayTag Platform_Trait_RequiresStrictControllerMapping;
+	// Platform.Trait.RequiresStrictControllerMapping
 
 	/** This tag means the platform has a single online user and all players use index 0 */
 	static FNativeGameplayTag Platform_Trait_SingleOnlineUser; // Platform.Trait.SingleOnlineUser
@@ -56,7 +58,7 @@ public:
 	/** Specifies the logical user on the local platform, guest users will point to the primary user */
 	UPROPERTY(BlueprintReadOnly, Category = UserInfo)
 	FPlatformUserId PlatformUser;
-	
+
 	/** If this user is assigned a LocalPlayer, this will match the index in the GameInstance localplayers array once it is fully created */
 	UPROPERTY(BlueprintReadOnly, Category = UserInfo)
 	int32 LocalPlayerIndex = -1;
@@ -83,7 +85,9 @@ public:
 
 	/** Returns the most recently queries result for a specific privilege, will return unknown if never queried */
 	UFUNCTION(BlueprintCallable, Category = UserInfo)
-	ECommonUserPrivilegeResult GetCachedPrivilegeResult(ECommonUserPrivilege Privilege, ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
+	ECommonUserPrivilegeResult GetCachedPrivilegeResult(ECommonUserPrivilege Privilege,
+	                                                    ECommonUserOnlineContext Context =
+		                                                    ECommonUserOnlineContext::Game) const;
 
 	/** Ask about the general availability of a feature, this combines cached results with state */
 	UFUNCTION(BlueprintCallable, Category = UserInfo)
@@ -121,13 +125,14 @@ public:
 
 	/** Per context cache, game will always exist but others may not */
 	TMap<ECommonUserOnlineContext, FCachedData> CachedDataMap;
-	
+
 	/** Looks up cached data using resolution rules */
 	FCachedData* GetCachedData(ECommonUserOnlineContext Context);
 	const FCachedData* GetCachedData(ECommonUserOnlineContext Context) const;
 
 	/** Updates cached privilege results, will propagate to game if needed */
-	void UpdateCachedPrivilegeResult(ECommonUserPrivilege Privilege, ECommonUserPrivilegeResult Result, ECommonUserOnlineContext Context);
+	void UpdateCachedPrivilegeResult(ECommonUserPrivilege Privilege, ECommonUserPrivilegeResult Result,
+	                                 ECommonUserOnlineContext Context);
 
 	/** Updates cached privilege results, will propagate to game if needed */
 	void UpdateCachedNetId(const FUniqueNetIdRepl& NewId, ECommonUserOnlineContext Context);
@@ -138,14 +143,22 @@ public:
 
 
 /** Delegates when initialization processes succeed or fail */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FCommonUserOnInitializeCompleteMulticast, const UCommonUserInfo*, UserInfo, bool, bSuccess, FText, Error, ECommonUserPrivilege, RequestedPrivilege, ECommonUserOnlineContext, OnlineContext);
-DECLARE_DYNAMIC_DELEGATE_FiveParams(FCommonUserOnInitializeComplete, const UCommonUserInfo*, UserInfo, bool, bSuccess, FText, Error, ECommonUserPrivilege, RequestedPrivilege, ECommonUserOnlineContext, OnlineContext);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FCommonUserOnInitializeCompleteMulticast, const UCommonUserInfo*,
+                                              UserInfo, bool, bSuccess, FText, Error, ECommonUserPrivilege,
+                                              RequestedPrivilege, ECommonUserOnlineContext, OnlineContext);
+
+DECLARE_DYNAMIC_DELEGATE_FiveParams(FCommonUserOnInitializeComplete, const UCommonUserInfo*, UserInfo, bool, bSuccess,
+                                    FText, Error, ECommonUserPrivilege, RequestedPrivilege, ECommonUserOnlineContext,
+                                    OnlineContext);
 
 /** Delegate when a system error message is sent, the game can choose to display it to the user using the type tag */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonUserHandleSystemMessageDelegate, FGameplayTag, MessageType, FText, TitleText, FText, BodyText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FCommonUserHandleSystemMessageDelegate, FGameplayTag, MessageType, FText,
+                                               TitleText, FText, BodyText);
 
 /** Delegate when a privilege changes, this can be bound to see if online status/etc changes during gameplay */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FCommonUserAvailabilityChangedDelegate, const UCommonUserInfo*, UserInfo, ECommonUserPrivilege, Privilege, ECommonUserAvailability, OldAvailability, ECommonUserAvailability, NewAvailability);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FCommonUserAvailabilityChangedDelegate, const UCommonUserInfo*, UserInfo,
+                                              ECommonUserPrivilege, Privilege, ECommonUserAvailability, OldAvailability,
+                                              ECommonUserAvailability, NewAvailability);
 
 
 /** Parameter struct for initialize functions, this would normally be filled in by wrapper functions like async nodes */
@@ -153,7 +166,7 @@ USTRUCT(BlueprintType)
 struct COMMONUSER_API FCommonUserInitializeParams
 {
 	GENERATED_BODY()
-	
+
 	/** What local player index to use, can specify one above current if can create player is enabled */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Default)
 	int32 LocalPlayerIndex = 0;
@@ -169,7 +182,7 @@ struct COMMONUSER_API FCommonUserInitializeParams
 	/** Specifies the logical user on the local platform */
 	UPROPERTY(BlueprintReadOnly, Category = UserInfo)
 	FPlatformUserId PlatformUser;
-	
+
 	/** Generally either CanPlay or CanPlayOnline, specifies what level of privilege is required */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Default)
 	ECommonUserPrivilege RequestedPrivilege = ECommonUserPrivilege::CanPlay;
@@ -206,7 +219,9 @@ class COMMONUSER_API UCommonUserSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
-	UCommonUserSubsystem() { }
+	UCommonUserSubsystem()
+	{
+	}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
@@ -280,7 +295,8 @@ public:
 	 * @returns true if the process was started, false if it failed before properly starting
 	 */
 	UFUNCTION(BlueprintCallable, Category = CommonUser)
-	virtual bool TryToInitializeForLocalPlay(int32 LocalPlayerIndex, FInputDeviceId PrimaryInputDevice, bool bCanUseGuestLogin);
+	virtual bool TryToInitializeForLocalPlay(int32 LocalPlayerIndex, FInputDeviceId PrimaryInputDevice,
+	                                         bool bCanUseGuestLogin);
 
 	/**
 	 * Starts the process of taking a locally logged in user and doing a full online login including account permission checks.
@@ -312,7 +328,8 @@ public:
 	 * @param Params			Params passed to TryToInitializeUser after detecting key input
 	 */
 	UFUNCTION(BlueprintCallable, Category = CommonUser)
-	virtual void ListenForLoginKeyInput(TArray<FKey> AnyUserKeys, TArray<FKey> NewUserKeys, FCommonUserInitializeParams Params);
+	virtual void ListenForLoginKeyInput(TArray<FKey> AnyUserKeys, TArray<FKey> NewUserKeys,
+	                                    FCommonUserInitializeParams Params);
 
 	/** Attempts to cancel an in-progress initialization attempt, this may not work on all platforms but will disable callbacks */
 	UFUNCTION(BlueprintCallable, Category = CommonUser)
@@ -372,7 +389,8 @@ public:
 	FName GetOnlineSubsystemName(ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
 
 	/** Returns the current online connection status */
-	EOnlineServerConnectionStatus::Type GetConnectionStatus(ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
+	EOnlineServerConnectionStatus::Type GetConnectionStatus(
+		ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
 #else
 	/** Get the services provider type, or None if there isn't one. */
 	UE::Online::EOnlineServices GetOnlineServicesProvider(ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
@@ -388,10 +406,12 @@ public:
 	bool HasOnlineConnection(ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
 
 	/** Returns the current login status for a player on the specified online system, only works for real platform users */
-	ELoginStatusType GetLocalUserLoginStatus(FPlatformUserId PlatformUser, ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
+	ELoginStatusType GetLocalUserLoginStatus(FPlatformUserId PlatformUser,
+	                                         ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
 
 	/** Returns the unique net id for a local platform user */
-	FUniqueNetIdRepl GetLocalUserNetId(FPlatformUserId PlatformUser, ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
+	FUniqueNetIdRepl GetLocalUserNetId(FPlatformUserId PlatformUser,
+	                                   ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
 
 	/** Convert a user id to a debug string */
 	FString PlatformUserIdToString(FPlatformUserId UserId);
@@ -407,8 +427,11 @@ public:
 	 * Starts the process of login for an existing local user, will return false if callback was not scheduled 
 	 * This activates the low level state machine and does not modify the initialization state on user info
 	 */
-	DECLARE_DELEGATE_FiveParams(FOnLocalUserLoginCompleteDelegate, const UCommonUserInfo* /*UserInfo*/, ELoginStatusType /*NewStatus*/, FUniqueNetIdRepl /*NetId*/, const TOptional<FOnlineErrorType>& /*Error*/, ECommonUserOnlineContext /*Type*/);
-	virtual bool LoginLocalUser(const UCommonUserInfo* UserInfo, ECommonUserPrivilege RequestedPrivilege, ECommonUserOnlineContext Context, FOnLocalUserLoginCompleteDelegate OnComplete);
+	DECLARE_DELEGATE_FiveParams(FOnLocalUserLoginCompleteDelegate, const UCommonUserInfo* /*UserInfo*/,
+	                            ELoginStatusType /*NewStatus*/, FUniqueNetIdRepl /*NetId*/,
+	                            const TOptional<FOnlineErrorType>& /*Error*/, ECommonUserOnlineContext /*Type*/);
+	virtual bool LoginLocalUser(const UCommonUserInfo* UserInfo, ECommonUserPrivilege RequestedPrivilege,
+	                            ECommonUserOnlineContext Context, FOnLocalUserLoginCompleteDelegate OnComplete);
 
 	/** Assign a local player to a specific local user and call callbacks as needed */
 	virtual void SetLocalPlayerUserInfo(ULocalPlayer* LocalPlayer, const UCommonUserInfo* UserInfo);
@@ -431,7 +454,7 @@ protected:
 		IOnlineIdentityPtr IdentityInterface;
 
 		/** Last connection status that was passed into the HandleNetworkConnectionStatusChanged hander */
-		EOnlineServerConnectionStatus::Type	CurrentConnectionStatus = EOnlineServerConnectionStatus::Normal;
+		EOnlineServerConnectionStatus::Type CurrentConnectionStatus = EOnlineServerConnectionStatus::Normal;
 #else
 		/** Online services, accessor to specific services */
 		UE::Online::IOnlineServicesPtr OnlineServices;
@@ -461,14 +484,16 @@ protected:
 	};
 
 	/** Internal structure to represent an in-progress login request */
-	struct FUserLoginRequest : public TSharedFromThis<FUserLoginRequest>
+	struct FUserLoginRequest : TSharedFromThis<FUserLoginRequest>
 	{
-		FUserLoginRequest(UCommonUserInfo* InUserInfo, ECommonUserPrivilege InPrivilege, ECommonUserOnlineContext InContext, FOnLocalUserLoginCompleteDelegate&& InDelegate)
+		FUserLoginRequest(UCommonUserInfo* InUserInfo, ECommonUserPrivilege InPrivilege,
+		                  ECommonUserOnlineContext InContext, FOnLocalUserLoginCompleteDelegate&& InDelegate)
 			: UserInfo(TWeakObjectPtr<UCommonUserInfo>(InUserInfo))
-			, DesiredPrivilege(InPrivilege)
-			, DesiredContext(InContext)
-			, Delegate(MoveTemp(InDelegate))
-			{}
+			  , DesiredPrivilege(InPrivilege)
+			  , DesiredContext(InContext)
+			  , Delegate(MoveTemp(InDelegate))
+		{
+		}
 
 		/** Which local user is trying to log on */
 		TWeakObjectPtr<UCommonUserInfo> UserInfo;
@@ -515,10 +540,12 @@ protected:
 	virtual void RefreshLocalUserInfo(UCommonUserInfo* UserInfo);
 
 	/** Possibly send privilege availability notification, compares current value to cached old value */
-	virtual void HandleChangedAvailability(UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserAvailability OldAvailability);
+	virtual void HandleChangedAvailability(UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege,
+	                                       ECommonUserAvailability OldAvailability);
 
 	/** Updates the cached privilege on a user and notifies delegate */
-	virtual void UpdateUserPrivilegeResult(UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege, ECommonUserPrivilegeResult Result, ECommonUserOnlineContext Context);
+	virtual void UpdateUserPrivilegeResult(UCommonUserInfo* UserInfo, ECommonUserPrivilege Privilege,
+	                                       ECommonUserPrivilegeResult Result, ECommonUserOnlineContext Context);
 
 	/** Gets internal data for a type of online system, can return null for service */
 	const FOnlineContextCache* GetContextCache(ECommonUserOnlineContext Context = ECommonUserOnlineContext::Game) const;
@@ -538,16 +565,20 @@ protected:
 	virtual void ProcessLoginRequest(TSharedRef<FUserLoginRequest> Request);
 
 	/** Call login on OSS, with platform auth from the platform OSS. Return true if AutoLogin started */
-	virtual bool TransferPlatformAuth(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
+	virtual bool TransferPlatformAuth(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                                  FPlatformUserId PlatformUser);
 
 	/** Call AutoLogin on OSS. Return true if AutoLogin started. */
-	virtual bool AutoLogin(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
+	virtual bool AutoLogin(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                       FPlatformUserId PlatformUser);
 
 	/** Call ShowLoginUI on OSS. Return true if ShowLoginUI started. */
-	virtual bool ShowLoginUI(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
+	virtual bool ShowLoginUI(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                         FPlatformUserId PlatformUser);
 
 	/** Call QueryUserPrivilege on OSS. Return true if QueryUserPrivilege started. */
-	virtual bool QueryUserPrivilege(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
+	virtual bool QueryUserPrivilege(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                                FPlatformUserId PlatformUser);
 
 	/** OSS-specific functions */
 #if COMMONUSER_OSSV1
@@ -556,9 +587,12 @@ protected:
 	virtual ECommonUserPrivilegeResult ConvertOSSPrivilegeResult(EUserPrivileges::Type Privilege, uint32 Results) const;
 
 	void BindOnlineDelegatesOSSv1();
-	bool AutoLoginOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
-	bool ShowLoginUIOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
-	bool QueryUserPrivilegeOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request, FPlatformUserId PlatformUser);
+	bool AutoLoginOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                    FPlatformUserId PlatformUser);
+	bool ShowLoginUIOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                      FPlatformUserId PlatformUser);
+	bool QueryUserPrivilegeOSSv1(FOnlineContextCache* System, TSharedRef<FUserLoginRequest> Request,
+	                             FPlatformUserId PlatformUser);
 #else
 	virtual ECommonUserPrivilege ConvertOnlineServicesPrivilege(UE::Online::EUserPrivileges Privilege) const;
 	virtual UE::Online::EUserPrivileges ConvertOnlineServicesPrivilege(ECommonUserPrivilege Privilege) const;
@@ -575,12 +609,23 @@ protected:
 
 	/** Callbacks for OSS functions */
 #if COMMONUSER_OSSV1
-	virtual void HandleIdentityLoginStatusChanged(int32 PlatformUserIndex, ELoginStatus::Type OldStatus, ELoginStatus::Type NewStatus, const FUniqueNetId& NewId, ECommonUserOnlineContext Context);
-	virtual void HandleUserLoginCompleted(int32 PlatformUserIndex, bool bWasSuccessful, const FUniqueNetId& NetId, const FString& Error, ECommonUserOnlineContext Context);
-	virtual void HandleControllerPairingChanged(int32 PlatformUserIndex, FControllerPairingChangedUserInfo PreviousUser, FControllerPairingChangedUserInfo NewUser);
-	virtual void HandleNetworkConnectionStatusChanged(const FString& ServiceName, EOnlineServerConnectionStatus::Type LastConnectionStatus, EOnlineServerConnectionStatus::Type ConnectionStatus, ECommonUserOnlineContext Context);
-	virtual void HandleOnLoginUIClosed(TSharedPtr<const FUniqueNetId> LoggedInNetId, const int PlatformUserIndex, const FOnlineError& Error, ECommonUserOnlineContext Context);
-	virtual void HandleCheckPrivilegesComplete(const FUniqueNetId& UserId, EUserPrivileges::Type Privilege, uint32 PrivilegeResults, ECommonUserPrivilege RequestedPrivilege, TWeakObjectPtr<UCommonUserInfo> CommonUserInfo, ECommonUserOnlineContext Context);
+	virtual void HandleIdentityLoginStatusChanged(int32 PlatformUserIndex, ELoginStatus::Type OldStatus,
+	                                              ELoginStatus::Type NewStatus, const FUniqueNetId& NewId,
+	                                              ECommonUserOnlineContext Context);
+	virtual void HandleUserLoginCompleted(int32 PlatformUserIndex, bool bWasSuccessful, const FUniqueNetId& NetId,
+	                                      const FString& Error, ECommonUserOnlineContext Context);
+	virtual void HandleControllerPairingChanged(int32 PlatformUserIndex, FControllerPairingChangedUserInfo PreviousUser,
+	                                            FControllerPairingChangedUserInfo NewUser);
+	virtual void HandleNetworkConnectionStatusChanged(const FString& ServiceName,
+	                                                  EOnlineServerConnectionStatus::Type LastConnectionStatus,
+	                                                  EOnlineServerConnectionStatus::Type ConnectionStatus,
+	                                                  ECommonUserOnlineContext Context);
+	virtual void HandleOnLoginUIClosed(TSharedPtr<const FUniqueNetId> LoggedInNetId, const int PlatformUserIndex,
+	                                   const FOnlineError& Error, ECommonUserOnlineContext Context);
+	virtual void HandleCheckPrivilegesComplete(const FUniqueNetId& UserId, EUserPrivileges::Type Privilege,
+	                                           uint32 PrivilegeResults, ECommonUserPrivilege RequestedPrivilege,
+	                                           TWeakObjectPtr<UCommonUserInfo> CommonUserInfo,
+	                                           ECommonUserOnlineContext Context);
 #else
 	virtual void HandleAuthLoginStatusChanged(const UE::Online::FAuthLoginStatusChanged& EventParameters, ECommonUserOnlineContext Context);
 	virtual void HandleUserLoginCompletedV2(const UE::Online::TOnlineResult<UE::Online::FAuthLogin>& Result, FPlatformUserId PlatformUser, ECommonUserOnlineContext Context);
@@ -592,9 +637,12 @@ protected:
 	/**
 	 * Callback for when an input device (i.e. a gamepad) has been connected or disconnected. 
 	 */
-	virtual void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
+	virtual void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState,
+	                                                FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
 
-	virtual void HandleLoginForUserInitialize(const UCommonUserInfo* UserInfo, ELoginStatusType NewStatus, FUniqueNetIdRepl NetId, const TOptional<FOnlineErrorType>& Error, ECommonUserOnlineContext Context, FCommonUserInitializeParams Params);
+	virtual void HandleLoginForUserInitialize(const UCommonUserInfo* UserInfo, ELoginStatusType NewStatus,
+	                                          FUniqueNetIdRepl NetId, const TOptional<FOnlineErrorType>& Error,
+	                                          ECommonUserOnlineContext Context, FCommonUserInitializeParams Params);
 	virtual void HandleUserInitializeFailed(FCommonUserInitializeParams Params, FText Error);
 	virtual void HandleUserInitializeSucceeded(FCommonUserInitializeParams Params);
 
@@ -616,7 +664,7 @@ protected:
 
 	/** Maximum number of local players */
 	int32 MaxNumberOfLocalPlayers = 0;
-	
+
 	/** True if this is a dedicated server, which doesn't require a LocalPlayer */
 	bool bIsDedicatedServer = false;
 
@@ -626,7 +674,7 @@ protected:
 	/** Information about each local user, from local player index to user */
 	UPROPERTY()
 	TMap<int32, TObjectPtr<UCommonUserInfo>> LocalUserInfos;
-	
+
 	/** Cached platform/mode trait tags */
 	FGameplayTagContainer CachedTraitTags;
 

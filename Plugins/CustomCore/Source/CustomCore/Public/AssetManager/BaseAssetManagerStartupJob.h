@@ -25,7 +25,7 @@ struct FBaseAssetManagerStartupJob
 	}
 
 	/** Perform actual loading, will return a handle if it created one */
-	TSharedPtr<FStreamableHandle> DoJob() ;
+	TSharedPtr<FStreamableHandle> DoJob();
 
 	void UpdateSubstepProgress(const float NewProgress) const
 	{
@@ -45,5 +45,4 @@ struct FBaseAssetManagerStartupJob
 			}
 		}
 	}
-
 };

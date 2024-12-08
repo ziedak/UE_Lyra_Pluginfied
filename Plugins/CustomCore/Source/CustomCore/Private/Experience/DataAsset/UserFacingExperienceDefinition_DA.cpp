@@ -2,7 +2,7 @@
 
 
 #include "Experience/DataAsset/UserFacingExperienceDefinition_DA.h"
-#include "CommonSessionSubsystem.h" 
+#include "CommonSessionSubsystem.h"
 
 UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHostingRequest(
 	const UObject* WorldContextObject) const
@@ -13,8 +13,10 @@ UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHos
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
 	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UCommonSession_HostSessionRequest* Result = nullptr;
-	
-	if (UCommonSessionSubsystem* Subsystem = GameInstance ? GameInstance->GetSubsystem<UCommonSessionSubsystem>() : nullptr)
+
+	if (UCommonSessionSubsystem* Subsystem = GameInstance
+		                                         ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
+		                                         : nullptr)
 	{
 		Result = Subsystem->CreateOnlineHostSessionRequest();
 	}

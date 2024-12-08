@@ -21,6 +21,7 @@ class FSlateRect;
 #define LOCTEXT_NAMESPACE "CommonKeybindWidget"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCommonPlayerInput, Log, All);
+
 DEFINE_LOG_CATEGORY(LogCommonPlayerInput);
 
 struct FSlateDrawUtil
@@ -76,19 +77,19 @@ struct FSlateDrawUtil
 };
 
 
-
 void FMeasuredText::SetText(const FText& InText)
 {
 	CachedText = InText;
 	bTextDirty = true;
 }
 
-FVector2D FMeasuredText::UpdateTextSize(const FSlateFontInfo &InFontInfo, float FontScale) const
+FVector2D FMeasuredText::UpdateTextSize(const FSlateFontInfo& InFontInfo, float FontScale) const
 {
 	if (bTextDirty)
 	{
 		bTextDirty = false;
-		CachedTextSize = FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(CachedText, InFontInfo, FontScale);
+		CachedTextSize = FSlateApplication::Get().GetRenderer()->GetFontMeasureService()->Measure(
+			CachedText, InFontInfo, FontScale);
 	}
 
 	return CachedTextSize;
@@ -96,8 +97,8 @@ FVector2D FMeasuredText::UpdateTextSize(const FSlateFontInfo &InFontInfo, float 
 
 UCommonPlayerInputKey::UCommonPlayerInputKey(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, BoundKeyFallback(EKeys::Invalid)
-	, InputTypeOverride(ECommonInputType::Count)
+	  , BoundKeyFallback(EKeys::Invalid)
+	  , InputTypeOverride(ECommonInputType::Count)
 {
 	FrameSize = FVector2D(0, 0);
 }
@@ -134,9 +135,12 @@ void UCommonPlayerInputKey::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-int32 UCommonPlayerInputKey::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
+int32 UCommonPlayerInputKey::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry,
+                                         const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements,
+                                         int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
 {
-	int32 MaxLayer = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
+	int32 MaxLayer = Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle,
+	                                    bParentEnabled);
 
 	if (bDrawProgress)
 	{
@@ -220,7 +224,9 @@ int32 UCommonPlayerInputKey::NativePaint(const FPaintArgs& Args, const FGeometry
 
 void UCommonPlayerInputKey::StartHoldProgress(FName HoldActionName, float HoldDuration)
 {
-	if (HoldActionName == BoundAction && ensureMsgf(HoldDuration > 0.0f, TEXT("Trying to perform hold action \"%s\" with no HoldDuration"), *BoundAction.ToString()))
+	if (HoldActionName == BoundAction && ensureMsgf(HoldDuration > 0.0f,
+	                                                TEXT("Trying to perform hold action \"%s\" with no HoldDuration"),
+	                                                *BoundAction.ToString()))
 	{
 		HoldKeybindDuration = HoldDuration;
 		HoldKeybindStartTime = GetWorld()->GetRealTimeSeconds();
@@ -273,7 +279,7 @@ void UCommonPlayerInputKey::UpdateHoldProgress()
 			ProgressPercentageMID->SetScalarParameterValue(PercentageMaterialParameterName, HoldKeybindPercentage);
 
 			// Schedule a callback for next tick to update the hold progress again.
-			GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::UpdateHoldProgress);		
+			GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::UpdateHoldProgress);
 		}
 
 		if (bShowTimeCountDown)
@@ -306,13 +312,15 @@ void UCommonPlayerInputKey::UpdateKeybindWidget()
 		return;
 	}
 
-	const bool bIsUsingGamepad = (InputTypeOverride == ECommonInputType::Gamepad) || ((CommonInputSubsystem != nullptr) && (CommonInputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad)) ;
+	const bool bIsUsingGamepad = (InputTypeOverride == ECommonInputType::Gamepad) || ((CommonInputSubsystem != nullptr)
+		&& (CommonInputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad));
 
 	if (!BoundKey.IsValid())
 	{
 		BoundKey = BoundKeyFallback;
 	}
-	UE_LOG(LogCommonPlayerInput, Verbose, TEXT("UCommonKeybindWidget::UpdateKeybindWidget: Action: %s Key: %s"), *(BoundAction.ToString()), *(BoundKey.ToString()));
+	UE_LOG(LogCommonPlayerInput, Verbose, TEXT("UCommonKeybindWidget::UpdateKeybindWidget: Action: %s Key: %s"),
+	       *(BoundAction.ToString()), *(BoundKey.ToString()));
 
 	// Must be called before Update, due to the creation of ProgressPercentageMID which will be used in Update
 	SetupHoldKeybind();
@@ -458,7 +466,7 @@ void UCommonPlayerInputKey::ShowHoldBackPlate()
 	if (IsHoldKeybind())
 	{
 		float BrushSizeAsValue = 32.0f;
-		
+
 		float DesiredBoxSize = BrushSizeAsValue + 10.0f;
 		if (!bDrawBrushForKey)
 		{
@@ -502,7 +510,8 @@ void UCommonPlayerInputKey::ShowHoldBackPlate()
 	}
 }
 
-void UCommonPlayerInputKey::HandlePlayerControllerSet(UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController)
+void UCommonPlayerInputKey::HandlePlayerControllerSet(UCommonLocalPlayer* LocalPlayer,
+                                                      APlayerController* PlayerController)
 {
 	if (bWaitingForPlayerController && GetOwningPlayer<ACommonPlayerController>())
 	{
@@ -523,7 +532,8 @@ void UCommonPlayerInputKey::RecalculateDesiredSize()
 
 	if (bDrawCountdownText)
 	{
-		MaximumDesiredSize = FVector2D::Max(MaximumDesiredSize, CountdownText.UpdateTextSize(CountdownTextFont, LayoutScale));
+		MaximumDesiredSize = FVector2D::Max(MaximumDesiredSize,
+		                                    CountdownText.UpdateTextSize(CountdownTextFont, LayoutScale));
 	}
 	else if (bDrawBrushForKey)
 	{
@@ -540,4 +550,3 @@ void UCommonPlayerInputKey::RecalculateDesiredSize()
 }
 
 #undef LOCTEXT_NAMESPACE
-

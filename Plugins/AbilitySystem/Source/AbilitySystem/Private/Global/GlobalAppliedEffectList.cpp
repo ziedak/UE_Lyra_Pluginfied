@@ -12,7 +12,8 @@ void FGlobalAppliedEffectList::AddToAsc(const TSubclassOf<UGameplayEffect>& Effe
 	}
 
 	const UGameplayEffect* GameplayEffectCDO = Effect->GetDefaultObject<UGameplayEffect>();
-	const FActiveGameplayEffectHandle GameplayEffectHandle = Asc->ApplyGameplayEffectToSelf(GameplayEffectCDO, /*Level=*/ 1, Asc->MakeEffectContext());
+	const FActiveGameplayEffectHandle GameplayEffectHandle = Asc->ApplyGameplayEffectToSelf(
+		GameplayEffectCDO, /*Level=*/ 1, Asc->MakeEffectContext());
 	Handles.Add(Asc, GameplayEffectHandle);
 }
 

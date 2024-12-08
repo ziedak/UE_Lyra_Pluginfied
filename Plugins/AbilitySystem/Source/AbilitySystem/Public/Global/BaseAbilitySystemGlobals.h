@@ -15,7 +15,7 @@ UCLASS()
 class ABILITYSYSTEM_API UBaseAbilitySystemGlobals : public UAbilitySystemGlobals
 {
 	GENERATED_BODY()
-	
+
 	/**
 	* Cache commonly used tags here. This has the benefit of one place to set the tag FName in case tag names change and
 	* the function call into UBaseAbilitySystemGlobals::GSGet() is cheaper than calling FGameplayTag::RequestGameplayTag().
@@ -39,6 +39,7 @@ class ABILITYSYSTEM_API UBaseAbilitySystemGlobals : public UAbilitySystemGlobals
 	{
 		return dynamic_cast<UBaseAbilitySystemGlobals&>(Get());
 	}
+
 	/** Should allocate a project specific GameplayEffectContext struct. Caller is responsible for deallocation */
 	virtual FGameplayEffectContext* AllocGameplayEffectContext() const override;
 

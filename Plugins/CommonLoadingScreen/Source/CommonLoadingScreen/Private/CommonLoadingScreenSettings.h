@@ -20,8 +20,6 @@ class UCommonLoadingScreenSettings : public UDeveloperSettingsBackedByCVars
 public:
 	UCommonLoadingScreenSettings();
 
-public:
-	
 	// The widget to load for the loading screen.
 	UPROPERTY(config, EditAnywhere, Category=Display, meta=(MetaClass="/Script/UMG.UserWidget"))
 	FSoftClassPath LoadingScreenWidget;
@@ -35,20 +33,22 @@ public:
 	//
 	// Note: This is not normally applied in the editor for iteration time, but can be 
 	// enabled via HoldLoadingScreenAdditionalSecsEvenInEditor
- 	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s, ConsoleVariable="CommonLoadingScreen.HoldLoadingScreenAdditionalSecs"))
+	UPROPERTY(config, EditAnywhere, Category=Configuration,
+		meta=(ForceUnits=s, ConsoleVariable="CommonLoadingScreen.HoldLoadingScreenAdditionalSecs"))
 	float HoldLoadingScreenAdditionalSecs = 2.0f;
 
 	// The interval in seconds beyond which the loading screen is considered permanently hung (if non-zero).
- 	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s))
+	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s))
 	float LoadingScreenHeartbeatHangDuration = 0.0f;
 
 	// The interval in seconds between each log of what is keeping a loading screen up (if non-zero).
- 	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s))
+	UPROPERTY(config, EditAnywhere, Category=Configuration, meta=(ForceUnits=s))
 	float LogLoadingScreenHeartbeatInterval = 5.0f;
 
 	// When true, the reason the loading screen is shown or hidden will be printed to the log every frame.
-	UPROPERTY(Transient, EditAnywhere, Category=Debugging, meta=(ConsoleVariable="CommonLoadingScreen.LogLoadingScreenReasonEveryFrame"))
-	bool LogLoadingScreenReasonEveryFrame = 0;
+	UPROPERTY(Transient, EditAnywhere, Category=Debugging,
+		meta=(ConsoleVariable="CommonLoadingScreen.LogLoadingScreenReasonEveryFrame"))
+	bool LogLoadingScreenReasonEveryFrame = false;
 
 	// Force the loading screen to be displayed (useful for debugging)
 	UPROPERTY(Transient, EditAnywhere, Category=Debugging, meta=(ConsoleVariable="CommonLoadingScreen.AlwaysShow"))
@@ -64,4 +64,3 @@ public:
 	UPROPERTY(config, EditAnywhere, Category=Configuration)
 	bool ForceTickLoadingScreenEvenInEditor = true;
 };
-

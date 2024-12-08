@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "LyraInputComponent.h"
+#include "InputConfig/LyraInputComponent.h"
 #include "MyInputComponent.generated.h"
 
 

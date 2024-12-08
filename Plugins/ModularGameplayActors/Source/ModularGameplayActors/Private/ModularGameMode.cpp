@@ -26,4 +26,3 @@ AModularGameMode::AModularGameMode(const FObjectInitializer& ObjectInitializer)
 	PlayerStateClass = AModularPlayerState::StaticClass();
 	DefaultPawnClass = AModularPawn::StaticClass();
 }
-

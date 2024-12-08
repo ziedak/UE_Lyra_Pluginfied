@@ -4,7 +4,7 @@
 
 UCombatSet::UCombatSet()
 	: BaseDamage(0.0f)
-	, BaseHeal(0.0f)
+	  , BaseHeal(0.0f)
 {
 }
 
@@ -19,7 +19,6 @@ void UCombatSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 void UCombatSet::OnRep_BaseDamage(const FGameplayAttributeData& OldValue) const
 {
-
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCombatSet, BaseDamage, OldValue);
 }
 

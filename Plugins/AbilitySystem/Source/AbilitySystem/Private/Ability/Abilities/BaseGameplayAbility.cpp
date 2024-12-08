@@ -55,7 +55,9 @@ APlayerController* UBaseGameplayAbility::GetPlayerControllerFromActorInfo() cons
 AController* UBaseGameplayAbility::GetControllerFromActorInfo() const
 {
 	if (!CurrentActorInfo)
+	{
 		return nullptr;
+	}
 
 	if (AController* PC = CurrentActorInfo->PlayerController.Get())
 	{
@@ -98,14 +100,18 @@ void UBaseGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActor
 
 	// Try to activate if activation policy is on spawn.
 	if (!ActorInfo || Spec.IsActive() || bIsPredicting || (ActivationPolicy != EAbilityActivationPolicy::OnSpawn))
+	{
 		return;
+	}
 
 	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
 	const AActor* AvatarActor = ActorInfo->AvatarActor.Get();
 
 	// If avatar actor is torn off or about to die, don't try to activate until we get the new one.
 	if (!ASC || !AvatarActor || AvatarActor->GetTearOff() || (AvatarActor->GetLifeSpan() > 0.0f))
+	{
 		return;
+	}
 
 	const bool bIsLocalExecution = (NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalPredicted) || (
 		NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalOnly);
@@ -156,7 +162,9 @@ bool UBaseGameplayAbility::ChangeActivationGroup(EAbilityActivationGroup NewGrou
 	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(ChangeActivationGroup, false);
 
 	if (!CanChangeActivationGroup(NewGroup))
+	{
 		return false;
+	}
 
 	if (ActivationGroup != NewGroup)
 	{
@@ -250,19 +258,27 @@ bool UBaseGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle H
                                               FGameplayTagContainer* OptionalRelevantTags) const
 {
 	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
+	{
 		return false;
+	}
 
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
 		return false;
+	}
 
 	//@TODO Possibly remove after setting up tag relationships
 	const UBaseAbilitySystemComponent* Asc = CastChecked<
 		UBaseAbilitySystemComponent>(ActorInfo->AbilitySystemComponent.Get());
 	if (!Asc->IsActivationGroupBlocked(ActivationGroup))
+	{
 		return true;
+	}
 	// If the activation group is blocked, add the relevant tag to the OptionalRelevantTags container and return false
 	if (OptionalRelevantTags)
+	{
 		OptionalRelevantTags->AddTag(AbilityTags::ACTIVATE_FAIL_ACTIVATION_GROUP);
+	}
 
 	return false;
 }
@@ -322,16 +338,22 @@ bool UBaseGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
                                      OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
 	if (!Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) || !ActorInfo)
+	{
 		return false;
+	}
 
 	// Verify we can afford any additional costs
 	for (const TObjectPtr<UBaseAbilityCost>& AdditionalCost : AdditionalCosts)
 	{
 		if (AdditionalCost != nullptr)
+		{
 			continue;
+		}
 
 		if (!AdditionalCost->CheckCost(this, Handle, ActorInfo, /*inout*/ OptionalRelevantTags))
+		{
 			return false;
+		}
 	}
 
 	return true;
@@ -350,20 +372,26 @@ void UBaseGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	auto DetermineIfAbilityHitTarget = [&]()
 	{
 		if (ActorInfo->IsNetAuthority())
+		{
 			return false;
+		}
 
 		const UBaseAbilitySystemComponent* Asc = Cast<UBaseAbilitySystemComponent>(
 			ActorInfo->AbilitySystemComponent.Get());
 
 		if (!Asc)
+		{
 			return false;
+		}
 
 		FGameplayAbilityTargetDataHandle TargetData;
 		Asc->GetAbilityTargetData(Handle, ActivationInfo, TargetData);
 		for (int32 TargetDataIdx = 0; TargetDataIdx < TargetData.Data.Num(); ++TargetDataIdx)
 		{
 			if (UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetData, TargetDataIdx))
+			{
 				return true;
+			}
 		}
 
 		return false;
@@ -375,7 +403,9 @@ void UBaseGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	for (const TObjectPtr<UBaseAbilityCost>& AdditionalCost : AdditionalCosts)
 	{
 		if (AdditionalCost == nullptr)
+		{
 			continue;
+		}
 
 		if (AdditionalCost->ShouldOnlyApplyCostOnHit())
 		{

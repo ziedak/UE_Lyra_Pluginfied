@@ -10,7 +10,8 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_ListenForGameplayMessage)
 
-UAsyncAction_ListenForGameplayMessage* UAsyncAction_ListenForGameplayMessage::ListenForGameplayMessages(UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, EGameplayMessageMatch MatchType)
+UAsyncAction_ListenForGameplayMessage* UAsyncAction_ListenForGameplayMessage::ListenForGameplayMessages(
+	UObject* WorldContextObject, FGameplayTag Channel, UScriptStruct* PayloadType, EGameplayMessageMatch MatchType)
 {
 	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
 	if (!World)
@@ -38,15 +39,19 @@ void UAsyncAction_ListenForGameplayMessage::Activate()
 
 			TWeakObjectPtr<UAsyncAction_ListenForGameplayMessage> WeakThis(this);
 			ListenerHandle = Router.RegisterListenerInternal(ChannelToRegister,
-				[WeakThis](FGameplayTag Channel, const UScriptStruct* StructType, const void* Payload)
-				{
-					if (UAsyncAction_ListenForGameplayMessage* StrongThis = WeakThis.Get())
-					{
-						StrongThis->HandleMessageReceived(Channel, StructType, Payload);
-					}
-				},
-				MessageStructType.Get(),
-				MessageMatchType);
+			                                                 [WeakThis](FGameplayTag Channel,
+			                                                            const UScriptStruct* StructType,
+			                                                            const void* Payload)
+			                                                 {
+				                                                 if (UAsyncAction_ListenForGameplayMessage* StrongThis =
+					                                                 WeakThis.Get())
+				                                                 {
+					                                                 StrongThis->HandleMessageReceived(
+						                                                 Channel, StructType, Payload);
+				                                                 }
+			                                                 },
+			                                                 MessageStructType.Get(),
+			                                                 MessageMatchType);
 
 			return;
 		}
@@ -79,16 +84,18 @@ DEFINE_FUNCTION(UAsyncAction_ListenForGameplayMessage::execGetPayload)
 	bool bSuccess = false;
 
 	// Make sure the type we are trying to get through the blueprint node matches the type of the message payload received.
-	if ((StructProp != nullptr) && (StructProp->Struct != nullptr) && (MessagePtr != nullptr) && (StructProp->Struct == P_THIS->MessageStructType.Get()) && (P_THIS->ReceivedMessagePayloadPtr != nullptr))
+	if ((StructProp != nullptr) && (StructProp->Struct != nullptr) && (MessagePtr != nullptr) && (StructProp->Struct ==
+		P_THIS->MessageStructType.Get()) && (P_THIS->ReceivedMessagePayloadPtr != nullptr))
 	{
 		StructProp->Struct->CopyScriptStruct(MessagePtr, P_THIS->ReceivedMessagePayloadPtr);
 		bSuccess = true;
 	}
 
-	*(bool*)RESULT_PARAM = bSuccess;
+	*static_cast<bool*>(RESULT_PARAM) = bSuccess;
 }
 
-void UAsyncAction_ListenForGameplayMessage::HandleMessageReceived(FGameplayTag Channel, const UScriptStruct* StructType, const void* Payload)
+void UAsyncAction_ListenForGameplayMessage::HandleMessageReceived(FGameplayTag Channel, const UScriptStruct* StructType,
+                                                                  const void* Payload)
 {
 	if (!MessageStructType.Get() || (MessageStructType.Get() == StructType))
 	{
@@ -107,4 +114,3 @@ void UAsyncAction_ListenForGameplayMessage::HandleMessageReceived(FGameplayTag C
 		SetReadyToDestroy();
 	}
 }
-

@@ -33,7 +33,6 @@ void ABaseGameState::PostInitializeComponents()
 }
 
 
-
 void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -56,7 +55,9 @@ void ABaseGameState::Tick(float DeltaSeconds)
 void ABaseGameState::SetServerFPS(const float NewServerFPS)
 {
 	if (GetLocalRole() != ROLE_Authority || ServerFPS == NewServerFPS)
+	{
 		return;
+	}
 
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ServerFPS, this);
 	ServerFPS = NewServerFPS;
@@ -65,7 +66,9 @@ void ABaseGameState::SetServerFPS(const float NewServerFPS)
 void ABaseGameState::MulticastMessageToClients_Unreliable_Implementation(const FVerbMessage Message)
 {
 	if (GetNetMode() == NM_Client)
+	{
 		UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message);
+	}
 }
 
 void ABaseGameState::MulticastMessageToClients_Reliable_Implementation(const FVerbMessage Message)

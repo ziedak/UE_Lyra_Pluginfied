@@ -15,7 +15,6 @@ class UBaseGamePhaseAbility : public UBaseGameplayAbility
 	GENERATED_BODY()
 
 public:
-
 	UBaseGamePhaseAbility(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	const FGameplayTag& GetGamePhaseTag() const { return GamePhaseTag; }
@@ -25,11 +24,12 @@ public:
 #endif
 
 protected:
-
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-
-protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	                             const FGameplayAbilityActivationInfo ActivationInfo,
+	                             const FGameplayEventData* TriggerEventData) override;
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+	                        const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+	                        bool bWasCancelled) override;
 
 	// Defines the game phase that this game phase ability is part of.  So for example,
 	// if your game phase is GamePhase.RoundStart, then it will cancel all sibling phases.

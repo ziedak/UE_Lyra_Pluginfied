@@ -28,7 +28,7 @@ class UK2Node_AsyncAction_ListenForGameplayMessages : public UK2Node_AsyncAction
 	virtual void PinDefaultValueChanged(UEdGraphPin* ChangedPin) override;
 	virtual void GetPinHoverText(const UEdGraphPin& Pin, FString& HoverTextOut) const override;
 	//~End of UEdGraphNode interface
-	
+
 	//~UK2Node interface
 	virtual void GetMenuActions(FBlueprintActionDatabaseRegistrar& ActionRegistrar) const override;
 	virtual void AllocateDefaultPins() override;
@@ -40,7 +40,6 @@ protected:
 		UEdGraphPin*& InOutLastThenPin, UEdGraph* SourceGraph, FKismetCompilerContext& CompilerContext) override;
 
 private:
-	
 	// Add the GetPayload flow to the end of the delegate handler's logic chain
 	bool HandlePayloadImplementation(
 		FMulticastDelegateProperty* CurrentProperty,

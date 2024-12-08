@@ -23,7 +23,8 @@ UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationOk(c
 	return Descriptor;
 }
 
-UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationOkCancel(const FText& Header, const FText& Body)
+UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationOkCancel(
+	const FText& Header, const FText& Body)
 {
 	UCommonGameDialogDescriptor* Descriptor = NewObject<UCommonGameDialogDescriptor>();
 	Descriptor->Header = Header;
@@ -43,7 +44,8 @@ UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationOkCa
 	return Descriptor;
 }
 
-UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesNo(const FText& Header, const FText& Body)
+UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesNo(
+	const FText& Header, const FText& Body)
 {
 	UCommonGameDialogDescriptor* Descriptor = NewObject<UCommonGameDialogDescriptor>();
 	Descriptor->Header = Header;
@@ -63,7 +65,8 @@ UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesN
 	return Descriptor;
 }
 
-UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesNoCancel(const FText& Header, const FText& Body)
+UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesNoCancel(
+	const FText& Header, const FText& Body)
 {
 	UCommonGameDialogDescriptor* Descriptor = NewObject<UCommonGameDialogDescriptor>();
 	Descriptor->Header = Header;
@@ -90,17 +93,15 @@ UCommonGameDialogDescriptor* UCommonGameDialogDescriptor::CreateConfirmationYesN
 
 UCommonGameDialog::UCommonGameDialog()
 {
-
 }
 
-void UCommonGameDialog::SetupDialog(UCommonGameDialogDescriptor* Descriptor, FCommonMessagingResultDelegate ResultCallback)
+void UCommonGameDialog::SetupDialog(UCommonGameDialogDescriptor* Descriptor,
+                                    FCommonMessagingResultDelegate ResultCallback)
 {
-
 }
 
 void UCommonGameDialog::KillDialog()
 {
-
 }
 
 #undef LOCTEXT_NAMESPACE

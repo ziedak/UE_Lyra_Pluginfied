@@ -16,7 +16,9 @@ FPrimaryAssetId ABaseWorldSettings::GetDefaultGameplayExperience() const
 {
 	FPrimaryAssetId Result;
 	if (DefaultGameplayExperience.IsNull())
+	{
 		return Result;
+	}
 
 	Result = UAssetManager::Get().GetPrimaryAssetIdForPath(DefaultGameplayExperience.ToSoftObjectPath());
 

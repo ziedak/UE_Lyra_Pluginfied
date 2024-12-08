@@ -1,5 +1,9 @@
 # Gas
 
+CMD
+D:/"Program Files"/"Epic Games"/UE_5.4/Engine/Build/BatchFiles/Build.bat Gas Win64 Development -project="E:/Unreal Projects/ue5/zied/Gas/Gas.uproject"
+
+
 ## Input System:
 Resources:
 - [Input System](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/index.html)
@@ -7,6 +11,7 @@ Resources:
 - [Input Action System](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/InputActionSystem/index.html)
 - [Input Mapping Context](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/InputMappingContext/index.html)
 - [Input Routing](https://www.exportgeometry.com/blog/input-routing-deep-dive)
+- [Introduction to Common UI](https://www.youtube.com/watch?v=TTB5y-03SnE&t=4581s)
 ### Enhanced Input System:
 
 - This system pushes input bindings into data assets. There are two pieces:
@@ -29,3 +34,9 @@ This basically just allows you to give each key on an input device (keyboard, co
 Here you specify a universal “click” and “back” action. The action must link to a row in your input action table.
 #### FNavigationConfig black magic:
 You can actually rebind the engine definitions for basic actions like a “click”.
+
+
+# Strings
+Name =  constant string
+Sting = normal string
+Text = Localizable text

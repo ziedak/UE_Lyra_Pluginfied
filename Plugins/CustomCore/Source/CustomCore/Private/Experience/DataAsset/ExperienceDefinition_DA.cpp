@@ -37,7 +37,9 @@ EDataValidationResult UExperienceDefinition_DA::IsDataValid(FDataValidationConte
 
 	// Make sure users didn't subclass from a BP of this (it's fine and expected to subclass once in BP, just not twice)
 	if (GetClass()->IsNative())
+	{
 		return Result;
+	}
 
 	const UClass* ParentClass = GetClass()->GetSuperClass();
 
@@ -49,7 +51,9 @@ EDataValidationResult UExperienceDefinition_DA::IsDataValid(FDataValidationConte
 	}
 
 	if (FirstNativeParent == ParentClass)
+	{
 		return Result;
+	}
 
 	// Inheritance not allowed
 	Context.AddError(FText::Format(LOCTEXT("Experience_Inheritance_Is_Unsupported",
@@ -69,7 +73,9 @@ void UExperienceDefinition_DA::UpdateAssetBundleData()
 	for (UGameFeatureAction* Action : GameFeatureActions)
 	{
 		if (Action)
+		{
 			Action->AddAdditionalAssetBundleData(AssetBundleData);
+		}
 	}
 }
 #endif // WITH_EDITORONLY_DATA

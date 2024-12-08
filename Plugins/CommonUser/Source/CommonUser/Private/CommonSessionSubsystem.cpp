@@ -30,6 +30,7 @@ using namespace UE::Online;
 
 
 DECLARE_LOG_CATEGORY_EXTERN(LogCommonSession, Log, All);
+
 DEFINE_LOG_CATEGORY(LogCommonSession);
 
 #define LOCTEXT_NAMESPACE "CommonUser"
@@ -146,7 +147,9 @@ public:
 		SearchRequest = InSearchRequest;
 	}
 
-	virtual ~FCommonOnlineSearchSettingsBase() {}
+	virtual ~FCommonOnlineSearchSettingsBase() override
+	{
+	}
 
 	virtual void AddReferencedObjects(FReferenceCollector& Collector) override
 	{
@@ -159,7 +162,6 @@ public:
 		return NameString;
 	}
 
-public:
 	TObjectPtr<UCommonSession_SearchSessionRequest> SearchRequest = nullptr;
 };
 
@@ -170,7 +172,6 @@ public:
 class FCommonSession_OnlineSessionSettings : public FOnlineSessionSettings
 {
 public:
-
 	FCommonSession_OnlineSessionSettings(bool bIsLAN = false, bool bIsPresence = false, int32 MaxNumPlayers = 4)
 	{
 		NumPublicConnections = MaxNumPlayers;
@@ -188,7 +189,9 @@ public:
 		bAllowJoinViaPresenceFriendsOnly = false;
 	}
 
-	virtual ~FCommonSession_OnlineSessionSettings() {}
+	virtual ~FCommonSession_OnlineSessionSettings() override
+	{
+	}
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -212,7 +215,9 @@ public:
 		}
 	}
 
-	virtual ~FCommonOnlineSearchSettingsOSSv1() {}
+	virtual ~FCommonOnlineSearchSettingsOSSv1() override
+	{
+	}
 };
 #else
 
@@ -247,10 +252,7 @@ FString UCommonSession_HostSessionRequest::GetMapName() const
 	{
 		return MapAssetData.PackageName.ToString();
 	}
-	else
-	{
-		return FString();
-	}
+	return FString();
 }
 
 FString UCommonSession_HostSessionRequest::ConstructTravelURL() const
@@ -261,7 +263,7 @@ FString UCommonSession_HostSessionRequest::ConstructTravelURL() const
 	{
 		CombinedExtraArgs += TEXT("?bIsLanMatch");
 	}
-	
+
 	if (OnlineMode != ECommonSessionOnlineMode::Offline)
 	{
 		CombinedExtraArgs += TEXT("?listen");
@@ -285,8 +287,8 @@ FString UCommonSession_HostSessionRequest::ConstructTravelURL() const
 	//bIsRecordingDemo ? TEXT("?DemoRec") : TEXT(""));
 
 	return FString::Printf(TEXT("%s%s"),
-		*GetMapName(),
-		*CombinedExtraArgs);
+	                       *GetMapName(),
+	                       *CombinedExtraArgs);
 }
 
 bool UCommonSession_HostSessionRequest::ValidateAndLogErrors(FText& OutError) const
@@ -294,7 +296,10 @@ bool UCommonSession_HostSessionRequest::ValidateAndLogErrors(FText& OutError) co
 #if WITH_SERVER_CODE
 	if (GetMapName().IsEmpty())
 	{
-		OutError = FText::Format(NSLOCTEXT("NetworkErrors", "InvalidMapFormat", "Can't find asset data for MapID {0}, hosting request failed."), FText::FromString(MapID.ToString()));
+		OutError = FText::Format(
+			NSLOCTEXT("NetworkErrors", "InvalidMapFormat",
+			          "Can't find asset data for MapID {0}, hosting request failed."),
+			FText::FromString(MapID.ToString()));
 		return false;
 	}
 
@@ -345,32 +350,41 @@ void UCommonSessionSubsystem::BindOnlineDelegatesOSSv1()
 	const IOnlineSessionPtr SessionInterface = OnlineSub->GetSessionInterface();
 	check(SessionInterface.IsValid());
 
-	SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete));
-	SessionInterface->AddOnStartSessionCompleteDelegate_Handle(FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete));
-	SessionInterface->AddOnUpdateSessionCompleteDelegate_Handle(FOnUpdateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnUpdateSessionComplete));
-	SessionInterface->AddOnEndSessionCompleteDelegate_Handle(FOnEndSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnEndSessionComplete));
-	SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionComplete));
+	SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(
+		FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete));
+	SessionInterface->AddOnStartSessionCompleteDelegate_Handle(
+		FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete));
+	SessionInterface->AddOnUpdateSessionCompleteDelegate_Handle(
+		FOnUpdateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnUpdateSessionComplete));
+	SessionInterface->AddOnEndSessionCompleteDelegate_Handle(
+		FOnEndSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnEndSessionComplete));
+	SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(
+		FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionComplete));
 
-//	SessionInterface->AddOnMatchmakingCompleteDelegate_Handle(FOnMatchmakingCompleteDelegate::CreateUObject(this, &ThisClass::OnMatchmakingComplete));
-//	SessionInterface->AddOnCancelMatchmakingCompleteDelegate_Handle(FOnCancelMatchmakingCompleteDelegate::CreateUObject(this, &ThisClass::OnCancelMatchmakingComplete));
+	//	SessionInterface->AddOnMatchmakingCompleteDelegate_Handle(FOnMatchmakingCompleteDelegate::CreateUObject(this, &ThisClass::OnMatchmakingComplete));
+	//	SessionInterface->AddOnCancelMatchmakingCompleteDelegate_Handle(FOnCancelMatchmakingCompleteDelegate::CreateUObject(this, &ThisClass::OnCancelMatchmakingComplete));
 
-	SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsComplete));
-// 	SessionInterface->AddOnCancelFindSessionsCompleteDelegate_Handle(FOnCancelFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnCancelFindSessionsComplete));
-// 	SessionInterface->AddOnPingSearchResultsCompleteDelegate_Handle(FOnPingSearchResultsCompleteDelegate::CreateUObject(this, &ThisClass::OnPingSearchResultsComplete));
-	SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete));
+	SessionInterface->AddOnFindSessionsCompleteDelegate_Handle(
+		FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsComplete));
+	// 	SessionInterface->AddOnCancelFindSessionsCompleteDelegate_Handle(FOnCancelFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnCancelFindSessionsComplete));
+	// 	SessionInterface->AddOnPingSearchResultsCompleteDelegate_Handle(FOnPingSearchResultsCompleteDelegate::CreateUObject(this, &ThisClass::OnPingSearchResultsComplete));
+	SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(
+		FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete));
 
-//	TWO_PARAM(OnSessionParticipantJoined, FName, const FUniqueNetId&);
-//	THREE_PARAM(OnSessionParticipantLeft, FName, const FUniqueNetId&, EOnSessionParticipantLeftReason);
-//	ONE_PARAM(OnQosDataRequested, FName);
-//	TWO_PARAM(OnSessionCustomDataChanged, FName, const FOnlineSessionSettings&);
-//	TWO_PARAM(OnSessionSettingsUpdated, FName, const FOnlineSessionSettings&);
-//	THREE_PARAM(OnSessionParticipantSettingsUpdated, FName, const FUniqueNetId&, const FOnlineSessionSettings&);
-//	FOUR_PARAM(OnSessionInviteReceived, const FUniqueNetId& /*UserId*/, const FUniqueNetId& /*FromId*/, const FString& /*AppId*/, const FOnlineSessionSearchResult& /*InviteResult*/);
-//	THREE_PARAM(OnRegisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
-//	THREE_PARAM(OnUnregisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
+	//	TWO_PARAM(OnSessionParticipantJoined, FName, const FUniqueNetId&);
+	//	THREE_PARAM(OnSessionParticipantLeft, FName, const FUniqueNetId&, EOnSessionParticipantLeftReason);
+	//	ONE_PARAM(OnQosDataRequested, FName);
+	//	TWO_PARAM(OnSessionCustomDataChanged, FName, const FOnlineSessionSettings&);
+	//	TWO_PARAM(OnSessionSettingsUpdated, FName, const FOnlineSessionSettings&);
+	//	THREE_PARAM(OnSessionParticipantSettingsUpdated, FName, const FUniqueNetId&, const FOnlineSessionSettings&);
+	//	FOUR_PARAM(OnSessionInviteReceived, const FUniqueNetId& /*UserId*/, const FUniqueNetId& /*FromId*/, const FString& /*AppId*/, const FOnlineSessionSearchResult& /*InviteResult*/);
+	//	THREE_PARAM(OnRegisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
+	//	THREE_PARAM(OnUnregisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
 
-	SessionInterface->AddOnSessionUserInviteAcceptedDelegate_Handle(FOnSessionUserInviteAcceptedDelegate::CreateUObject(this, &ThisClass::HandleSessionUserInviteAccepted));
-	SessionInterface->AddOnSessionFailureDelegate_Handle(FOnSessionFailureDelegate::CreateUObject(this, &ThisClass::HandleSessionFailure));
+	SessionInterface->AddOnSessionUserInviteAcceptedDelegate_Handle(
+		FOnSessionUserInviteAcceptedDelegate::CreateUObject(this, &ThisClass::HandleSessionUserInviteAccepted));
+	SessionInterface->AddOnSessionFailureDelegate_Handle(
+		FOnSessionFailureDelegate::CreateUObject(this, &ThisClass::HandleSessionFailure));
 }
 
 #else
@@ -475,25 +489,25 @@ void UCommonSessionSubsystem::HostSession(APlayerController* HostingPlayer, UCom
 	{
 		if (GetWorld()->GetNetMode() == NM_Client)
 		{
-			SetCreateSessionError(NSLOCTEXT("NetworkErrors", "CannotHostAsClient", "Cannot host offline game as client."));
+			SetCreateSessionError(NSLOCTEXT("NetworkErrors", "CannotHostAsClient",
+			                                "Cannot host offline game as client."));
 			OnCreateSessionComplete(NAME_None, false);
 			return;
 		}
-		else
-		{
-			// Offline so travel to the specified match URL immediately
-			GetWorld()->ServerTravel(Request->ConstructTravelURL());
-		}
+		// Offline so travel to the specified match URL immediately
+		GetWorld()->ServerTravel(Request->ConstructTravelURL());
 	}
 	else
 	{
 		CreateOnlineSessionInternal(LocalPlayer, Request);
 	}
 
-	NotifySessionInformationUpdated(ECommonSessionInformationState::InGame, Request->ModeNameForAdvertisement, Request->GetMapName());
+	NotifySessionInformationUpdated(ECommonSessionInformationState::InGame, Request->ModeNameForAdvertisement,
+	                                Request->GetMapName());
 }
 
-void UCommonSessionSubsystem::CreateOnlineSessionInternal(ULocalPlayer* LocalPlayer, UCommonSession_HostSessionRequest* Request)
+void UCommonSessionSubsystem::CreateOnlineSessionInternal(ULocalPlayer* LocalPlayer,
+                                                          UCommonSession_HostSessionRequest* Request)
 {
 	CreateSessionResult = FOnlineResultInformation();
 	PendingTravelURL = Request->ConstructTravelURL();
@@ -506,7 +520,8 @@ void UCommonSessionSubsystem::CreateOnlineSessionInternal(ULocalPlayer* LocalPla
 }
 
 #if COMMONUSER_OSSV1
-void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv1(ULocalPlayer* LocalPlayer, UCommonSession_HostSessionRequest* Request)
+void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv1(ULocalPlayer* LocalPlayer,
+                                                               UCommonSession_HostSessionRequest* Request)
 {
 	const FName SessionName(NAME_GameSession);
 	const int32 MaxPlayers = Request->GetMaxPlayers();
@@ -531,17 +546,22 @@ void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv1(ULocalPlayer* Loc
 	//@TODO: You can get here on some platforms while trying to do a LAN session, does that require a valid user id?
 	if (ensure(UserId.IsValid()))
 	{
-		HostSettings = MakeShareable(new FCommonSession_OnlineSessionSettings(Request->OnlineMode == ECommonSessionOnlineMode::LAN, bIsPresence, MaxPlayers));
+		HostSettings = MakeShareable(
+			new FCommonSession_OnlineSessionSettings(Request->OnlineMode == ECommonSessionOnlineMode::LAN, bIsPresence,
+			                                         MaxPlayers));
 		HostSettings->bUseLobbiesIfAvailable = Request->bUseLobbies;
-		HostSettings->Set(SETTING_GAMEMODE, Request->ModeNameForAdvertisement, EOnlineDataAdvertisementType::ViaOnlineService);
+		HostSettings->Set(SETTING_GAMEMODE, Request->ModeNameForAdvertisement,
+		                  EOnlineDataAdvertisementType::ViaOnlineService);
 		HostSettings->Set(SETTING_MAPNAME, Request->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineService);
 		//@TODO: HostSettings->Set(SETTING_MATCHING_HOPPER, FString("TeamDeathmatch"), EOnlineDataAdvertisementType::DontAdvertise);
 		HostSettings->Set(SETTING_MATCHING_TIMEOUT, 120.0f, EOnlineDataAdvertisementType::ViaOnlineService);
-		HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString(TEXT("GameSession")), EOnlineDataAdvertisementType::DontAdvertise);
+		HostSettings->Set(SETTING_SESSION_TEMPLATE_NAME, FString(TEXT("GameSession")),
+		                  EOnlineDataAdvertisementType::DontAdvertise);
 		HostSettings->Set(SETTING_ONLINESUBSYSTEM_VERSION, true, EOnlineDataAdvertisementType::ViaOnlineService);
 
 		Sessions->CreateSession(*UserId, SessionName, *HostSettings);
-		NotifySessionInformationUpdated(ECommonSessionInformationState::InGame, Request->ModeNameForAdvertisement, Request->GetMapName());
+		NotifySessionInformationUpdated(ECommonSessionInformationState::InGame, Request->ModeNameForAdvertisement,
+		                                Request->GetMapName());
 	}
 	else
 	{
@@ -614,7 +634,8 @@ void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv2(ULocalPlayer* Loc
 
 void UCommonSessionSubsystem::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnCreateSessionComplete(SessionName: %s, bWasSuccessful: %d)"), *SessionName.ToString(), bWasSuccessful);
+	UE_LOG(LogCommonSession, Log, TEXT("OnCreateSessionComplete(SessionName: %s, bWasSuccessful: %d)"),
+	       *SessionName.ToString(), bWasSuccessful);
 
 #if COMMONUSER_OSSV1 // OSSv2 joins splitscreen players as part of the create call
 	// Add the splitscreen player if one exists
@@ -638,14 +659,16 @@ void UCommonSessionSubsystem::OnCreateSessionComplete(FName SessionName, bool bW
 }
 
 #if COMMONUSER_OSSV1
-void UCommonSessionSubsystem::OnRegisterLocalPlayerComplete_CreateSession(const FUniqueNetId& PlayerId, EOnJoinSessionCompleteResult::Type Result)
+void UCommonSessionSubsystem::OnRegisterLocalPlayerComplete_CreateSession(
+	const FUniqueNetId& PlayerId, EOnJoinSessionCompleteResult::Type Result)
 {
 	FinishSessionCreation(Result == EOnJoinSessionCompleteResult::Success);
 }
 
 void UCommonSessionSubsystem::OnStartSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnStartSessionComplete(SessionName: %s, bWasSuccessful: %d)"), *SessionName.ToString(), bWasSuccessful);
+	UE_LOG(LogCommonSession, Log, TEXT("OnStartSessionComplete(SessionName: %s, bWasSuccessful: %d)"),
+	       *SessionName.ToString(), bWasSuccessful);
 
 	if (bWantToDestroyPendingSession)
 	{
@@ -679,7 +702,8 @@ void UCommonSessionSubsystem::FinishSessionCreation(bool bWasSuccessful)
 			CreateSessionResult.ErrorText = ReturnReason;
 		}
 
-		UE_LOG(LogCommonSession, Error, TEXT("FinishSessionCreation(%s): %s"), *CreateSessionResult.ErrorId, *CreateSessionResult.ErrorText.ToString());
+		UE_LOG(LogCommonSession, Error, TEXT("FinishSessionCreation(%s): %s"), *CreateSessionResult.ErrorId,
+		       *CreateSessionResult.ErrorText.ToString());
 
 		NotifyCreateSessionComplete(CreateSessionResult);
 		NotifySessionInformationUpdated(ECommonSessionInformationState::OutOfGame);
@@ -689,23 +713,27 @@ void UCommonSessionSubsystem::FinishSessionCreation(bool bWasSuccessful)
 #if COMMONUSER_OSSV1
 void UCommonSessionSubsystem::OnUpdateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnUpdateSessionComplete(SessionName: %s, bWasSuccessful: %s"), *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogCommonSession, Log, TEXT("OnUpdateSessionComplete(SessionName: %s, bWasSuccessful: %s"),
+	       *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
 }
 
 void UCommonSessionSubsystem::OnEndSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnEndSessionComplete(SessionName: %s, bWasSuccessful: %s)"), *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogCommonSession, Log, TEXT("OnEndSessionComplete(SessionName: %s, bWasSuccessful: %s)"),
+	       *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
 	CleanUpSessions();
 }
 
 void UCommonSessionSubsystem::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnDestroySessionComplete(SessionName: %s, bWasSuccessful: %s)"), *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogCommonSession, Log, TEXT("OnDestroySessionComplete(SessionName: %s, bWasSuccessful: %s)"),
+	       *SessionName.ToString(), bWasSuccessful ? TEXT("true") : TEXT("false"));
 	bWantToDestroyPendingSession = false;
 }
 #endif // COMMONUSER_OSSV1
 
-void UCommonSessionSubsystem::FindSessions(APlayerController* SearchingPlayer, UCommonSession_SearchSessionRequest* Request)
+void UCommonSessionSubsystem::FindSessions(APlayerController* SearchingPlayer,
+                                           UCommonSession_SearchSessionRequest* Request)
 {
 	if (Request == nullptr)
 	{
@@ -720,7 +748,8 @@ void UCommonSessionSubsystem::FindSessions(APlayerController* SearchingPlayer, U
 #endif // COMMONUSER_OSSV1
 }
 
-void UCommonSessionSubsystem::FindSessionsInternal(APlayerController* SearchingPlayer, const TSharedRef<FCommonOnlineSearchSettings>& InSearchSettings)
+void UCommonSessionSubsystem::FindSessionsInternal(APlayerController* SearchingPlayer,
+                                                   const TSharedRef<FCommonOnlineSearchSettings>& InSearchSettings)
 {
 	if (SearchSettings.IsValid())
 	{
@@ -728,14 +757,16 @@ void UCommonSessionSubsystem::FindSessionsInternal(APlayerController* SearchingP
 		// just give it the same results as the currently pending one
 		// (or enqueue the request and service it when the previous one finishes or fails)
 		UE_LOG(LogCommonSession, Error, TEXT("A previous FindSessions call is still in progress, aborting"));
-		SearchSettings->SearchRequest->NotifySearchFinished(false, LOCTEXT("Error_FindSessionAlreadyInProgress", "Session search already in progress"));
+		SearchSettings->SearchRequest->NotifySearchFinished(
+			false, LOCTEXT("Error_FindSessionAlreadyInProgress", "Session search already in progress"));
 	}
 
 	ULocalPlayer* LocalPlayer = (SearchingPlayer != nullptr) ? SearchingPlayer->GetLocalPlayer() : nullptr;
 	if (LocalPlayer == nullptr)
 	{
 		UE_LOG(LogCommonSession, Error, TEXT("SearchingPlayer is invalid"));
-		InSearchSettings->SearchRequest->NotifySearchFinished(false, LOCTEXT("Error_FindSessionBadPlayer", "Session search was not provided a local player"));
+		InSearchSettings->SearchRequest->NotifySearchFinished(
+			false, LOCTEXT("Error_FindSessionBadPlayer", "Session search was not provided a local player"));
 		return;
 	}
 
@@ -755,7 +786,8 @@ void UCommonSessionSubsystem::FindSessionsInternalOSSv1(ULocalPlayer* LocalPlaye
 	IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 	check(Sessions);
 
-	if (!Sessions->FindSessions(*LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId(), StaticCastSharedRef<FCommonOnlineSearchSettingsOSSv1>(SearchSettings.ToSharedRef())))
+	if (!Sessions->FindSessions(*LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId(),
+	                            StaticCastSharedRef<FCommonOnlineSearchSettingsOSSv1>(SearchSettings.ToSharedRef())))
 	{
 		// Some session search failures will call this delegate inside the function, others will not
 		OnFindSessionsComplete(false);
@@ -825,7 +857,8 @@ void UCommonSessionSubsystem::FindSessionsInternalOSSv2(ULocalPlayer* LocalPlaye
 }
 #endif // COMMONUSER_OSSV1
 
-void UCommonSessionSubsystem::QuickPlaySession(APlayerController* JoiningOrHostingPlayer, UCommonSession_HostSessionRequest* HostRequest)
+void UCommonSessionSubsystem::QuickPlaySession(APlayerController* JoiningOrHostingPlayer,
+                                               UCommonSession_HostSessionRequest* HostRequest)
 {
 	UE_LOG(LogCommonSession, Log, TEXT("QuickPlay Requested"));
 
@@ -835,11 +868,14 @@ void UCommonSessionSubsystem::QuickPlaySession(APlayerController* JoiningOrHosti
 		return;
 	}
 
-	TStrongObjectPtr<UCommonSession_HostSessionRequest> HostRequestPtr = TStrongObjectPtr<UCommonSession_HostSessionRequest>(HostRequest);
-	TWeakObjectPtr<APlayerController> JoiningOrHostingPlayerPtr = TWeakObjectPtr<APlayerController>(JoiningOrHostingPlayer);
+	TStrongObjectPtr<UCommonSession_HostSessionRequest> HostRequestPtr = TStrongObjectPtr<
+		UCommonSession_HostSessionRequest>(HostRequest);
+	TWeakObjectPtr<APlayerController> JoiningOrHostingPlayerPtr = TWeakObjectPtr<APlayerController>(
+		JoiningOrHostingPlayer);
 
 	UCommonSession_SearchSessionRequest* QuickPlayRequest = CreateOnlineSearchSessionRequest();
-	QuickPlayRequest->OnSearchFinished.AddUObject(this, &UCommonSessionSubsystem::HandleQuickPlaySearchFinished, JoiningOrHostingPlayerPtr, HostRequestPtr);
+	QuickPlayRequest->OnSearchFinished.AddUObject(this, &UCommonSessionSubsystem::HandleQuickPlaySearchFinished,
+	                                              JoiningOrHostingPlayerPtr, HostRequestPtr);
 
 	HostRequestPtr->bUseLobbies = bUseLobbiesDefault;
 	QuickPlayRequest->bUseLobbies = bUseLobbiesDefault;
@@ -848,7 +884,8 @@ void UCommonSessionSubsystem::QuickPlaySession(APlayerController* JoiningOrHosti
 	FindSessionsInternal(JoiningOrHostingPlayer, CreateQuickPlaySearchSettings(HostRequest, QuickPlayRequest));
 }
 
-TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlaySearchSettings(UCommonSession_HostSessionRequest* HostRequest, UCommonSession_SearchSessionRequest* SearchRequest)
+TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlaySearchSettings(
+	UCommonSession_HostSessionRequest* HostRequest, UCommonSession_SearchSessionRequest* SearchRequest)
 {
 #if COMMONUSER_OSSV1
 	return CreateQuickPlaySearchSettingsOSSv1(HostRequest, SearchRequest);
@@ -858,9 +895,11 @@ TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlay
 }
 
 #if COMMONUSER_OSSV1
-TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlaySearchSettingsOSSv1(UCommonSession_HostSessionRequest* HostRequest, UCommonSession_SearchSessionRequest* SearchRequest)
+TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlaySearchSettingsOSSv1(
+	UCommonSession_HostSessionRequest* HostRequest, UCommonSession_SearchSessionRequest* SearchRequest)
 {
-	TSharedRef<FCommonOnlineSearchSettingsOSSv1> QuickPlaySearch = MakeShared<FCommonOnlineSearchSettingsOSSv1>(SearchRequest);
+	TSharedRef<FCommonOnlineSearchSettingsOSSv1> QuickPlaySearch = MakeShared<FCommonOnlineSearchSettingsOSSv1>(
+		SearchRequest);
 
 	/** By default quick play does not want to include the map or game mode, games can fill this in as desired
 	if (!HostRequest->ModeNameForAdvertisement.IsEmpty())
@@ -900,10 +939,14 @@ TSharedRef<FCommonOnlineSearchSettings> UCommonSessionSubsystem::CreateQuickPlay
 
 #endif // COMMONUSER_OSSV1
 
-void UCommonSessionSubsystem::HandleQuickPlaySearchFinished(bool bSucceeded, const FText& ErrorMessage, TWeakObjectPtr<APlayerController> JoiningOrHostingPlayer, TStrongObjectPtr<UCommonSession_HostSessionRequest> HostRequest)
+void UCommonSessionSubsystem::HandleQuickPlaySearchFinished(bool bSucceeded, const FText& ErrorMessage,
+                                                            TWeakObjectPtr<APlayerController> JoiningOrHostingPlayer,
+                                                            TStrongObjectPtr<UCommonSession_HostSessionRequest>
+                                                            HostRequest)
 {
 	const int32 ResultCount = SearchSettings->SearchRequest->Results.Num();
-	UE_LOG(LogCommonSession, Log, TEXT("QuickPlay Search Finished %s (Results %d) (Error: %s)"), bSucceeded ? TEXT("Success") : TEXT("Failed"), ResultCount, *ErrorMessage.ToString());
+	UE_LOG(LogCommonSession, Log, TEXT("QuickPlay Search Finished %s (Results %d) (Error: %s)"),
+	       bSucceeded ? TEXT("Success") : TEXT("Failed"), ResultCount, *ErrorMessage.ToString());
 
 	//@TODO: We have to check if the error message is empty because some OSS layers report a failure just because there are no sessions.  Please fix with OSS 2.0.
 	if (bSucceeded || ErrorMessage.IsEmpty())
@@ -969,7 +1012,8 @@ void UCommonSessionSubsystem::CleanUpSessionsOSSv1()
 	}
 	else if (EOnlineSessionState::Starting == SessionState || EOnlineSessionState::Creating == SessionState)
 	{
-		UE_LOG(LogCommonSession, Log, TEXT("Waiting for session to start, and then we will end it to return to main menu"));
+		UE_LOG(LogCommonSession, Log,
+		       TEXT("Waiting for session to start, and then we will end it to return to main menu"));
 	}
 }
 
@@ -997,7 +1041,8 @@ void UCommonSessionSubsystem::CleanUpSessionsOSSv2()
 #if COMMONUSER_OSSV1
 void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 {
-	UE_LOG(LogCommonSession, Log, TEXT("OnFindSessionsComplete(bWasSuccessful: %s)"), bWasSuccessful ? TEXT("true") : TEXT("false"));
+	UE_LOG(LogCommonSession, Log, TEXT("OnFindSessionsComplete(bWasSuccessful: %s)"),
+	       bWasSuccessful ? TEXT("true") : TEXT("false"));
 
 	if (!SearchSettings.IsValid())
 	{
@@ -1005,7 +1050,8 @@ void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 		return;
 	}
 
-	FCommonOnlineSearchSettingsOSSv1& SearchSettingsV1 = *StaticCastSharedPtr<FCommonOnlineSearchSettingsOSSv1>(SearchSettings);
+	FCommonOnlineSearchSettingsOSSv1& SearchSettingsV1 = *StaticCastSharedPtr<FCommonOnlineSearchSettingsOSSv1>(
+		SearchSettings);
 	if (SearchSettingsV1.SearchState == EOnlineAsyncTaskState::InProgress)
 	{
 		UE_LOG(LogCommonSession, Error, TEXT("OnFindSessionsComplete called when search is still in progress!"));
@@ -1033,13 +1079,16 @@ void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 				OwningUserId = Result.Session.OwningUserId->ToString();
 			}
 
-			UE_LOG(LogCommonSession, Log, TEXT("\tFound session (UserId: %s, UserName: %s, NumOpenPrivConns: %d, NumOpenPubConns: %d, Ping: %d ms"),
-				*OwningUserId,
-				*Result.Session.OwningUserName,
-				Result.Session.NumOpenPrivateConnections,
-				Result.Session.NumOpenPublicConnections,
-				Result.PingInMs
-				);
+			UE_LOG(LogCommonSession, Log,
+			       TEXT(
+				       "\tFound session (UserId: %s, UserName: %s, NumOpenPrivConns: %d, NumOpenPubConns: %d, Ping: %d ms"
+			       ),
+			       *OwningUserId,
+			       *Result.Session.OwningUserName,
+			       Result.Session.NumOpenPrivateConnections,
+			       Result.Session.NumOpenPublicConnections,
+			       Result.PingInMs
+			);
 		}
 	}
 	else
@@ -1047,7 +1096,7 @@ void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 		SearchSettingsV1.SearchRequest->Results.Empty();
 	}
 
-	if (0)
+	if (false)
 	{
 		// Fake Sessions OSSV1
 		for (int i = 0; i < 10; i++)
@@ -1058,13 +1107,17 @@ void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 			FakeResult.Session.SessionSettings.NumPublicConnections = 10;
 			FakeResult.Session.SessionSettings.bShouldAdvertise = true;
 			FakeResult.Session.SessionSettings.bAllowJoinInProgress = true;
-			FakeResult.PingInMs=99;
+			FakeResult.PingInMs = 99;
 			Entry->Result = FakeResult;
 			SearchSettingsV1.SearchRequest->Results.Add(Entry);
 		}
 	}
-	
-	SearchSettingsV1.SearchRequest->NotifySearchFinished(bWasSuccessful, bWasSuccessful ? FText() : LOCTEXT("Error_FindSessionV1Failed", "Find session failed"));
+
+	SearchSettingsV1.SearchRequest->NotifySearchFinished(bWasSuccessful,
+	                                                     bWasSuccessful
+		                                                     ? FText()
+		                                                     : LOCTEXT("Error_FindSessionV1Failed",
+		                                                               "Find session failed"));
 	SearchSettings.Reset();
 }
 #endif // COMMONUSER_OSSV1
@@ -1119,22 +1172,23 @@ void UCommonSessionSubsystem::OnJoinSessionComplete(FName SessionName, EOnJoinSe
 {
 	// Add any splitscreen players if they exist
 	//@TODO:
-// 	if (Result == EOnJoinSessionCompleteResult::Success && LocalPlayers.Num() > 1)
-// 	{
-// 		IOnlineSessionPtr Sessions = Online::GetSessionInterface(GetWorld());
-// 		if (Sessions.IsValid() && LocalPlayers[1]->GetPreferredUniqueNetId().IsValid())
-// 		{
-// 			Sessions->RegisterLocalPlayer(*LocalPlayers[1]->GetPreferredUniqueNetId(), NAME_GameSession,
-// 				FOnRegisterLocalPlayerCompleteDelegate::CreateUObject(this, &UShooterGameInstance::OnRegisterJoiningLocalPlayerComplete));
-// 		}
-// 	}
-// 	else
- 	{
+	// 	if (Result == EOnJoinSessionCompleteResult::Success && LocalPlayers.Num() > 1)
+	// 	{
+	// 		IOnlineSessionPtr Sessions = Online::GetSessionInterface(GetWorld());
+	// 		if (Sessions.IsValid() && LocalPlayers[1]->GetPreferredUniqueNetId().IsValid())
+	// 		{
+	// 			Sessions->RegisterLocalPlayer(*LocalPlayers[1]->GetPreferredUniqueNetId(), NAME_GameSession,
+	// 				FOnRegisterLocalPlayerCompleteDelegate::CreateUObject(this, &UShooterGameInstance::OnRegisterJoiningLocalPlayerComplete));
+	// 		}
+	// 	}
+	// 	else
+	{
 		FinishJoinSession(Result);
 	}
 }
 
-void UCommonSessionSubsystem::OnRegisterJoiningLocalPlayerComplete(const FUniqueNetId& PlayerId, EOnJoinSessionCompleteResult::Type Result)
+void UCommonSessionSubsystem::OnRegisterJoiningLocalPlayerComplete(const FUniqueNetId& PlayerId,
+                                                                   EOnJoinSessionCompleteResult::Type Result)
 {
 	FinishJoinSession(Result);
 }
@@ -1172,7 +1226,8 @@ void UCommonSessionSubsystem::FinishJoinSession(EOnJoinSessionCompleteResult::Ty
 		// No FOnlineError to initialize from
 		FOnlineResultInformation JoinSessionResult;
 		JoinSessionResult.bWasSuccessful = false;
-		JoinSessionResult.ErrorId = LexToString(Result); // This is not robust but there is no extended information available
+		JoinSessionResult.ErrorId = LexToString(Result);
+		// This is not robust but there is no extended information available
 		JoinSessionResult.ErrorText = ReturnReason;
 		NotifyJoinSessionComplete(JoinSessionResult);
 		NotifySessionInformationUpdated(ECommonSessionInformationState::OutOfGame);
@@ -1322,11 +1377,13 @@ void UCommonSessionSubsystem::InternalTravelToSession(const FName SessionName)
 
 	// Allow modification of the URL prior to travel
 	OnPreClientTravelEvent.Broadcast(URL);
-		
+
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
-void UCommonSessionSubsystem::NotifyUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* RequestedSession, const FOnlineResultInformation& RequestedSessionResult)
+void UCommonSessionSubsystem::NotifyUserRequestedSession(const FPlatformUserId& PlatformUserId,
+                                                         UCommonSession_SearchResult* RequestedSession,
+                                                         const FOnlineResultInformation& RequestedSessionResult)
 {
 	OnUserRequestedSessionEvent.Broadcast(PlatformUserId, RequestedSession, RequestedSessionResult);
 	K2_OnUserRequestedSessionEvent.Broadcast(PlatformUserId, RequestedSession, RequestedSessionResult);
@@ -1344,7 +1401,8 @@ void UCommonSessionSubsystem::NotifyCreateSessionComplete(const FOnlineResultInf
 	K2_OnCreateSessionCompleteEvent.Broadcast(Result);
 }
 
-void UCommonSessionSubsystem::NotifySessionInformationUpdated(ECommonSessionInformationState SessionStatus, const FString& GameMode, const FString& MapName)
+void UCommonSessionSubsystem::NotifySessionInformationUpdated(ECommonSessionInformationState SessionStatus,
+                                                              const FString& GameMode, const FString& MapName)
 {
 	OnSessionInformationChangedEvent.Broadcast(SessionStatus, GameMode, MapName);
 	K2_OnSessionInformationChangedEvent.Broadcast(SessionStatus, GameMode, MapName);
@@ -1362,12 +1420,15 @@ void UCommonSessionSubsystem::SetCreateSessionError(const FText& ErrorText)
 #if COMMONUSER_OSSV1
 void UCommonSessionSubsystem::HandleSessionFailure(const FUniqueNetId& NetId, ESessionFailure::Type FailureType)
 {
-	UE_LOG(LogCommonSession, Warning, TEXT("UCommonSessionSubsystem::HandleSessionFailure(NetId: %s, FailureType: %s)"), *NetId.ToDebugString(), LexToString(FailureType));
-	
+	UE_LOG(LogCommonSession, Warning, TEXT("UCommonSessionSubsystem::HandleSessionFailure(NetId: %s, FailureType: %s)"),
+	       *NetId.ToDebugString(), LexToString(FailureType));
+
 	//@TODO: Probably need to do a bit more...
 }
 
-void UCommonSessionSubsystem::HandleSessionUserInviteAccepted(const bool bWasSuccessful, const int32 LocalUserIndex, FUniqueNetIdPtr AcceptingUserId, const FOnlineSessionSearchResult& SearchResult)
+void UCommonSessionSubsystem::HandleSessionUserInviteAccepted(const bool bWasSuccessful, const int32 LocalUserIndex,
+                                                              FUniqueNetIdPtr AcceptingUserId,
+                                                              const FOnlineSessionSearchResult& SearchResult)
 {
 	FPlatformUserId PlatformUserId = IPlatformInputDeviceMapper::Get().GetPlatformUserForUserIndex(LocalUserIndex);
 
@@ -1390,7 +1451,8 @@ void UCommonSessionSubsystem::HandleSessionUserInviteAccepted(const bool bWasSuc
 
 #endif // COMMONUSER_OSSV1
 
-void UCommonSessionSubsystem::TravelLocalSessionFailure(UWorld* World, ETravelFailure::Type FailureType, const FString& ReasonString)
+void UCommonSessionSubsystem::TravelLocalSessionFailure(UWorld* World, ETravelFailure::Type FailureType,
+                                                        const FString& ReasonString)
 {
 	// The delegate for this is global, but PIE can have more than one game instance, so make
 	// sure it's being raised for the same world this game instance subsystem is associated with
@@ -1400,9 +1462,9 @@ void UCommonSessionSubsystem::TravelLocalSessionFailure(UWorld* World, ETravelFa
 	}
 
 	UE_LOG(LogCommonSession, Warning, TEXT("TravelLocalSessionFailure(World: %s, FailureType: %s, ReasonString: %s)"),
-		*GetPathNameSafe(World),
-		ETravelFailure::ToString(FailureType),
-		*ReasonString);
+	       *GetPathNameSafe(World),
+	       ETravelFailure::ToString(FailureType),
+	       *ReasonString);
 
 	// TODO:  Broadcast this failure when we are also able to broadcast a success. Presently we broadcast a success before starting the travel, so a failure after a success is confusing.
 	//FOnlineResultInformation JoinSessionResult;
@@ -1444,7 +1506,8 @@ void UCommonSessionSubsystem::HandlePostLoadMap(UWorld* World)
 	if (HostSettings.IsValid())
 	{
 		// This needs to be the full package path to match the host GetMapName function, World->GetMapName is currently the short name
-		HostSettings->Set(SETTING_MAPNAME, UWorld::RemovePIEPrefix(World->GetOutermost()->GetName()), EOnlineDataAdvertisementType::ViaOnlineService);
+		HostSettings->Set(SETTING_MAPNAME, UWorld::RemovePIEPrefix(World->GetOutermost()->GetName()),
+		                  EOnlineDataAdvertisementType::ViaOnlineService);
 
 		const FName SessionName(NAME_GameSession);
 		SessionInterface->UpdateSession(SessionName, *HostSettings, true);

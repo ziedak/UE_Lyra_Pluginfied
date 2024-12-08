@@ -48,7 +48,6 @@ class UBaseAbilityTagRelationshipMapping : public UDataAsset
 {
 	GENERATED_BODY()
 
-private:
 	/** The list of relationships between different gameplay tags (which ones block or cancel others) */
 	UPROPERTY(EditAnywhere, Category = Ability, meta = (TitleProperty = "AbilityTag"))
 	TArray<FAbilityTagRelationship> AbilityTagRelationships;
@@ -59,14 +58,17 @@ public:
 	 * @param OutTagsToBlock The tags that will be blocked by the ability
 	 * @param OutTagsToCancel The tags that will be canceled by the ability
 	*/
-	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock, FGameplayTagContainer* OutTagsToCancel) const;
+	void GetAbilityTagsToBlockAndCancel(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutTagsToBlock,
+	                                    FGameplayTagContainer* OutTagsToCancel) const;
 
 	/** Given a set of ability tags, add additional required and blocking tags 
 	 * @param AbilityTags The tags of the ability that is being checked
 	 * @param OutActivationRequired The tags that are required for activation
 	 * @param OutActivationBlocked The tags that are blocked for activation
 	*/
-	void GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& AbilityTags, FGameplayTagContainer* OutActivationRequired, FGameplayTagContainer* OutActivationBlocked) const;
+	void GetRequiredAndBlockedActivationTags(const FGameplayTagContainer& AbilityTags,
+	                                         FGameplayTagContainer* OutActivationRequired,
+	                                         FGameplayTagContainer* OutActivationBlocked) const;
 
 	/** Returns true if the specified ability tags are canceled by the passed in action tag 
 	 * @param AbilityTags The tags of the ability that is being checked

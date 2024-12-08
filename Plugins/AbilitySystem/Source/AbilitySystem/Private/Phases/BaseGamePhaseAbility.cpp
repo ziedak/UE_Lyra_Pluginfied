@@ -21,12 +21,15 @@ UBaseGamePhaseAbility::UBaseGamePhaseAbility(const FObjectInitializer& ObjectIni
 #if WITH_EDITOR
 EDataValidationResult UBaseGamePhaseAbility::IsDataValid(FDataValidationContext& Context) const
 {
-	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context), EDataValidationResult::Valid);
+	EDataValidationResult Result = CombineDataValidationResults(Super::IsDataValid(Context),
+	                                                            EDataValidationResult::Valid);
 
 	if (!GamePhaseTag.IsValid())
 	{
 		Result = EDataValidationResult::Invalid;
-		Context.AddError(FText::Format(LOCTEXT("GamePhaseTagInvalid", "GamePhaseTag must be set to a tag representing the current phase {0}."), FText::FromString(GetPathName())));
+		Context.AddError(FText::Format(
+			LOCTEXT("GamePhaseTagInvalid", "GamePhaseTag must be set to a tag representing the current phase {0}."),
+			FText::FromString(GetPathName())));
 	}
 	return Result;
 }
@@ -34,9 +37,9 @@ EDataValidationResult UBaseGamePhaseAbility::IsDataValid(FDataValidationContext&
 
 // Called when the ability is activated
 void UBaseGamePhaseAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+                                            const FGameplayAbilityActorInfo* ActorInfo,
+                                            const FGameplayAbilityActivationInfo ActivationInfo,
+                                            const FGameplayEventData* TriggerEventData)
 {
 	if (ActorInfo->IsNetAuthority())
 	{
@@ -53,9 +56,9 @@ void UBaseGamePhaseAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 }
 
 void UBaseGamePhaseAbility::EndAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo,
-	bool bReplicateEndAbility, bool bWasCancelled)
+                                       const FGameplayAbilityActorInfo* ActorInfo,
+                                       const FGameplayAbilityActivationInfo ActivationInfo,
+                                       bool bReplicateEndAbility, bool bWasCancelled)
 {
 	if (ActorInfo->IsNetAuthority())
 	{

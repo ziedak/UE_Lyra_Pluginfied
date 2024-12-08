@@ -6,10 +6,10 @@ public class CommonGame : ModuleRules
 {
 	public CommonGame(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;				
-		
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				"CoreUObject",
@@ -22,18 +22,18 @@ public class CommonGame : ModuleRules
 				"CommonUI",
 				"CommonUser",
 				"GameplayTags",
-				"ModularGameplayActors",
+				"ModularGameplayActors"
 			}
 		);
-			
-		
+
+
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
 			}
 		);
-		
-		
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{
