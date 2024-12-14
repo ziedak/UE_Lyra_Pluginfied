@@ -17,8 +17,8 @@ struct FGeometry;
 
 namespace SafeZoneEditor
 {
-	const float JoystickDeadZone = 0.2f;
-	const float SafeZoneChangeSpeed = 0.1f;
+	constexpr float JoystickDeadZone = 0.2f;
+	constexpr float SafeZoneChangeSpeed = 0.1f;
 }
 
 ULyraSafeZoneEditor::ULyraSafeZoneEditor(const FObjectInitializer& Initializer)
@@ -64,7 +64,7 @@ FReply ULyraSafeZoneEditor::NativeOnAnalogValueChanged(const FGeometry& InGeomet
                                                        const FAnalogInputEvent& InAnalogEvent)
 {
 	if (InAnalogEvent.GetKey() == EKeys::Gamepad_LeftY && FMath::Abs(InAnalogEvent.GetAnalogValue()) >=
-		SafeZoneEditor::JoystickDeadZone)
+	    SafeZoneEditor::JoystickDeadZone)
 	{
 		const float SafeZoneMultiplier = FMath::Clamp(
 			SSafeZone::GetGlobalSafeZoneScale().Get(1.0f) + InAnalogEvent.GetAnalogValue() *

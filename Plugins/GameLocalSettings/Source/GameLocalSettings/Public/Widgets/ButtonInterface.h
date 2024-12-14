@@ -19,5 +19,5 @@ class GAMELOCALSETTINGS_API IButtonInterface
 	GENERATED_BODY()
 
 public:
-	virtual void SetButtonText(const FText& InText)=0;
+	virtual void SetButtonText(const FText& InText) =0;
 };

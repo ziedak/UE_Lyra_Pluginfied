@@ -13,10 +13,10 @@ UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHos
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
 	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
 	UCommonSession_HostSessionRequest* Result = nullptr;
-
-	if (UCommonSessionSubsystem* Subsystem = GameInstance
-		                                         ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
-		                                         : nullptr)
+	UCommonSessionSubsystem* Subsystem = GameInstance
+		                                     ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
+		                                     : nullptr;
+	if (Subsystem)
 	{
 		Result = Subsystem->CreateOnlineHostSessionRequest();
 	}

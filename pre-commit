@@ -1,0 +1,8 @@
+#!/bin/sh
+echo "Running pre-commit hook"
+ for file in $(git diff --staged --name-only | grep -i -E '\.(cpp|h|cs)$'); do
+
+      echo "${file}"
+#      clang-format -i "${file}"
+        git add "${file}"
+ done

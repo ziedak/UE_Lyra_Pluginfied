@@ -41,13 +41,12 @@ void UGameSettingRegistry::Regenerate()
 bool UGameSettingRegistry::IsFinishedInitializing() const
 {
 	bool bReady = true;
-	for (UGameSetting* Setting : RegisteredSettings)
+	for (const UGameSetting* Setting : RegisteredSettings)
 	{
-		if (!Setting->IsReady())
-		{
-			bReady = false;
-			break;
-		}
+		if (Setting->IsReady()) continue;
+
+		bReady = false;
+		break;
 	}
 
 	return bReady;
@@ -55,10 +54,10 @@ bool UGameSettingRegistry::IsFinishedInitializing() const
 
 void UGameSettingRegistry::SaveChanges()
 {
-
 }
 
-void UGameSettingRegistry::GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings)
+void UGameSettingRegistry::GetSettingsForFilter(const FGameSettingFilterState& FilterState,
+                                                TArray<UGameSetting*>& InOutSettings) const
 {
 	TArray<UGameSetting*> RootSettings;
 	if (FilterState.GetSettingRootList().Num() > 0)
@@ -75,14 +74,12 @@ void UGameSettingRegistry::GetSettingsForFilter(const FGameSettingFilterState& F
 		if (const UGameSettingCollection* TopLevelCollection = Cast<UGameSettingCollection>(TopLevelSetting))
 		{
 			TopLevelCollection->GetSettingsForFilter(FilterState, InOutSettings);
+			continue;
 		}
-		else
-		{
-			if (FilterState.DoesSettingPassFilter(*TopLevelSetting))
-			{
-				InOutSettings.Add(TopLevelSetting);
-			}
-		}
+
+		if (!FilterState.DoesSettingPassFilter(*TopLevelSetting)) continue;
+
+		InOutSettings.Add(TopLevelSetting);
 	}
 }
 
@@ -91,22 +88,18 @@ UGameSetting* UGameSettingRegistry::FindSettingByDevName(const FName& SettingDev
 	for (UGameSetting* Setting : RegisteredSettings)
 	{
 		if (Setting->GetDevName() == SettingDevName)
-		{
 			return Setting;
-		}
 	}
-
 	return nullptr;
 }
 
 void UGameSettingRegistry::RegisterSetting(UGameSetting* InSetting)
 {
-	if (InSetting)
-	{
-		TopLevelSettings.Add(InSetting);
-		InSetting->SetRegistry(this);
-		RegisterInnerSettings(InSetting);
-	}
+	if (!InSetting) return;
+
+	TopLevelSettings.Add(InSetting);
+	InSetting->SetRegistry(this);
+	RegisterInnerSettings(InSetting);
 }
 
 void UGameSettingRegistry::RegisterInnerSettings(UGameSetting* InSetting)
@@ -128,7 +121,10 @@ void UGameSettingRegistry::RegisterInnerSettings(UGameSetting* InSetting)
 
 #if !UE_BUILD_SHIPPING
 	ensureAlwaysMsgf(!RegisteredSettings.Contains(InSetting), TEXT("This setting has already been registered!"));
-	ensureAlwaysMsgf(nullptr == RegisteredSettings.FindByPredicate([&InSetting](UGameSetting* ExistingSetting) { return InSetting->GetDevName() == ExistingSetting->GetDevName(); }), TEXT("A setting with this DevName has already been registered!  DevNames must be unique within a registry."));
+	ensureAlwaysMsgf(
+		nullptr == RegisteredSettings.FindByPredicate([&InSetting](UGameSetting* ExistingSetting) { return InSetting->
+			GetDevName() == ExistingSetting->GetDevName(); }),
+		TEXT("A setting with this DevName has already been registered!  DevNames must be unique within a registry."));
 #endif
 
 	RegisteredSettings.Add(InSetting);
@@ -144,25 +140,24 @@ void UGameSettingRegistry::HandleSettingApplied(UGameSetting* Setting)
 	OnSettingApplied(Setting);
 }
 
-void UGameSettingRegistry::HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason)
+void UGameSettingRegistry::HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason) const
 {
 	OnSettingChangedEvent.Broadcast(Setting, Reason);
 }
 
-void UGameSettingRegistry::HandleSettingEditConditionsChanged(UGameSetting* Setting)
+void UGameSettingRegistry::HandleSettingEditConditionsChanged(UGameSetting* Setting) const
 {
 	OnSettingEditConditionChangedEvent.Broadcast(Setting);
 }
 
-void UGameSettingRegistry::HandleSettingNamedAction(UGameSetting* Setting, FGameplayTag GameSettings_Action_Tag)
+void UGameSettingRegistry::HandleSettingNamedAction(UGameSetting* Setting, FGameplayTag GameSettings_Action_Tag) const
 {
 	OnSettingNamedActionEvent.Broadcast(Setting, GameSettings_Action_Tag);
 }
 
-void UGameSettingRegistry::HandleSettingNavigation(UGameSetting* Setting)
+void UGameSettingRegistry::HandleSettingNavigation(UGameSetting* Setting) const
 {
 	OnExecuteNavigationEvent.Broadcast(Setting);
 }
 
 #undef LOCTEXT_NAMESPACE
-

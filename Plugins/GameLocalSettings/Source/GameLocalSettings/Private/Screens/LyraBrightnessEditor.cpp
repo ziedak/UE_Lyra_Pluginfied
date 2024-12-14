@@ -64,7 +64,7 @@ FReply ULyraBrightnessEditor::NativeOnAnalogValueChanged(const FGeometry& InGeom
                                                          const FAnalogInputEvent& InAnalogEvent)
 {
 	if (InAnalogEvent.GetKey() == EKeys::Gamepad_LeftY && FMath::Abs(InAnalogEvent.GetAnalogValue()) >=
-		BrightnessEditor::JoystickDeadZone)
+	    BrightnessEditor::JoystickDeadZone)
 	{
 		const float SafeZoneMultiplier = FMath::Clamp(
 			SSafeZone::GetGlobalSafeZoneScale().Get(1.0f) + InAnalogEvent.GetAnalogValue() *

@@ -12,7 +12,7 @@
 UGameFeatureAction_AddGameplayCuePath::UGameFeatureAction_AddGameplayCuePath()
 {
 	// Add a default path that is commonly used
-	DirectoryPathsToAdd.Add(FDirectoryPath{ TEXT("/GameplayCues") });
+	DirectoryPathsToAdd.Add(FDirectoryPath{TEXT("/GameplayCues")});
 }
 
 #if WITH_EDITOR
@@ -24,7 +24,8 @@ EDataValidationResult UGameFeatureAction_AddGameplayCuePath::IsDataValid(FDataVa
 	{
 		if (Path.IsEmpty())
 		{
-			const FText InvalidCuePathError = FText::Format(LOCTEXT("InvalidCuePathError", "'{0}' is not a valid path!"), FText::FromString(Path));
+			const FText InvalidCuePathError = FText::Format(
+				LOCTEXT("InvalidCuePathError", "'{0}' is not a valid path!"), FText::FromString(Path));
 			Context.AddError(InvalidCuePathError);
 			Result = CombineDataValidationResults(Result, EDataValidationResult::Invalid);
 		}
@@ -35,4 +36,3 @@ EDataValidationResult UGameFeatureAction_AddGameplayCuePath::IsDataValid(FDataVa
 #endif	// WITH_EDITOR
 
 #undef LOCTEXT_NAMESPACE
-

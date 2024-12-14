@@ -12,7 +12,8 @@ TSharedRef<FWhenPlayingAsPrimaryPlayer> FWhenPlayingAsPrimaryPlayer::Get()
 	return Instance;
 }
 
-void FWhenPlayingAsPrimaryPlayer::GatherEditState(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState& InOutEditState) const
+void FWhenPlayingAsPrimaryPlayer::GatherEditState(const ULocalPlayer* InLocalPlayer,
+                                                  FGameSettingEditableState& InOutEditState) const
 {
 	if (!InLocalPlayer->IsPrimaryPlayer())
 	{

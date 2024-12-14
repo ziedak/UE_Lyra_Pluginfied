@@ -39,7 +39,9 @@ class GAMELOCALSETTINGS_API ULyraInputConfig : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	ULyraInputConfig(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer){};
+	ULyraInputConfig(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
+	{
+	};
 
 	UFUNCTION(BlueprintCallable, Category = "Lyra|Pawn")
 	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;

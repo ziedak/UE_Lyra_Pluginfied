@@ -17,9 +17,9 @@ class GAMESETTINGS_API UKeyAlreadyBoundWarning : public UGameSettingPressAnyKey
 	GENERATED_BODY()
 
 public:
-	void SetWarningText(const FText& InText);
+	void SetWarningText(const FText& InText) const;
 
-	void SetCancelText(const FText& InText);
+	void SetCancelText(const FText& InText) const;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))

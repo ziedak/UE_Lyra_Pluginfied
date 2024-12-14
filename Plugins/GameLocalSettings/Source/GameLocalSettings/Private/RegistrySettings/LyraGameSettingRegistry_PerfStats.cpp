@@ -20,23 +20,19 @@ void ULyraGameSettingRegistry::AddPerformanceStatPage(UGameSettingCollection* Pe
 		static_assert(static_cast<int32>(ELyraDisplayablePerformanceStat::Count) == 15,
 		              "Consider updating this function to deal with new performance stats");
 
-		UGameSettingCollectionPage* StatsPage = NewObject<UGameSettingCollectionPage>();
-		StatsPage->SetDevName(TEXT("PerfStatsPage"));
-		StatsPage->SetDisplayName(LOCTEXT("PerfStatsPage_Name", "Performance Stats"));
-		StatsPage->SetDescriptionRichText(LOCTEXT("PerfStatsPage_Description",
-		                                          "Configure the display of performance statistics."));
-		StatsPage->SetNavigationText(LOCTEXT("PerfStatsPage_Navigation", "Edit"));
-
-		StatsPage->AddEditCondition(FWhenPlayingAsPrimaryPlayer::Get());
+		const auto StatsPage = UGameSettingCollectionPage::CreateSettings(
+			"PerfStatsPage",
+			LOCTEXT("PerfStatsPage_Name", "Performance Stats"),
+			LOCTEXT("PerfStatsPage_Description", "Configure the display of performance statistics."),
+			LOCTEXT("PerfStatsPage_Navigation", "Edit"),
+			FWhenPlayingAsPrimaryPlayer::Get());
 
 		PerfStatsOuterCategory->AddSetting(StatsPage);
 
 		// Performance stats
-		////////////////////////////////////////////////////////////////////////////////////
 		{
-			UGameSettingCollection* StatCategory_Performance = NewObject<UGameSettingCollection>();
-			StatCategory_Performance->SetDevName(TEXT("StatCategory_Performance"));
-			StatCategory_Performance->SetDisplayName(LOCTEXT("StatCategory_Performance_Name", "Performance"));
+			const auto StatCategory_Performance = UGameSettingCollection::CreateCollection(
+				"StatCategory_Performance", LOCTEXT("StatCategory_Performance_Name", "Performance"));
 			StatsPage->AddSetting(StatCategory_Performance);
 
 			//----------------------------------------------------------------------------------

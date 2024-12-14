@@ -42,8 +42,10 @@ void UGameplayAbility_Reset::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 
 	//@TODO:Implement this
 	//Execute the reset from the ABaseCharacter
-	 if (ABaseCharacter* BaseChar = Cast<ABaseCharacter>(CurrentActorInfo->AvatarActor.Get()))
-	 	BaseChar->Reset();
+	if (ABaseCharacter* BaseChar = Cast<ABaseCharacter>(CurrentActorInfo->AvatarActor.Get()))
+	{
+		BaseChar->Reset();
+	}
 
 
 	// Let others know a reset has occurred

@@ -24,7 +24,6 @@ UCLASS(Abstract, meta = (Category = "Settings", DisableNativeTick))
 class GAMESETTINGS_API UGameSettingScreen : public UCommonActivatableWidget
 {
 	GENERATED_BODY()
-public:
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -34,25 +33,30 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void NavigateToSetting(FName SettingDevName);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void NavigateToSettings(const TArray<FName>& SettingDevNames);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnSettingsDirtyStateChanged(bool bSettingsDirty);
-	virtual void OnSettingsDirtyStateChanged_Implementation(bool bSettingsDirty) { }
+
+	virtual void OnSettingsDirtyStateChanged_Implementation(bool bSettingsDirty)
+	{
+	}
 
 	UFUNCTION(BlueprintCallable)
 	bool AttemptToPopNavigation();
 
 	UFUNCTION(BlueprintCallable)
-	UGameSettingCollection* GetSettingCollection(FName SettingDevName, bool& HasAnySettings); 
+	UGameSettingCollection* GetSettingCollection(FName SettingDevName, bool& HasAnySettings);
 
-protected:
 	virtual UGameSettingRegistry* CreateRegistry() PURE_VIRTUAL(, return nullptr;);
 
 	template <typename GameSettingRegistryT = UGameSettingRegistry>
-	GameSettingRegistryT* GetRegistry() const { return Cast<GameSettingRegistryT>(const_cast<UGameSettingScreen*>(this)->GetOrCreateRegistry()); }
+	GameSettingRegistryT* GetRegistry() const
+	{
+		return Cast<GameSettingRegistryT>(const_cast<UGameSettingScreen*>(this)->GetOrCreateRegistry());
+	}
 
 	UFUNCTION(BlueprintCallable)
 	virtual void CancelChanges();
@@ -72,7 +76,7 @@ protected:
 private:
 	UGameSettingRegistry* GetOrCreateRegistry();
 
-private:	// Bound Widgets
+	// Bound Widgets
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UGameSettingPanel> Settings_Panel;
 

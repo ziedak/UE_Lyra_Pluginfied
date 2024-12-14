@@ -57,7 +57,9 @@ void UGameplayAbility_Death::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		*GetName());
 
 	if (bAutoStartDeath)
+	{
 		StartDeath();
+	}
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -84,7 +86,7 @@ void UGameplayAbility_Death::StartDeath() const
 	if (!HealthComponent)
 	{
 		ULOG_ERROR(LogGAS, "UGameplayAbility_Death::StartDeath called with invalid HealthComponent. Actor: %s",
-		                 *GetAvatarActorFromActorInfo()->GetName());
+		           *GetAvatarActorFromActorInfo()->GetName());
 		return;
 	}
 	if (HealthComponent->GetDeathState() != EDeathState::NotDead)
@@ -105,13 +107,13 @@ void UGameplayAbility_Death::FinishDeath() const
 	if (!HealthComponent)
 	{
 		ULOG_ERROR(LogGAS, "UGameplayAbility_Death::StartDeath called with invalid HealthComponent. Actor: %s",
-		                 *GetAvatarActorFromActorInfo()->GetName());
+		           *GetAvatarActorFromActorInfo()->GetName());
 		return;
 	}
 	if (HealthComponent->GetDeathState() != EDeathState::DeathStarted)
 	{
 		ULOG_WARNING(LogGAS, "UGameplayAbility_Death::FinishDeath called when the actor is not dead. Actor: %s",
-		                   *GetAvatarActorFromActorInfo()->GetName());
+		             *GetAvatarActorFromActorInfo()->GetName());
 		return;
 	}
 

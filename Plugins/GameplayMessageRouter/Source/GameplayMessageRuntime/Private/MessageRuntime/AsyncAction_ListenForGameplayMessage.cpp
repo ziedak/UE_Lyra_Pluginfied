@@ -85,7 +85,7 @@ DEFINE_FUNCTION(UAsyncAction_ListenForGameplayMessage::execGetPayload)
 
 	// Make sure the type we are trying to get through the blueprint node matches the type of the message payload received.
 	if ((StructProp != nullptr) && (StructProp->Struct != nullptr) && (MessagePtr != nullptr) && (StructProp->Struct ==
-		P_THIS->MessageStructType.Get()) && (P_THIS->ReceivedMessagePayloadPtr != nullptr))
+		    P_THIS->MessageStructType.Get()) && (P_THIS->ReceivedMessagePayloadPtr != nullptr))
 	{
 		StructProp->Struct->CopyScriptStruct(MessagePtr, P_THIS->ReceivedMessagePayloadPtr);
 		bSuccess = true;

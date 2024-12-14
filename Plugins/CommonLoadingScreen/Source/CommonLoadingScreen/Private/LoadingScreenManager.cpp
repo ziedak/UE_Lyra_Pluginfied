@@ -524,7 +524,7 @@ void ULoadingScreenManager::ShowLoadingScreen()
 
 	// Unable to show loading screen if the engine is still loading with its loading screen.
 	if (FPreLoadScreenManager::Get() && FPreLoadScreenManager::Get()->HasActivePreLoadScreenType(
-		EPreLoadScreenTypes::EngineLoadingScreen))
+		    EPreLoadScreenTypes::EngineLoadingScreen))
 	{
 		return;
 	}

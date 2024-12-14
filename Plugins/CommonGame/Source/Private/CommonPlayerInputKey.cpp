@@ -34,14 +34,14 @@ struct FSlateDrawUtil
 		const FLinearColor& InTint = FLinearColor::White)
 	{
 		DrawBrushCenterFitWithOffset
-		(
-			ElementList,
-			InLayer,
-			InAllottedGeometry,
-			InBrush,
-			InTint,
-			FVector2D(0, 0)
-		);
+			(
+				ElementList,
+				InLayer,
+				InAllottedGeometry,
+				InBrush,
+				InTint,
+				FVector2D(0, 0)
+				);
 	}
 
 	static void DrawBrushCenterFitWithOffset(
@@ -65,14 +65,14 @@ struct FSlateDrawUtil
 		const FVector2D Offset = (InAllottedGeometry.GetLocalSize() * 0.5f) - (FinalSize * 0.5f) + InOffset;
 
 		FSlateDrawElement::MakeBox
-		(
-			ElementList,
-			InLayer,
-			InAllottedGeometry.ToPaintGeometry(FinalSize, FSlateLayoutTransform(Offset)),
-			InBrush,
-			ESlateDrawEffect::None,
-			InTint
-		);
+			(
+				ElementList,
+				InLayer,
+				InAllottedGeometry.ToPaintGeometry(FinalSize, FSlateLayoutTransform(Offset)),
+				InBrush,
+				ESlateDrawEffect::None,
+				InTint
+				);
 	}
 };
 
@@ -145,13 +145,13 @@ int32 UCommonPlayerInputKey::NativePaint(const FPaintArgs& Args, const FGeometry
 	if (bDrawProgress)
 	{
 		FSlateDrawUtil::DrawBrushCenterFit
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry,
-			&HoldProgressBrush,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * HoldProgressBrush.GetTint(InWidgetStyle))
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry,
+				&HoldProgressBrush,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * HoldProgressBrush.GetTint(InWidgetStyle))
+				);
 	}
 
 	if (bDrawCountdownText)
@@ -159,64 +159,64 @@ int32 UCommonPlayerInputKey::NativePaint(const FPaintArgs& Args, const FGeometry
 		const FVector2D CountdownTextOffset = (AllottedGeometry.GetLocalSize() - CountdownText.GetTextSize()) * 0.5f;
 
 		FSlateDrawElement::MakeText
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry.ToOffsetPaintGeometry(CountdownTextOffset),
-			CountdownText.GetText(),
-			CountdownTextFont,
-			ESlateDrawEffect::None,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint())
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry.ToOffsetPaintGeometry(CountdownTextOffset),
+				CountdownText.GetText(),
+				CountdownTextFont,
+				ESlateDrawEffect::None,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint())
+				);
 	}
 	else if (bDrawBrushForKey)
 	{
 		// Draw Shadow
 		FSlateDrawUtil::DrawBrushCenterFitWithOffset
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry,
-			&CachedKeyBrush,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * FLinearColor::Black),
-			FVector2D(1, 1)
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry,
+				&CachedKeyBrush,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * FLinearColor::Black),
+				FVector2D(1, 1)
+				);
 
 		FSlateDrawUtil::DrawBrushCenterFit
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry,
-			&CachedKeyBrush,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * CachedKeyBrush.GetTint(InWidgetStyle))
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry,
+				&CachedKeyBrush,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * CachedKeyBrush.GetTint(InWidgetStyle))
+				);
 	}
 	else if (KeybindText.GetTextSize().X > 0)
 	{
 		const FVector2D FrameOffset = (AllottedGeometry.GetLocalSize() - FrameSize) * 0.5f;
 
 		FSlateDrawElement::MakeBox
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry.ToPaintGeometry(FrameSize, FSlateLayoutTransform(FrameOffset)),
-			&KeyBindTextBorder,
-			ESlateDrawEffect::None,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * KeyBindTextBorder.GetTint(InWidgetStyle))
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry.ToPaintGeometry(FrameSize, FSlateLayoutTransform(FrameOffset)),
+				&KeyBindTextBorder,
+				ESlateDrawEffect::None,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint() * KeyBindTextBorder.GetTint(InWidgetStyle))
+				);
 
 		const FVector2D ActionTextOffset = (AllottedGeometry.GetLocalSize() - KeybindText.GetTextSize()) * 0.5f;
 
 		FSlateDrawElement::MakeText
-		(
-			OutDrawElements,
-			++MaxLayer,
-			AllottedGeometry.ToOffsetPaintGeometry(ActionTextOffset),
-			KeybindText.GetText(),
-			KeyBindTextFont,
-			ESlateDrawEffect::None,
-			FLinearColor(InWidgetStyle.GetColorAndOpacityTint())
-		);
+			(
+				OutDrawElements,
+				++MaxLayer,
+				AllottedGeometry.ToOffsetPaintGeometry(ActionTextOffset),
+				KeybindText.GetText(),
+				KeyBindTextFont,
+				ESlateDrawEffect::None,
+				FLinearColor(InWidgetStyle.GetColorAndOpacityTint())
+				);
 	}
 
 	return MaxLayer;
@@ -313,7 +313,7 @@ void UCommonPlayerInputKey::UpdateKeybindWidget()
 	}
 
 	const bool bIsUsingGamepad = (InputTypeOverride == ECommonInputType::Gamepad) || ((CommonInputSubsystem != nullptr)
-		&& (CommonInputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad));
+		                             && (CommonInputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad));
 
 	if (!BoundKey.IsValid())
 	{

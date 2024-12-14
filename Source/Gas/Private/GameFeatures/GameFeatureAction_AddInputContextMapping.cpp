@@ -37,7 +37,7 @@ void UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating(FGameFea
 {
 	FPerContextData& ActiveData = ContextData.FindOrAdd(Context);
 	if (!ensure(ActiveData.ExtensionRequestHandles.IsEmpty()) ||
-		!ensure(ActiveData.ControllersAddedTo.IsEmpty()))
+	    !ensure(ActiveData.ControllersAddedTo.IsEmpty()))
 	{
 		Reset(ActiveData);
 	}
@@ -154,25 +154,35 @@ void UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsFo
 void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)
 {
 	if (!(ensure(LocalPlayer)))
+	{
 		return;
+	}
 	const UEnhancedInputLocalPlayerSubsystem* EISubsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 	if (!EISubsystem)
+	{
 		return;
+	}
 
 	UEnhancedInputUserSettings* Settings = EISubsystem->GetUserSettings();
 	if (!Settings)
+	{
 		return;
+	}
 
 	for (const auto& [InputMapping, Priority, bRegisterWithSettings] : InputMappings)
 	{
 		// Skip entries that don't want to be registered
 		if (!bRegisterWithSettings)
+		{
 			continue;
+		}
 
 		// Register this IMC with the settings!
 		if (const UInputMappingContext* Imc = InputMapping.Get())
+		{
 			Settings->UnregisterInputMappingContext(Imc);
+		}
 	}
 }
 
@@ -207,7 +217,9 @@ void UGameFeatureAction_AddInputContextMapping::AddToWorld(const FWorldContext& 
 	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
 	if (!GameInstance || !World || !World->IsGameWorld())
+	{
 		return;
+	}
 
 	if (UGameFrameworkComponentManager* ComponentManager = UGameInstance::GetSubsystem<
 		UGameFrameworkComponentManager>(GameInstance))
@@ -248,11 +260,12 @@ void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(
 
 	// TODO Why does this code mix and match controllers and local players? ControllersAddedTo is never modified
 	if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName ==
-		UGameFrameworkComponentManager::NAME_ReceiverRemoved))
+		    UGameFrameworkComponentManager::NAME_ReceiverRemoved))
 	{
 		RemoveInputMapping(AsController, ActiveData);
 	} //TODO : implement this
-	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName == UHeroComponent::NAME_BIND_INPUTS_NOW))
+	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (
+		         EventName == UHeroComponent::NAME_BIND_INPUTS_NOW))
 	{
 		AddInputMappingForPlayer(AsController->GetLocalPlayer(), ActiveData);
 	}
@@ -262,7 +275,9 @@ void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer
 {
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
 	if (!LocalPlayer)
+	{
 		return;
+	}
 
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	if (!InputSystem)

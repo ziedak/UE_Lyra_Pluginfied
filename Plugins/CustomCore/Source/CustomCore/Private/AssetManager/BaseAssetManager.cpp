@@ -14,7 +14,7 @@ static FAutoConsoleCommand CVarDumpLoadedAssets(
 	TEXT("Lyra.DumpLoadedAssets"),
 	TEXT("Shows all assets that were loaded via the asset manager and are currently in memory."),
 	FConsoleCommandDelegate::CreateStatic(UBaseAssetManager::DumpLoadedAssets)
-);
+	);
 
 UBaseAssetManager& UBaseAssetManager::Get()
 {

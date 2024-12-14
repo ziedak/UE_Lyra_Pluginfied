@@ -27,19 +27,19 @@ class UAsyncAction_ShowConfirmation : public UBlueprintAsyncActionBase
 		meta = (BlueprintInternalUseOnly = "true", WorldContext = "InWorldContextObject"))
 	static UAsyncAction_ShowConfirmation* ShowConfirmationYesNo(
 		UObject* InWorldContextObject, FText Title, FText Message
-	);
+		);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic,
 		meta = (BlueprintInternalUseOnly = "true", WorldContext = "InWorldContextObject"))
 	static UAsyncAction_ShowConfirmation* ShowConfirmationOkCancel(
 		UObject* InWorldContextObject, FText Title, FText Message
-	);
+		);
 
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic,
 		meta = (BlueprintInternalUseOnly = "true", WorldContext = "InWorldContextObject"))
 	static UAsyncAction_ShowConfirmation* ShowConfirmationCustom(
 		UObject* InWorldContextObject, UCommonGameDialogDescriptor* Descriptor
-	);
+		);
 
 	virtual void Activate() override;
 

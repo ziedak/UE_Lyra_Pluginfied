@@ -23,7 +23,7 @@ void UGameResponsivePanelSlot::ReleaseSlateResources(bool bReleaseChildren)
 	Slot = nullptr;
 }
 
-void UGameResponsivePanelSlot::BuildSlot(TSharedRef<SGameResponsivePanel> GameResponsivePanel)
+void UGameResponsivePanelSlot::BuildSlot(const TSharedRef<SGameResponsivePanel>& GameResponsivePanel)
 {
 	Slot = &GameResponsivePanel->AddSlot()
 	[
@@ -34,4 +34,3 @@ void UGameResponsivePanelSlot::BuildSlot(TSharedRef<SGameResponsivePanel> GameRe
 void UGameResponsivePanelSlot::SynchronizeProperties()
 {
 }
-

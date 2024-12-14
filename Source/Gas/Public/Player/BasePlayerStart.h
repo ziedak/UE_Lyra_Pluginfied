@@ -29,7 +29,7 @@ public:
 	virtual EPlayerStartLocationOccupancy GetLocationOccupancy(AController* const ControllerPawnToFit) override;
 
 	/** Did this player start get claimed by a controller already? */
-	bool IsClaimed() const{return ClaimingController != nullptr;};
+	bool IsClaimed() const { return ClaimingController != nullptr; };
 
 	/** If this PlayerStart was not claimed, claim it for ClaimingController */
 	virtual bool TryClaim(AController* OccupyingController) override;

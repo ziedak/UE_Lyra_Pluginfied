@@ -29,7 +29,7 @@ public:
 	/** UGameSettingValueDiscrete */
 	virtual void SetDiscreteOptionByIndex(int32 Index) override;
 	virtual int32 GetDiscreteOptionIndex() const override;
-	virtual TArray<FText> GetDiscreteOptions() const override;
+	virtual TArray<FText> GetDiscreteOptions() const override{ return Options; };
 
 protected:
 	/** UGameSettingValue */
@@ -37,7 +37,6 @@ protected:
 
 	void AddMode(FText&& Label, ELyraStatDisplayMode Mode);
 
-protected:
 	TArray<FText> Options;
 	TArray<ELyraStatDisplayMode> DisplayModes;
 

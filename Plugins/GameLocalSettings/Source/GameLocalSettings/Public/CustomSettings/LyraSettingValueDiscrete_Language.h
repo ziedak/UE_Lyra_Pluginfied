@@ -15,7 +15,6 @@ class GAMELOCALSETTINGS_API ULyraSettingValueDiscrete_Language : public UGameSet
 	GENERATED_BODY()
 
 public:
-	ULyraSettingValueDiscrete_Language();
 
 	/** UGameSettingValue */
 	virtual void StoreInitial() override;
@@ -32,6 +31,5 @@ protected:
 	virtual void OnInitialized() override;
 	virtual void OnApply() override;
 
-protected:
 	TArray<FString> AvailableCultureNames;
 };

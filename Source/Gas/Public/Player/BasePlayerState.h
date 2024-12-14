@@ -89,12 +89,11 @@ protected:
 
 
 	ABasePlayerController* GetBasePlayerController() const { return Cast<ABasePlayerController>(GetOwner()); }
-	
 
 private:
 	UFUNCTION()
 	void OnExperienceLoaded(const UExperienceDefinition_DA* Experience);
-	
+
 	// The ability system component sub-object used by player characters.
 	UPROPERTY(VisibleAnywhere, Category = "Base|PlayerState")
 	TObjectPtr<UBaseAbilitySystemComponent> AbilitySystemComponent;

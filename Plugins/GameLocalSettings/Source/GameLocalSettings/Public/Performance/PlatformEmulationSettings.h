@@ -21,11 +21,11 @@ class UPlatformEmulationSettings : public UDeveloperSettingsBackedByCVars
 public:
 	//~UDeveloperSettings interface
 	virtual FName GetCategoryName() const override { return FApp::GetProjectName(); }
-	
+
 	//~End of UDeveloperSettings interface
 
-	FName GetPretendBaseDeviceProfile() const{return PretendBaseDeviceProfile;};
-	FName GetPretendPlatformName() const{return PretendPlatform;};
+	FName GetPretendBaseDeviceProfile() const { return PretendBaseDeviceProfile; };
+	FName GetPretendPlatformName() const { return PretendPlatform; };
 
 private:
 	UPROPERTY(EditAnywhere, config, Category=PlatformEmulation, meta=(Categories="Input,Platform.Trait"))
@@ -71,7 +71,6 @@ private:
 	// The last pretend platform we applied
 	FName LastAppliedPretendPlatform;
 
-private:
 	void ApplySettings();
 	void ChangeActivePretendPlatform(FName NewPlatformName);
 #endif

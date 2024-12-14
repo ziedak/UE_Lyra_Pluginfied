@@ -6,7 +6,8 @@
 
 #define LOCTEXT_NAMESPACE "GameSetting"
 
-TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfMissing(FGameplayTag InVisibilityTag, const FString& InKillReason)
+TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfMissing(const FGameplayTag InVisibilityTag,
+                                                                       const FString& InKillReason)
 {
 	check(InVisibilityTag.IsValid());
 	check(!InKillReason.IsEmpty());
@@ -19,7 +20,8 @@ TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfMissing(FGameplay
 	return Result;
 }
 
-TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfMissing(FGameplayTag InVisibilityTag, const FText& InDisableReason)
+TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfMissing(
+	const FGameplayTag InVisibilityTag, const FText& InDisableReason)
 {
 	check(InVisibilityTag.IsValid());
 	check(!InDisableReason.IsEmpty());
@@ -32,7 +34,8 @@ TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfMissing(FGamep
 	return Result;
 }
 
-TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfPresent(FGameplayTag InVisibilityTag, const FString& InKillReason)
+TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfPresent(const FGameplayTag InVisibilityTag,
+                                                                       const FString& InKillReason)
 {
 	check(InVisibilityTag.IsValid());
 	check(!InKillReason.IsEmpty());
@@ -45,7 +48,8 @@ TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::KillIfPresent(FGameplay
 	return Result;
 }
 
-TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfPresent(FGameplayTag InVisibilityTag, const FText& InDisableReason)
+TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfPresent(
+	const FGameplayTag InVisibilityTag, const FText& InDisableReason)
 {
 	check(InVisibilityTag.IsValid());
 	check(!InDisableReason.IsEmpty());
@@ -58,19 +62,13 @@ TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfPresent(FGamep
 	return Result;
 }
 
-void FWhenPlatformHasTrait::GatherEditState(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState& InOutEditState) const
+void FWhenPlatformHasTrait::GatherEditState(const ULocalPlayer* InLocalPlayer,
+                                            FGameSettingEditableState& InOutEditState) const
 {
-	if (UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->HasVisibilityTag(VisibilityTag) != bTagDesired)
-	{
-		if (KillReason.IsEmpty())
-		{
-			InOutEditState.Disable(DisableReason);
-		}
-		else
-		{
-			InOutEditState.Kill(KillReason);
-		}
-	}
+	const auto bHasDesiredTag = UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->HasVisibilityTag(VisibilityTag)
+		== bTagDesired;
+	if (!bHasDesiredTag) return;
+	KillReason.IsEmpty() ? InOutEditState.Disable(DisableReason) : InOutEditState.Kill(KillReason);
 }
 
 #undef LOCTEXT_NAMESPACE

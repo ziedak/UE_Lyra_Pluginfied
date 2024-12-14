@@ -36,7 +36,7 @@ SGridPanel::FSlot& SGameResponsivePanel::AddSlot()
 {
 	SGridPanel::FSlot* Slot;
 	InnerGrid->AddSlot(InnerGrid->GetChildren()->Num(), 0)
-		.Expose(Slot);
+	         .Expose(Slot);
 	InnerSlots.Add(Slot);
 
 	RefreshLayout();
@@ -58,7 +58,7 @@ int32 SGameResponsivePanel::RemoveSlot(const TSharedRef<SWidget>& SlotWidget)
 	return InnerGrid->RemoveSlot(SlotWidget);
 }
 
-void SGameResponsivePanel::ClearChildren()
+void SGameResponsivePanel::ClearChildren() const
 {
 	InnerGrid->ClearChildren();
 }
@@ -74,14 +74,15 @@ bool SGameResponsivePanel::CustomPrepass(float LayoutScaleMultiplier)
 	return true;
 }
 
-void SGameResponsivePanel::OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const
+void SGameResponsivePanel::OnArrangeChildren(const FGeometry& AllottedGeometry,
+                                             FArrangedChildren& ArrangedChildren) const
 {
 	ArrangedChildren.AddWidget(AllottedGeometry.MakeChild(
 		ChildSlot.GetWidget(),
 		FVector2D(0, 0),
 		AllottedGeometry.GetLocalSize() / Scale,
 		Scale
-	));
+		));
 }
 
 FVector2D SGameResponsivePanel::ComputeDesiredSize(float InLayoutScale) const
@@ -96,17 +97,12 @@ float SGameResponsivePanel::GetRelativeLayoutScale(int32 ChildIndex, float Layou
 
 bool SGameResponsivePanel::ShouldWrap() const
 {
-	if (PhysialScreenSize.IsZero() || !bCanWrapVertically)
-	{
-		return false;
-	}
-
-	return (PhysialScreenSize.X < 7);
+	return PhysialScreenSize.IsZero() || !bCanWrapVertically ? false : PhysialScreenSize.X < 7;
 }
 
 void SGameResponsivePanel::RefreshResponsiveness()
 {
-	PhysialScreenSize = FVector2D(0, 0);
+	PhysialScreenSize = FVector2D (0, 0);
 
 	TSharedPtr<SViewport> GameViewport = FSlateApplication::Get().GetGameViewport();
 	if (GameViewport.IsValid())
@@ -118,10 +114,10 @@ void SGameResponsivePanel::RefreshResponsiveness()
 
 			int32 ScreenDensity = 0;
 			FPlatformApplicationMisc::GetPhysicalScreenDensity(ScreenDensity);
-			
+
 			if (ScreenDensity != 0)
 			{
-				PhysialScreenSize = ViewportSize / (float)ScreenDensity;
+				PhysialScreenSize = ViewportSize / static_cast<float>(ScreenDensity);
 			}
 		}
 	}

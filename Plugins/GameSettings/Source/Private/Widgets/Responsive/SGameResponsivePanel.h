@@ -12,19 +12,14 @@ struct FGeometry;
 class SGameResponsivePanel : public SCompoundWidget
 {
 public:
-
-	typedef SGridPanel::FSlot FSlot;
-
-public:
+	using FSlot = SGridPanel::FSlot;
 
 	SLATE_BEGIN_ARGS(SGameResponsivePanel)
-	{
-		_Visibility = EVisibility::SelfHitTestInvisible;
-	}
+		{
+			_Visibility = EVisibility::SelfHitTestInvisible;
+		}
 
 	SLATE_END_ARGS()
-
-public:
 
 	SGameResponsivePanel();
 
@@ -52,7 +47,7 @@ public:
 	/**
 	 * Removes all slots from the panel.
 	 */
-	void ClearChildren();
+	void ClearChildren() const;
 
 	void EnableVerticalStacking(const bool bCanVerticallyWrap);
 
@@ -61,15 +56,14 @@ protected:
 	virtual bool CustomPrepass(float LayoutScaleMultiplier) override;
 	virtual FVector2D ComputeDesiredSize(float) const override;
 	virtual float GetRelativeLayoutScale(int32 ChildIndex, float LayoutScaleMultiplier) const override;
-	virtual void OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const;
+	virtual void
+	OnArrangeChildren(const FGeometry& AllottedGeometry, FArrangedChildren& ArrangedChildren) const override;
 	// End SWidget overrides.
 
 	bool ShouldWrap() const;
 
 	void RefreshResponsiveness();
 	void RefreshLayout();
-
-protected:
 
 	TSharedRef<SGridPanel> InnerGrid;
 	TArray<SGridPanel::FSlot*> InnerSlots;

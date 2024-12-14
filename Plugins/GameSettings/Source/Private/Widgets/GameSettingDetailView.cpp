@@ -19,7 +19,7 @@
 
 UGameSettingDetailView::UGameSettingDetailView(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, ExtensionWidgetPool(*this)
+	  , ExtensionWidgetPool(*this)
 {
 }
 
@@ -69,14 +69,17 @@ void UGameSettingDetailView::FillSettingDetails(UGameSetting* InSetting)
 	{
 		const FText DynamicDetails = InSetting ? InSetting->GetDynamicDetails() : FText::GetEmpty();
 		RichText_DynamicDetails->SetText(DynamicDetails);
-		RichText_DynamicDetails->SetVisibility(DynamicDetails.IsEmpty() ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
+		RichText_DynamicDetails->SetVisibility(DynamicDetails.IsEmpty()
+			                                       ? ESlateVisibility::Collapsed
+			                                       : ESlateVisibility::HitTestInvisible);
 	}
 
 	if (RichText_WarningDetails)
 	{
 		if (InSetting && !InSetting->GetWarningRichText().IsEmpty())
 		{
-			const FText WarningText = FText::Format(LOCTEXT("WarningReasonLine", "<Icon.Warning></> {0}"), InSetting->GetWarningRichText());
+			const FText WarningText = FText::Format(
+				LOCTEXT("WarningReasonLine", "<Icon.Warning></> {0}"), InSetting->GetWarningRichText());
 			RichText_WarningDetails->SetText(WarningText);
 			RichText_WarningDetails->SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
@@ -100,20 +103,24 @@ void UGameSettingDetailView::FillSettingDetails(UGameSetting* InSetting)
 			{
 				for (FText Reason : EditableState.GetDisabledReasons())
 				{
-					DisabledDetailLines.Add(FText::Format(LOCTEXT("DisabledReasonLine", "<Icon.Warning></> {0}"), Reason));
+					DisabledDetailLines.Add(
+						FText::Format(LOCTEXT("DisabledReasonLine", "<Icon.Warning></> {0}"), Reason));
 				}
 			}
 
 			if (EditableState.GetDisabledOptions().Num() > 0)
 			{
-				DisabledDetailLines.Add(LOCTEXT("DisabledOptionReasonLine", "<Icon.Warning></> There are fewer options than available due to Parental Controls."));
+				DisabledDetailLines.Add(LOCTEXT("DisabledOptionReasonLine",
+				                                "<Icon.Warning></> There are fewer options than available due to Parental Controls."));
 			}
 		}
 
 		RichText_DisabledDetails->SetText(FText::Join(FText::FromString(TEXT("\n")), DisabledDetailLines));
-		RichText_DisabledDetails->SetVisibility(DisabledDetailLines.Num() == 0 ? ESlateVisibility::Collapsed : ESlateVisibility::HitTestInvisible);
+		RichText_DisabledDetails->SetVisibility(DisabledDetailLines.Num() == 0
+			                                        ? ESlateVisibility::Collapsed
+			                                        : ESlateVisibility::HitTestInvisible);
 	}
-	
+
 	if (Box_DetailsExtension)
 	{
 		// First release the widgets back into the pool.
@@ -132,7 +139,7 @@ void UGameSettingDetailView::FillSettingDetails(UGameSetting* InSetting)
 			{
 				ExtensionClassPtrs = VisualData->GatherDetailExtensions(InSetting);
 			}
-			
+
 			if (StreamingHandle.IsValid())
 			{
 				StreamingHandle->CancelHandle();
@@ -163,21 +170,25 @@ void UGameSettingDetailView::FillSettingDetails(UGameSetting* InSetting)
 
 				StreamingHandle = UAssetManager::GetStreamableManager().RequestAsyncLoad(
 					MoveTemp(ExtensionPaths),
-					FStreamableDelegate::CreateWeakLambda(this, [this, SettingPtr, ExtensionClassPtrs] {
-						for (TSoftClassPtr<UGameSettingDetailExtension> SoftClassPtr : ExtensionClassPtrs)
-						{
-							CreateDetailsExtension(SettingPtr.Get(), SoftClassPtr.Get());
-						}
+					FStreamableDelegate::CreateWeakLambda(this, [this, SettingPtr, ExtensionClassPtrs]
+					                                      {
+						                                      for (TSoftClassPtr<UGameSettingDetailExtension>
+						                                           SoftClassPtr : ExtensionClassPtrs)
+						                                      {
+							                                      CreateDetailsExtension(
+								                                      SettingPtr.Get(), SoftClassPtr.Get());
+						                                      }
 
-						ExtensionWidgetPool.ReleaseInactiveSlateResources();
-					}
-				));
+						                                      ExtensionWidgetPool.ReleaseInactiveSlateResources();
+					                                      }
+						));
 			}
 		}
 	}
 }
 
-void UGameSettingDetailView::CreateDetailsExtension(UGameSetting* InSetting, TSubclassOf<UGameSettingDetailExtension> ExtensionClass)
+void UGameSettingDetailView::CreateDetailsExtension(UGameSetting* InSetting,
+                                                    TSubclassOf<UGameSettingDetailExtension> ExtensionClass)
 {
 	if (InSetting && ExtensionClass)
 	{

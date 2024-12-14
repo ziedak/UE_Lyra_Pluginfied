@@ -13,7 +13,8 @@ void SSubtitleDisplay::Construct(const FArguments& InArgs)
 {
 	if (!InArgs._ManualSubtitles.Get())
 	{
-		FSubtitleManagerSetSubtitleText& OnSetSubtitleText = FSubtitleManager::GetSubtitleManager()->OnSetSubtitleText();
+		FSubtitleManagerSetSubtitleText& OnSetSubtitleText = FSubtitleManager::GetSubtitleManager()->
+			OnSetSubtitleText();
 		OnSetSubtitleText.AddSP(this, &SSubtitleDisplay::HandleSubtitleChanged);
 	}
 

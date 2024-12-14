@@ -28,20 +28,25 @@ void UGameSettingListView::ValidateCompiledDefaults(IWidgetCompilerLog& InCompil
 
 	if (!VisualData)
 	{
-		InCompileLog.Error(FText::Format(FText::FromString("{0} has no VisualData defined."), FText::FromString(GetName())));
+		InCompileLog.Error(FText::Format(FText::FromString("{0} has no VisualData defined."),
+		                                 FText::FromString(GetName())));
 	}
 }
 
 #endif
 
-UUserWidget& UGameSettingListView::OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass, const TSharedRef<STableViewBase>& OwnerTable)
+UUserWidget& UGameSettingListView::OnGenerateEntryWidgetInternal(UObject* Item,
+                                                                 TSubclassOf<UUserWidget> DesiredEntryClass,
+                                                                 const TSharedRef<STableViewBase>& OwnerTable)
 {
 	UGameSetting* SettingItem = Cast<UGameSetting>(Item);
 
-	TSubclassOf<UGameSettingListEntryBase> SettingEntryClass = TSubclassOf<UGameSettingListEntryBase>(DesiredEntryClass);
+	TSubclassOf<UGameSettingListEntryBase> SettingEntryClass = TSubclassOf<
+		UGameSettingListEntryBase>(DesiredEntryClass);
 	if (VisualData)
 	{
-		if (const TSubclassOf<UGameSettingListEntryBase> EntryClassSetting = VisualData->GetEntryForSetting(SettingItem))
+		if (const TSubclassOf<UGameSettingListEntryBase> EntryClassSetting = VisualData->
+			GetEntryForSetting(SettingItem))
 		{
 			SettingEntryClass = EntryClassSetting;
 		}
@@ -55,7 +60,8 @@ UUserWidget& UGameSettingListView::OnGenerateEntryWidgetInternal(UObject* Item, 
 		//UE_LOG(LogGameSettings, Error, TEXT("UGameSettingListView: No VisualData Defined!"));
 	}
 
-	UGameSettingListEntryBase& EntryWidget = GenerateTypedEntry<UGameSettingListEntryBase>(SettingEntryClass, OwnerTable);
+	UGameSettingListEntryBase& EntryWidget = GenerateTypedEntry<UGameSettingListEntryBase>(
+		SettingEntryClass, OwnerTable);
 
 	if (!IsDesignTime())
 	{

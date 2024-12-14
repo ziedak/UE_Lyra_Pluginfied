@@ -4,21 +4,23 @@
 
 #include "DataSource/GameSettingDataSourceDynamic.h" // IWYU pragma: keep
 #include "GameSettingRegistry.h"
-#include "PlayerSharedSettings.h"
+#include "GameSettingValueDiscreteDynamic.h"
+#include "GameSettingValueScalarDynamic.h"
 #include "Settings/LyraSettingsLocal.h" // IWYU pragma: keep
-#include "Settings/LyraSettingsShared.h"
 
 #include "LyraGameSettingRegistry.generated.h"
 
-class ULocalPlayer;
-class UObject;
 
 //--------------------------------------
 // ULyraGameSettingRegistry
 //--------------------------------------
 
+class ULyraSettingValueDiscreteDynamic_AudioOutputDevice;
+class UGameSettingCollectionPage;
+class ULyraSettingsShared;
 class UGameSettingCollection;
 class ULocalPlayer;
+class UObject;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogLyraGameSettingRegistry, Log, Log);
 
@@ -55,8 +57,6 @@ class ULyraGameSettingRegistry : public UGameSettingRegistry
 	GENERATED_BODY()
 
 public:
-	ULyraGameSettingRegistry();
-
 	static ULyraGameSettingRegistry* Get(ULocalPlayer* InLocalPlayer);
 
 	virtual void SaveChanges() override;
@@ -70,11 +70,61 @@ protected:
 	void AddPerformanceStatPage(UGameSettingCollection* Screen, ULocalPlayer* InLocalPlayer) const;
 
 	UGameSettingCollection* InitializeAudioSettings(ULocalPlayer* InLocalPlayer);
-	UGameSettingCollection* InitializeGameplaySettings(ULocalPlayer* InLocalPlayer);
 
+private:
+	UGameSettingCollection* AddSoundSettings();
+	UGameSettingCollectionPage* AddSubtitleSettings();
+	UGameSettingCollection* AddVolumeSettings();
+	ULyraSettingValueDiscreteDynamic_AudioOutputDevice* AddAudioOutputDeviceSetting();
+	UGameSettingValueDiscreteDynamic_Enum* AddBackgroundAudioSetting();
+	UGameSettingValueDiscreteDynamic_Bool* AddHeadphoneModeSetting();
+	UGameSettingValueDiscreteDynamic_Bool* AddHDRAudioModeSetting();
+	UGameSettingValueScalarDynamic* AddVolume(const FName& DevName,
+	                                          const FText& DisplayName, const FText& Description,
+	                                          const TSharedRef<FGameSettingDataSource>& Getter,
+	                                          const TSharedRef<FGameSettingDataSource>& Setter,
+	                                          const float DefaultValue);
+
+protected:
 	UGameSettingCollection* InitializeMouseAndKeyboardSettings(ULocalPlayer* InLocalPlayer);
+
+private:
+	UGameSettingValueScalarDynamic* AddMouseSensitivityYawSetting(const TRange<double>& Range, double Step);
+	UGameSettingValueScalarDynamic* AddMouseSensitivityPitchSetting(const TRange<double>& Range, const double Step);
+	UGameSettingValueScalarDynamic* AddMouseTargetingMultiplierSetting(const TRange<double>& Range, const double Step);
+	UGameSettingValueDiscreteDynamic_Bool* AddInvertVerticalAxisSetting();
+	UGameSettingValueDiscreteDynamic_Bool* AddInvertHorizontalAxisSetting();
+	void AddKeyBindingSettings(UGameSettingCollection* Screen, const ULocalPlayer* InLocalPlayer);
+	UGameSettingCollection* AddMouseSensitivitySettings();
+
+protected:
 	UGameSettingCollection* InitializeGamepadSettings(ULocalPlayer* InLocalPlayer);
 
+private:
+	UGameSettingValueDiscreteDynamic* CreateControllerHardwareSetting();
+	UGameSettingValueDiscreteDynamic_Bool* CreateGamepadVibrationSetting();
+	UGameSettingValueDiscreteDynamic_Bool* CreateInvertVerticalAxisSetting();
+	UGameSettingValueDiscreteDynamic_Bool* CreateInvertHorizontalAxisSetting();
+	UGameSettingCollection* CreateHardwareCollection();
+	UGameSettingCollection* CreateGamepadBindingCollection();
+	UGameSettingValueDiscreteDynamic_Enum* CreateLookSensitivityPresetSetting();
+	UGameSettingValueDiscreteDynamic_Enum* CreateLookSensitivityPresetAdsSetting();
+	UGameSettingCollection* CreateBasicSensitivityCollection();
+	UGameSettingCollection* CreateDeadZoneCollection();
+	UGameSettingValueScalarDynamic* CreateMoveStickDeadZoneSetting(float GamepadSensitivityMinimumLimit,
+	                                                               float GamepadSensitivityMaximumLimit);
+	UGameSettingValueScalarDynamic* CreateLookStickDeadZoneSetting(float GamepadSensitivityMinimumLimit,
+	                                                               float GamepadSensitivityMaximumLimit);
+
+protected:
+	UGameSettingCollection* InitializeGameplaySettings(ULocalPlayer* InLocalPlayer);
+
+private:
+	UGameSettingCollectionPage* SetLanguageSettings(ULocalPlayer* InLocalPlayer);
+	UGameSettingValueDiscreteDynamic_Bool* SetReplaySettings(ULocalPlayer* InLocalPlayer);
+	UGameSettingValueDiscreteDynamic_Number* SetReplayLimitSettings(ULocalPlayer* InLocalPlayer);
+
+protected:
 	UPROPERTY()
 	TObjectPtr<UGameSettingCollection> VideoSettings;
 

@@ -82,22 +82,18 @@ public:
 	                             FGameSettingEditableState& InOutEditState) const override
 	{
 		if (!ULyraPlatformSpecificRenderingSettings::Get()->bSupportsGranularVideoQualitySettings)
-		{
 			InOutEditState.Kill(DisableString);
-		}
 	}
 
 	virtual void SettingChanged(const ULocalPlayer* LocalPlayer, UGameSetting* Setting,
 	                            EGameSettingChangeReason Reason) const override
 	{
 		// TODO for now this applies the setting immediately
-		if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettings>())
-		{
-			if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
-			{
-				ISharedSettings->GetLocalSettings()->ApplyScalabilitySettings();
-			}
-		}
+		if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettings>())
+			return;
+
+		if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
+			ISharedSettings->GetLocalSettings()->ApplyScalabilitySettings();
 		// const ULyraLocalPlayer* LyraLocalPlayer = CastChecked<ULyraLocalPlayer>(LocalPlayer);
 		// LyraLocalPlayer->GetLocalSettings()->ApplyScalabilitySettings();
 	}
@@ -110,9 +106,8 @@ private:
 
 UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocalPlayer* InLocalPlayer)
 {
-	UGameSettingCollection* Screen = NewObject<UGameSettingCollection>();
-	Screen->SetDevName(TEXT("VideoCollection"));
-	Screen->SetDisplayName(LOCTEXT("VideoCollection_Name", "Video"));
+	UGameSettingCollection* Screen = UGameSettingCollection::CreateCollection(
+		"VideoCollection",LOCTEXT("VideoCollection_Name", "Video"));
 	Screen->Initialize(InLocalPlayer);
 
 	UGameSettingValueDiscreteDynamic_Enum* WindowModeSetting;
@@ -120,28 +115,44 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 	// Display
 	////////////////////////////////////////////////////////////////////////////////////
 	{
-		UGameSettingCollection* Display = NewObject<UGameSettingCollection>();
-		Display->SetDevName(TEXT("DisplayCollection"));
-		Display->SetDisplayName(LOCTEXT("DisplayCollection_Name", "Display"));
+		const auto Display = UGameSettingCollection::CreateCollection("DisplayCollection",
+		                                                              LOCTEXT("DisplayCollection_Name", "Display"));
 		Screen->AddSetting(Display);
 
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Enum* Setting = NewObject<UGameSettingValueDiscreteDynamic_Enum>();
-			Setting->SetDevName(TEXT("WindowMode"));
-			Setting->SetDisplayName(LOCTEXT("WindowMode_Name", "Window Mode"));
-			Setting->SetDescriptionRichText(LOCTEXT("WindowMode_Description",
-			                                        "In Windowed mode you can interact with other windows more easily, and drag the edges of the window to set the size. In Windowed Fullscreen mode you can easily switch between applications. In Fullscreen mode you cannot interact with other windows as easily, but the game will run slightly faster."));
+			//TODO seet video window default value
+			UGameSettingValueDiscreteDynamic_Enum* Setting = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
+				"WindowMode",
+				LOCTEXT("WindowMode_Name", "Window Mode"),
+				LOCTEXT("WindowMode_Description",
+				        "In Windowed mode you can interact with other windows more easily, "
+				        "and drag the edges of the window to set the size. In Windowed Fullscreen "
+				        "mode you can easily switch between applications. In Fullscreen mode"
+				        " you cannot interact with other windows as easily, but the game will run slightly faster."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFullscreenMode));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFullscreenMode));
-			Setting->AddEnumOption(EWindowMode::Fullscreen, LOCTEXT("WindowModeFullscreen", "Fullscreen"));
-			Setting->AddEnumOption(EWindowMode::WindowedFullscreen,
-			                       LOCTEXT("WindowModeWindowedFullscreen", "Windowed Fullscreen"));
-			Setting->AddEnumOption(EWindowMode::Windowed, LOCTEXT("WindowModeWindowed", "Windowed"));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFullscreenMode),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFullscreenMode),
+				EWindowMode::Windowed,
+				{
+					{
+						EWindowMode::Fullscreen,
+						LOCTEXT("WindowModeFullscreen", "Fullscreen")
+					},
+					{
+						EWindowMode::WindowedFullscreen,
+						LOCTEXT("WindowModeWindowedFullscreen", "Windowed Fullscreen")
+					},
+					{
+						EWindowMode::Windowed,
+						LOCTEXT("WindowModeWindowed", "Windowed")
+					}
+				}
+			);
 
 			Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(
-				TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode")));
+					TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode"))
+			);
 
 			WindowModeSetting = Setting;
 
@@ -157,7 +168,8 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 
 			Setting->AddEditDependency(WindowModeSetting);
 			Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(
-				TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode")));
+				TAG_Platform_Trait_SupportsWindowedMode,
+				TEXT("Platform does not support window mode")));
 			Setting->AddEditCondition(MakeShared<FWhenCondition>(
 				[WindowModeSetting](const ULocalPlayer*, FGameSettingEditableState& InOutEditState)
 				{
@@ -180,9 +192,8 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 	// Graphics
 	////////////////////////////////////////////////////////////////////////////////////
 	{
-		UGameSettingCollection* Graphics = NewObject<UGameSettingCollection>();
-		Graphics->SetDevName(TEXT("GraphicsCollection"));
-		Graphics->SetDisplayName(LOCTEXT("GraphicsCollection_Name", "Graphics"));
+		const auto Graphics = UGameSettingCollection::CreateCollection("GraphicsCollection",
+		                                                               LOCTEXT("GraphicsCollection_Name", "Graphics"));
 		Screen->AddSetting(Graphics);
 
 		//----------------------------------------------------------------------------------
@@ -210,19 +221,16 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("ColorBlindStrength"));
-			Setting->SetDisplayName(LOCTEXT("ColorBlindStrength_Name", "Color Blind Strength"));
-			Setting->SetDescriptionRichText(LOCTEXT("ColorBlindStrength_Description",
-			                                        "Using the provided images, test out the different strengths to find a color correction that works best for you."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("ColorBlindStrength"),
+				LOCTEXT("ColorBlindStrength_Name", "Color Blind Strength"),
+				LOCTEXT("ColorBlindStrength_Description",
+				        "Using the provided images, test out the different strengths to find a color correction that works best for you."),
 
-			Setting->SetDynamicGetter(GET_SHARED_SETTINGS_FUNCTION_PATH(GetColorBlindStrength));
-			Setting->SetDynamicSetter(GET_SHARED_SETTINGS_FUNCTION_PATH(SetColorBlindStrength));
-			Setting->SetDefaultValue(GetDefault<ULyraSettingsShared>()->GetColorBlindStrength());
-			for (int32 Index = 0; Index <= 10; Index++)
-			{
-				Setting->AddOption(Index, FText::AsNumber(Index));
-			}
+				GET_SHARED_SETTINGS_FUNCTION_PATH(GetColorBlindStrength),
+				GET_SHARED_SETTINGS_FUNCTION_PATH(SetColorBlindStrength),
+				GetDefault<ULyraSettingsShared>()->GetColorBlindStrength(), 10);
+
 
 			Setting->AddEditCondition(FWhenPlayingAsPrimaryPlayer::Get());
 
@@ -286,9 +294,8 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 	////////////////////////////////////////////////////////////////////////////////////
 	{
 		UGameSetting* MobileFPSType;
-		UGameSettingCollection* GraphicsQuality = NewObject<UGameSettingCollection>();
-		GraphicsQuality->SetDevName(TEXT("GraphicsQuality"));
-		GraphicsQuality->SetDisplayName(LOCTEXT("GraphicsQuality_Name", "Graphics Quality"));
+		const auto GraphicsQuality = UGameSettingCollection::CreateCollection(
+			"GraphicsQuality",LOCTEXT("GraphicsQuality_Name", "Graphics Quality"));
 		Screen->AddSetting(GraphicsQuality);
 
 		UGameSetting* AutoSetQuality;
@@ -466,14 +473,16 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("GlobalIlluminationQuality"));
-			Setting->SetDisplayName(LOCTEXT("GlobalIlluminationQuality_Name", "Global Illumination"));
-			Setting->SetDescriptionRichText(LOCTEXT("GlobalIlluminationQuality_Description",
-			                                        "Global Illumination controls the quality of dynamically calculated indirect lighting bounces, sky shadowing and Ambient Occlusion. Settings of 'High' and above use more accurate ray tracing methods to solve lighting, but can reduce performance."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("GlobalIlluminationQuality"),
+				LOCTEXT("GlobalIlluminationQuality_Name", "Global Illumination"),
+				LOCTEXT("GlobalIlluminationQuality_Description",
+				        "Global Illumination controls the quality of dynamically calculated "
+				        "indirect lighting bounces, sky shadowing and Ambient Occlusion. Settings of "
+				        "'High' and above use more accurate ray tracing methods to solve lighting, but can reduce performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetGlobalIlluminationQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetGlobalIlluminationQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetGlobalIlluminationQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetGlobalIlluminationQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("VisualEffectQualityLow", "Low"));
 			Setting->AddOption(1, LOCTEXT("VisualEffectQualityMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("VisualEffectQualityHigh", "High"));
@@ -481,9 +490,9 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 
 			Setting->AddEditDependency(AutoSetQuality);
 			Setting->AddEditDependency(GraphicsQualityPresets);
-			Setting->AddEditCondition(
-				MakeShared<FGameSettingEditCondition_VideoQuality>(
-					TEXT("Platform does not support GlobalIlluminationQuality")));
+			Setting->AddEditCondition(MakeShared<FGameSettingEditCondition_VideoQuality>(
+					TEXT("Platform does not support GlobalIlluminationQuality"))
+			);
 
 			// When this setting changes, it can GraphicsQualityPresets to be set to custom, or a particular preset.
 			GraphicsQualityPresets->AddEditDependency(Setting);
@@ -492,14 +501,15 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("Shadows"));
-			Setting->SetDisplayName(LOCTEXT("Shadows_Name", "Shadows"));
-			Setting->SetDescriptionRichText(LOCTEXT("Shadows_Description",
-			                                        "Shadow quality determines the resolution and view distance of dynamic shadows. Shadows improve visual quality and give better depth perception, but can reduce performance."));
-
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetShadowQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetShadowQuality));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				"Shadows",
+				LOCTEXT("Shadows_Name", "Shadows"),
+				LOCTEXT("Shadows_Description",
+				        "Shadow quality determines the resolution and view distance of dynamic shadows. "
+				        "Shadows improve visual quality and give better depth perception, but can reduce "
+				        "performance."),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetShadowQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetShadowQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("ShadowLow", "Off"));
 			Setting->AddOption(1, LOCTEXT("ShadowMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("ShadowHigh", "High"));
@@ -508,7 +518,8 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 			Setting->AddEditDependency(AutoSetQuality);
 			Setting->AddEditDependency(GraphicsQualityPresets);
 			Setting->AddEditCondition(
-				MakeShared<FGameSettingEditCondition_VideoQuality>(TEXT("Platform does not support Shadows")));
+				MakeShared<FGameSettingEditCondition_VideoQuality>(
+					TEXT("Platform does not support Shadows")));
 
 			// When this setting changes, it can GraphicsQualityPresets to be set to custom, or a particular preset.
 			GraphicsQualityPresets->AddEditDependency(Setting);
@@ -517,14 +528,16 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("AntiAliasing"));
-			Setting->SetDisplayName(LOCTEXT("AntiAliasing_Name", "Anti-Aliasing"));
-			Setting->SetDescriptionRichText(LOCTEXT("AntiAliasing_Description",
-			                                        "Anti-Aliasing reduces jaggy artifacts along geometry edges. Increasing this setting will make edges look smoother, but can reduce performance. Higher settings mean more anti-aliasing."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("AntiAliasing"),
+				LOCTEXT("AntiAliasing_Name", "Anti-Aliasing"),
+				LOCTEXT("AntiAliasing_Description",
+				        "Anti-Aliasing reduces jaggy artifacts along geometry edges. "
+				        "Increasing this setting will make edges look smoother, but can reduce performance."
+				        " Higher settings mean more anti-aliasing."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetAntiAliasingQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetAntiAliasingQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetAntiAliasingQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetAntiAliasingQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("AntiAliasingLow", "Off"));
 			Setting->AddOption(1, LOCTEXT("AntiAliasingMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("AntiAliasingHigh", "High"));
@@ -542,14 +555,14 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("ViewDistance"));
-			Setting->SetDisplayName(LOCTEXT("ViewDistance_Name", "View Distance"));
-			Setting->SetDescriptionRichText(LOCTEXT("ViewDistance_Description",
-			                                        "View distance determines how far away objects are culled for performance."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("ViewDistance"),
+				LOCTEXT("ViewDistance_Name", "View Distance"),
+				LOCTEXT("ViewDistance_Description",
+				        "View distance determines how far away objects are culled for performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetViewDistanceQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetViewDistanceQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetViewDistanceQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetViewDistanceQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("ViewDistanceNear", "Near"));
 			Setting->AddOption(1, LOCTEXT("ViewDistanceMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("ViewDistanceFar", "Far"));
@@ -567,15 +580,15 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("TextureQuality"));
-			Setting->SetDisplayName(LOCTEXT("TextureQuality_Name", "Textures"));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("TextureQuality"),
+				LOCTEXT("TextureQuality_Name", "Textures"),
 
-			Setting->SetDescriptionRichText(LOCTEXT("TextureQuality_Description",
-			                                        "Texture quality determines the resolution of textures in game. Increasing this setting will make objects more detailed, but can reduce performance."));
+				LOCTEXT("TextureQuality_Description",
+				        "Texture quality determines the resolution of textures in game. Increasing this setting will make objects more detailed, but can reduce performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetTextureQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetTextureQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetTextureQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetTextureQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("TextureQualityLow", "Low"));
 			Setting->AddOption(1, LOCTEXT("TextureQualityMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("TextureQualityHigh", "High"));
@@ -593,14 +606,14 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("VisualEffectQuality"));
-			Setting->SetDisplayName(LOCTEXT("VisualEffectQuality_Name", "Effects"));
-			Setting->SetDescriptionRichText(LOCTEXT("VisualEffectQuality_Description",
-			                                        "Effects determines the quality of visual effects and lighting in game. Increasing this setting will increase the quality of visual effects, but can reduce performance."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("VisualEffectQuality"),
+				LOCTEXT("VisualEffectQuality_Name", "Effects"),
+				LOCTEXT("VisualEffectQuality_Description",
+				        "Effects determines the quality of visual effects and lighting in game. Increasing this setting will increase the quality of visual effects, but can reduce performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetVisualEffectQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetVisualEffectQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetVisualEffectQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetVisualEffectQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("VisualEffectQualityLow", "Low"));
 			Setting->AddOption(1, LOCTEXT("VisualEffectQualityMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("VisualEffectQualityHigh", "High"));
@@ -619,14 +632,14 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("ReflectionQuality"));
-			Setting->SetDisplayName(LOCTEXT("ReflectionQuality_Name", "Reflections"));
-			Setting->SetDescriptionRichText(LOCTEXT("ReflectionQuality_Description",
-			                                        "Reflection quality determines the resolution and accuracy of reflections.  Settings of 'High' and above use more accurate ray tracing methods to solve reflections, but can reduce performance."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("ReflectionQuality"),
+				LOCTEXT("ReflectionQuality_Name", "Reflections"),
+				LOCTEXT("ReflectionQuality_Description",
+				        "Reflection quality determines the resolution and accuracy of reflections.  Settings of 'High' and above use more accurate ray tracing methods to solve reflections, but can reduce performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetReflectionQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetReflectionQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetReflectionQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetReflectionQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("VisualEffectQualityLow", "Low"));
 			Setting->AddOption(1, LOCTEXT("VisualEffectQualityMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("VisualEffectQualityHigh", "High"));
@@ -645,14 +658,14 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 		}
 		//----------------------------------------------------------------------------------
 		{
-			UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-			Setting->SetDevName(TEXT("PostProcessingQuality"));
-			Setting->SetDisplayName(LOCTEXT("PostProcessingQuality_Name", "Post Processing"));
-			Setting->SetDescriptionRichText(LOCTEXT("PostProcessingQuality_Description",
-			                                        "Post Processing effects include Motion Blur, Depth of Field and Bloom. Increasing this setting improves the quality of post process effects, but can reduce performance."));
+			const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+				TEXT("PostProcessingQuality"),
+				LOCTEXT("PostProcessingQuality_Name", "Post Processing"),
+				LOCTEXT("PostProcessingQuality_Description",
+				        "Post Processing effects include Motion Blur, Depth of Field and Bloom. Increasing this setting improves the quality of post process effects, but can reduce performance."),
 
-			Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetPostProcessingQuality));
-			Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetPostProcessingQuality));
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(GetPostProcessingQuality),
+				GET_LOCAL_SETTINGS_FUNCTION_PATH(SetPostProcessingQuality), 3, 1);
 			Setting->AddOption(0, LOCTEXT("PostProcessingQualityLow", "Low"));
 			Setting->AddOption(1, LOCTEXT("PostProcessingQualityMedium", "Medium"));
 			Setting->AddOption(2, LOCTEXT("PostProcessingQualityHigh", "High"));
@@ -674,9 +687,8 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 	// Advanced Graphics
 	////////////////////////////////////////////////////////////////////////////////////
 	{
-		UGameSettingCollection* AdvancedGraphics = NewObject<UGameSettingCollection>();
-		AdvancedGraphics->SetDevName(TEXT("AdvancedGraphics"));
-		AdvancedGraphics->SetDisplayName(LOCTEXT("AdvancedGraphics_Name", "Advanced Graphics"));
+		const auto AdvancedGraphics = UGameSettingCollection::CreateCollection(
+			"AdvancedGraphics",LOCTEXT("AdvancedGraphics_Name", "Advanced Graphics"));
 		Screen->AddSetting(AdvancedGraphics);
 
 		//----------------------------------------------------------------------------------
@@ -712,10 +724,10 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 	return Screen;
 }
 
-void AddFrameRateOptions(UGameSettingValueDiscreteDynamic_Number* Setting)
+void AddFrameRateOptions(const auto Setting)
 {
 	const FText FPSFormat = LOCTEXT("FPSFormat", "{0} FPS");
-	for (int32 Rate : GetDefault<ULyraPerformanceSettings>()->DesktopFrameRateLimits)
+	for (const int32 Rate : GetDefault<ULyraPerformanceSettings>()->DesktopFrameRateLimits)
 	{
 		Setting->AddOption(static_cast<float>(Rate), FText::Format(FPSFormat, Rate));
 	}
@@ -727,15 +739,15 @@ void ULyraGameSettingRegistry::InitializeVideoSettings_FrameRates(UGameSettingCo
 {
 	//----------------------------------------------------------------------------------
 	{
-		UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-		Setting->SetDevName(TEXT("FrameRateLimit_OnBattery"));
-		Setting->SetDisplayName(LOCTEXT("FrameRateLimit_OnBattery_Name", "Frame Rate Limit (On Battery)"));
-		Setting->SetDescriptionRichText(LOCTEXT("FrameRateLimit_OnBattery_Description",
-		                                        "Frame rate limit when running on battery. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."));
+		const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+			TEXT("FrameRateLimit_OnBattery"),
+			LOCTEXT("FrameRateLimit_OnBattery_Name", "Frame Rate Limit (On Battery)"),
+			LOCTEXT("FrameRateLimit_OnBattery_Description",
+			        "Frame rate limit when running on battery. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."),
 
-		Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_OnBattery));
-		Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_OnBattery));
-		Setting->SetDefaultValue(GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_OnBattery());
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_OnBattery),
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_OnBattery),
+			GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_OnBattery(), 1);
 
 		Setting->AddEditCondition(
 			MakeShared<FGameSettingEditCondition_FramePacingMode>(ELyraFramePacingMode::DesktopStyle));
@@ -747,15 +759,15 @@ void ULyraGameSettingRegistry::InitializeVideoSettings_FrameRates(UGameSettingCo
 	}
 	//----------------------------------------------------------------------------------
 	{
-		UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-		Setting->SetDevName(TEXT("FrameRateLimit_InMenu"));
-		Setting->SetDisplayName(LOCTEXT("FrameRateLimit_InMenu_Name", "Frame Rate Limit (Menu)"));
-		Setting->SetDescriptionRichText(LOCTEXT("FrameRateLimit_InMenu_Description",
-		                                        "Frame rate limit when in the menu. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."));
+		const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+			TEXT("FrameRateLimit_InMenu"),
+			LOCTEXT("FrameRateLimit_InMenu_Name", "Frame Rate Limit (Menu)"),
+			LOCTEXT("FrameRateLimit_InMenu_Description",
+			        "Frame rate limit when in the menu. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."),
 
-		Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_InMenu));
-		Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_InMenu));
-		Setting->SetDefaultValue(GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_InMenu());
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_InMenu),
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_InMenu),
+			GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_InMenu(), 1);
 		Setting->AddEditCondition(
 			MakeShared<FGameSettingEditCondition_FramePacingMode>(ELyraFramePacingMode::DesktopStyle));
 
@@ -765,15 +777,16 @@ void ULyraGameSettingRegistry::InitializeVideoSettings_FrameRates(UGameSettingCo
 	}
 	//----------------------------------------------------------------------------------
 	{
-		UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-		Setting->SetDevName(TEXT("FrameRateLimit_WhenBackgrounded"));
-		Setting->SetDisplayName(LOCTEXT("FrameRateLimit_WhenBackgrounded_Name", "Frame Rate Limit (Background)"));
-		Setting->SetDescriptionRichText(LOCTEXT("FrameRateLimit_WhenBackgrounded_Description",
-		                                        "Frame rate limit when in the background. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."));
+		const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+			TEXT("FrameRateLimit_WhenBackgrounded"),
+			LOCTEXT("FrameRateLimit_WhenBackgrounded_Name", "Frame Rate Limit (Background)"),
+			LOCTEXT("FrameRateLimit_WhenBackgrounded_Description",
+			        "Frame rate limit when in the background. Set this lower for a more consistent frame rate or higher "
+			        "for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."),
 
-		Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_WhenBackgrounded));
-		Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_WhenBackgrounded));
-		Setting->SetDefaultValue(GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_WhenBackgrounded());
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_WhenBackgrounded),
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_WhenBackgrounded),
+			GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_WhenBackgrounded(), 1);
 		Setting->AddEditCondition(
 			MakeShared<FGameSettingEditCondition_FramePacingMode>(ELyraFramePacingMode::DesktopStyle));
 
@@ -783,15 +796,17 @@ void ULyraGameSettingRegistry::InitializeVideoSettings_FrameRates(UGameSettingCo
 	}
 	//----------------------------------------------------------------------------------
 	{
-		UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
-		Setting->SetDevName(TEXT("FrameRateLimit_Always"));
-		Setting->SetDisplayName(LOCTEXT("FrameRateLimit_Always_Name", "Frame Rate Limit"));
-		Setting->SetDescriptionRichText(LOCTEXT("FrameRateLimit_Always_Description",
-		                                        "Frame rate limit sets the highest frame rate that is allowed. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."));
+		const auto Setting = UGameSettingValueDiscreteDynamic_Number::Create(
+			TEXT("FrameRateLimit_Always"),
+			LOCTEXT("FrameRateLimit_Always_Name", "Frame Rate Limit"),
+			LOCTEXT("FrameRateLimit_Always_Description",
+			        "Frame rate limit sets the highest frame rate that is allowed. Set this lower for a more consistent frame rate or higher for the best experience on faster machines. You may need to disable Vsync to reach high frame rates."),
 
-		Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_Always));
-		Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_Always));
-		Setting->SetDefaultValue(GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_Always());
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFrameRateLimit_Always),
+			GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFrameRateLimit_Always),
+			GetDefault<ULyraSettingsLocal>()->GetFrameRateLimit_Always(),
+			1);
+
 		Setting->AddEditCondition(
 			MakeShared<FGameSettingEditCondition_FramePacingMode>(ELyraFramePacingMode::DesktopStyle));
 

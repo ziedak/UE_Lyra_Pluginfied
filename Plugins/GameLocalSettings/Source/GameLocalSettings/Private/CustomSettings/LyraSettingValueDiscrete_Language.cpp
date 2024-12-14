@@ -17,10 +17,6 @@
 
 static constexpr int32 SettingSystemDefaultLanguageIndex = 0;
 
-ULyraSettingValueDiscrete_Language::ULyraSettingValueDiscrete_Language()
-{
-}
-
 void ULyraSettingValueDiscrete_Language::OnInitialized()
 {
 	Super::OnInitialized();
@@ -30,9 +26,7 @@ void ULyraSettingValueDiscrete_Language::OnInitialized()
 	for (const FString& CultureName : AllCultureNames)
 	{
 		if (FInternationalization::Get().IsCultureAllowed(CultureName))
-		{
 			AvailableCultureNames.Add(CultureName);
-		}
 	}
 
 	AvailableCultureNames.Insert(TEXT(""), SettingSystemDefaultLanguageIndex);
@@ -45,16 +39,16 @@ void ULyraSettingValueDiscrete_Language::StoreInitial()
 
 void ULyraSettingValueDiscrete_Language::OnApply()
 {
-	if (UCommonMessagingSubsystem* Messaging = LocalPlayer->GetSubsystem<UCommonMessagingSubsystem>())
-	{
-		Messaging->ShowConfirmation(
-			UCommonGameDialogDescriptor::CreateConfirmationOk(
-				LOCTEXT("WarningLanguage_Title", "Language Changed"),
-				LOCTEXT("WarningLanguage_Message",
-				        "You will need to restart the game completely for all language related changes to take effect.")
-			)
-		);
-	}
+	UCommonMessagingSubsystem* Messaging = LocalPlayer->GetSubsystem<UCommonMessagingSubsystem>();
+	if (!Messaging) return;
+
+	Messaging->ShowConfirmation(
+		UCommonGameDialogDescriptor::CreateConfirmationOk(
+			LOCTEXT("WarningLanguage_Title", "Language Changed"),
+			LOCTEXT("WarningLanguage_Message",
+			        "You will need to restart the game completely for all language related changes to take effect.")
+		)
+	);
 }
 
 void ULyraSettingValueDiscrete_Language::ResetToDefault()
@@ -64,16 +58,15 @@ void ULyraSettingValueDiscrete_Language::ResetToDefault()
 
 void ULyraSettingValueDiscrete_Language::RestoreToInitial()
 {
-	if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettings>())
+	if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettings>()) return;
+
+	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
+	if (!ISharedSettings) return;
+
+	if (ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings())
 	{
-		if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
-		{
-			if (ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings())
-			{
-				Settings->ClearPendingCulture();
-				NotifySettingChanged(EGameSettingChangeReason::RestoreToInitial);
-			}
-		}
+		Settings->ClearPendingCulture();
+		NotifySettingChanged(EGameSettingChangeReason::RestoreToInitial);
 	}
 
 	// if (ULyraSettingsShared* Settings = CastChecked<ULyraLocalPlayer>(LocalPlayer)->GetSharedSettings())
@@ -86,19 +79,15 @@ void ULyraSettingValueDiscrete_Language::RestoreToInitial()
 void ULyraSettingValueDiscrete_Language::SetDiscreteOptionByIndex(int32 Index)
 {
 	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
-	if (!ISharedSettings)
-		return;
+	if (!ISharedSettings) return;
+
 	ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings();
-	if (!Settings)
-		return;
+	if (!Settings) return;
+
 	if (Index == SettingSystemDefaultLanguageIndex)
-	{
 		Settings->ResetToDefaultCulture();
-	}
 	else if (AvailableCultureNames.IsValidIndex(Index))
-	{
 		Settings->SetPendingCulture(AvailableCultureNames[Index]);
-	}
 
 	NotifySettingChanged(EGameSettingChangeReason::Change);
 
@@ -112,7 +101,7 @@ void ULyraSettingValueDiscrete_Language::SetDiscreteOptionByIndex(int32 Index)
 	// 	{
 	// 		Settings->SetPendingCulture(AvailableCultureNames[Index]);
 	// 	}
-	// 	
+	//
 	// 	NotifySettingChanged(EGameSettingChangeReason::Change);
 	// }
 }
@@ -122,50 +111,42 @@ int32 ULyraSettingValueDiscrete_Language::GetDiscreteOptionIndex() const
 	//const ULyraSettingsShared* Settings = CastChecked<ULyraLocalPlayer>(LocalPlayer)->GetSharedSettings()
 
 	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
-	if (!ISharedSettings)
-		return 0;
-	ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings();
-	if (!Settings)
-		return 0;
+	if (!ISharedSettings) return 0;
+
+	const ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings();
+	if (!Settings) return 0;
 
 	if (Settings->ShouldResetToDefaultCulture())
-	{
 		return SettingSystemDefaultLanguageIndex;
-	}
 
-	// We prefer the pending culture to the current culture as the options UI updates the pending culture before it 
+
+	// We prefer the pending culture to the current culture as the options UI updates the pending culture before it
 	// gets applied, and we need the UI to reflect that choice
 	FString PendingCulture = Settings->GetPendingCulture();
 	if (PendingCulture.IsEmpty())
 	{
 		if (Settings->IsUsingDefaultCulture())
-		{
 			return SettingSystemDefaultLanguageIndex;
-		}
 
 		PendingCulture = FInternationalization::Get().GetCurrentCulture()->GetName();
 	}
 
-	// Try to find an exact match 
-	{
-		const int32 ExactMatchIndex = AvailableCultureNames.IndexOfByKey(PendingCulture);
-		if (ExactMatchIndex != INDEX_NONE)
-		{
-			return ExactMatchIndex;
-		}
-	}
+	// Try to find an exact match
+
+	const int32 ExactMatchIndex = AvailableCultureNames.IndexOfByKey(PendingCulture);
+	if (ExactMatchIndex != INDEX_NONE)
+		return ExactMatchIndex;
+
 
 	// Try to find a prioritized match (eg, allowing "en-US" to show as "en" in the UI)
 	const TArray<FString> PrioritizedPendingCultures = FInternationalization::Get().GetPrioritizedCultureNames(
 		PendingCulture);
+
 	for (int32 i = 0; i < AvailableCultureNames.Num(); ++i)
 	{
 		if (PrioritizedPendingCultures.Contains(AvailableCultureNames[i]))
-		{
 			return i;
-		}
 	}
-
 
 	return 0;
 }
@@ -176,7 +157,7 @@ TArray<FText> ULyraSettingValueDiscrete_Language::GetDiscreteOptions() const
 
 	for (const FString& CultureName : AvailableCultureNames)
 	{
-		if (CultureName == TEXT(""))
+		if (CultureName.IsEmpty())
 		{
 			const FCulturePtr SystemDefaultCulture = FInternationalization::Get().GetDefaultCulture();
 			if (ensure(SystemDefaultCulture))
@@ -188,22 +169,21 @@ TArray<FText> ULyraSettingValueDiscrete_Language::GetDiscreteOptions() const
 
 				Options.Add(MoveTemp(LocalizedSystemDefault));
 			}
+			continue;
 		}
-		else
+
+		const FCulturePtr Culture = FInternationalization::Get().GetCulture(CultureName);
+		if (ensureMsgf(Culture, TEXT("Unable to find Culture '%s'!"), *CultureName))
 		{
-			const FCulturePtr Culture = FInternationalization::Get().GetCulture(CultureName);
-			if (ensureMsgf(Culture, TEXT("Unable to find Culture '%s'!"), *CultureName))
-			{
-				const FString CultureDisplayName = Culture->GetDisplayName();
-				const FString CultureNativeName = Culture->GetNativeName();
+			const FString CultureDisplayName = Culture->GetDisplayName();
+			const FString CultureNativeName = Culture->GetNativeName();
 
-				// Only show both names if they're different (to avoid repetition)
-				FString Entry = (!CultureNativeName.Equals(CultureDisplayName, ESearchCase::CaseSensitive))
-					                ? FString::Printf(TEXT("%s (%s)"), *CultureNativeName, *CultureDisplayName)
-					                : CultureNativeName;
+			// Only show both names if they're different (to avoid repetition)
+			FString Entry = (!CultureNativeName.Equals(CultureDisplayName, ESearchCase::CaseSensitive))
+				                ? FString::Printf(TEXT("%s (%s)"), *CultureNativeName, *CultureDisplayName)
+				                : CultureNativeName;
 
-				Options.Add(FText::FromString(Entry));
-			}
+			Options.Add(FText::FromString(Entry));
 		}
 	}
 

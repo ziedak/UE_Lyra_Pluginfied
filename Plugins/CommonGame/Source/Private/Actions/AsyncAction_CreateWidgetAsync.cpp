@@ -58,7 +58,7 @@ void UAsyncAction_CreateWidgetAsync::Activate()
 		UserWidgetSoftClass.ToSoftObjectPath(),
 		FStreamableDelegate::CreateUObject(this, &ThisClass::OnWidgetLoaded),
 		FStreamableManager::AsyncLoadHighPriority
-	);
+		);
 
 	// Setup a cancel delegate so that we can resume input if this handler is canceled.
 	StreamingHandle->BindCancelDelegate(FStreamableDelegate::CreateWeakLambda(this,
@@ -68,7 +68,7 @@ void UAsyncAction_CreateWidgetAsync::Activate()
 			                                                                          OwningPlayer.Get(),
 			                                                                          SuspendInputToken);
 	                                                                          })
-	);
+		);
 }
 
 void UAsyncAction_CreateWidgetAsync::Cancel()

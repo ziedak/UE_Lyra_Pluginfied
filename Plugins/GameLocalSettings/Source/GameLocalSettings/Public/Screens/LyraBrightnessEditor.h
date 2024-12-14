@@ -29,7 +29,6 @@ class ULyraBrightnessEditor : public UCommonActivatableWidget, public IGameSetti
 public:
 	FSimpleMulticastDelegate OnSafeZoneSet;
 
-public:
 	ULyraBrightnessEditor(const FObjectInitializer& Initializer);
 
 	// Begin IGameSettingActionInterface

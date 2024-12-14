@@ -47,7 +47,7 @@ void UCoreDeveloperSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("ExperienceOverrideActive", "Developer Settings Override\nExperience {0}"),
 			FText::FromName(ExperienceOverride.PrimaryAssetName)
-		));
+			));
 		Info.ExpireDuration = 2.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}

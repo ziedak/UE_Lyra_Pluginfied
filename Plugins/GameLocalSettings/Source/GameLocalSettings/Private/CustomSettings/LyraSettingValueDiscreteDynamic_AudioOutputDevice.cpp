@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CustomSettings/LyraSettingValueDiscreteDynamic_AudioOutputDevice.h"
-
 #include "AudioDeviceNotificationSubsystem.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraSettingValueDiscreteDynamic_AudioOutputDevice)
@@ -17,16 +16,20 @@ void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::OnInitialized()
 
 	if (UAudioDeviceNotificationSubsystem* AudioDeviceNotifSubsystem = UAudioDeviceNotificationSubsystem::Get())
 	{
-		AudioDeviceNotifSubsystem->DeviceAddedNative.AddUObject(this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved);
-		AudioDeviceNotifSubsystem->DeviceRemovedNative.AddUObject(this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved);
+		AudioDeviceNotifSubsystem->DeviceAddedNative.AddUObject(
+			this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved);
+		AudioDeviceNotifSubsystem->DeviceRemovedNative.AddUObject(
+			this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved);
 		//AudioDeviceNotifSubsystem->DeviceSwitchedNative.AddUObject(this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceSwitched);
-		AudioDeviceNotifSubsystem->DefaultRenderDeviceChangedNative.AddUObject(this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DefaultDeviceChanged);
+		AudioDeviceNotifSubsystem->DefaultRenderDeviceChangedNative.AddUObject(
+			this, &ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DefaultDeviceChanged);
 	}
 
 	UAudioMixerBlueprintLibrary::GetAvailableAudioOutputDevices(this, DevicesObtainedCallback);
 }
 
-void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::OnAudioOutputDevicesObtained(const TArray<FAudioOutputDeviceInfo>& AvailableDevices)
+void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::OnAudioOutputDevicesObtained(
+	const TArray<FAudioOutputDeviceInfo>& AvailableDevices)
 {
 	int32 NewSize = AvailableDevices.Num();
 	OutputDevices.Reset(NewSize++);
@@ -41,27 +44,27 @@ void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::OnAudioOutputDevicesObt
 
 	for (const FAudioOutputDeviceInfo& DeviceInfo : OutputDevices)
 	{
-		if (!DeviceInfo.DeviceId.IsEmpty() && !DeviceInfo.Name.IsEmpty())
+		if (DeviceInfo.DeviceId.IsEmpty() || DeviceInfo.Name.IsEmpty()) continue;
+		
+		// System Default 
+		if (DeviceInfo.bIsSystemDefault)
 		{
-			// System Default 
-			if (DeviceInfo.bIsSystemDefault)
-			{
-				SystemDefaultDeviceId = DeviceInfo.DeviceId;
-				SystemDefaultDeviceName = DeviceInfo.Name;
-			}
-
-			// Current Device
-			if (DeviceInfo.bIsCurrentDevice)
-			{
-				CurrentDeviceId = DeviceInfo.DeviceId;
-			}
-
-			// Add the menu option
-			AddDynamicOption(DeviceInfo.DeviceId, FText::FromString(DeviceInfo.Name));
+			SystemDefaultDeviceId = DeviceInfo.DeviceId;
+			SystemDefaultDeviceName = DeviceInfo.Name;
 		}
+
+		// Current Device
+		if (DeviceInfo.bIsCurrentDevice)
+		{
+			CurrentDeviceId = DeviceInfo.DeviceId;
+		}
+
+		// Add the menu option
+		AddDynamicOption(DeviceInfo.DeviceId, FText::FromString(DeviceInfo.Name));
 	}
 
-	OptionDisplayTexts[0] = FText::Format(LOCTEXT("DefaultAudioOutputDevice", "Default Output - {0}"), FText::FromString(SystemDefaultDeviceName));
+	OptionDisplayTexts[0] = FText::Format(
+		LOCTEXT("DefaultAudioOutputDevice", "Default Output - {0}"), FText::FromString(SystemDefaultDeviceName));
 	SetDefaultValueFromString(TEXT(""));
 	RefreshEditableState();
 
@@ -93,12 +96,13 @@ void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::OnCompletedDeviceSwap(c
 	//}
 }
 
-void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved(FString DeviceId)
+void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DeviceAddedOrRemoved(FString DeviceId) const
 {
 	UAudioMixerBlueprintLibrary::GetAvailableAudioOutputDevices(this, DevicesObtainedCallback);
 }
 
-void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DefaultDeviceChanged(EAudioDeviceChangedRole InRole, FString DeviceId)
+void ULyraSettingValueDiscreteDynamic_AudioOutputDevice::DefaultDeviceChanged(
+	EAudioDeviceChangedRole InRole, FString DeviceId) const
 {
 	UAudioMixerBlueprintLibrary::GetAvailableAudioOutputDevices(this, DevicesObtainedCallback);
 }

@@ -1088,7 +1088,7 @@ void UCommonSessionSubsystem::OnFindSessionsComplete(bool bWasSuccessful)
 			       Result.Session.NumOpenPrivateConnections,
 			       Result.Session.NumOpenPublicConnections,
 			       Result.PingInMs
-			);
+				);
 		}
 	}
 	else

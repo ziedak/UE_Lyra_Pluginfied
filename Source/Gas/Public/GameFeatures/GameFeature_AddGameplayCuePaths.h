@@ -14,8 +14,11 @@ UCLASS()
 class GAS_API UGameFeature_AddGameplayCuePaths : public UObject, public IGameFeatureStateChangeObserver
 {
 	GENERATED_BODY()
+
 public:
-	virtual void OnGameFeatureRegistering(const UGameFeatureData* GameFeatureData, const FString& PluginName, const FString& PluginURL) override;
-	virtual void OnGameFeatureUnregistering(const UGameFeatureData* GameFeatureData, const FString& PluginName, const FString& PluginURL) override;
+	virtual void OnGameFeatureRegistering(const UGameFeatureData* GameFeatureData, const FString& PluginName,
+	                                      const FString& PluginURL) override;
+	virtual void OnGameFeatureUnregistering(const UGameFeatureData* GameFeatureData, const FString& PluginName,
+	                                        const FString& PluginURL) override;
 
 };

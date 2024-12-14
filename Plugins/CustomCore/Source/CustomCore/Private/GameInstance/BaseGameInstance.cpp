@@ -60,7 +60,7 @@ namespace Lyra
 				if (Cert.IsValid())
 				{
 					const FString CertPath = FPaths::ProjectContentDir() / TEXT("DTLS") / FPaths::MakeValidFileName(
-						FString::Printf(TEXT("%s.pem"), *CertName));
+						                         FString::Printf(TEXT("%s.pem"), *CertName));
 
 					if (!Cert->ExportCertificate(CertPath))
 					{
@@ -142,7 +142,6 @@ void UBaseGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, 
 	// If login succeeded, tell the local player to load their settings
 	if (!bSuccess || !(ensure(UserInfo)))
 	{
-		return;
 	}
 
 	//@TODO: Implement this
@@ -202,7 +201,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionToken(const FString& Encryption
 					TArrayView<const uint8> Fingerprint = Cert->GetFingerprint();
 
 					FString DebugFile = FPaths::Combine(*FPaths::ProjectSavedDir(), TEXT("DTLS")) /
-						FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
+					                    FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
 
 					FString FingerprintStr = BytesToHex(Fingerprint.GetData(), Fingerprint.Num());
 					FFileHelper::SaveStringToFile(FingerprintStr, *DebugFile);
@@ -261,7 +260,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyRespo
 			{
 				// But for testing purposes...
 				FString DebugFile = FPaths::Combine(*FPaths::ProjectSavedDir(), TEXT("DTLS")) /
-					FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
+				                    FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
 				FString FingerprintStr;
 				FFileHelper::LoadFileToString(FingerprintStr, *DebugFile);
 
@@ -318,7 +317,7 @@ void UBaseGameInstance::OnPreClientTravelToSession(FString& URL)
 			APlayerController* const PlayerController = GetFirstLocalPlayerController();
 
 			if (PlayerController && PlayerController->PlayerState && PlayerController->PlayerState->GetUniqueId().
-				IsValid())
+			    IsValid())
 			{
 				const FUniqueNetIdRepl& PlayerUniqueId = PlayerController->PlayerState->GetUniqueId();
 				const FString EncryptionToken = PlayerUniqueId.ToString();

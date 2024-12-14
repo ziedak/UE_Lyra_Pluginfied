@@ -13,4 +13,3 @@ void UGameSettingRotator::SetDefaultOption(int32 DefaultOptionIndex)
 {
 	BP_OnDefaultOptionSpecified(DefaultOptionIndex);
 }
-

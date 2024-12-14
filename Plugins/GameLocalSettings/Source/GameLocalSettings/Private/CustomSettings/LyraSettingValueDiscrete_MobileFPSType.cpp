@@ -9,9 +9,6 @@
 
 #define LOCTEXT_NAMESPACE "LyraSettings"
 
-ULyraSettingValueDiscrete_MobileFPSType::ULyraSettingValueDiscrete_MobileFPSType(): InitialValue(0)
-{
-}
 
 void ULyraSettingValueDiscrete_MobileFPSType::OnInitialized()
 {
@@ -23,15 +20,16 @@ void ULyraSettingValueDiscrete_MobileFPSType::OnInitialized()
 	for (int32 TestLimit : PlatformSettings->MobileFrameRateLimits)
 	{
 		if (ULyraSettingsLocal::IsSupportedMobileFramePace(TestLimit))
-		{
 			FPSOptions.Add(TestLimit, MakeLimitString(TestLimit));
-		}
 	}
 
 	const int32 FirstFrameRateWithQualityLimit = UserSettings->GetFirstFrameRateWithQualityLimit();
 	if (FirstFrameRateWithQualityLimit > 0)
 	{
-		SetWarningRichText(FText::Format(LOCTEXT("MobileFPSType_Note", "<strong>Note: Changing the framerate setting to {0} or higher might lower your Quality Presets.</>"), MakeLimitString(FirstFrameRateWithQualityLimit)));
+		SetWarningRichText(FText::Format(
+			LOCTEXT("MobileFPSType_Note",
+			        "<strong>Note: Changing the framerate setting to {0} or higher might lower your Quality Presets.</>"),
+			MakeLimitString(FirstFrameRateWithQualityLimit)));
 	}
 }
 
@@ -40,7 +38,7 @@ int32 ULyraSettingValueDiscrete_MobileFPSType::GetDefaultFPS() const
 	return ULyraSettingsLocal::GetDefaultMobileFrameRate();
 }
 
-FText ULyraSettingValueDiscrete_MobileFPSType::MakeLimitString(int32 Number)
+FText ULyraSettingValueDiscrete_MobileFPSType::MakeLimitString(const int32 Number)
 {
 	return FText::Format(LOCTEXT("MobileFrameRateOption", "{0} FPS"), FText::AsNumber(Number));
 }
@@ -66,7 +64,6 @@ void ULyraSettingValueDiscrete_MobileFPSType::SetDiscreteOptionByIndex(int32 Ind
 	FPSOptions.GenerateKeyArray(FPSOptionsModes);
 
 	const int32 NewMode = FPSOptionsModes.IsValidIndex(Index) ? FPSOptionsModes[Index] : GetDefaultFPS();
-
 	SetValue(NewMode, EGameSettingChangeReason::Change);
 }
 
@@ -93,9 +90,7 @@ int32 ULyraSettingValueDiscrete_MobileFPSType::GetValue() const
 void ULyraSettingValueDiscrete_MobileFPSType::SetValue(const int32 NewLimitFPS, const EGameSettingChangeReason InReason)
 {
 	ULyraSettingsLocal::Get()->SetDesiredMobileFrameRateLimit(NewLimitFPS);
-
 	NotifySettingChanged(InReason);
 }
 
 #undef LOCTEXT_NAMESPACE
-

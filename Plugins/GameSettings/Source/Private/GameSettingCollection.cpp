@@ -11,9 +11,16 @@
 // UGameSettingCollection
 //--------------------------------------
 
+UGameSettingCollection* UGameSettingCollection::CreateCollection(const FName& DevName, const FText& DisplayName)
+{
+	UGameSettingCollection* Collection = NewObject<UGameSettingCollection>();
+	Collection->SetDevName(DevName);
+	Collection->SetDisplayName(DisplayName);
+	return Collection;
+}
+
 UGameSettingCollection::UGameSettingCollection()
 {
-
 }
 
 void UGameSettingCollection::AddSetting(UGameSetting* Setting)
@@ -47,7 +54,8 @@ TArray<UGameSettingCollection*> UGameSettingCollection::GetChildCollections() co
 	return CollectionSettings;
 }
 
-void UGameSettingCollection::GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings) const
+void UGameSettingCollection::GetSettingsForFilter(const FGameSettingFilterState& FilterState,
+                                                  TArray<UGameSetting*>& InOutSettings) const
 {
 	for (UGameSetting* ChildSetting : Settings)
 	{
@@ -90,6 +98,23 @@ void UGameSettingCollection::GetSettingsForFilter(const FGameSettingFilterState&
 // UGameSettingCollectionPage
 //--------------------------------------
 
+UGameSettingCollectionPage* UGameSettingCollectionPage::CreateSettings(const FName& DevName,
+                                                                       const FText& DisplayName,
+                                                                       const FText& Description,
+                                                                       const FText& NavigationText,
+                                                                       const TSharedRef<FGameSettingEditCondition>&
+                                                                       EditCondition)
+{
+	const auto Setting = NewObject<UGameSettingCollectionPage>();
+	Setting->SetDevName(DevName);
+	Setting->SetDisplayName(DisplayName);
+	Setting->SetDescriptionRichText(Description);
+	Setting->SetNavigationText(NavigationText);
+	Setting->AddEditCondition(EditCondition);
+
+	return Setting;
+}
+
 UGameSettingCollectionPage::UGameSettingCollectionPage()
 {
 }
@@ -104,7 +129,8 @@ void UGameSettingCollectionPage::OnInitialized()
 #endif
 }
 
-void UGameSettingCollectionPage::GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings) const
+void UGameSettingCollectionPage::GetSettingsForFilter(const FGameSettingFilterState& FilterState,
+                                                      TArray<UGameSetting*>& InOutSettings) const
 {
 	// If we're including nested pages, call the super and dump them all, otherwise, we pretend we have none for the filtering.
 	// because our settings are displayed on another page.
@@ -120,4 +146,3 @@ void UGameSettingCollectionPage::ExecuteNavigation()
 }
 
 #undef LOCTEXT_NAMESPACE
-

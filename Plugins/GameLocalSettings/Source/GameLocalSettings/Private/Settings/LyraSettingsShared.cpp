@@ -40,18 +40,11 @@ ULyraSettingsShared::ULyraSettingsShared()
 	GamepadLookStickDeadZone = LyraSettingsSharedCVars::DefaultGamepadRightStickInnerDeadZone;
 }
 
-int32 ULyraSettingsShared::GetLatestDataVersion() const
-{
-	// 0 = before subclassing ULocalPlayerSaveGame
-	// 1 = first proper version
-	return 1;
-}
-
 ULyraSettingsShared* ULyraSettingsShared::CreateTemporarySettings(const ULocalPlayer* LocalPlayer)
 {
 	// This is not loaded from disk but should be set up to save
 	ULyraSettingsShared* SharedSettings = Cast<ULyraSettingsShared>(
-		CreateNewSaveGameForLocalPlayer(ULyraSettingsShared::StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME));
+		CreateNewSaveGameForLocalPlayer(StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME));
 
 	SharedSettings->ApplySettings();
 
@@ -62,7 +55,7 @@ ULyraSettingsShared* ULyraSettingsShared::LoadOrCreateSettings(const ULocalPlaye
 {
 	// This will stall the main thread while it loads
 	ULyraSettingsShared* SharedSettings = Cast<ULyraSettingsShared>(
-		LoadOrCreateSaveGameForLocalPlayer(ULyraSettingsShared::StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME));
+		LoadOrCreateSaveGameForLocalPlayer(StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME));
 
 	SharedSettings->ApplySettings();
 
@@ -71,7 +64,7 @@ ULyraSettingsShared* ULyraSettingsShared::LoadOrCreateSettings(const ULocalPlaye
 
 bool ULyraSettingsShared::AsyncLoadOrCreateSettings(const ULocalPlayer* LocalPlayer, FOnSettingsLoadedEvent Delegate)
 {
-	FOnLocalPlayerSaveGameLoadedNative Lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda([Delegate]
+	const FOnLocalPlayerSaveGameLoadedNative Lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda([Delegate]
 	(ULocalPlayerSaveGame* LoadedSave)
 		{
 			ULyraSettingsShared* LoadedSettings = CastChecked<ULyraSettingsShared>(LoadedSave);
@@ -81,8 +74,8 @@ bool ULyraSettingsShared::AsyncLoadOrCreateSettings(const ULocalPlayer* LocalPla
 			Delegate.ExecuteIfBound(LoadedSettings);
 		});
 
-	return ULocalPlayerSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer(
-		ULyraSettingsShared::StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME, Lambda);
+	return AsyncLoadOrCreateSaveGameForLocalPlayer(
+		StaticClass(), LocalPlayer, SHARED_SETTINGS_SLOT_NAME, Lambda);
 }
 
 void ULyraSettingsShared::SaveSettings()
@@ -91,14 +84,13 @@ void ULyraSettingsShared::SaveSettings()
 	AsyncSaveGameToSlotForLocalPlayer();
 
 	// TODO_BH: Move this to the serialize function instead with a bumped version number
-	if (UEnhancedInputLocalPlayerSubsystem* System = ULocalPlayer::GetSubsystem<
-		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer))
-	{
-		if (UEnhancedInputUserSettings* InputSettings = System->GetUserSettings())
-		{
-			InputSettings->AsyncSaveSettings();
-		}
-	}
+	const auto EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer);
+
+	if (!EnhancedInputLocalPlayerSubsystem)
+		return;
+	if (UEnhancedInputUserSettings* InputSettings = EnhancedInputLocalPlayerSubsystem->GetUserSettings())
+		InputSettings->AsyncSaveSettings();
 }
 
 void ULyraSettingsShared::ApplySettings()
@@ -107,51 +99,19 @@ void ULyraSettingsShared::ApplySettings()
 	ApplyBackgroundAudioSettings();
 	ApplyCultureSettings();
 
-	if (UEnhancedInputLocalPlayerSubsystem* System = ULocalPlayer::GetSubsystem<
-		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer))
-	{
-		if (UEnhancedInputUserSettings* InputSettings = System->GetUserSettings())
-		{
-			InputSettings->ApplySettings();
-		}
-	}
+	ApplyInputSettings();
 }
 
-void ULyraSettingsShared::SetColorBlindStrength(int32 InColorBlindStrength)
+void ULyraSettingsShared::ApplyInputSettings() const
 {
-	InColorBlindStrength = FMath::Clamp(InColorBlindStrength, 0, 10);
-	if (ColorBlindStrength != InColorBlindStrength)
-	{
-		ColorBlindStrength = InColorBlindStrength;
-		FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
-			static_cast<EColorVisionDeficiency>(static_cast<int32>(ColorBlindMode)),
-			ColorBlindStrength,
-			true,
-			false);
-	}
-}
+	const auto EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer);
 
-int32 ULyraSettingsShared::GetColorBlindStrength() const
-{
-	return ColorBlindStrength;
-}
+	if (!EnhancedInputLocalPlayerSubsystem)
+		return;
 
-void ULyraSettingsShared::SetColorBlindMode(EColorBlindMode InMode)
-{
-	if (ColorBlindMode != InMode)
-	{
-		ColorBlindMode = InMode;
-		FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
-			static_cast<EColorVisionDeficiency>(static_cast<int32>(ColorBlindMode)),
-			ColorBlindStrength,
-			true,
-			false);
-	}
-}
-
-EColorBlindMode ULyraSettingsShared::GetColorBlindMode() const
-{
-	return ColorBlindMode;
+	if (UEnhancedInputUserSettings* InputSettings = EnhancedInputLocalPlayerSubsystem->GetUserSettings())
+		InputSettings->ApplySettings();
 }
 
 void ULyraSettingsShared::ApplySubtitleOptions() const
@@ -170,66 +130,67 @@ void ULyraSettingsShared::ApplySubtitleOptions() const
 
 //////////////////////////////////////////////////////////////////////
 
-void ULyraSettingsShared::SetAllowAudioInBackgroundSetting(ELyraAllowBackgroundAudioSetting NewValue)
+void ULyraSettingsShared::SetAllowAudioInBackgroundSetting(const EBackgroundAudioSetting NewValue)
 {
 	if (ChangeValueAndDirty(AllowAudioInBackground, NewValue))
-	{
 		ApplyBackgroundAudioSettings();
-	}
 }
 
 void ULyraSettingsShared::ApplyBackgroundAudioSettings() const
 {
-	if (OwningPlayer && OwningPlayer->IsPrimaryPlayer())
-	{
-		FApp::SetUnfocusedVolumeMultiplier((AllowAudioInBackground != ELyraAllowBackgroundAudioSetting::Off)
-			                                   ? 1.0f
-			                                   : 0.0f);
-	}
-}
+	if (!OwningPlayer || !OwningPlayer->IsPrimaryPlayer()) return;
 
-//////////////////////////////////////////////////////////////////////
+	const auto UnfocusedVolumeMultiplier = AllowAudioInBackground != EBackgroundAudioSetting::Off
+		                                       ? 1.0f
+		                                       : 0.0f;
+	FApp::SetUnfocusedVolumeMultiplier(UnfocusedVolumeMultiplier);
+}
 
 void ULyraSettingsShared::ApplyCultureSettings()
 {
 	if (bResetToDefaultCulture)
 	{
-		const FCulturePtr SystemDefaultCulture = FInternationalization::Get().GetDefaultCulture();
-		check(SystemDefaultCulture.IsValid());
+		ApplyDefaultCulture();
+		return;
+	}
 
-		const FString CultureToApply = SystemDefaultCulture->GetName();
-		if (FInternationalization::Get().SetCurrentCulture(CultureToApply))
-		{
-			// Clear this string
-			GConfig->RemoveKey(TEXT("Internationalization"), TEXT("Culture"), GGameUserSettingsIni);
-			GConfig->Flush(false, GGameUserSettingsIni);
-		}
-		bResetToDefaultCulture = false;
-	}
-	else if (!PendingCulture.IsEmpty())
+	if (!PendingCulture.IsEmpty())
+		ApplyPendingCulture();
+
+	ClearPendingCulture();
+}
+
+void ULyraSettingsShared::ApplyDefaultCulture()
+{
+	const FCulturePtr SystemDefaultCulture = FInternationalization::Get().GetDefaultCulture();
+	check(SystemDefaultCulture.IsValid());
+
+	const FString CultureToApply = SystemDefaultCulture->GetName();
+	if (FInternationalization::Get().SetCurrentCulture(CultureToApply))
 	{
-		// SetCurrentCulture may trigger PendingCulture to be cleared (if a culture change is broadcast) so we take a copy of it to work with
-		const FString CultureToApply = PendingCulture;
-		if (FInternationalization::Get().SetCurrentCulture(CultureToApply))
-		{
-			// Note: This is intentionally saved to the users config
-			// We need to localize text before the player logs in and very early in the loading screen
-			GConfig->SetString(TEXT("Internationalization"), TEXT("Culture"), *CultureToApply, GGameUserSettingsIni);
-			GConfig->Flush(false, GGameUserSettingsIni);
-		}
-		ClearPendingCulture();
+		// Clear this string
+		GConfig->RemoveKey(TEXT("Internationalization"), TEXT("Culture"), GGameUserSettingsIni);
+		GConfig->Flush(false, GGameUserSettingsIni);
 	}
+	bResetToDefaultCulture = false;
+}
+
+void ULyraSettingsShared::ApplyPendingCulture() const
+{
+	// SetCurrentCulture may trigger PendingCulture to be cleared (if a culture change is broadcast) so we take a copy of it to work with
+	if (!FInternationalization::Get().SetCurrentCulture(PendingCulture))
+		return;
+
+	// Note: This is intentionally saved to the users config
+	// We need to localize text before the player logs in and very early in the loading screen
+	GConfig->SetString(TEXT("Internationalization"), TEXT("Culture"), *PendingCulture, GGameUserSettingsIni);
+	GConfig->Flush(false, GGameUserSettingsIni);
 }
 
 void ULyraSettingsShared::ResetCultureToCurrentSettings()
 {
 	ClearPendingCulture();
 	bResetToDefaultCulture = false;
-}
-
-const FString& ULyraSettingsShared::GetPendingCulture() const
-{
-	return PendingCulture;
 }
 
 void ULyraSettingsShared::SetPendingCulture(const FString& NewCulture)
@@ -243,11 +204,6 @@ void ULyraSettingsShared::OnCultureChanged()
 {
 	ClearPendingCulture();
 	bResetToDefaultCulture = false;
-}
-
-void ULyraSettingsShared::ClearPendingCulture()
-{
-	PendingCulture.Reset();
 }
 
 bool ULyraSettingsShared::IsUsingDefaultCulture() const
@@ -269,4 +225,31 @@ void ULyraSettingsShared::ResetToDefaultCulture()
 
 void ULyraSettingsShared::ApplyInputSensitivity() const
 {
+}
+
+void ULyraSettingsShared::SetColorBlindStrength(int32 InColorBlindStrength)
+{
+	InColorBlindStrength = FMath::Clamp(InColorBlindStrength, 0, 10);
+	if (ColorBlindStrength == InColorBlindStrength)
+		return;
+
+	ColorBlindStrength = InColorBlindStrength;
+	FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
+		static_cast<EColorVisionDeficiency>(static_cast<int32>(ColorBlindMode)),
+		ColorBlindStrength,
+		true,
+		false);
+}
+
+void ULyraSettingsShared::SetColorBlindMode(const EColorBlindMode InMode)
+{
+	if (ColorBlindMode == InMode)
+		return;
+
+	ColorBlindMode = InMode;
+	FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
+		static_cast<EColorVisionDeficiency>(static_cast<int32>(ColorBlindMode)),
+		ColorBlindStrength,
+		true,
+		false);
 }

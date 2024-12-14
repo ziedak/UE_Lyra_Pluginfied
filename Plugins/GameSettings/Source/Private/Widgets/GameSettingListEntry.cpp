@@ -118,7 +118,7 @@ void UGameSettingListEntrySetting_Discrete::SetSetting(UGameSetting* InSetting)
 	DiscreteSetting = Cast<UGameSettingValueDiscrete>(InSetting);
 
 	Super::SetSetting(InSetting);
-	
+
 	Refresh();
 }
 

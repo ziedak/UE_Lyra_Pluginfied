@@ -6,7 +6,7 @@
 
 #include "LyraAimSensitivityData.generated.h"
 
-enum class ELyraGamepadSensitivity : uint8;
+enum class EGamepadSensitivity : uint8;
 
 class UObject;
 
@@ -21,10 +21,10 @@ class GAMELOCALSETTINGS_API ULyraAimSensitivityData : public UPrimaryDataAsset
 public:
 	ULyraAimSensitivityData(const FObjectInitializer& ObjectInitializer);
 
-	float SensitivityEnumToFloat(const ELyraGamepadSensitivity InSensitivity) const;
+	float SensitivityEnumToFloat(const EGamepadSensitivity InSensitivity) const;
 
 protected:
 	/** Map of SensitivityMap settings to their corresponding float */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<ELyraGamepadSensitivity, float> SensitivityMap;
+	TMap<EGamepadSensitivity, float> SensitivityMap;
 };

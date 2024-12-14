@@ -685,7 +685,7 @@ FPrimaryAssetId ABaseGameMode::GetUserExperienceIdFromCommandLine(const FPrimary
 	FPrimaryAssetId UserExperienceId;
 	FString UserExperienceFromCommandLine;
 	if (FParse::Value(FCommandLine::Get(), TEXT("UserExperience="), UserExperienceFromCommandLine) ||
-		FParse::Value(FCommandLine::Get(), TEXT("Playlist="), UserExperienceFromCommandLine))
+	    FParse::Value(FCommandLine::Get(), TEXT("Playlist="), UserExperienceFromCommandLine))
 	{
 		UserExperienceId = FPrimaryAssetId::ParseTypeAndName(UserExperienceFromCommandLine);
 		if (!UserExperienceId.PrimaryAssetType.IsValid())

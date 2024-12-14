@@ -29,7 +29,8 @@ public:
 	//~UGameFeaturesProjectPolicies interface
 	virtual void InitGameFeatureManager() override;
 	virtual void ShutdownGameFeatureManager() override;
-	virtual TArray<FPrimaryAssetId> GetPreloadAssetListForGameFeature(const UGameFeatureData* GameFeatureToLoad, bool bIncludeLoadedAssets = false) const override;
+	virtual TArray<FPrimaryAssetId> GetPreloadAssetListForGameFeature(const UGameFeatureData* GameFeatureToLoad,
+	                                                                  bool bIncludeLoadedAssets = false) const override;
 	virtual bool IsPluginAllowed(const FString& PluginURL) const override;
 	virtual const TArray<FName> GetPreloadBundleStateForGameFeature() const override;
 	virtual void GetGameFeatureLoadingMode(bool& bLoadClientData, bool& bLoadServerData) const override;
@@ -39,4 +40,3 @@ private:
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UObject>> Observers;
 };
-

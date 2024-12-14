@@ -7,37 +7,38 @@ public class GameSubtitles : ModuleRules
 	public GameSubtitles(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				// ... add other public dependencies that you statically link with here ...
 				"Overlay",
-                "UMG",
+				"UMG",
 				"MediaAssets",
 				"MediaUtils",
 				"GameplayTags"
 			}
 		);
 
-        PublicIncludePathModuleNames.AddRange(
-            new string[] {
-                "UMG",
-            }
-        );
-			
-		
+		PublicIncludePathModuleNames.AddRange(
+			new[]
+			{
+				"UMG"
+			}
+		);
+
+
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore"
 				// ... add private dependencies that you statically link with here ...
 			}
 		);
-		
-		
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

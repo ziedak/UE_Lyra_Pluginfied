@@ -25,7 +25,7 @@ void UGameFeatureAction_AddAbilities::OnGameFeatureActivating(FGameFeatureActiva
 	FPerContextData& ActiveData = ContextData.FindOrAdd(Context);
 
 	if (!ensureAlways(ActiveData.ActiveExtensions.IsEmpty()) ||
-		!ensureAlways(ActiveData.ComponentRequests.IsEmpty()))
+	    !ensureAlways(ActiveData.ComponentRequests.IsEmpty()))
 	{
 		Reset(ActiveData);
 	}
@@ -126,17 +126,23 @@ void UGameFeatureAction_AddAbilities::AddToWorld(const FWorldContext& WorldConte
 	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
 	if (!GameInstance || !World || !World->IsGameWorld())
+	{
 		return;
+	}
 	UGameFrameworkComponentManager* ComponentMan = UGameInstance::GetSubsystem<
 		UGameFrameworkComponentManager>(GameInstance);
 	if (!ComponentMan)
+	{
 		return;
+	}
 
 	int32 EntryIndex = 0;
 	for (const FGameFeatureAbilitiesEntry& Entry : AbilitiesList)
 	{
 		if (Entry.ActorClass.IsNull())
+		{
 			continue;
+		}
 
 		const UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
 			UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
@@ -161,18 +167,20 @@ void UGameFeatureAction_AddAbilities::Reset(FPerContextData& ActiveData) const
 	ActiveData.ComponentRequests.Empty();
 }
 
-void UGameFeatureAction_AddAbilities::HandleActorExtension( AActor* Actor,
-                                                            FName EventName,
-                                                            int32 EntryIndex,
-                                                            FGameFeatureStateChangeContext ChangeContext)
+void UGameFeatureAction_AddAbilities::HandleActorExtension(AActor* Actor,
+                                                           FName EventName,
+                                                           int32 EntryIndex,
+                                                           FGameFeatureStateChangeContext ChangeContext)
 {
 	FPerContextData* ActiveData = ContextData.Find(ChangeContext);
 	if (!AbilitiesList.IsValidIndex(EntryIndex) || !ActiveData)
+	{
 		return;
-	
+	}
+
 	const FGameFeatureAbilitiesEntry& Entry = AbilitiesList[EntryIndex];
 	if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName ==
-		UGameFrameworkComponentManager::NAME_ReceiverRemoved))
+		    UGameFrameworkComponentManager::NAME_ReceiverRemoved))
 	{
 		RemoveActorAbilities(Actor, *ActiveData);
 	}
@@ -189,11 +197,15 @@ void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, const FGa
 {
 	check(Actor);
 	if (!Actor->HasAuthority())
+	{
 		return;
+	}
 
 	// early out if Actor already has ability extensions applied
 	if (ActiveData.ActiveExtensions.Find(Actor))
+	{
 		return;
+	}
 
 	UAbilitySystemComponent* AbilitySystemComponent = FindOrAddComponentForActor<UAbilitySystemComponent>(
 		Actor, AbilitiesEntry, ActiveData);
@@ -214,7 +226,9 @@ void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, const FGa
 	for (const auto& [AbilityType] : AbilitiesEntry.GrantedAbilities)
 	{
 		if (AbilityType.IsNull())
+		{
 			continue;
+		}
 		FGameplayAbilitySpec NewAbilitySpec(AbilityType.LoadSynchronous());
 		FGameplayAbilitySpecHandle AbilityHandle = AbilitySystemComponent->GiveAbility(NewAbilitySpec);
 
@@ -224,12 +238,16 @@ void UGameFeatureAction_AddAbilities::AddActorAbilities(AActor* Actor, const FGa
 	for (const FAttributeSetGrant& Attributes : AbilitiesEntry.GrantedAttributes)
 	{
 		if (Attributes.AttributeSetType.IsNull())
+		{
 			continue;
+		}
 
 		TSubclassOf<UAttributeSet> SetType = Attributes.AttributeSetType.LoadSynchronous();
 		if (!SetType)
+		{
 			continue;
-		
+		}
+
 		UAttributeSet* NewSet = NewObject<UAttributeSet>(AbilitySystemComponent->GetOwner(), SetType);
 		if (!Attributes.InitializationData.IsNull())
 		{
@@ -260,7 +278,9 @@ void UGameFeatureAction_AddAbilities::RemoveActorAbilities(const AActor* Actor, 
 {
 	FActorExtensions* ActorExtensions = ActiveData.ActiveExtensions.Find(Actor);
 	if (!ActorExtensions)
+	{
 		return;
+	}
 
 	if (UAbilitySystemComponent* AbilitySystemComponent = Actor->FindComponentByClass<UAbilitySystemComponent>())
 	{

@@ -27,7 +27,6 @@ class GAMESETTINGS_API UGameSettingPanel : public UCommonUserWidget
 	GENERATED_BODY()
 
 public:
-
 	UGameSettingPanel();
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
@@ -68,7 +67,7 @@ public:
 protected:
 	void RegisterRegistryEvents();
 	void UnregisterRegistryEvents();
-	
+
 	void HandleSettingItemHoveredChanged(UObject* Item, bool bHovered);
 	void HandleSettingItemSelectionChanged(UObject* Item);
 	void FillSettingDetails(UGameSetting* InSetting);
@@ -77,7 +76,6 @@ protected:
 	void HandleSettingEditConditionsChanged(UGameSetting* Setting);
 
 private:
-
 	UPROPERTY(Transient)
 	TObjectPtr<UGameSettingRegistry> Registry;
 
@@ -97,18 +95,17 @@ private:
 
 	bool bAdjustListViewPostRefresh = true;
 
-private:	// Bound Widgets
+	// Bound Widgets
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UGameSettingListView> ListView_Settings;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UGameSettingDetailView> Details_Settings;
 
-private:
 	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnExecuteNamedActionBP, UGameSetting*, Setting, FGameplayTag, Action);
+
 	UPROPERTY(BlueprintAssignable, Category = Events, meta = (DisplayName = "On Execute Named Action"))
 	FOnExecuteNamedActionBP BP_OnExecuteNamedAction;
 
-private:
 	FTSTicker::FDelegateHandle RefreshHandle;
 };

@@ -62,7 +62,9 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 	check(InPawnData);
 
 	if (GetLocalRole() != ROLE_Authority)
+	{
 		return;
+	}
 
 	if (PawnData)
 	{
@@ -111,7 +113,9 @@ void ABasePlayerState::PostInitializeComponents()
 	//==> The OnExperienceLoaded function is called when the experience is loaded.
 	const UWorld* World = GetWorld();
 	if (!World || !World->IsGameWorld() || World->GetNetMode() == NM_Client)
+	{
 		return;
+	}
 
 	const AGameStateBase* GameState = GetWorld()->GetGameState();
 	check(GameState);
@@ -210,7 +214,9 @@ void ABasePlayerState::OnReactivated()
 void ABasePlayerState::SetPlayerConnectionType(const EPlayerConnectionType NewType)
 {
 	if (MyPlayerConnectionType == NewType)
+	{
 		return;
+	}
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, MyPlayerConnectionType, this);
 	MyPlayerConnectionType = NewType;
 }
@@ -232,7 +238,9 @@ void ABasePlayerState::ClientBroadcastMessage_Implementation(const FVerbMessage 
 void ABasePlayerState::SetReplicatedViewRotation(const FRotator& NewRot)
 {
 	if (ReplicatedViewRotation == NewRot)
+	{
 		return;
+	}
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ReplicatedViewRotation, this);
 	ReplicatedViewRotation = NewRot;
 }

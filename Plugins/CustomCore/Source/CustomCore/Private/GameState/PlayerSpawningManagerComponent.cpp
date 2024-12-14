@@ -167,13 +167,13 @@ bool UPlayerSpawningManagerComponent::ControllerCanRestart(AController* Player) 
 
 void UPlayerSpawningManagerComponent::OnFinishRestartPlayer(AController* Player, const FRotator& StartRotation)
 {
-    // TODO Finish Restart Player
+	// TODO Finish Restart Player
 }
 
 void UPlayerSpawningManagerComponent::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
 {
-    OnFinishRestartPlayer(NewPlayer, StartRotation);
-    K2_OnFinishRestartPlayer(NewPlayer, StartRotation);
+	OnFinishRestartPlayer(NewPlayer, StartRotation);
+	K2_OnFinishRestartPlayer(NewPlayer, StartRotation);
 }
 
 APlayerStart* UPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlayerStart(

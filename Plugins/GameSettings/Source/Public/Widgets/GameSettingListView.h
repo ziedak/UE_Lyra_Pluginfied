@@ -30,10 +30,10 @@ public:
 #endif
 
 protected:
-	virtual UUserWidget& OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass, const TSharedRef<STableViewBase>& OwnerTable) override;
+	virtual UUserWidget& OnGenerateEntryWidgetInternal(UObject* Item, TSubclassOf<UUserWidget> DesiredEntryClass,
+	                                                   const TSharedRef<STableViewBase>& OwnerTable) override;
 	virtual bool OnIsSelectableOrNavigableInternal(UObject* SelectedItem) override;
 
-protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UGameSettingVisualData> VisualData;
 

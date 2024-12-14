@@ -29,7 +29,7 @@ void UGameFeatureAction_AddInputBinding::OnGameFeatureActivating(FGameFeatureAct
 {
 	FPerContextData& ActiveData = ContextData.FindOrAdd(Context);
 	if (!ensure(ActiveData.ExtensionRequestHandles.IsEmpty()) ||
-		!ensure(ActiveData.PawnsAddedTo.IsEmpty()))
+	    !ensure(ActiveData.PawnsAddedTo.IsEmpty()))
 	{
 		Reset(ActiveData);
 	}
@@ -74,15 +74,19 @@ void UGameFeatureAction_AddInputBinding::AddToWorld(const FWorldContext& WorldCo
 {
 	const UWorld* World = WorldContext.World();
 	const UGameInstance* GameInstance = WorldContext.OwningGameInstance;
-	 FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
+	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
 	if (!GameInstance || !World || !World->IsGameWorld())
+	{
 		return;
+	}
 
 	UGameFrameworkComponentManager* ComponentManager = UGameInstance::GetSubsystem<
 		UGameFrameworkComponentManager>(GameInstance);
 	if (!ComponentManager)
+	{
 		return;
+	}
 
 	const UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
 		UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
@@ -119,12 +123,12 @@ void UGameFeatureAction_AddInputBinding::HandlePawnExtension(AActor* Actor, FNam
 	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
 	if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName ==
-		UGameFrameworkComponentManager::NAME_ReceiverRemoved))
+		    UGameFrameworkComponentManager::NAME_ReceiverRemoved))
 	{
 		RemoveInputMapping(AsPawn, ActiveData);
 	}
 	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (EventName ==
-		UHeroComponent::NAME_BIND_INPUTS_NOW))
+		         UHeroComponent::NAME_BIND_INPUTS_NOW))
 	{
 		AddInputMappingForPlayer(AsPawn, ActiveData);
 	}
@@ -136,7 +140,9 @@ void UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer(APawn* Pawn, F
 	const ULocalPlayer* LocalPlayer = PlayerController ? PlayerController->GetLocalPlayer() : nullptr;
 
 	if (!LocalPlayer)
+	{
 		return;
+	}
 
 	const UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>();
@@ -162,7 +168,7 @@ void UGameFeatureAction_AddInputBinding::AddInputMappingForPlayer(APawn* Pawn, F
 			}
 		}
 	}
-	
+
 	ActiveData.PawnsAddedTo.AddUnique(Pawn);
 }
 

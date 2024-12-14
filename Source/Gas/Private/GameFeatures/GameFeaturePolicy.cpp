@@ -42,7 +42,8 @@ void UGameFeaturePolicy::ShutdownGameFeatureManager()
 	Observers.Empty();
 }
 
-TArray<FPrimaryAssetId> UGameFeaturePolicy::GetPreloadAssetListForGameFeature(const UGameFeatureData* GameFeatureToLoad, bool bIncludeLoadedAssets) const
+TArray<FPrimaryAssetId> UGameFeaturePolicy::GetPreloadAssetListForGameFeature(
+	const UGameFeatureData* GameFeatureToLoad, bool bIncludeLoadedAssets) const
 {
 	return Super::GetPreloadAssetListForGameFeature(GameFeatureToLoad, bIncludeLoadedAssets);
 }
@@ -63,6 +64,3 @@ bool UGameFeaturePolicy::IsPluginAllowed(const FString& PluginURL) const
 {
 	return Super::IsPluginAllowed(PluginURL);
 }
-
-
-

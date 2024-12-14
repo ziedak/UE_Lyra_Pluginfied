@@ -20,5 +20,5 @@ void FGameSubtitlesModule::StartupModule()
 void FGameSubtitlesModule::ShutdownModule()
 {
 }
-	
+
 IMPLEMENT_MODULE(FGameSubtitlesModule, GameSubtitles)

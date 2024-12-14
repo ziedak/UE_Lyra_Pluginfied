@@ -20,7 +20,8 @@ void UGameSettingAction::OnInitialized()
 	Super::OnInitialized();
 
 #if !UE_BUILD_SHIPPING
-	ensureMsgf(HasCustomAction() || NamedAction.IsValid(), TEXT("Action settings need either a custom action or a named action."));
+	ensureMsgf(HasCustomAction() || NamedAction.IsValid(),
+	           TEXT("Action settings need either a custom action or a named action."));
 	ensureMsgf(!ActionText.IsEmpty(), TEXT("You must provide a ActionText for settings with actions."));
 	ensureMsgf(!DescriptionRichText.IsEmpty(), TEXT("You must provide a description for settings with actions."));
 #endif
@@ -28,9 +29,11 @@ void UGameSettingAction::OnInitialized()
 
 void UGameSettingAction::SetCustomAction(TFunction<void(ULocalPlayer*)> InAction)
 {
-	CustomAction = UGameSettingCustomAction::CreateLambda([InAction](UGameSetting* /*Setting*/, ULocalPlayer* InLocalPlayer) {
-		InAction(InLocalPlayer);
-	});
+	CustomAction = UGameSettingCustomAction::CreateLambda(
+		[InAction](UGameSetting* /*Setting*/, ULocalPlayer* InLocalPlayer)
+		{
+			InAction(InLocalPlayer);
+		});
 }
 
 void UGameSettingAction::ExecuteAction()
@@ -43,7 +46,7 @@ void UGameSettingAction::ExecuteAction()
 	{
 		OnExecuteNamedActionEvent.Broadcast(this, NamedAction);
 	}
-	
+
 	if (bDirtyAction)
 	{
 		NotifySettingChanged(EGameSettingChangeReason::Change);
@@ -51,4 +54,3 @@ void UGameSettingAction::ExecuteAction()
 }
 
 #undef LOCTEXT_NAMESPACE
-

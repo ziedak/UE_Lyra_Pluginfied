@@ -13,7 +13,8 @@ UCLASS(BlueprintType)
 class CUSTOMCORE_API UUserFacingExperienceDefinition_DA : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
-	public:
+
+public:
 	/** The specific map to load */
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Experience, meta=(AllowedTypes="Map"))
 	FPrimaryAssetId MapID;
@@ -62,7 +63,6 @@ class CUSTOMCORE_API UUserFacingExperienceDefinition_DA : public UPrimaryDataAss
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category=Experience)
 	int32 MaxPlayerCount = 16;
 
-public:
 	/** Create a request object that is used to actually start a session with these settings */
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta = (WorldContext = "WorldContextObject"))
 	UCommonSession_HostSessionRequest* CreateHostingRequest(const UObject* WorldContextObject) const;

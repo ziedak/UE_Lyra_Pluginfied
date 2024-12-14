@@ -21,7 +21,7 @@ class GAMESETTINGS_API UGameSettingDetailExtension : public UUserWidget
 
 public:
 	void SetSetting(UGameSetting* InSetting);
-	
+
 protected:
 	virtual void NativeSettingAssigned(UGameSetting* InSetting);
 	virtual void NativeSettingValueChanged(UGameSetting* InSetting, EGameSettingChangeReason Reason);
@@ -32,7 +32,6 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnSettingValueChanged(UGameSetting* InSetting);
 
-protected:
 	UPROPERTY(Transient)
 	TObjectPtr<UGameSetting> Setting;
 };

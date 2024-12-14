@@ -7,7 +7,6 @@ USTRUCT()
 struct FSharedRepMovement
 {
 	GENERATED_BODY()
-public:
 	FSharedRepMovement();
 
 	bool FillForCharacter(const ACharacter* Character);
@@ -32,13 +31,12 @@ public:
 };
 
 
-
-template<>
-struct TStructOpsTypeTraits<FSharedRepMovement> : public TStructOpsTypeTraitsBase2<FSharedRepMovement>
+template <>
+struct TStructOpsTypeTraits<FSharedRepMovement> : TStructOpsTypeTraitsBase2<FSharedRepMovement>
 {
 	enum
 	{
 		WithNetSerializer = true,
 		WithNetSharedSerialization = true,
 	};
-}; 
+};

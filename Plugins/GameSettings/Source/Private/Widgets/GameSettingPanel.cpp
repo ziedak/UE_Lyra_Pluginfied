@@ -146,7 +146,7 @@ TArray<UGameSetting*> UGameSettingPanel::GetSettingsWeCanResetToDefault() const
 		FGameSettingFilterState AllAvailableFilter = FilterState;
 		AllAvailableFilter.bIncludeDisabled = true;
 		AllAvailableFilter.bIncludeHidden = true;
-		AllAvailableFilter.bIncludeResetable = false;
+		AllAvailableFilter.bIncludeResetTable = false;
 		AllAvailableFilter.bIncludeNestedPages = false;
 
 		Registry->GetSettingsForFilter(AllAvailableFilter, AvailableSettings);
@@ -208,7 +208,7 @@ void UGameSettingPanel::RefreshSettingsList()
 				{
 					Setting->RefreshEditableState(false);
 				}
-			}			
+			}
 
 			return false;
 		}
@@ -276,4 +276,3 @@ UGameSetting* UGameSettingPanel::GetSelectedSetting() const
 {
 	return Cast<UGameSetting>(ListView_Settings->GetSelectedItem());
 }
-

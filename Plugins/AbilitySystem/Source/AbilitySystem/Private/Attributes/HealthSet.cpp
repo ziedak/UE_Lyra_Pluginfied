@@ -165,7 +165,7 @@ float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data) c
 
 #if !UE_BUILD_SHIPPING
 	if (!bIsDamageFromSelfDestruct && (Data.Target.HasMatchingGameplayTag(CheatTags::GODMODE) || Data.Target.
-		HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH)))
+	                                   HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH)))
 	{
 		MinimumHealth = 1.0f;
 	}

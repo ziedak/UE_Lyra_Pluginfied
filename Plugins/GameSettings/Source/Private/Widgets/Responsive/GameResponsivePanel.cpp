@@ -15,7 +15,7 @@ UGameResponsivePanel::UGameResponsivePanel(const FObjectInitializer& ObjectIniti
 	: Super(ObjectInitializer)
 {
 	bIsVariable = false;
-	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	UWidget::SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 }
 
 void UGameResponsivePanel::ReleaseSlateResources(bool bReleaseChildren)
@@ -33,7 +33,7 @@ UClass* UGameResponsivePanel::GetSlotClass() const
 void UGameResponsivePanel::OnSlotAdded(UPanelSlot* InSlot)
 {
 	// Add the child to the live canvas if it already exists
-	if ( MyGameResponsivePanel.IsValid() )
+	if (MyGameResponsivePanel.IsValid())
 	{
 		CastChecked<UGameResponsivePanelSlot>(InSlot)->BuildSlot(MyGameResponsivePanel.ToSharedRef());
 	}
@@ -42,30 +42,28 @@ void UGameResponsivePanel::OnSlotAdded(UPanelSlot* InSlot)
 void UGameResponsivePanel::OnSlotRemoved(UPanelSlot* InSlot)
 {
 	// Remove the widget from the live slot if it exists.
-	if ( MyGameResponsivePanel.IsValid() && InSlot->Content)
+	if (!MyGameResponsivePanel.IsValid() || !InSlot->Content) return;
+	const TSharedPtr<SWidget> Widget = InSlot->Content->GetCachedWidget();
+	
+	if (Widget.IsValid())
 	{
-		TSharedPtr<SWidget> Widget = InSlot->Content->GetCachedWidget();
-		if ( Widget.IsValid() )
-		{
-			MyGameResponsivePanel->RemoveSlot(Widget.ToSharedRef());
-		}
+		MyGameResponsivePanel->RemoveSlot(Widget.ToSharedRef());
 	}
 }
 
 UGameResponsivePanelSlot* UGameResponsivePanel::AddChildToGameResponsivePanel(UWidget* Content)
 {
-	return Cast<UGameResponsivePanelSlot>( Super::AddChild(Content) );
+	return Cast<UGameResponsivePanelSlot>(AddChild(Content));
 }
 
 TSharedRef<SWidget> UGameResponsivePanel::RebuildWidget()
 {
 	MyGameResponsivePanel = SNew(SGameResponsivePanel);
-
 	MyGameResponsivePanel->EnableVerticalStacking(bCanStackVertically);
 
-	for ( UPanelSlot* PanelSlot : Slots )
+	for (UPanelSlot* PanelSlot : Slots)
 	{
-		if ( UGameResponsivePanelSlot* TypedSlot = Cast<UGameResponsivePanelSlot>(PanelSlot) )
+		if (UGameResponsivePanelSlot* TypedSlot = Cast<UGameResponsivePanelSlot>(PanelSlot))
 		{
 			TypedSlot->Parent = this;
 			TypedSlot->BuildSlot(MyGameResponsivePanel.ToSharedRef());
@@ -87,4 +85,3 @@ const FText UGameResponsivePanel::GetPaletteCategory()
 /////////////////////////////////////////////////////
 
 #undef LOCTEXT_NAMESPACE
-

@@ -12,53 +12,25 @@
 // UGameSettingValueDiscreteDynamic
 //////////////////////////////////////////////////////////////////////////
 
-UGameSettingValueDiscreteDynamic::UGameSettingValueDiscreteDynamic()
-{
-}
-
-void UGameSettingValueDiscreteDynamic::SetDynamicGetter(const TSharedRef<FGameSettingDataSource>& InGetter)
-{
-	Getter = InGetter;
-}
-
-void UGameSettingValueDiscreteDynamic::SetDynamicSetter(const TSharedRef<FGameSettingDataSource>& InSetter)
-{
-	Setter = InSetter;
-}
-
-void UGameSettingValueDiscreteDynamic::SetDefaultValueFromString(FString InOptionValue)
-{
-	DefaultValue = InOptionValue;
-}
-
-void UGameSettingValueDiscreteDynamic::AddDynamicOption(FString InOptionValue, FText InOptionText)
+void UGameSettingValueDiscreteDynamic::AddDynamicOption(const FString& InOptionValue, const FText& InOptionText)
 {
 #if !UE_BUILD_SHIPPING
-	ensureAlwaysMsgf(!OptionValues.Contains(InOptionValue), TEXT("You already added this option InOptionValue: %s InOptionText %s."), *InOptionValue, *InOptionText.ToString());
+	ensureAlwaysMsgf(!OptionValues.Contains(InOptionValue),
+	                 TEXT("You already added this option InOptionValue: %s InOptionText %s."), *InOptionValue,
+	                 *InOptionText.ToString());
 #endif
 
 	OptionValues.Add(InOptionValue);
 	OptionDisplayTexts.Add(InOptionText);
 }
 
-void UGameSettingValueDiscreteDynamic::RemoveDynamicOption(FString InOptionValue)
+void UGameSettingValueDiscreteDynamic::RemoveDynamicOption(const FString& InOptionValue)
 {
 	const int32 Index = OptionValues.IndexOfByKey(InOptionValue);
-	if (Index != INDEX_NONE)
-	{
-		OptionValues.RemoveAt(Index);
-		OptionDisplayTexts.RemoveAt(Index);
-	}
-}
+	if (Index == INDEX_NONE) return;
 
-const TArray<FString>& UGameSettingValueDiscreteDynamic::GetDynamicOptions()
-{
-	return OptionValues;
-}
-
-bool UGameSettingValueDiscreteDynamic::HasDynamicOption(const FString& InOptionValue)
-{
-	return OptionValues.Contains(InOptionValue);
+	OptionValues.RemoveAt(Index);
+	OptionDisplayTexts.RemoveAt(Index);
 }
 
 FString UGameSettingValueDiscreteDynamic::GetValueAsString() const
@@ -66,12 +38,12 @@ FString UGameSettingValueDiscreteDynamic::GetValueAsString() const
 	return Getter->GetValueAsString(LocalPlayer);
 }
 
-void UGameSettingValueDiscreteDynamic::SetValueFromString(FString InStringValue)
+void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue)
 {
 	SetValueFromString(InStringValue, EGameSettingChangeReason::Change);
 }
 
-void UGameSettingValueDiscreteDynamic::SetValueFromString(FString InStringValue, EGameSettingChangeReason Reason)
+void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue, EGameSettingChangeReason Reason)
 {
 	check(Setter);
 	Setter->SetValue(LocalPlayer, InStringValue);
@@ -79,18 +51,19 @@ void UGameSettingValueDiscreteDynamic::SetValueFromString(FString InStringValue,
 	NotifySettingChanged(Reason);
 }
 
-bool UGameSettingValueDiscreteDynamic::AreOptionsEqual(const FString& InOptionA, const FString& InOptionB) const
-{
-	return InOptionA == InOptionB;
-}
-
 void UGameSettingValueDiscreteDynamic::OnInitialized()
 {
 #if !UE_BUILD_SHIPPING
 	ensureAlways(Getter);
-	ensureAlwaysMsgf(Getter->Resolve(LocalPlayer), TEXT("%s: %s did not resolve, are all functions and properties valid, and are they UFunctions/UProperties? Does the getter function have no parameters?"), *GetDevName().ToString(), *Getter->ToString());
+	ensureAlwaysMsgf(Getter->Resolve(LocalPlayer),
+	                 TEXT(
+		                 "%s: %s did not resolve, are all functions and properties valid, and are they UFunctions/UProperties? Does the getter function have no parameters?"
+	                 ), *GetDevName().ToString(), *Getter->ToString());
 	ensureAlways(Setter);
-	ensureAlwaysMsgf(Setter->Resolve(LocalPlayer), TEXT("%s: %s did not resolve, are all functions and properties valid, and are they UFunctions/UProperties? Does the setting function have exactly one parameter?"), *GetDevName().ToString(), *Setter->ToString());
+	ensureAlwaysMsgf(Setter->Resolve(LocalPlayer),
+	                 TEXT(
+		                 "%s: %s did not resolve, are all functions and properties valid, and are they UFunctions/UProperties? Does the setting function have exactly one parameter?"
+	                 ), *GetDevName().ToString(), *Setter->ToString());
 #endif
 
 	Super::OnInitialized();
@@ -137,7 +110,8 @@ void UGameSettingValueDiscreteDynamic::SetDiscreteOptionByIndex(int32 Index)
 int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionIndex() const
 {
 	const FString CurrentValue = GetValueAsString();
-	const int32 Index = OptionValues.IndexOfByPredicate([this, CurrentValue](const FString& InOption) {
+	const int32 Index = OptionValues.IndexOfByPredicate([this, CurrentValue](const FString& InOption)
+	{
 		return AreOptionsEqual(CurrentValue, InOption);
 	});
 
@@ -152,41 +126,53 @@ int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionIndex() const
 
 int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionDefaultIndex() const
 {
-	if (DefaultValue.IsSet())
-	{
-		return OptionValues.IndexOfByPredicate([this](const FString& InOption) {
-			return AreOptionsEqual(DefaultValue.GetValue(), InOption);
-		});
-	}
-
-	return INDEX_NONE;
+	return DefaultValue.IsSet()
+		       ? OptionValues.IndexOfByPredicate([this](const FString& InOption)
+		       {
+			       return AreOptionsEqual(DefaultValue.GetValue(), InOption);
+		       })
+		       : INDEX_NONE;
 }
 
 TArray<FText> UGameSettingValueDiscreteDynamic::GetDiscreteOptions() const
 {
 	const TArray<FString>& DisabledOptions = GetEditState().GetDisabledOptions();
 
-	if (DisabledOptions.Num() > 0)
+	if (DisabledOptions.Num() <= 0)
+		return OptionDisplayTexts;
+
+	TArray<FText> AllowedOptions;
+	for (int32 OptionIndex = 0; OptionIndex < OptionValues.Num(); ++OptionIndex)
 	{
-		TArray<FText> AllowedOptions;
-
-		for (int32 OptionIndex = 0; OptionIndex < OptionValues.Num(); ++OptionIndex)
+		if (!DisabledOptions.Contains(OptionValues[OptionIndex]))
 		{
-			if (!DisabledOptions.Contains(OptionValues[OptionIndex]))
-			{
-				AllowedOptions.Add(OptionDisplayTexts[OptionIndex]);
-			}
+			AllowedOptions.Add(OptionDisplayTexts[OptionIndex]);
 		}
-
-		return AllowedOptions;
 	}
 
-	return OptionDisplayTexts;
+	return AllowedOptions;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // UGameSettingValueDiscreteDynamic_Bool
 //////////////////////////////////////////////////////////////////////////
+
+UGameSettingValueDiscreteDynamic_Bool* UGameSettingValueDiscreteDynamic_Bool::CreateSettings(const FName& DevName,
+	const FText& DisplayName, const FText& Description, const TSharedRef<FGameSettingDataSource>& Getter,
+	const TSharedRef<FGameSettingDataSource>& Setter, const bool DefaultValue)
+
+{
+	const auto Setting = NewObject<UGameSettingValueDiscreteDynamic_Bool>();
+	Setting->SetDevName(DevName);
+	Setting->SetDisplayName(DisplayName);
+	Setting->SetDescriptionRichText(Description);
+	Setting->SetDynamicGetter(Getter);
+	Setting->SetDynamicSetter(Setter);
+	Setting->SetDefaultValue(DefaultValue);
+
+	return Setting;
+}
+
 
 UGameSettingValueDiscreteDynamic_Bool::UGameSettingValueDiscreteDynamic_Bool()
 {
@@ -217,11 +203,6 @@ void UGameSettingValueDiscreteDynamic_Bool::SetDefaultValue(bool Value)
 // UGameSettingValueDiscreteDynamic_Number
 //////////////////////////////////////////////////////////////////////////
 
-UGameSettingValueDiscreteDynamic_Number::UGameSettingValueDiscreteDynamic_Number()
-{
-
-}
-
 void UGameSettingValueDiscreteDynamic_Number::OnInitialized()
 {
 	Super::OnInitialized();
@@ -233,26 +214,10 @@ void UGameSettingValueDiscreteDynamic_Number::OnInitialized()
 // UGameSettingValueDiscreteDynamic_Enum
 //////////////////////////////////////////////////////////////////////////
 
-UGameSettingValueDiscreteDynamic_Enum::UGameSettingValueDiscreteDynamic_Enum()
-{
-
-}
-
 void UGameSettingValueDiscreteDynamic_Enum::OnInitialized()
 {
 	Super::OnInitialized();
-
 	ensure(OptionValues.Num() > 0);
 }
-
-//////////////////////////////////////////////////////////////////////////
-// UGameSettingValueDiscreteDynamic_Color
-//////////////////////////////////////////////////////////////////////////
-
-UGameSettingValueDiscreteDynamic_Color::UGameSettingValueDiscreteDynamic_Color()
-{
-
-}
-
 
 #undef LOCTEXT_NAMESPACE

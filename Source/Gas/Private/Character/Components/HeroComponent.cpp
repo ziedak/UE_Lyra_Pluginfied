@@ -42,10 +42,10 @@ UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 // void UHeroComponent::SetAbilityCameraMode(TSubclassOf<UBaseCameraMode> CameraMode,
 // 	const FGameplayAbilitySpecHandle& OwningSpecHandle)
 // {
-// 	
+//
 // 	if (!CameraMode)
 // 		return;
-// 	
+//
 // 	AbilityCameraMode = CameraMode;
 // 	AbilityCameraModeOwningSpecHandle = OwningSpecHandle;
 // }
@@ -58,7 +58,9 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig* InputConfi
 {
 	const APawn* Pawn = GetPawn<APawn>();
 	if (!Pawn)
+	{
 		return;
+	}
 
 	// do we need those checks?
 	const APlayerController* PC = GetController<APlayerController>();
@@ -72,7 +74,9 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig* InputConfi
 
 	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
 	if (!PawnExtComp)
+	{
 		return;
+	}
 
 	const auto InputComponent = Pawn->FindComponentByClass<ULyraInputComponent>();
 	if (!(ensureMsgf(InputComponent,
@@ -193,16 +197,24 @@ bool UHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
 	APawn* Pawn = GetPawn<APawn>();
 
 	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED)
+	{
 		return CanTransitionToSpawned(Pawn);
+	}
 
 	if (CurrentState == InitStateTags::SPAWNED && DesiredState == InitStateTags::DATA_AVAILABLE)
+	{
 		return CanTransitionToDataAvailable(Pawn);
+	}
 
 	if (CurrentState == InitStateTags::DATA_AVAILABLE && DesiredState == InitStateTags::DATA_INITIALIZED)
+	{
 		return CanTransitionToDataInitialized(Manager, Pawn);
+	}
 
 	if (CurrentState == InitStateTags::DATA_INITIALIZED && DesiredState == InitStateTags::GAMEPLAY_READY)
+	{
 		return CanTransitionToGameplayReady();
+	}
 
 	return false;
 }
@@ -215,20 +227,26 @@ bool UHeroComponent::CanTransitionToSpawned(const APawn* Pawn) const
 bool UHeroComponent::CanTransitionToDataAvailable(const APawn* Pawn) const
 {
 	if (!GetPlayerState<ABasePlayerState>())
+	{
 		return false;
+	}
 
 	if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 	{
 		const AController* Controller = GetController<AController>();
 		const bool bHasControllerPairedWithPlayerState = Controller && Controller->PlayerState && Controller->
-			PlayerState->GetOwner() == Controller;
+		                                                 PlayerState->GetOwner() == Controller;
 
 		if (!bHasControllerPairedWithPlayerState)
+		{
 			return false;
+		}
 	}
 
 	if (!Pawn->IsLocallyControlled() || Pawn->IsBotControlled())
+	{
 		return true;
+	}
 
 	const ABasePlayerController* PC = GetController<ABasePlayerController>();
 	return Pawn->InputComponent && PC && PC->GetLocalPlayer();
@@ -257,11 +275,16 @@ void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manag
                                            FGameplayTag DesiredState)
 {
 	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED)
+	{
 		return;
+	}
 
 	const APawn* Pawn = GetPawn<APawn>();
 	ABasePlayerState* BasePS = GetPlayerState<ABasePlayerState>();
-	if (!ensure(Pawn && BasePS)) return;
+	if (!ensure(Pawn && BasePS))
+	{
+		return;
+	}
 
 	const UGasPawnData* PawnData = nullptr;
 
@@ -296,8 +319,10 @@ void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manag
 void UHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
 {
 	if (Params.FeatureName != UPawnExtensionComponent::Name_ActorFeatureName || Params.FeatureState !=
-		InitStateTags::DATA_INITIALIZED)
+	    InitStateTags::DATA_INITIALIZED)
+	{
 		return;
+	}
 
 	// If the extension component says all other components are initialized,
 	// try to progress to next state
@@ -410,7 +435,7 @@ void UHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 //
 // 					FModifyContextOptions Options = {};
 // 					Options.bIgnoreAllPressedKeysUntilRelease = false;
-// 					// Actually add the config to the local player							
+// 					// Actually add the config to the local player
 // 					Subsystem->AddMappingContext(Imc, Priority, Options);
 // 				}
 //
@@ -429,7 +454,7 @@ void UHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 // 					LyraIc->AddInputMappings(InputConfig, Subsystem);
 //
 // 					// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
-// 					// be triggered directly by these input actions Triggered events. 
+// 					// be triggered directly by these input actions Triggered events.
 // 					TArray<uint32> BindHandles;
 // 					LyraIc->BindAbilityActionList(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
 // 					                              &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
@@ -465,7 +490,10 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 	check(PlayerInputComponent);
 
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+	{
+		return;
+	}
 
 	const APlayerController* PC = GetController<APlayerController>();
 	check(PC);
@@ -491,7 +519,9 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 	}
 
 	if (ensure(!bReadyToBindInputs))
+	{
 		bReadyToBindInputs = true;
+	}
 
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
 		const_cast<APlayerController*>(PC), NAME_BIND_INPUTS_NOW);
@@ -514,14 +544,18 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 		LOG_INFO(LogGAS, "---------------%s found ", *Imc->GetName());
 
 		if (!bRegisterWithSettings)
+		{
 			continue;
+		}
 
 		if (UEnhancedInputUserSettings* Settings = Subsystem->GetUserSettings())
+		{
 			Settings->RegisterInputMappingContext(Imc);
+		}
 
 		FModifyContextOptions Options = {};
 		Options.bIgnoreAllPressedKeysUntilRelease = false;
-		// Actually add the config to the local player							
+		// Actually add the config to the local player
 		Subsystem->AddMappingContext(Imc, Priority, Options);
 	}
 }
@@ -544,7 +578,7 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 	InputComponent->AddInputMappings(InputConfig, Subsystem);
 
 	// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
-	// be triggered directly by these input actions Triggered events. 
+	// be triggered directly by these input actions Triggered events.
 	TArray<uint32> BindHandles;
 	InputComponent->BindAbilityActionList(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
 	                                      &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
@@ -565,26 +599,38 @@ void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
 	if (!Pawn)
+	{
 		return;
+	}
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
 	if (!PawnExtComp)
+	{
 		return;
+	}
 
 	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
+	{
 		Asc->SetAbilityInputTagPressed(InputTag);
+	}
 }
 
 void UHeroComponent::Input_AbilityInputTagReleased(const FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
 	if (!Pawn)
+	{
 		return;
+	}
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
 	if (!PawnExtComp)
+	{
 		return;
+	}
 
 	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
+	{
 		Asc->SetAbilityInputTagReleased(InputTag);
+	}
 }
 
 void UHeroComponent::Input_Move(const FInputActionValue& InputActionValue)

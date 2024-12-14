@@ -28,8 +28,6 @@ struct GAMESETTINGS_API FGameSettingFilterState
 {
 	GENERATED_BODY()
 
-public:
-
 	FGameSettingFilterState();
 
 	UPROPERTY()
@@ -39,12 +37,11 @@ public:
 	bool bIncludeHidden = false;
 
 	UPROPERTY()
-	bool bIncludeResetable = true;
+	bool bIncludeResetTable = true;
 
 	UPROPERTY()
 	bool bIncludeNestedPages = false;
 
-public:
 	void SetSearchText(const FString& InSearchText);
 
 	bool DoesSettingPassFilter(const UGameSetting& InSetting) const;
@@ -56,8 +53,9 @@ public:
 	{
 		return SettingAllowList.Contains(InSetting);
 	}
-	
+
 	const TArray<UGameSetting*>& GetSettingRootList() const { return SettingRootList; }
+
 	bool IsSettingInRootList(const UGameSetting* InSetting) const
 	{
 		return SettingRootList.Contains(InSetting);
@@ -83,15 +81,15 @@ class GAMESETTINGS_API FGameSettingEditableState
 public:
 	FGameSettingEditableState()
 		: bVisible(true)
-		, bEnabled(true)
-		, bResetable(true)
-		, bHideFromAnalytics(false)
+		  , bEnabled(true)
+		  , bResetTable(true)
+		  , bHideFromAnalytics(false)
 	{
 	}
 
 	bool IsVisible() const { return bVisible; }
 	bool IsEnabled() const { return bEnabled; }
-	bool IsResetable() const { return bResetable; }
+	bool IsResetTable() const { return bResetTable; }
 	bool IsHiddenFromAnalytics() const { return bHideFromAnalytics; }
 	const TArray<FText>& GetDisabledReasons() const { return DisabledReasons; }
 
@@ -110,16 +108,16 @@ public:
 	/** Discrete Options that should be hidden from the user. Currently used only by Parental Controls. */
 	void DisableOption(const FString& Option);
 
-	template<typename EnumType>
+	template <typename EnumType>
 	void DisableEnumOption(EnumType InEnumValue)
 	{
-		DisableOption(StaticEnum<EnumType>()->GetNameStringByValue((int64)InEnumValue));
+		DisableOption(StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InEnumValue)));
 	}
 
 	/**
 	 * Prevents the setting from being reset if the user resets the settings on the screen to their defaults.
 	 */
-	void UnableToReset();
+	void UnableToReset() { bResetTable = false; };
 
 	/**
 	 * Hide from analytics, you may want to do this if for example, we just want to prevent noise, such as platform
@@ -138,7 +136,7 @@ public:
 private:
 	uint8 bVisible : 1;
 	uint8 bEnabled : 1;
-	uint8 bResetable : 1;
+	uint8 bResetTable : 1;
 	uint8 bHideFromAnalytics : 1;
 
 	TArray<FString> DisabledOptions;
@@ -157,14 +155,20 @@ private:
 class GAMESETTINGS_API FGameSettingEditCondition : public TSharedFromThis<FGameSettingEditCondition>
 {
 public:
-	FGameSettingEditCondition() { }
-	virtual ~FGameSettingEditCondition() { }
+	FGameSettingEditCondition()
+	{
+	}
+
+	virtual ~FGameSettingEditCondition()
+	{
+	}
 
 	DECLARE_EVENT_OneParam(FGameSettingEditCondition, FOnEditConditionChanged, bool);
+
 	FOnEditConditionChanged OnEditConditionChangedEvent;
 
 	/** Broadcasts Event*/
-	void BroadcastEditConditionChanged()
+	void BroadcastEditConditionChanged() const
 	{
 		OnEditConditionChangedEvent.Broadcast(true);
 	}
@@ -180,7 +184,8 @@ public:
 	}
 
 	/** Called when the setting is changed. */
-	virtual void SettingChanged(const ULocalPlayer* InLocalPlayer, UGameSetting* Setting, EGameSettingChangeReason Reason) const
+	virtual void SettingChanged(const ULocalPlayer* InLocalPlayer, UGameSetting* Setting,
+	                            EGameSettingChangeReason Reason) const
 	{
 	}
 

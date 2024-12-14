@@ -38,10 +38,20 @@ protected:
 	virtual void OnDependencyChanged() override;
 
 	void InitializeResolutions();
+
+private:
+	void ResetResolution();
+	void InitializeWindowedResolutions(const FDisplayMetrics& InitialDisplayMetrics);
+	void InitializeWindowedFullscreenResolutions(const FDisplayMetrics& InitialDisplayMetrics, const FScreenResolutionArray& ScreenResolutions);
+	void InitializeFullscreenResolutions(const FScreenResolutionArray& ScreenResolutions);
+
+protected:
 	bool ShouldAllowFullScreenResolution(const FScreenResolutionRHI& SrcScreenRes, int32 FilterThreshold) const;
+	bool IsAspectRatioValid(float AspectRatio, int32 FilterThreshold) const;
 	static void GetStandardWindowResolutions(const FIntPoint& MinResolution, const FIntPoint& MaxResolution,
 	                                         float MinAspectRatio, TArray<FIntPoint>& OutResolutions);
 	void SelectAppropriateResolutions();
+	bool IsResolutionSizeValid(const FScreenResolutionRHI& ScreenRes, int32 FilterThreshold) const;
 	int32 FindIndexOfDisplayResolution(const FIntPoint& InPoint) const;
 	int32 FindIndexOfDisplayResolutionForceValid(const FIntPoint& InPoint) const;
 	int32 FindClosestResolutionIndex(const FIntPoint& Resolution) const;

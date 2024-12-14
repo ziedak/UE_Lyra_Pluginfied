@@ -28,7 +28,7 @@ class ULyraSettingAction_SafeZoneEditor : public UGameSettingAction
 
 public:
 	ULyraSettingAction_SafeZoneEditor();
-	virtual TArray<UGameSetting*> GetChildSettings() override;
+	virtual TArray<UGameSetting*> GetChildSettings() override { return {SafeZoneValueSetting}; };
 
 private:
 	UPROPERTY()

@@ -50,12 +50,12 @@ void UGAssetManager::InitializeGameplayCueManager() const
 	Gcm->LoadAlwaysLoadedCues();
 }
 
- const UGasGameData& UGAssetManager::GetGameData()
+const UGasGameData& UGAssetManager::GetGameData()
 {
 	return GetOrLoadTypedGameData<UGasGameData>(BaseGameDataPath);
 }
 
- UGasPawnData* UGAssetManager::GetDefaultPawnData() const
+UGasPawnData* UGAssetManager::GetDefaultPawnData() const
 {
 	return GetAsset(DefaultPawnData);
 }
@@ -68,8 +68,8 @@ void UGAssetManager::PreBeginPIE(bool bStartSimulate)
 	Super::PreBeginPIE(bStartSimulate);
 	{
 		FScopedSlowTask SlowTask(0, NSLOCTEXT("GasEditor", "PreBeginPIE", "Loading PIE Data"));
-		const bool bShowCancelButton = false;
-		const bool bAllowInPIE = true;
+		constexpr bool bShowCancelButton = false;
+		constexpr bool bAllowInPIE = true;
 		SlowTask.MakeDialog(bShowCancelButton, bAllowInPIE);
 
 		const UGasGameData& GameData = GetGameData();

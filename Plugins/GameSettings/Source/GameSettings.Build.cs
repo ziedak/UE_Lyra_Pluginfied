@@ -6,10 +6,10 @@ public class GameSettings : ModuleRules
 {
 	public GameSettings(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;				
-		
+		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+
 		PublicDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"Core",
 				"CoreUObject",
@@ -23,17 +23,18 @@ public class GameSettings : ModuleRules
 				"GameplayTags"
 			}
 		);
-			
-		
+
+
 		PrivateDependencyModuleNames.AddRange(
-			new string[]
+			new[]
 			{
 				"ApplicationCore",
-				"PropertyPath"
+				"PropertyPath",
+				"DeveloperSettings"
 			}
 		);
-		
-		
+
+
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
 			{

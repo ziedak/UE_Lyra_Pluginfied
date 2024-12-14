@@ -60,12 +60,12 @@ public:
 	virtual FName GetFeatureName() const override { return NAME_ACTOR_FEATURE_NAME; }
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	                                FGameplayTag DesiredState) const override;
-	
+
 	bool CanTransitionToSpawned(const APawn* Pawn) const;
 	bool CanTransitionToDataAvailable(const APawn* Pawn) const;
 	bool CanTransitionToDataInitialized(const UGameFrameworkComponentManager* Manager, APawn* Pawn) const;
 	bool CanTransitionToGameplayReady() const;
-	
+
 	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	                                   FGameplayTag DesiredState) override;
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
@@ -93,7 +93,6 @@ protected:
 
 	//TSubclassOf<UBaseCameraMode> DetermineCameraMode() const;
 
-protected:
 	UPROPERTY(EditAnywhere)
 	TArray<FInputMappingContextAndPriority> DefaultInputMappings;
 

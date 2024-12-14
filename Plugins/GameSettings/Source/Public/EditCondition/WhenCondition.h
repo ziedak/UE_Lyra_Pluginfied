@@ -7,12 +7,14 @@
 class FWhenCondition : public FGameSettingEditCondition
 {
 public:
-	FWhenCondition(TFunction<void(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState&)>&& InInlineEditCondition)
+	FWhenCondition(
+		TFunction<void(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState&)>&& InInlineEditCondition)
 		: InlineEditCondition(InInlineEditCondition)
 	{
 	}
 
-	virtual void GatherEditState(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState& InOutEditState) const override
+	virtual void GatherEditState(const ULocalPlayer* InLocalPlayer,
+	                             FGameSettingEditableState& InOutEditState) const override
 	{
 		InlineEditCondition(InLocalPlayer, InOutEditState);
 	}

@@ -3,12 +3,13 @@
 #pragma once
 
 
-
 #include "GameFramework/Actor.h"
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealth_DeathEvent, AActor*, OwningActor);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FHealth_AttributeChanged, UHealthComponent*, HealthComponent, float, OldValue, float, NewValue, AActor*, Instigator);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FHealth_AttributeChanged, UHealthComponent*, HealthComponent, float,
+                                              OldValue, float, NewValue, AActor*, Instigator);
 
 class UBaseAbilitySystemComponent;
 class UHealthSet;
@@ -35,6 +36,7 @@ UCLASS()
 class GAS_API UHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
 public :
 	UHealthComponent(const FObjectInitializer& ObjectInitializer);
 
@@ -48,10 +50,10 @@ public :
 	//Initializes the health component
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	void InitializeWithAbilitySystem(UBaseAbilitySystemComponent* InAbilitySystemComponent);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Health")
-	 void UninitializeFromAbilitySystem() ;
-	
+	void UninitializeFromAbilitySystem();
+
 	//Returns the current health
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetHealth() const;
@@ -59,14 +61,14 @@ public :
 	// Returns the current health in the range [0.0, 1.0].
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetHealthNormalized() const;
-	
+
 	//Returns the maximum health
 	UFUNCTION(BlueprintPure, Category = "Health")
 	float GetMaxHealth() const;
 
 	//Returns the current death state
 	UFUNCTION(BlueprintPure, Category = "Health")
-	FORCEINLINE EDeathState GetDeathState() const{return DeathState;};
+	FORCEINLINE EDeathState GetDeathState() const { return DeathState; };
 
 	//Returns true if the actor is dead
 	UFUNCTION(BlueprintCallable, BlueprintPure = false, Category = "Health", Meta = (ExpandBoolAsExecs = "ReturnValue"))
@@ -80,8 +82,6 @@ public :
 
 	// Applies enough damage to kill the owner.
 	virtual void DamageSelfDestruct(bool bFellOutOfWorld = false);
-
-public:
 
 	// Delegate fired when the health value has changed. This is called on the client but the instigator may not be valid
 	UPROPERTY(BlueprintAssignable)
@@ -100,25 +100,29 @@ public:
 	FHealth_DeathEvent OnDeathFinished;
 
 protected:
-// ACTOR COMPONENT OVERRIDES
+	// ACTOR COMPONENT OVERRIDES
 	virtual void OnUnregister() override;
 
 	void ClearGameplayTags() const;
 
-	virtual void HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
-	virtual void HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
-	virtual void HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser, const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue, float NewValue);
+	virtual void HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+	                                 const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue,
+	                                 float NewValue);
+	virtual void HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
+	                                    const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
+	                                    float OldValue, float NewValue);
+	virtual void HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser,
+	                               const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude, float OldValue,
+	                               float NewValue);
 
 
 	UFUNCTION()
 	virtual void OnRep_DeathState(EDeathState OldDeathState);
 
-protected:
-
 	// Ability system used by this component.
 	UPROPERTY()
 	TObjectPtr<UBaseAbilitySystemComponent> AbilitySystemComponent;
-	
+
 	// Health set used by this component.
 	UPROPERTY()
 	TObjectPtr<const UHealthSet> HealthSet;
@@ -127,4 +131,3 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_DeathState)
 	EDeathState DeathState;
 };
-

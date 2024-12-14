@@ -25,9 +25,6 @@ struct FAbilityGrant
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
 	TSoftClassPtr<UGameplayAbility> AbilityType;
 
-	// Input action to bind the ability to, if any (can be left unset)
-// 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-// 	TSoftObjectPtr<UInputAction> InputAction;
 };
 
 USTRUCT(BlueprintType)
@@ -57,7 +54,7 @@ struct FGameFeatureAbilitiesEntry
 	UPROPERTY(EditAnywhere, Category="Abilities")
 	TArray<FAbilityGrant> GrantedAbilities;
 
-	// List of attribute sets to grant to actors of the specified class 
+	// List of attribute sets to grant to actors of the specified class
 	UPROPERTY(EditAnywhere, Category="Attributes")
 	TArray<FAttributeSetGrant> GrantedAttributes;
 
@@ -94,36 +91,43 @@ public:
 	TArray<FGameFeatureAbilitiesEntry> AbilitiesList;
 
 private:
-	
 	struct FActorExtensions
 	{
 		TArray<FGameplayAbilitySpecHandle> Abilities;
 		TArray<UAttributeSet*> Attributes;
 		TArray<FGrantedHandlesData> AbilitySetHandles;
 	};
-	
+
 	struct FPerContextData
 	{
 		TMap<AActor*, FActorExtensions> ActiveExtensions;
 		TArray<TSharedPtr<FComponentRequestHandle>> ComponentRequests;
 	};
-	
-	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;	
+
+	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;
 
 	//~ Begin UGameFeatureAction_WorldActionBase interface
-	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
+	virtual void AddToWorld(const FWorldContext& WorldContext,
+	                        const FGameFeatureStateChangeContext& ChangeContext) override;
 	//~ End UGameFeatureAction_WorldActionBase interface
 
 	void Reset(FPerContextData& ActiveData) const;
-	void HandleActorExtension( AActor* Actor, FName EventName, int32 EntryIndex, FGameFeatureStateChangeContext ChangeContext);
-	void AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData);
+	void HandleActorExtension(AActor* Actor, FName EventName, int32 EntryIndex,
+	                          FGameFeatureStateChangeContext ChangeContext);
+	void AddActorAbilities(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry,
+	                       FPerContextData& ActiveData);
 	void RemoveActorAbilities(const AActor* Actor, FPerContextData& ActiveData) const;
 
-	template<class ComponentType>
-	ComponentType* FindOrAddComponentForActor(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData)
+	template <class ComponentType>
+	ComponentType* FindOrAddComponentForActor(AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry,
+	                                          FPerContextData& ActiveData)
 	{
 		//@TODO: Just find, no add?
-		return Cast<ComponentType>(FindOrAddComponentForActor(ComponentType::StaticClass(), Actor, AbilitiesEntry, ActiveData));
+		return Cast<ComponentType>(
+			FindOrAddComponentForActor(ComponentType::StaticClass(), Actor, AbilitiesEntry, ActiveData));
 	}
-	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, const AActor* Actor, const FGameFeatureAbilitiesEntry& AbilitiesEntry, FPerContextData& ActiveData) const;
+
+	UActorComponent* FindOrAddComponentForActor(UClass* ComponentType, const AActor* Actor,
+	                                            const FGameFeatureAbilitiesEntry& AbilitiesEntry,
+	                                            FPerContextData& ActiveData) const;
 };

@@ -26,12 +26,16 @@ void UGameFeature_AddGameplayCuePaths::OnGameFeatureRegistering(const UGameFeatu
 			UGameFeatureAction_AddGameplayCuePath>(Action);
 
 		if (!AddGameplayCueGfa)
+		{
 			continue;
+		}
 
 		const TArray<FDirectoryPath>& DirsToAdd = AddGameplayCueGfa->GetDirectoryPathsToAdd();
 		UBaseGameplayCueManager* Gcm = UBaseGameplayCueManager::Get();
 		if (!Gcm)
+		{
 			continue;
+		}
 
 		const UGameplayCueSet* RuntimeGameplayCueSet = Gcm->GetRuntimeCueSet();
 		const int32 PreInitializeNumCues = RuntimeGameplayCueSet
@@ -72,13 +76,17 @@ void UGameFeature_AddGameplayCuePaths::OnGameFeatureUnregistering(const UGameFea
 		const UGameFeatureAction_AddGameplayCuePath* AddGameplayCueGFA = Cast<
 			UGameFeatureAction_AddGameplayCuePath>(Action);
 		if (!AddGameplayCueGFA)
+		{
 			continue;
+		}
 
 		const TArray<FDirectoryPath>& DirsToAdd = AddGameplayCueGFA->GetDirectoryPathsToAdd();
 		UGameplayCueManager* Gcm = UAbilitySystemGlobals::Get().GetGameplayCueManager();
 
 		if (!Gcm)
+		{
 			continue;
+		}
 
 		int32 NumRemoved = 0;
 		for (const auto& [Path] : DirsToAdd)

@@ -4,6 +4,8 @@
 #include "Player/BaseLocalPlayer.h"
 
 #include "AudioMixerBlueprintLibrary.h"
+#include "Settings/LyraSettingsShared.h"
+#include "Settings/LyraSettingsLocal.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseLocalPlayer)
 
@@ -11,102 +13,106 @@ void UBaseLocalPlayer::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	// if (UBaseSettingsLocal* LocalSettings = GetLocalSettings())
-	// 	LocalSettings->OnAudioOutputDeviceChanged.AddUObject(this, &UBaseLocalPlayer::OnAudioOutputDeviceChanged);
+	if (ULyraSettingsLocal* LocalSettings = GetLocalSettings())
+		LocalSettings->OnAudioOutputDeviceChanged.AddUObject(this, &ThisClass::OnAudioOutputDeviceChanged);
 }
 
-// void UBaseLocalPlayer::SwitchController(APlayerController* PC)
-// {
-// 	Super::SwitchController(PC);
-// 	OnPlayerControllerChanged(PC);
-// }
+void UBaseLocalPlayer::SwitchController(APlayerController* PC)
+{
+	Super::SwitchController(PC);
+	OnPlayerControllerChanged(PC);
+}
 
-// bool UBaseLocalPlayer::SpawnPlayActor(const FString& URL, FString& OutError, UWorld* InWorld)
-// {
-// 	const bool bResult = Super::SpawnPlayActor(URL, OutError, InWorld);
-// 	OnPlayerControllerChanged(PlayerController);
+bool UBaseLocalPlayer::SpawnPlayActor(const FString& URL, FString& OutError, UWorld* InWorld)
+{
+	const bool bResult = Super::SpawnPlayActor(URL, OutError, InWorld);
+	OnPlayerControllerChanged(PlayerController);
 
-// 	return bResult;
-// }
+	return bResult;
+}
 
-// void UBaseLocalPlayer::InitOnlineSession()
-// {
-// 	OnPlayerControllerChanged(PlayerController);
-// 	Super::InitOnlineSession();
-// }
+void UBaseLocalPlayer::InitOnlineSession()
+{
+	OnPlayerControllerChanged(PlayerController);
+	Super::InitOnlineSession();
+}
 
-// void UBaseLocalPlayer::OnPlayerControllerChanged(APlayerController* NewController)
-// {
-// 	// Stop listening for changes from the old controller
-// 	FGenericTeamId OldTeamID = FGenericTeamId::NoTeam;
-// 	if (IBaseTeamAgentInterface* ControllerAsTeamProvider = Cast<IBaseTeamAgentInterface>(LastBoundPC.Get()))
-// 	{
-// 		OldTeamID = ControllerAsTeamProvider->GetGenericTeamId();
-// 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().RemoveAll(this);
-// 	}
-//
-// 	// Grab the current team ID and listen for future changes
-// 	FGenericTeamId NewTeamID = FGenericTeamId::NoTeam;
-// 	if (IBaseTeamAgentInterface* ControllerAsTeamProvider = Cast<IBaseTeamAgentInterface>(NewController))
-// 	{
-// 		NewTeamID = ControllerAsTeamProvider->GetGenericTeamId();
-// 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().AddDynamic(this, &ThisClass::OnControllerChangedTeam);
-// 		LastBoundPC = NewController;
-// 	}
-//
-// 	ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
-// }
+ULyraSettingsLocal* UBaseLocalPlayer::GetLocalSettings() const
+{
+	return ULyraSettingsLocal::Get();
+}
 
-// UBaseSettingsShared* UBaseLocalPlayer::GetSharedSettings() const
-// {
-// 	if (SharedSettings)
-// 		return SharedSettings;
+void UBaseLocalPlayer::OnPlayerControllerChanged(APlayerController* NewController)
+{
+	// 	// Stop listening for changes from the old controller
+	// 	FGenericTeamId OldTeamID = FGenericTeamId::NoTeam;
+	// 	if (IBaseTeamAgentInterface* ControllerAsTeamProvider = Cast<IBaseTeamAgentInterface>(LastBoundPC.Get()))
+	// 	{
+	// 		OldTeamID = ControllerAsTeamProvider->GetGenericTeamId();
+	// 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().RemoveAll(this);
+	// 	}
+	//
+	// 	// Grab the current team ID and listen for future changes
+	// 	FGenericTeamId NewTeamID = FGenericTeamId::NoTeam;
+	// 	if (IBaseTeamAgentInterface* ControllerAsTeamProvider = Cast<IBaseTeamAgentInterface>(NewController))
+	// 	{
+	// 		NewTeamID = ControllerAsTeamProvider->GetGenericTeamId();
+	// 		ControllerAsTeamProvider->GetTeamChangedDelegateChecked().AddDynamic(this, &ThisClass::OnControllerChangedTeam);
+	// 		LastBoundPC = NewController;
+	// 	}
+	//
+	// 	ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
+}
 
-// 	// On PC it's okay to use the sync load because it only checks the disk
-// 	// This could use a platform tag to check for proper save support instead
-// 	const bool bCanLoadBeforeLogin = PLATFORM_DESKTOP;
-// 	if (bCanLoadBeforeLogin)
-// 		return UBaseSettingsShared::LoadOrCreateSettings(this);
+ULyraSettingsShared* UBaseLocalPlayer::GetSharedSettings() const
+{
+	if (SharedSettings)
+		return SharedSettings;
 
-// 	// We need to wait for user login to get the real settings so return temp ones
-// 	return UBaseSettingsShared::CreateTemporarySettings(this);
-// }
+	// On PC it's okay to use the sync load because it only checks the disk
+	// This could use a platform tag to check for proper save support instead
+	const bool bCanLoadBeforeLogin = PLATFORM_DESKTOP;
+	if (bCanLoadBeforeLogin)
+		return ULyraSettingsShared::LoadOrCreateSettings(this);
 
-// void UBaseLocalPlayer::LoadSharedSettingsFromDisk(const bool bForceLoad)
-// {
-// 	const FUniqueNetIdRepl CurrentNetId = GetCachedUniqueNetId();
-// 	// Already loaded once, don't reload
-// 	if (!bForceLoad && SharedSettings && CurrentNetId == NetIdForSharedSettings)
-// 		return;
+	// We need to wait for user login to get the real settings so return temp ones
+	return ULyraSettingsShared::CreateTemporarySettings(this);
+}
 
-// 	ensure(
-// 		UBaseSettingsShared::AsyncLoadOrCreateSettings(this,
-// 			UBaseSettingsShared::FOnSettingsLoadedEvent::CreateUObject(
-// 				this, &UBaseLocalPlayer::OnSharedSettingsLoaded)));
-// }
+void UBaseLocalPlayer::LoadSharedSettingsFromDisk(const bool bForceLoad)
+{
+	// Already loaded once, don't reload
+	if (!bForceLoad && SharedSettings && GetCachedUniqueNetId() == NetIdForSharedSettings)
+		return;
 
-// void UBaseLocalPlayer::OnSharedSettingsLoaded(UBaseSettingsShared* LoadedOrCreatedSettings)
-// {
-// 	// The settings are applied before it gets here
-// 	if (!(ensure(LoadedOrCreatedSettings)))
-// 		return;
+	ensure(
+		ULyraSettingsShared::AsyncLoadOrCreateSettings(this,
+			ULyraSettingsShared::FOnSettingsLoadedEvent::CreateUObject(
+				this, &UBaseLocalPlayer::OnSharedSettingsLoaded)));
+}
 
-// 	// This will replace the temporary or previously loaded object which will GC out normally
-// 	SharedSettings = LoadedOrCreatedSettings;
-// 	NetIdForSharedSettings = GetCachedUniqueNetId();
-// }
+void UBaseLocalPlayer::OnSharedSettingsLoaded(ULyraSettingsShared* LoadedOrCreatedSettings)
+{
+	// The settings are applied before it gets here
+	if (!(ensure(LoadedOrCreatedSettings)))
+		return;
 
-// void UBaseLocalPlayer::OnAudioOutputDeviceChanged(const FString& InAudioOutputDeviceId)
-// {
-// 	FOnCompletedDeviceSwap DevicesSwappedCallback;
-// 	DevicesSwappedCallback.BindUFunction(this, FName("OnCompletedAudioDeviceSwap"));
-// 	UAudioMixerBlueprintLibrary::SwapAudioOutputDevice(GetWorld(),
-// 	                                                   InAudioOutputDeviceId,
-// 	                                                   DevicesSwappedCallback);
-// }
+	// This will replace the temporary or previously loaded object which will GC out normally
+	SharedSettings = LoadedOrCreatedSettings;
+	NetIdForSharedSettings = GetCachedUniqueNetId();
+}
 
-// void UBaseLocalPlayer::OnCompletedAudioDeviceSwap(const FSwapAudioOutputResult& SwapResult)
-// {
-// 	if (SwapResult.Result == ESwapAudioOutputDeviceResultState::Failure)
-// 		UE_LOG(LogTemp, Error, TEXT("Failed to swap audio device: %s"), *SwapResult.CurrentDeviceId);
-// }
+void UBaseLocalPlayer::OnAudioOutputDeviceChanged(const FString& InAudioOutputDeviceId)
+{
+	FOnCompletedDeviceSwap DevicesSwappedCallback;
+	DevicesSwappedCallback.BindUFunction(this, FName("OnCompletedAudioDeviceSwap"));
+	UAudioMixerBlueprintLibrary::SwapAudioOutputDevice(GetWorld(),
+	                                                   InAudioOutputDeviceId,
+	                                                   DevicesSwappedCallback);
+}
+
+void UBaseLocalPlayer::OnCompletedAudioDeviceSwap(const FSwapAudioOutputResult& SwapResult)
+{
+	if (SwapResult.Result == ESwapAudioOutputDeviceResultState::Failure)
+		UE_LOG(LogTemp, Error, TEXT("Failed to swap audio device: %s"), *SwapResult.CurrentDeviceId);
+}

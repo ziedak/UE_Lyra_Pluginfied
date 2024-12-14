@@ -38,4 +38,3 @@ void USubtitleDisplaySubsystem::SetSubtitleDisplayOptions(const FSubtitleFormat&
 	SubtitleFormat = InOptions;
 	DisplayFormatChangedEvent.Broadcast(SubtitleFormat);
 }
-

@@ -28,19 +28,22 @@ class GAMESETTINGS_API UGameSettingRegistry : public UObject
 
 public:
 	DECLARE_EVENT_TwoParams(UGameSettingRegistry, FOnSettingChanged, UGameSetting*, EGameSettingChangeReason);
+
 	DECLARE_EVENT_OneParam(UGameSettingRegistry, FOnSettingEditConditionChanged, UGameSetting*);
 
 	FOnSettingChanged OnSettingChangedEvent;
 	FOnSettingEditConditionChanged OnSettingEditConditionChangedEvent;
 
-	DECLARE_EVENT_TwoParams(UGameSettingRegistry, FOnSettingNamedActionEvent, UGameSetting* /*Setting*/, FGameplayTag /*GameSettings_Action_Tag*/);
+	DECLARE_EVENT_TwoParams(UGameSettingRegistry, FOnSettingNamedActionEvent, UGameSetting* /*Setting*/,
+	                        FGameplayTag /*GameSettings_Action_Tag*/);
+
 	FOnSettingNamedActionEvent OnSettingNamedActionEvent;
 
 	/** Navigate to the child settings of the provided setting. */
 	DECLARE_EVENT_OneParam(UGameSettingRegistry, FOnExecuteNavigation, UGameSetting* /*Setting*/);
+
 	FOnExecuteNavigation OnExecuteNavigationEvent;
 
-public:
 	UGameSettingRegistry();
 
 	void Initialize(ULocalPlayer* InLocalPlayer);
@@ -50,12 +53,12 @@ public:
 	virtual bool IsFinishedInitializing() const;
 
 	virtual void SaveChanges();
-	
-	void GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings);
+
+	void GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings) const;
 
 	UGameSetting* FindSettingByDevName(const FName& SettingDevName);
 
-	template<typename T = UGameSetting>
+	template <typename T = UGameSetting>
 	T* FindSettingByDevNameChecked(const FName& SettingDevName)
 	{
 		T* Setting = Cast<T>(FindSettingByDevName(SettingDevName));
@@ -64,19 +67,21 @@ public:
 	}
 
 protected:
-	virtual void OnInitialize(ULocalPlayer* InLocalPlayer) PURE_VIRTUAL(, )
+	virtual void OnInitialize(ULocalPlayer* InLocalPlayer) PURE_VIRTUAL(,)
 
-	virtual void OnSettingApplied(UGameSetting* Setting) { }
-	
+	virtual void OnSettingApplied(UGameSetting* Setting)
+	{
+	}
+
 	void RegisterSetting(UGameSetting* InSetting);
 	void RegisterInnerSettings(UGameSetting* InSetting);
 
 	// Internal event handlers.
-	void HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason);
+	void HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason) const;
 	void HandleSettingApplied(UGameSetting* Setting);
-	void HandleSettingEditConditionsChanged(UGameSetting* Setting);
-	void HandleSettingNamedAction(UGameSetting* Setting, FGameplayTag GameSettings_Action_Tag);
-	void HandleSettingNavigation(UGameSetting* Setting);
+	void HandleSettingEditConditionsChanged(UGameSetting* Setting) const;
+	void HandleSettingNamedAction(UGameSetting* Setting, FGameplayTag GameSettings_Action_Tag) const;
+	void HandleSettingNavigation(UGameSetting* Setting) const;
 
 	UPROPERTY(Transient)
 	TArray<TObjectPtr<UGameSetting>> TopLevelSettings;

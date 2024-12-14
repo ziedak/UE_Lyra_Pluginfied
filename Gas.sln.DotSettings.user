@@ -1,14 +1,15 @@
-﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xml:space="preserve">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AUObjectBaseUtility_002Eh_002Fl_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E4_003FEngine_003FSource_003FRuntime_003FCoreUObject_003FPublic_003FUObject_003FUObjectBaseUtility_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
-	
-	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
-	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">d:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe</s:String>
-	<s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
-	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/CustomGlobalProperties/=MSBuildEnableWorkloadResolver/@EntryIndexedValue">True</s:String>
-	<s:Int64 x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/ParallelProcessesCount2/@EntryValue">0</s:Int64>
-	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/PassVisualStudioParameters/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=cee7e3a1_002D70b5_002D4f53_002Da426_002D9d48efc36752/@EntryIndexedValue"></s:String>
-	<s:Boolean x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=cee7e3a1_002D70b5_002D4f53_002Da426_002D9d48efc36752/@EntryIndexRemoved">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=d9750fd1_002Dfccd_002D417c_002Db706_002D956b95880787/@EntryIndexedValue"></s:String>
-	<s:Boolean x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=d9750fd1_002Dfccd_002D417c_002Db706_002D956b95880787/@EntryIndexRemoved">True</s:Boolean></wpf:ResourceDictionary>
+    <s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
+
+    <s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
+    <s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">d:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe</s:String>
+    <s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
+    <s:String x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/CustomGlobalProperties/=MSBuildEnableWorkloadResolver/@EntryIndexedValue">True</s:String>
+    <s:Int64 x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/ParallelProcessesCount2/@EntryValue">0</s:Int64>
+    <s:Boolean x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/PassVisualStudioParameters/@EntryValue">True</s:Boolean>
+    <s:String x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=cee7e3a1_002D70b5_002D4f53_002Da426_002D9d48efc36752/@EntryIndexedValue"></s:String>
+    <s:Boolean x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=cee7e3a1_002D70b5_002D4f53_002Da426_002D9d48efc36752/@EntryIndexRemoved">True</s:Boolean>
+    <s:String x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=d9750fd1_002Dfccd_002D417c_002Db706_002D956b95880787/@EntryIndexedValue"></s:String>
+    <s:Boolean x:Key="/Default/Environment/InlayHints/CppTypeConversionHintsOptions/ExclusionList/=d9750fd1_002Dfccd_002D417c_002Db706_002D956b95880787/@EntryIndexRemoved">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=notif/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

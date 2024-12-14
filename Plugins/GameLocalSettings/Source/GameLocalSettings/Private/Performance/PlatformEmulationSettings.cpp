@@ -44,7 +44,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformTraitEnableActive", "Platform Trait Override\nEnabling {0}"),
 			FText::AsCultureInvariant(AdditionalPlatformTraitsToEnable.ToStringSimple())
-		));
+			));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -55,7 +55,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformTraitSuppressionActive", "Platform Trait Override\nSuppressing {0}"),
 			FText::AsCultureInvariant(AdditionalPlatformTraitsToSuppress.ToStringSimple())
-		));
+			));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -66,7 +66,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformOverrideActive", "Platform Override Active\nPretending to be {0}"),
 			FText::FromName(PretendPlatform)
-		));
+			));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -148,7 +148,7 @@ void UPlatformEmulationSettings::PickReasonableBaseDeviceProfile()
 	if (UDeviceProfile* ProfilePtr = Manager.FindProfile(PretendBaseDeviceProfile.ToString(), /*bCreateOnFail=*/ false))
 	{
 		const bool bIsCompatible = (PretendPlatform == NAME_None) || (ProfilePtr->DeviceType == PretendPlatform.
-			ToString());
+		                                                              ToString());
 		if (!bIsCompatible)
 		{
 			PretendBaseDeviceProfile = NAME_None;
@@ -167,7 +167,7 @@ void UPlatformEmulationSettings::PickReasonableBaseDeviceProfile()
 			{
 				const FName TestName = Profile->GetFName();
 				if ((ShortestMatchingProfileName == NAME_None) || (TestName.GetStringLength() <
-					ShortestMatchingProfileName.GetStringLength()))
+				                                                   ShortestMatchingProfileName.GetStringLength()))
 				{
 					ShortestMatchingProfileName = TestName;
 				}

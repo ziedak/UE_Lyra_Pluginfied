@@ -17,9 +17,8 @@ struct FFrame;
 //////////////////////////////////////////////////////////////////////
 
 // Observer which caches the stats for the previous frame
-struct FLyraPerformanceStatCache : public IPerformanceDataConsumer
+struct FLyraPerformanceStatCache : IPerformanceDataConsumer
 {
-public:
 	FLyraPerformanceStatCache(ULyraPerformanceStatSubsystem* InSubsystem)
 		: MySubsystem(InSubsystem)
 	{
@@ -34,7 +33,7 @@ public:
 	double GetCachedStat(ELyraDisplayablePerformanceStat Stat) const;
 
 protected:
-	IPerformanceDataConsumer::FFrameData CachedData;
+	FFrameData CachedData;
 	ULyraPerformanceStatSubsystem* MySubsystem;
 
 	float CachedServerFPS = 0.0f;

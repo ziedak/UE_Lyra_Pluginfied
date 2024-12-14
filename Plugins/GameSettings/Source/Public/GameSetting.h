@@ -5,7 +5,6 @@
 #include "GameplayTagContainer.h"
 #include "Components/SlateWrapperTypes.h"
 #include "GameSettingFilterState.h"
-#include "GameplayTagContainer.h"
 
 #include "GameSetting.generated.h"
 
@@ -27,18 +26,16 @@ class GAMESETTINGS_API UGameSetting : public UObject
 	GENERATED_BODY()
 
 public:
-	UGameSetting() { }
+	DECLARE_EVENT_TwoParams(UGameSetting, FOnSettingChanged, UGameSetting* /*InSetting*/,
+	                        EGameSettingChangeReason /*InChangeReason*/);
 
-public:
-	DECLARE_EVENT_TwoParams(UGameSetting, FOnSettingChanged, UGameSetting* /*InSetting*/, EGameSettingChangeReason /*InChangeReason*/);
 	DECLARE_EVENT_OneParam(UGameSetting, FOnSettingApplied, UGameSetting* /*InSetting*/);
+
 	DECLARE_EVENT_OneParam(UGameSetting, FOnSettingEditConditionChanged, UGameSetting* /*InSetting*/);
 
 	FOnSettingChanged OnSettingChangedEvent;
 	FOnSettingApplied OnSettingAppliedEvent;
 	FOnSettingEditConditionChanged OnSettingEditConditionChangedEvent;
-
-public:
 
 	/**
 	 * Gets the non-localized developer name for this setting.  This should remain constant, and represent a 
@@ -46,6 +43,7 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable)
 	FName GetDevName() const { return DevName; }
+
 	void SetDevName(const FName& Value) { DevName = Value; }
 
 	bool GetAdjustListViewPostRefresh() const { return bAdjustListViewPostRefresh; }
@@ -53,17 +51,24 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FText GetDisplayName() const { return DisplayName; }
+
 	void SetDisplayName(const FText& Value) { DisplayName = Value; }
 #if !UE_BUILD_SHIPPING
 	void SetDisplayName(const FString& Value) { SetDisplayName(FText::FromString(Value)); }
 #endif
 	UFUNCTION(BlueprintCallable)
 	ESlateVisibility GetDisplayNameVisibility() { return DisplayNameVisibility; }
-	void SetNameDisplayVisibility(ESlateVisibility InVisibility) { DisplayNameVisibility = InVisibility; }
+
+	void SetNameDisplayVisibility(const ESlateVisibility InVisibility) { DisplayNameVisibility = InVisibility; }
 
 	UFUNCTION(BlueprintCallable)
 	FText GetDescriptionRichText() const { return DescriptionRichText; }
-	void SetDescriptionRichText(const FText& Value) { DescriptionRichText = Value; InvalidateSearchableText(); }
+
+	void SetDescriptionRichText(const FText& Value)
+	{
+		DescriptionRichText = Value;
+		InvalidateSearchableText();
+	}
 #if !UE_BUILD_SHIPPING
 	/** This version is for cheats and other non-shipping items, that don't need to localize their text.  We don't permit this in shipping to prevent unlocalized text being introduced. */
 	void SetDescriptionRichText(const FString& Value) { SetDescriptionRichText(FText::FromString(Value)); }
@@ -71,6 +76,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	const FGameplayTagContainer& GetTags() const { return Tags; }
+
 	void AddTag(const FGameplayTag& TagToAdd) { Tags.AddTag(TagToAdd); }
 
 	void SetRegistry(UGameSettingRegistry* InOwningRegistry) { OwningRegistry = InOwningRegistry; }
@@ -83,7 +89,7 @@ public:
 
 	/** Gets the owning local player for this setting - which all initialized settings will have. */
 	ULocalPlayer* GetOwningLocalPlayer() const { return LocalPlayer; }
-	
+
 	/** Set the dynamic details callback, we query this when building the description panel.  This text is not searchable.*/
 	void SetDynamicDetails(const FGetGameSettingsDetails& InDynamicDetails) { DynamicDetails = InDynamicDetails; }
 
@@ -96,7 +102,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FText GetWarningRichText() const { return WarningRichText; }
-	void SetWarningRichText(const FText& Value) { WarningRichText = Value; InvalidateSearchableText(); }
+
+	void SetWarningRichText(const FText& Value)
+	{
+		WarningRichText = Value;
+		InvalidateSearchableText();
+	}
 #if !UE_BUILD_SHIPPING
 	/** This version is for cheats and other non-shipping items, that don't need to localize their text.  We don't permit this in shipping to prevent unlocalized text being introduced. */
 	void SetWarningRichText(const FString& Value) { SetWarningRichText(FText::FromString(Value)); }
@@ -174,7 +185,7 @@ protected:
 
 	/** Regenerates the plain searchable text if it has been dirtied. */
 	void RefreshPlainText() const;
-	void InvalidateSearchableText() { bRefreshPlainSearchableText = true; }
+	void InvalidateSearchableText() const { bRefreshPlainSearchableText = true; }
 
 	/** Notify that the setting changed */
 	void NotifySettingChanged(EGameSettingChangeReason Reason);
@@ -186,8 +197,6 @@ protected:
 
 	/**  */
 	FGameSettingEditableState ComputeEditableState() const;
-
-protected:
 
 	UPROPERTY(Transient)
 	TObjectPtr<ULocalPlayer> LocalPlayer;
@@ -220,7 +229,6 @@ protected:
 
 		FString Get() const;
 
-	private:
 		mutable FString StringCache;
 		mutable FCultureRef Culture;
 		TFunction<FString()> StringGetter;
@@ -235,7 +243,6 @@ protected:
 	bool bReportAnalytics = false;
 
 private:
-
 	/** Most settings are immediately ready, but some may require startup time before it's safe to call their functions. */
 	bool bReady = false;
 

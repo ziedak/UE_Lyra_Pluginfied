@@ -17,7 +17,6 @@ class UGameFeatureAction_AddGameplayCuePath final : public UGameFeatureAction
 	GENERATED_BODY()
 
 public:
-
 	UGameFeatureAction_AddGameplayCuePath();
 
 	//~UObject interface
@@ -30,6 +29,7 @@ public:
 
 private:
 	/** List of paths to register to the gameplay cue manager. These are relative to the game content directory */
-	UPROPERTY(EditAnywhere, Category = "Game Feature | Gameplay Cues", meta = (RelativeToGameContentDir, LongPackageName))
+	UPROPERTY(EditAnywhere, Category = "Game Feature | Gameplay Cues",
+		meta = (RelativeToGameContentDir, LongPackageName))
 	TArray<FDirectoryPath> DirectoryPathsToAdd;
 };

@@ -18,7 +18,7 @@ class ULyraInputConfig;
  * Expects that local players are set up to use the EnhancedInput system.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "Add Input Binds"))
-class UGameFeatureAction_AddInputBinding  : public UGameFeatureAction_WorldActionBase
+class UGameFeatureAction_AddInputBinding : public UGameFeatureAction_WorldActionBase
 {
 	GENERATED_BODY()
 
@@ -47,7 +47,8 @@ private:
 	TMap<FGameFeatureStateChangeContext, FPerContextData> ContextData;
 
 	//~ Begin UGameFeatureAction_WorldActionBase interface
-	virtual void AddToWorld(const FWorldContext& WorldContext, const FGameFeatureStateChangeContext& ChangeContext) override;
+	virtual void AddToWorld(const FWorldContext& WorldContext,
+	                        const FGameFeatureStateChangeContext& ChangeContext) override;
 	//~ End UGameFeatureAction_WorldActionBase interface
 
 	void Reset(FPerContextData& ActiveData);

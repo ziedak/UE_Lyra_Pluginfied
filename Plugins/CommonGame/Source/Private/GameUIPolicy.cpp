@@ -81,7 +81,7 @@ void UGameUIPolicy::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer)
 		LayoutInfo->bAddedToViewport = false;
 
 		if (LocalMultiplayerInteractionMode == ELocalMultiplayerInteractionMode::SingleToggle && !LocalPlayer->
-			IsPrimaryPlayer())
+		    IsPrimaryPlayer())
 		{
 			UPrimaryGameLayout* RootLayout = LayoutInfo->RootLayout;
 			if (RootLayout && !RootLayout->IsDormant())

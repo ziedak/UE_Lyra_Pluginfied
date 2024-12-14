@@ -17,7 +17,6 @@ struct FGameSettingClassExtensions
 {
 	GENERATED_BODY()
 
-public:
 	UPROPERTY(EditAnywhere, Category = Extensions)
 	TArray<TSoftClassPtr<UGameSettingDetailExtension>> Extensions;
 };
@@ -27,7 +26,6 @@ struct FGameSettingNameExtensions
 {
 	GENERATED_BODY()
 
-public:
 	UPROPERTY(EditAnywhere, Category = Extensions)
 	bool bIncludeClassDefaultExtensions = false;
 
@@ -47,11 +45,10 @@ public:
 	TSubclassOf<UGameSettingListEntryBase> GetEntryForSetting(UGameSetting* InSetting);
 
 	virtual TArray<TSoftClassPtr<UGameSettingDetailExtension>> GatherDetailExtensions(UGameSetting* InSetting);
-	
+
 protected:
 	virtual TSubclassOf<UGameSettingListEntryBase> GetCustomEntryForSetting(UGameSetting* InSetting);
 
-protected:
 	UPROPERTY(EditDefaultsOnly, Category = ListEntries, meta = (AllowAbstract))
 	TMap<TSubclassOf<UGameSetting>, TSubclassOf<UGameSettingListEntryBase>> EntryWidgetForClass;
 

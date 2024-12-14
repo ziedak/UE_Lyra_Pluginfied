@@ -7,11 +7,14 @@
 #include "Components/PawnComponent.h"
 #include "PawnExtensionComponent.generated.h"
 
-namespace EEndPlayReason { enum Type : int; }
+namespace EEndPlayReason
+{
+	enum Type : int;
+}
 
 class UGameFrameworkComponentManager;
 class UBaseAbilitySystemComponent;
-class UGasPawnData; 
+class UGasPawnData;
 class UObject;
 struct FActorInitStateChangedParams;
 struct FFrame;
@@ -29,20 +32,25 @@ class GAS_API UPawnExtensionComponent : public UPawnComponent, public IGameFrame
 public:
 	// Sets default values for this component's properties
 	UPawnExtensionComponent(const FObjectInitializer& ObjectInitializer);
-/** The name of this overall feature, this one depends on the other named component features */
+	/** The name of this overall feature, this one depends on the other named component features */
 	static const FName Name_ActorFeatureName;
 
 	//~ Begin IGameFrameworkInitStateInterface interface
 	virtual FName GetFeatureName() const override { return Name_ActorFeatureName; }
-	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) const override;
-	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState, FGameplayTag DesiredState) override;
+	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+	                                FGameplayTag DesiredState) const override;
+	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+	                                   FGameplayTag DesiredState) override;
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 	virtual void CheckDefaultInitialization() override;
 	//~ End IGameFrameworkInitStateInterface interface
 
 	/** Returns the pawn extension component if one exists on the specified actor. */
 	UFUNCTION(BlueprintPure, Category = "Base|Pawn")
-	static UPawnExtensionComponent* FindPawnExtensionComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UPawnExtensionComponent>() : nullptr); }
+	static UPawnExtensionComponent* FindPawnExtensionComponent(const AActor* Actor)
+	{
+		return (Actor ? Actor->FindComponentByClass<UPawnExtensionComponent>() : nullptr);
+	}
 
 	/** Gets the pawn data, which is used to specify pawn properties in data */
 	template <class T>
@@ -77,7 +85,6 @@ public:
 	void OnAbilitySystemUninitialized_Register(const FSimpleMulticastDelegate::FDelegate& Delegate);
 
 protected:
-
 	virtual void OnRegister() override;
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

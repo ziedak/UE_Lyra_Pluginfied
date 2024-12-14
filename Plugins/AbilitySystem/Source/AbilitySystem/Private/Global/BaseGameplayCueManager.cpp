@@ -148,8 +148,8 @@ void UBaseGameplayCueManager::DumpGameplayCues(const TArray<FString>& Args)
 		for (const FGameplayCueNotifyData& CueData : Gcm->RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueData)
 		{
 			if (!CueData.LoadedGameplayCueClass
-				|| Gcm->AlwaysLoadedCues.Contains(CueData.LoadedGameplayCueClass)
-				|| Gcm->PreloadedCues.Contains(CueData.LoadedGameplayCueClass))
+			    || Gcm->AlwaysLoadedCues.Contains(CueData.LoadedGameplayCueClass)
+			    || Gcm->PreloadedCues.Contains(CueData.LoadedGameplayCueClass))
 			{
 				continue;
 			}
@@ -321,7 +321,7 @@ void UBaseGameplayCueManager::ProcessLoadedTags()
 	for (const FLoadedGameplayTagToProcessData& LoadedTagData : TaskLoadedGameplayTagsToProcess)
 	{
 		if (!RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueDataMap.Contains(LoadedTagData.Tag) || LoadedTagData.
-			WeakOwner.IsStale())
+		    WeakOwner.IsStale())
 		{
 			continue;
 		}
@@ -375,12 +375,12 @@ void UBaseGameplayCueManager::ProcessTagToPreload(const FGameplayTag& Tag, UObje
 				CueData.GameplayCueNotifyObj,
 				WeakOwner,
 				bAlwaysLoadedCue
-			),
+				),
 			FStreamableManager::DefaultAsyncLoadPriority,
 			false,
 			false,
 			TEXT("GameplayCueManager")
-		);
+			);
 	}
 }
 
@@ -423,8 +423,8 @@ void UBaseGameplayCueManager::RegisterPreloadedCue(UClass* LoadedGameplayCueClas
 		PreloadedCueReferencers.Remove(LoadedGameplayCueClass);
 	}
 	else if ((OwningObject != LoadedGameplayCueClass)
-		&& (OwningObject != LoadedGameplayCueClass->GetDefaultObject())
-		&& !AlwaysLoadedCues.Contains(LoadedGameplayCueClass)
+	         && (OwningObject != LoadedGameplayCueClass->GetDefaultObject())
+	         && !AlwaysLoadedCues.Contains(LoadedGameplayCueClass)
 	)
 	{
 		PreloadedCues.Add(LoadedGameplayCueClass);

@@ -19,10 +19,8 @@ UCLASS()
 class GAMESETTINGS_API UGameSettingValueDiscreteDynamic : public UGameSettingValueDiscrete
 {
 	GENERATED_BODY()
-	
-public:
-	UGameSettingValueDiscreteDynamic();
 
+public:
 	/** UGameSettingValue */
 	virtual void Startup() override;
 	virtual void StoreInitial() override;
@@ -36,29 +34,28 @@ public:
 	virtual TArray<FText> GetDiscreteOptions() const override;
 
 	/** UGameSettingValueDiscreteDynamic */
-	void SetDynamicGetter(const TSharedRef<FGameSettingDataSource>& InGetter);
-	void SetDynamicSetter(const TSharedRef<FGameSettingDataSource>& InSetter);
-	void SetDefaultValueFromString(FString InOptionValue);
-	void AddDynamicOption(FString InOptionValue, FText InOptionText);
-	void RemoveDynamicOption(FString InOptionValue);
-	const TArray<FString>& GetDynamicOptions();
+	void SetDynamicGetter(const TSharedRef<FGameSettingDataSource>& InGetter) { Getter = InGetter; };
+	void SetDynamicSetter(const TSharedRef<FGameSettingDataSource>& InSetter) { Setter = InSetter; };
+	void SetDefaultValueFromString(const FString& InOptionValue) { DefaultValue = InOptionValue; };
+	void AddDynamicOption(const FString& InOptionValue, const FText& InOptionText);
+	void RemoveDynamicOption(const FString& InOptionValue);
+	const TArray<FString>& GetDynamicOptions() { return OptionValues; };
 
-	bool HasDynamicOption(const FString& InOptionValue);
+	bool HasDynamicOption(const FString& InOptionValue) const { return OptionValues.Contains(InOptionValue); };
 
 	FString GetValueAsString() const;
-	void SetValueFromString(FString InStringValue);
+	void SetValueFromString(const FString& InStringValue);
 
 protected:
-	void SetValueFromString(FString InStringValue, EGameSettingChangeReason Reason);
+	void SetValueFromString(const FString& InStringValue, EGameSettingChangeReason Reason);
 
 	/** UGameSettingValue */
 	virtual void OnInitialized() override;
 
 	void OnDataSourcesReady();
 
-	bool AreOptionsEqual(const FString& InOptionA, const FString& InOptionB) const;
+	bool AreOptionsEqual(const FString& InOptionA, const FString& InOptionB) const { return InOptionA == InOptionB; };
 
-protected:
 	TSharedPtr<FGameSettingDataSource> Getter;
 	TSharedPtr<FGameSettingDataSource> Setter;
 
@@ -79,9 +76,18 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Bool : public UGameSetti
 	GENERATED_BODY()
 
 public:
+	static
+	UGameSettingValueDiscreteDynamic_Bool* CreateSettings(const FName& DevName,
+	                                                      const FText& DisplayName,
+	                                                      const FText& Description,
+	                                                      const TSharedRef<FGameSettingDataSource>&
+	                                                      Getter,
+	                                                      const TSharedRef<FGameSettingDataSource>&
+	                                                      Setter,
+	                                                      const bool DefaultValue);
+
 	UGameSettingValueDiscreteDynamic_Bool();
 
-public:
 	void SetDefaultValue(bool Value);
 
 	void SetTrueText(const FText& InText);
@@ -103,22 +109,43 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Number : public UGameSet
 	GENERATED_BODY()
 
 public:
-	UGameSettingValueDiscreteDynamic_Number();
+	template <typename NumberType>
+	static UGameSettingValueDiscreteDynamic_Number* Create(const FName& DevName,
+	                                                       const FText& DisplayName,
+	                                                       const FText& Description,
+	                                                       const TSharedRef<FGameSettingDataSource>& Getter,
+	                                                       const TSharedRef<FGameSettingDataSource>& Setter,
+	                                                       const NumberType DefaultValue,
+	                                                       const int32 NbOptions)
+	{
+		UGameSettingValueDiscreteDynamic_Number* Setting = NewObject<UGameSettingValueDiscreteDynamic_Number>();
+		Setting->SetDevName(DevName);
+		Setting->SetDisplayName(DisplayName);
+		Setting->SetDescriptionRichText(Description);
+		Setting->SetDynamicGetter(Getter);
+		Setting->SetDynamicSetter(Setter);
+		Setting->SetDefaultValue(DefaultValue);
+		for (int32 Index = 0; Index <= NbOptions; Index++)
+		{
+			Setting->AddOption(Index, FText::AsNumber(Index));
+		}
 
-public:
-	template<typename NumberType>
+		return Setting;
+	}
+
+	template <typename NumberType>
 	void SetDefaultValue(NumberType InValue)
 	{
 		SetDefaultValueFromString(LexToString(InValue));
 	}
 
-	template<typename NumberType>
+	template <typename NumberType>
 	void AddOption(NumberType InValue, const FText& InOptionText)
 	{
 		AddDynamicOption(LexToString(InValue), InOptionText);
 	}
 
-	template<typename NumberType>
+	template <typename NumberType>
 	NumberType GetValue() const
 	{
 		const FString ValueString = GetValueAsString();
@@ -129,7 +156,7 @@ public:
 		return OutValue;
 	}
 
-	template<typename NumberType>
+	template <typename NumberType>
 	void SetValue(NumberType InValue)
 	{
 		SetValueFromString(LexToString(InValue));
@@ -150,34 +177,78 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Enum : public UGameSetti
 	GENERATED_BODY()
 
 public:
-	UGameSettingValueDiscreteDynamic_Enum();
+	//@TODO: Add support to convert enums to TMap<EnumType, FText> Collection)
+	// {
+	// {Enum::Val, LOCTEXT("Enum_Val", "Val")},
+	// ...
+	// }
 
-public:
-	template<typename EnumType>
+
+//@TODO verify this is the right way to do this
+	template <typename EnumType>
+	static TMap<EnumType, FText> EnumToMap(const FString& NameSpace)
+	{
+		TMap<EnumType, FText> Collection;
+		const TCHAR* LNameSpace = *NameSpace;
+		for (EnumType Elm : TEnumRange<EnumType>())
+		{
+			const auto LEnumName = StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(Elm));
+			const auto LInKey = *FString::Printf(TEXT("%s_%s"), *LEnumName, *LEnumName);
+			auto Txt = NSLOCTEXT(NameSpace, InKey, EnumName);
+			Collection.Add(Elm, Txt);
+		}
+		return Collection;
+	}
+
+	template <typename EnumType>
+	static UGameSettingValueDiscreteDynamic_Enum* CreateEnumSettings(const FName& DevName,
+	                                                                 const FText& DisplayName,
+	                                                                 const FText& Description,
+	                                                                 const TSharedRef<FGameSettingDataSource>& Getter,
+	                                                                 const TSharedRef<FGameSettingDataSource>& Setter,
+	                                                                 const EnumType DefaultValue,
+	                                                                 TMap<EnumType, FText> Collection)
+	{
+		UGameSettingValueDiscreteDynamic_Enum* Setting = NewObject<UGameSettingValueDiscreteDynamic_Enum>();
+		Setting->SetDevName(DevName);
+		Setting->SetDisplayName(DisplayName);
+		Setting->SetDescriptionRichText(Description);
+		Setting->SetDynamicGetter(Getter);
+		Setting->SetDynamicSetter(Setter);
+		Setting->SetDefaultValue(DefaultValue);
+		for (auto Element : Collection)
+		{
+			Setting->AddEnumOption(Element.Key, Element.Value);
+		}
+		return Setting;
+	}
+
+
+	template <typename EnumType>
 	void SetDefaultValue(EnumType InEnumValue)
 	{
-		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue((int64)InEnumValue);
+		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InEnumValue));
 		SetDefaultValueFromString(StringValue);
 	}
 
-	template<typename EnumType>
+	template <typename EnumType>
 	void AddEnumOption(EnumType InEnumValue, const FText& InOptionText)
 	{
-		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue((int64)InEnumValue);
+		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InEnumValue));
 		AddDynamicOption(StringValue, InOptionText);
 	}
 
-	template<typename EnumType>
+	template <typename EnumType>
 	EnumType GetValue() const
 	{
 		const FString Value = GetValueAsString();
-		return (EnumType)StaticEnum<EnumType>()->GetValueByNameString(Value);
+		return static_cast<EnumType>(StaticEnum<EnumType>()->GetValueByNameString(Value));
 	}
 
-	template<typename EnumType>
+	template <typename EnumType>
 	void SetValue(EnumType InEnumValue)
 	{
-		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue((int64)InEnumValue);
+		const FString StringValue = StaticEnum<EnumType>()->GetNameStringByValue(static_cast<int64>(InEnumValue));
 		SetValueFromString(StringValue);
 	}
 
@@ -196,9 +267,6 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Color : public UGameSett
 	GENERATED_BODY()
 
 public:
-	UGameSettingValueDiscreteDynamic_Color();
-
-public:
 	void SetDefaultValue(FLinearColor InColor)
 	{
 		SetDefaultValueFromString(InColor.ToString());
@@ -207,13 +275,15 @@ public:
 	void AddColorOption(FLinearColor InColor)
 	{
 		const FColor SRGBColor = InColor.ToFColor(true);
-		AddDynamicOption(InColor.ToString(), FText::FromString(FString::Printf(TEXT("#%02X%02X%02X"), SRGBColor.R, SRGBColor.G, SRGBColor.B)));
+		AddDynamicOption(InColor.ToString(),
+		                 FText::FromString(
+			                 FString::Printf(TEXT("#%02X%02X%02X"), SRGBColor.R, SRGBColor.G, SRGBColor.B)));
 	}
 
 	FLinearColor GetValue() const
 	{
 		const FString Value = GetValueAsString();
-		
+
 		FLinearColor ColorValue;
 		bool bSuccess = ColorValue.InitFromString(Value);
 		ensure(bSuccess);
@@ -237,11 +307,8 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Vector2D : public UGameS
 	GENERATED_BODY()
 
 public:
-
-	UGameSettingValueDiscreteDynamic_Vector2D() { }
-
 	void SetDefaultValue(const FVector2D& InValue)
-	{	
+	{
 		SetDefaultValueFromString(InValue.ToString());
 	}
 

@@ -13,13 +13,7 @@ UCLASS()
 class UGameResponsivePanelSlot : public UPanelSlot
 {
 	GENERATED_UCLASS_BODY()
-
-public:
-	
-
-public:
-
-	void BuildSlot(TSharedRef<SGameResponsivePanel> GameResponsivePanel);
+	void BuildSlot(const TSharedRef<SGameResponsivePanel>& GameResponsivePanel);
 
 	// UPanelSlot interface
 	virtual void SynchronizeProperties() override;

@@ -15,7 +15,9 @@ bool FSharedRepMovement::FillForCharacter(const ACharacter* Character)
 {
 	const USceneComponent* PawnRootComponent = Character->GetRootComponent();
 	if (!PawnRootComponent)
+	{
 		return false;
+	}
 
 	const UCharacterMovementComponent* CharacterMovement = Character->GetCharacterMovement();
 
@@ -29,8 +31,10 @@ bool FSharedRepMovement::FillForCharacter(const ACharacter* Character)
 	// Timestamp is sent as zero if unused
 	RepTimeStamp = 0.f;
 	if ((CharacterMovement->NetworkSmoothingMode == ENetworkSmoothingMode::Linear) || CharacterMovement->
-		bNetworkAlwaysReplicateTransformUpdateTimestamp)
+	    bNetworkAlwaysReplicateTransformUpdateTimestamp)
+	{
 		RepTimeStamp = CharacterMovement->GetServerLastTransformUpdateTimeStamp();
+	}
 
 
 	return true;
@@ -39,25 +43,38 @@ bool FSharedRepMovement::FillForCharacter(const ACharacter* Character)
 bool FSharedRepMovement::Equals(const FSharedRepMovement& Other, ACharacter* Character) const
 {
 	if (RepMovement.Location != Other.RepMovement.Location)
+	{
 		return false;
+	}
 
 	if (RepMovement.Rotation != Other.RepMovement.Rotation)
+	{
 		return false;
+	}
 
 	if (RepMovement.LinearVelocity != Other.RepMovement.LinearVelocity)
+	{
 		return false;
+	}
 
 	if (RepMovementMode != Other.RepMovementMode)
+	{
 		return false;
+	}
 
 	if (bProxyIsJumpForceApplied != Other.bProxyIsJumpForceApplied)
+	{
 		return false;
+	}
 
 	if (bIsCrouched != Other.bIsCrouched)
+	{
 		return false;
+	}
 
 	return true;
 }
+
 // ensures that the character's movement state is correctly transmitted over the network
 bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
 {
@@ -80,5 +97,5 @@ bool FSharedRepMovement::NetSerialize(FArchive& Ar, class UPackageMap* Map, bool
 		RepTimeStamp = 0.f;
 	}
 
-return true;
+	return true;
 }

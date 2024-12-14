@@ -43,10 +43,7 @@ void FGameSettingRegistryChangeTracker::StopWatchingRegistry()
 void FGameSettingRegistryChangeTracker::ClearDirtyState()
 {
 	ensure(!bRestoringSettings);
-	if (bRestoringSettings)
-	{
-		return;
-	}
+	if (bRestoringSettings) return;
 
 	bSettingsChanged = false;
 	DirtySettings.Reset();
@@ -70,18 +67,14 @@ void FGameSettingRegistryChangeTracker::RestoreToInitial()
 {
 	ensure(!bRestoringSettings);
 	if (bRestoringSettings)
-	{
 		return;
-	}
 
+	TGuardValue<bool> LocalGuard(bRestoringSettings, true);
+	for (auto Entry : DirtySettings)
 	{
-		TGuardValue<bool> LocalGuard(bRestoringSettings, true);
-		for (auto Entry : DirtySettings)
+		if (UGameSettingValue* SettingValue = Cast<UGameSettingValue>(Entry.Value))
 		{
-			if (UGameSettingValue* SettingValue = Cast<UGameSettingValue>(Entry.Value))
-			{
-				SettingValue->RestoreToInitial();
-			}
+			SettingValue->RestoreToInitial();
 		}
 	}
 
@@ -90,10 +83,7 @@ void FGameSettingRegistryChangeTracker::RestoreToInitial()
 
 void FGameSettingRegistryChangeTracker::HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason)
 {
-	if (bRestoringSettings)
-	{
-		return;
-	}
+	if (bRestoringSettings) return;
 
 	bSettingsChanged = true;
 	DirtySettings.Add(FObjectKey(Setting), Setting);

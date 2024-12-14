@@ -18,13 +18,16 @@ class GAMESETTINGS_API UGameSettingCollection : public UGameSetting
 	GENERATED_BODY()
 
 public:
+	static UGameSettingCollection* CreateCollection(const FName& DevName, const FText& DisplayName);
+
 	UGameSettingCollection();
 
 	virtual TArray<UGameSetting*> GetChildSettings() override { return Settings; }
 	TArray<UGameSettingCollection*> GetChildCollections() const;
 
 	void AddSetting(UGameSetting* Setting);
-	virtual void GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings) const;
+	virtual void GetSettingsForFilter(const FGameSettingFilterState& FilterState,
+	                                  TArray<UGameSetting*>& InOutSettings) const;
 
 	virtual bool IsSelectable() const { return false; }
 
@@ -44,21 +47,29 @@ class GAMESETTINGS_API UGameSettingCollectionPage : public UGameSettingCollectio
 	GENERATED_BODY()
 
 public:
-
 	DECLARE_EVENT_OneParam(UGameSettingCollectionPage, FOnExecuteNavigation, UGameSetting* /*Setting*/);
+
 	FOnExecuteNavigation OnExecuteNavigationEvent;
 
-public:
+	static UGameSettingCollectionPage* CreateSettings(const FName& DevName,
+	                                                  const FText& DisplayName,
+	                                                  const FText& Description,
+	                                                  const FText& NavigationText,
+	                                                  const TSharedRef<FGameSettingEditCondition>&
+	                                                  EditCondition);
+
+
 	UGameSettingCollectionPage();
 
 	FText GetNavigationText() const { return NavigationText; }
-	void SetNavigationText(FText Value) { NavigationText = Value; }
+	void SetNavigationText(const FText& Value) { NavigationText = Value; }
 #if !UE_BUILD_SHIPPING
 	void SetNavigationText(const FString& Value) { SetNavigationText(FText::FromString(Value)); }
 #endif
-	
+
 	virtual void OnInitialized() override;
-	virtual void GetSettingsForFilter(const FGameSettingFilterState& FilterState, TArray<UGameSetting*>& InOutSettings) const override;
+	virtual void GetSettingsForFilter(const FGameSettingFilterState& FilterState,
+	                                  TArray<UGameSetting*>& InOutSettings) const override;
 	virtual bool IsSelectable() const override { return true; }
 
 	/**  */

@@ -16,10 +16,10 @@ class UHealthComponent;
 struct FSharedRepMovement;
 
 UCLASS(Config = Game, Meta = (ShortTooltip = "The base character pawn class used by this project."))
-class GAS_API ABaseCharacter :public AModularCharacter,
-	public IAbilitySystemInterface,
-	public IGameplayCueInterface,
-	public IGameplayTagAssetInterface
+class GAS_API ABaseCharacter : public AModularCharacter,
+                               public IAbilitySystemInterface,
+                               public IGameplayCueInterface,
+                               public IGameplayTagAssetInterface
 
 {
 	GENERATED_BODY()
@@ -36,8 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Base|Character")
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const;
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;// Implement IAbilitySystemInterface
-
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // Implement IAbilitySystemInterface
 
 
 #pragma region AActorInterface
@@ -65,7 +64,7 @@ public:
 	virtual bool HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const override;
 
 #pragma endregion
-	
+
 	/** RPCs that is called on frames when default property replication is skipped. This replicates a single movement update to everyone. */
 	UFUNCTION(NetMulticast, unreliable)
 	void FastSharedReplication(const FSharedRepMovement& SharedRepMovement);
@@ -74,8 +73,8 @@ public:
 	FSharedRepMovement LastSharedReplication;
 
 	virtual bool UpdateSharedReplication();
-protected:
 
+protected:
 	virtual void OnAbilitySystemInitialized();
 	virtual void OnAbilitySystemUninitialized();
 
@@ -118,18 +117,16 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GAS|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UHealthComponent> HealthComponent;
-UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPawnExtensionComponent> PawnExtComponent;
 
-/*	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBaseCameraComponent> CameraComponent;
+	/*	
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<UBaseCameraComponent> CameraComponent;
+	
+		UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
+		FBaseReplicatedAcceleration ReplicatedAcceleration;*/
 
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
-	FBaseReplicatedAcceleration ReplicatedAcceleration;*/
-
-
-private:
 
 	UFUNCTION()
 	void OnRep_ReplicatedAcceleration() const;

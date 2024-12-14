@@ -7,6 +7,7 @@
 
 class ULyraSettingsLocal;
 class ULyraSettingsShared;
+
 UINTERFACE()
 class UPlayerSharedSettings : public UInterface
 {
@@ -19,7 +20,7 @@ class GAMELOCALSETTINGS_API IPlayerSharedSettings
 
 public:
 	UFUNCTION()
-	virtual ULyraSettingsShared* GetSharedSettings() const=0;
+	virtual ULyraSettingsShared* GetSharedSettings() const =0;
 	UFUNCTION()
-	virtual ULyraSettingsLocal* GetLocalSettings() const=0;
+	virtual ULyraSettingsLocal* GetLocalSettings() const =0;
 };

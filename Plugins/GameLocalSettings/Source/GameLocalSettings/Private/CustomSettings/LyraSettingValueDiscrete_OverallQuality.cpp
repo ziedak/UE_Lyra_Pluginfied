@@ -45,6 +45,7 @@ void ULyraSettingValueDiscrete_OverallQuality::OnInitialized()
 
 void ULyraSettingValueDiscrete_OverallQuality::StoreInitial()
 {
+		
 }
 
 void ULyraSettingValueDiscrete_OverallQuality::ResetToDefault()
@@ -59,39 +60,22 @@ void ULyraSettingValueDiscrete_OverallQuality::SetDiscreteOptionByIndex(int32 In
 {
 	UGameUserSettings* UserSettings = CastChecked<UGameUserSettings>(GEngine->GetGameUserSettings());
 
-	if (Index == GetCustomOptionIndex())
-	{
-		// Leave everything as is we're in a custom setup.
-	}
-	else
-	{
 		// Low / Medium / High / Epic
+	if (Index != GetCustomOptionIndex())
 		UserSettings->SetOverallScalabilityLevel(Index);
-	}
-
+		// Leave everything as is we're in a custom setup.
 	NotifySettingChanged(EGameSettingChangeReason::Change);
 }
 
 int32 ULyraSettingValueDiscrete_OverallQuality::GetDiscreteOptionIndex() const
 {
 	const int32 OverallQualityLevel = GetOverallQualityLevel();
-	if (OverallQualityLevel == INDEX_NONE)
-	{
-		return GetCustomOptionIndex();
-	}
-
-	return OverallQualityLevel;
+	return OverallQualityLevel == INDEX_NONE ? GetCustomOptionIndex() : OverallQualityLevel;
 }
 
 TArray<FText> ULyraSettingValueDiscrete_OverallQuality::GetDiscreteOptions() const
 {
-	const int32 OverallQualityLevel = GetOverallQualityLevel();
-	if (OverallQualityLevel == INDEX_NONE)
-	{
-		return OptionsWithCustom;
-	}
-
-	return Options;
+	return GetOverallQualityLevel() == INDEX_NONE ? OptionsWithCustom : Options;
 }
 
 int32 ULyraSettingValueDiscrete_OverallQuality::GetCustomOptionIndex() const

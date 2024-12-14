@@ -23,10 +23,7 @@ class GAS_API UGasPawnData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-
 	UGasPawnData(const FObjectInitializer& ObjectInitializer);
-
-public:
 
 	// Class to instantiate for this pawn (should usually derive from AGasPawn or AGasCharacter).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Pawn")

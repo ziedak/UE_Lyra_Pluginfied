@@ -19,7 +19,7 @@ void UGameSettingScreen::NativeOnInitialized()
 void UGameSettingScreen::NativeOnActivated()
 {
 	Super::NativeOnActivated();
-	
+
 	ChangeTracker.WatchRegistry(Registry);
 
 	OnSettingsDirtyStateChanged(HaveSettingsBeenChanged());
@@ -92,16 +92,17 @@ bool UGameSettingScreen::AttemptToPopNavigation()
 UGameSettingCollection* UGameSettingScreen::GetSettingCollection(FName SettingDevName, bool& HasAnySettings)
 {
 	HasAnySettings = false;
-	
-	if (UGameSettingCollection* Collection = GetRegistry()->FindSettingByDevNameChecked<UGameSettingCollection>(SettingDevName))
+
+	if (UGameSettingCollection* Collection = GetRegistry()->FindSettingByDevNameChecked<UGameSettingCollection>(
+		SettingDevName))
 	{
 		TArray<UGameSetting*> InOutSettings;
-		
+
 		FGameSettingFilterState FilterState;
 		Collection->GetSettingsForFilter(FilterState, InOutSettings);
 
 		HasAnySettings = InOutSettings.Num() > 0;
-		
+
 		return Collection;
 	}
 
@@ -124,7 +125,7 @@ void UGameSettingScreen::NavigateToSettings(const TArray<FName>& SettingDevNames
 			FilterState.AddSettingToRootList(Setting);
 		}
 	}
-	
+
 	Settings_Panel->SetFilterState(FilterState);
 }
 

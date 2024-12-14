@@ -17,7 +17,6 @@ UCLASS()
 class UGameResponsivePanel : public UPanelWidget
 {
 	GENERATED_UCLASS_BODY()
-
 	/**  */
 	UFUNCTION(BlueprintCallable, Category="Widget")
 	UGameResponsivePanelSlot* AddChildToGameResponsivePanel(UWidget* Content);
@@ -34,18 +33,14 @@ class UGameResponsivePanel : public UPanelWidget
 	bool bCanStackVertically = true;
 
 protected:
-
 	// UPanelWidget
 	virtual UClass* GetSlotClass() const override;
 	virtual void OnSlotAdded(UPanelSlot* Slot) override;
 	virtual void OnSlotRemoved(UPanelSlot* Slot) override;
 	// End UPanelWidget
 
-protected:
-
 	TSharedPtr<class SGameResponsivePanel> MyGameResponsivePanel;
 
-protected:
 	// UWidget interface
 	virtual TSharedRef<SWidget> RebuildWidget() override;
 	// End of UWidget interface

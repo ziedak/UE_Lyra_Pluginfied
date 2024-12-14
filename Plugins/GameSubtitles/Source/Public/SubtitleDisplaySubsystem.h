@@ -16,16 +16,14 @@ struct GAMESUBTITLES_API FSubtitleFormat
 {
 	GENERATED_BODY()
 
-public:
 	FSubtitleFormat()
 		: SubtitleTextSize(ESubtitleDisplayTextSize::Medium)
-		, SubtitleTextColor(ESubtitleDisplayTextColor::White)
-		, SubtitleTextBorder(ESubtitleDisplayTextBorder::None)
-		, SubtitleBackgroundOpacity(ESubtitleDisplayBackgroundOpacity::Medium)
+		  , SubtitleTextColor(ESubtitleDisplayTextColor::White)
+		  , SubtitleTextBorder(ESubtitleDisplayTextBorder::None)
+		  , SubtitleBackgroundOpacity(ESubtitleDisplayBackgroundOpacity::Medium)
 	{
 	}
 
-public:
 	UPROPERTY(EditAnywhere, Category = "Display Info")
 	ESubtitleDisplayTextSize SubtitleTextSize;
 
@@ -45,13 +43,13 @@ class GAMESUBTITLES_API USubtitleDisplaySubsystem : public UGameInstanceSubsyste
 	GENERATED_BODY()
 
 public:
-	DECLARE_EVENT_OneParam(USubtitleDisplaySubsystem, FDisplayFormatChangedEvent, const FSubtitleFormat& /*DisplayFormat*/);
+	DECLARE_EVENT_OneParam(USubtitleDisplaySubsystem, FDisplayFormatChangedEvent,
+	                       const FSubtitleFormat& /*DisplayFormat*/);
+
 	FDisplayFormatChangedEvent DisplayFormatChangedEvent;
 
-public:
 	static USubtitleDisplaySubsystem* Get(const ULocalPlayer* LocalPlayer);
 
-public:
 	USubtitleDisplaySubsystem();
 
 	// Begin USubsystem

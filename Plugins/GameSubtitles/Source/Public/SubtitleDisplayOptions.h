@@ -18,15 +18,21 @@ enum class ESubtitleDisplayTextSize : uint8
 	Medium,
 	Large,
 	ExtraLarge,
-	ESubtitleDisplayTextSize_MAX
+	TextSize_MAX
 };
 
 UENUM()
 enum class ESubtitleDisplayTextColor : uint8
 {
 	White,
+	Black,
+	Red,
+	Green,
+	Blue,
 	Yellow,
-	ESubtitleDisplayTextColor_MAX
+	Cyan,
+	Magenta,
+	TextColor_MAX
 };
 
 UENUM()
@@ -35,7 +41,7 @@ enum class ESubtitleDisplayTextBorder : uint8
 	None,
 	Outline,
 	DropShadow,
-	ESubtitleDisplayTextBorder_MAX
+	TextBorder_MAX
 };
 
 UENUM()
@@ -46,7 +52,7 @@ enum class ESubtitleDisplayBackgroundOpacity : uint8
 	Medium,
 	High,
 	Solid,
-	ESubtitleDisplayBackgroundOpacity_MAX
+	BackgroundOpacity_MAX
 };
 
 /**
@@ -58,23 +64,20 @@ class GAMESUBTITLES_API USubtitleDisplayOptions : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	USubtitleDisplayOptions() { }
-
-public:
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
 	FSlateFontInfo Font;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-	int32 DisplayTextSizes[(int32)ESubtitleDisplayTextSize::ESubtitleDisplayTextSize_MAX];
+	int32 DisplayTextSizes[static_cast<int32>(ESubtitleDisplayTextSize::TextSize_MAX)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-	FLinearColor DisplayTextColors[(int32)ESubtitleDisplayTextColor::ESubtitleDisplayTextColor_MAX];
+	FLinearColor DisplayTextColors[static_cast<int32>(ESubtitleDisplayTextColor::TextColor_MAX)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-	float DisplayBorderSize[(int32)ESubtitleDisplayTextBorder::ESubtitleDisplayTextBorder_MAX];
+	float DisplayBorderSize[static_cast<int32>(ESubtitleDisplayTextBorder::TextBorder_MAX)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
-	float DisplayBackgroundOpacity[(int32)ESubtitleDisplayBackgroundOpacity::ESubtitleDisplayBackgroundOpacity_MAX];
+	float DisplayBackgroundOpacity[static_cast<int32>(ESubtitleDisplayBackgroundOpacity::BackgroundOpacity_MAX)];
 
 	UPROPERTY(EditDefaultsOnly, Category = "Display Info")
 	FSlateBrush BackgroundBrush;

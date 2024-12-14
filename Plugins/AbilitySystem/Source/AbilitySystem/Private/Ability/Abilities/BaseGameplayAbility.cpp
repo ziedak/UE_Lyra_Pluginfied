@@ -73,7 +73,7 @@ AController* UBaseGameplayAbility::GetControllerFromActorInfo() const
 			return C;
 		}
 
-		if (APawn* Pawn = Cast<APawn>(TestActor))
+		if (const APawn* Pawn = Cast<APawn>(TestActor))
 		{
 			return Pawn->GetController();
 		}
@@ -114,9 +114,9 @@ void UBaseGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActor
 	}
 
 	const bool bIsLocalExecution = (NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalPredicted) || (
-		NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalOnly);
+		                               NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalOnly);
 	const bool bIsServerExecution = (NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerOnly) || (
-		NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerInitiated);
+		                                NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerInitiated);
 
 	const bool bClientShouldActivate = ActorInfo->IsLocallyControlled() && bIsLocalExecution;
 	const bool bServerShouldActivate = ActorInfo->IsNetAuthority() && bIsServerExecution;
@@ -142,15 +142,15 @@ bool UBaseGameplayAbility::CanChangeActivationGroup(EAbilityActivationGroup NewG
 	UBaseAbilitySystemComponent* BaseASC = GetBaseAbilitySystemComponentFromActorInfo();
 	check(BaseASC);
 
+	// This ability can't change groups if it's blocked (unless it is the one doing the blocking).
 	if ((ActivationGroup != EAbilityActivationGroup::Exclusive_Blocking) && BaseASC->IsActivationGroupBlocked(NewGroup))
 	{
-		// This ability can't change groups if it's blocked (unless it is the one doing the blocking).
 		return false;
 	}
 
+	// This ability can't become replaceable if it can't be canceled.
 	if ((NewGroup == EAbilityActivationGroup::Exclusive_Replaceable) && !CanBeCanceled())
 	{
-		// This ability can't become replaceable if it can't be canceled.
 		return false;
 	}
 
@@ -526,33 +526,34 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 			bMissing = true;
 		}
 	}
-	// Check to see if the source has any blocked or required tags for this ability to activate on it
-	if (SourceTags != nullptr && (SourceBlockedTags.Num() || SourceRequiredTags.Num()))
-	{
-		if (SourceTags->HasAny(SourceBlockedTags))
-		{
-			bBlocked = true;
-		}
 
-		if (!SourceTags->HasAll(SourceRequiredTags))
+	const auto TagsCheck = [&bBlocked,&bMissing](const FGameplayTagContainer* Tags,
+	                                             const FGameplayTagContainer& BlockedTags,
+	                                             const FGameplayTagContainer& RequiredTags)
+	{
+		if (!Tags)
 		{
-			bMissing = true;
+			return;
 		}
-	}
+		if (BlockedTags.Num() || RequiredTags.Num())
+		{
+			if (Tags->HasAny(BlockedTags))
+			{
+				bBlocked = true;
+			}
+
+			if (!Tags->HasAll(RequiredTags))
+			{
+				bMissing = true;
+			}
+		}
+	};
+	// Check to see if the source has any blocked or required tags for this ability to activate on it
+	TagsCheck(SourceTags, SourceBlockedTags, SourceRequiredTags);
 
 	// Check to see if the target has any blocked or required tags for this ability to activate on it
-	if (TargetTags != nullptr && (TargetBlockedTags.Num() || TargetRequiredTags.Num()))
-	{
-		if (TargetTags->HasAny(TargetBlockedTags))
-		{
-			bBlocked = true;
-		}
+	TagsCheck(TargetTags, TargetBlockedTags, TargetRequiredTags);
 
-		if (!TargetTags->HasAll(TargetRequiredTags))
-		{
-			bMissing = true;
-		}
-	}
 
 	// If we are blocked or missing, add the relevant tags to the OptionalRelevantTags container
 	if (bBlocked)

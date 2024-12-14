@@ -118,7 +118,9 @@ float UHealthComponent::GetHealth() const
 float UHealthComponent::GetHealthNormalized() const
 {
 	if (!HealthSet)
+	{
 		return 0.0f;
+	}
 
 	const float Health = GetHealth();
 	const float MaxHealth = GetMaxHealth();
@@ -134,7 +136,9 @@ float UHealthComponent::GetMaxHealth() const
 void UHealthComponent::StartDeath()
 {
 	if (DeathState != EDeathState::NotDead)
+	{
 		return;
+	}
 
 	DeathState = EDeathState::DeathStarted;
 
@@ -155,7 +159,9 @@ void UHealthComponent::StartDeath()
 void UHealthComponent::FinishDeath()
 {
 	if (DeathState != EDeathState::DeathStarted)
+	{
 		return;
+	}
 
 	DeathState = EDeathState::DeathFinished;
 
@@ -175,7 +181,9 @@ void UHealthComponent::FinishDeath()
 void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 {
 	if (DeathState != EDeathState::NotDead || !AbilitySystemComponent)
+	{
 		return;
+	}
 
 	const TSubclassOf<UGameplayEffect> DamageGE = UBaseAssetManager::GetSubclass(
 		UGasGameData::Get().DamageGameplayEffect_SetByCaller);
@@ -212,7 +220,9 @@ void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 	DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::DAMAGE_SELF_DESTRUCT);
 
 	if (bFellOutOfWorld)
+	{
 		DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::FELL_OUT_OF_WORLD);
+	}
 
 	const float DamageMagnitude = GetMaxHealth();
 	DamageEffectSpec->SetSetByCallerMagnitude(SetByCallerTags::DAMAGE, DamageMagnitude);
@@ -249,7 +259,9 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 {
 #if WITH_SERVER_CODE
 	if (!AbilitySystemComponent || !DamageEffectSpec)
+	{
 		return;
+	}
 
 	//Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 	//This is done in a prediction window to ensure the event is sent in the correct order.
@@ -304,14 +316,16 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 	{
 		//the server is trying to set us back, but we have already predicted past the server state
 		ULOG_WARNING(LogGAS, "HealthComponent: Predicted past server death state [%d] -> [%d] for owner [%s].",
-		                   (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
+		             (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
 		return;
 	}
 
 	if (OldDeathState == EDeathState::NotDead)
 	{
 		if (NewDeathState == EDeathState::DeathStarted)
+		{
 			StartDeath();
+		}
 		else if (NewDeathState == EDeathState::DeathFinished)
 		{
 			StartDeath();
@@ -320,7 +334,7 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 		else
 		{
 			ULOG_ERROR(LogGAS, "HealthComponent: Invalid death transition [%d] -> [%d] for owner [%s].",
-			                 (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
+			           (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
 		}
 	}
 	else if (OldDeathState == EDeathState::DeathStarted && NewDeathState == EDeathState::DeathFinished)
@@ -330,11 +344,12 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 	else
 	{
 		ULOG_ERROR(LogGAS, "HealthComponent: Invalid death transition [%d] -> [%d] for owner [%s].",
-		                 (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
+		           (uint8)OldDeathState, (uint8)NewDeathState, *GetNameSafe(GetOwner()));
 	}
 
 
 	ensureMsgf((DeathState == NewDeathState),
-	           TEXT("HealthComponent: Death transition failed [%d] -> [%d] for owner [%s]."), static_cast<uint8>(OldDeathState),
+	           TEXT("HealthComponent: Death transition failed [%d] -> [%d] for owner [%s]."),
+	           static_cast<uint8>(OldDeathState),
 	           static_cast<uint8>(NewDeathState), *GetNameSafe(GetOwner()));
 }

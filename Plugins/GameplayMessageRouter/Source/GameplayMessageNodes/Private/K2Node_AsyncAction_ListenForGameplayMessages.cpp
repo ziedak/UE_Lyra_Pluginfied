@@ -50,7 +50,7 @@ void UK2Node_AsyncAction_ListenForGameplayMessages::GetPinHoverText(const UEdGra
 	if (Pin.PinName == UK2Node_AsyncAction_ListenForGameplayMessagesHelper::PayloadPinName)
 	{
 		HoverTextOut = HoverTextOut + LOCTEXT("PayloadOutTooltip", "\n\nThe message structure that we received").
-			ToString();
+		               ToString();
 	}
 }
 

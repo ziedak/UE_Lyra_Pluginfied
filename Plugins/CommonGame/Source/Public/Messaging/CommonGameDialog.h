@@ -23,7 +23,7 @@ struct FConfirmationDialogAction
 	bool operator==(const FConfirmationDialogAction& Other) const
 	{
 		return Result == Other.Result &&
-			OptionalDisplayText.EqualTo(Other.OptionalDisplayText);
+		       OptionalDisplayText.EqualTo(Other.OptionalDisplayText);
 	}
 };
 

@@ -3,11 +3,9 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CombatSet)
 
 UCombatSet::UCombatSet()
-	: BaseDamage(0.0f)
-	  , BaseHeal(0.0f)
+	: BaseDamage(0.0f), BaseHeal(0.0f)
 {
 }
-
 
 void UCombatSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

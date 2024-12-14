@@ -6,11 +6,13 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerStart)
 
-EPlayerStartLocationOccupancy ABasePlayerStart::GetLocationOccupancy(AController* const ControllerPawnToFit) 
+EPlayerStartLocationOccupancy ABasePlayerStart::GetLocationOccupancy(AController* const ControllerPawnToFit)
 {
 	UWorld* const World = GetWorld();
 	if (!HasAuthority() || !World || !World->GetAuthGameMode())
+	{
 		return EPlayerStartLocationOccupancy::Full;
+	}
 
 	const auto AuthGameMode = World->GetAuthGameMode();
 
@@ -43,7 +45,9 @@ EPlayerStartLocationOccupancy ABasePlayerStart::GetLocationOccupancy(AController
 bool ABasePlayerStart::TryClaim(AController* OccupyingController)
 {
 	if (!OccupyingController || IsClaimed())
+	{
 		return false;
+	}
 
 	ClaimingController = OccupyingController;
 	if (const UWorld* World = GetWorld())
@@ -59,7 +63,7 @@ bool ABasePlayerStart::TryClaim(AController* OccupyingController)
 void ABasePlayerStart::CheckUnclaimed()
 {
 	if (ClaimingController && ClaimingController->GetPawn() &&
-		GetLocationOccupancy(ClaimingController) == EPlayerStartLocationOccupancy::Empty)
+	    GetLocationOccupancy(ClaimingController) == EPlayerStartLocationOccupancy::Empty)
 	{
 		ClaimingController = nullptr;
 		if (const UWorld* World = GetWorld())

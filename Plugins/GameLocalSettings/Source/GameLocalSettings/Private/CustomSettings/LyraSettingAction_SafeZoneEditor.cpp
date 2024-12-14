@@ -23,17 +23,13 @@ ULyraSettingAction_SafeZoneEditor::ULyraSettingAction_SafeZoneEditor()
 	SafeZoneValueSetting->SetDefaultValue(0.0f);
 	SafeZoneValueSetting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetSafeZone));
 	SafeZoneValueSetting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetSafeZone));
-	SafeZoneValueSetting->SetDisplayFormat([](double SourceValue, double NormalizedValue)
+	SafeZoneValueSetting->SetDisplayFormat([](const double SourceValue, double NormalizedValue)
 	{
 		return FText::AsNumber(SourceValue);
 	});
 	SafeZoneValueSetting->SetSettingParent(this);
 }
 
-TArray<UGameSetting*> ULyraSettingAction_SafeZoneEditor::GetChildSettings()
-{
-	return {SafeZoneValueSetting};
-}
 
 void ULyraSettingValueScalarDynamic_SafeZoneValue::ResetToDefault()
 {

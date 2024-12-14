@@ -92,7 +92,7 @@ public:
 
 					StateFunc(EAsyncWidgetLayerState::AfterPush, Widget);
 				})
-		);
+			);
 
 		// Setup a cancel delegate so that we can resume input if this handler is canceled.
 		StreamingHandle->BindCancelDelegate(FStreamableDelegate::CreateWeakLambda(this,
@@ -101,7 +101,7 @@ public:
 					UCommonUIExtensions::ResumeInputForPlayer(GetOwningPlayer(), SuspendInputToken);
 					StateFunc(EAsyncWidgetLayerState::Canceled, nullptr);
 				})
-		);
+			);
 
 		return StreamingHandle;
 	}

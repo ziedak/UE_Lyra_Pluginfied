@@ -22,9 +22,11 @@ public:
 	UGameSettingPressAnyKey(const FObjectInitializer& Initializer);
 
 	DECLARE_EVENT_OneParam(UGameSettingPressAnyKey, FOnKeySelected, FKey);
+
 	FOnKeySelected OnKeySelected;
 
 	DECLARE_EVENT(UGameSettingPressAnyKey, FOnKeySelectionCanceled);
+
 	FOnKeySelectionCanceled OnKeySelectionCanceled;
 
 protected:

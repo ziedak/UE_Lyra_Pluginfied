@@ -15,7 +15,7 @@
 
 USubtitleDisplay::USubtitleDisplay(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, WrapTextAt(0) // No wrapping by default
+	  , WrapTextAt(0) // No wrapping by default
 {
 }
 
@@ -27,9 +27,9 @@ bool USubtitleDisplay::HasSubtitles() const
 void USubtitleDisplay::SynchronizeProperties()
 {
 	Super::SynchronizeProperties();
-	
+
 	RebuildStyle();
-	
+
 	if (IsDesignTime() || bPreviewMode)
 	{
 		SubtitleWidget->SetCurrentSubtitleText(PreviewText);
@@ -42,7 +42,8 @@ void USubtitleDisplay::ReleaseSlateResources(bool bReleaseChildren)
 
 	SubtitleWidget.Reset();
 
-	if (USubtitleDisplaySubsystem* SubtitleDisplay = UGameInstance::GetSubsystem<USubtitleDisplaySubsystem>(GetGameInstance()))
+	if (USubtitleDisplaySubsystem* SubtitleDisplay = UGameInstance::GetSubsystem<USubtitleDisplaySubsystem>(
+		GetGameInstance()))
 	{
 		SubtitleDisplay->DisplayFormatChangedEvent.RemoveAll(this);
 	}
@@ -50,7 +51,8 @@ void USubtitleDisplay::ReleaseSlateResources(bool bReleaseChildren)
 
 TSharedRef<SWidget> USubtitleDisplay::RebuildWidget()
 {
-	if (USubtitleDisplaySubsystem* SubtitleDisplay = UGameInstance::GetSubsystem<USubtitleDisplaySubsystem>(GetGameInstance()))
+	if (USubtitleDisplaySubsystem* SubtitleDisplay = UGameInstance::GetSubsystem<USubtitleDisplaySubsystem>(
+		GetGameInstance()))
 	{
 		SubtitleDisplay->DisplayFormatChangedEvent.AddUObject(this, &ThisClass::HandleSubtitleDisplayOptionsChanged);
 		Format = SubtitleDisplay->GetSubtitleDisplayOptions();
@@ -62,7 +64,7 @@ TSharedRef<SWidget> USubtitleDisplay::RebuildWidget()
 		.ManualSubtitles(IsDesignTime() || bPreviewMode);
 
 	RebuildStyle();
-	
+
 	return SubtitleWidget.ToSharedRef();
 }
 
@@ -82,20 +84,24 @@ void USubtitleDisplay::RebuildStyle()
 	if (Options)
 	{
 		GeneratedStyle.Font = Options->Font;
-		GeneratedStyle.Font.Size = Options->DisplayTextSizes[(int32)Format.SubtitleTextSize];
-		GeneratedStyle.ColorAndOpacity = Options->DisplayTextColors[(int32)Format.SubtitleTextColor];
+		GeneratedStyle.Font.Size = Options->DisplayTextSizes[static_cast<int32>(Format.SubtitleTextSize)];
+		GeneratedStyle.ColorAndOpacity = Options->DisplayTextColors[static_cast<int32>(Format.SubtitleTextColor)];
 
 		switch (Format.SubtitleTextBorder)
 		{
 		case ESubtitleDisplayTextBorder::DropShadow:
 		{
-			const float ShadowSize = FMath::Max(1.0f, Options->DisplayBorderSize[(int32)ESubtitleDisplayTextBorder::DropShadow] * (float)Format.SubtitleTextSize / 2.0f);
+			const float ShadowSize = FMath::Max(
+				1.0f, Options->DisplayBorderSize[static_cast<int32>(ESubtitleDisplayTextBorder::DropShadow)] *
+				      static_cast<float>(Format.SubtitleTextSize) / 2.0f);
 			GeneratedStyle.SetShadowOffset(FVector2D(ShadowSize, ShadowSize));
 			break;
 		}
 		case ESubtitleDisplayTextBorder::Outline:
 		{
-			const float OutlineSize = FMath::Max(1.0f, Options->DisplayBorderSize[(int32)ESubtitleDisplayTextBorder::Outline] * (float)Format.SubtitleTextSize);
+			const float OutlineSize = FMath::Max(
+				1.0f, Options->DisplayBorderSize[static_cast<int32>(ESubtitleDisplayTextBorder::Outline)] * static_cast<
+					      float>(Format.SubtitleTextSize));
 			GeneratedStyle.Font.OutlineSettings.OutlineSize = OutlineSize;
 			break;
 		}
@@ -105,7 +111,8 @@ void USubtitleDisplay::RebuildStyle()
 		}
 
 		FLinearColor CurrentBackgroundColor = Options->BackgroundBrush.TintColor.GetSpecifiedColor();
-		CurrentBackgroundColor.A = Options->DisplayBackgroundOpacity[(int32)Format.SubtitleBackgroundOpacity];
+		CurrentBackgroundColor.A = Options->DisplayBackgroundOpacity[static_cast<int32>(Format.
+			SubtitleBackgroundOpacity)];
 		GeneratedBackgroundBorder = Options->BackgroundBrush;
 		GeneratedBackgroundBorder.TintColor = CurrentBackgroundColor;
 
@@ -125,11 +132,12 @@ void USubtitleDisplay::ValidateCompiledDefaults(IWidgetCompilerLog& CompileLog) 
 
 	if (!Options)
 	{
-		CompileLog.Error(FText::Format(LOCTEXT("Error_USubtitleDisplay_MissingOptions", "{0} has no subtitle Options asset specified."), FText::FromString(GetName())));
+		CompileLog.Error(FText::Format(
+			LOCTEXT("Error_USubtitleDisplay_MissingOptions", "{0} has no subtitle Options asset specified."),
+			FText::FromString(GetName())));
 	}
 }
 
 #endif
 
 #undef LOCTEXT_NAMESPACE
-

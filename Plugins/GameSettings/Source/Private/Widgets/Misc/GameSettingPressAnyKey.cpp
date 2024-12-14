@@ -12,13 +12,7 @@ class ICursor;
 class FSettingsPressAnyKeyInputPreProcessor : public IInputProcessor
 {
 public:
-	FSettingsPressAnyKeyInputPreProcessor()
-	{
-
-	}
-
 	virtual void Tick(const float DeltaTime, FSlateApplication& SlateApp, TSharedRef<ICursor> Cursor) override { }
-
 	virtual bool HandleKeyUpEvent(FSlateApplication& SlateApp, const FKeyEvent& InKeyEvent) override
 	{
 		HandleKey(InKeyEvent.GetKey());
@@ -30,7 +24,8 @@ public:
 		return true;
 	}
 
-	virtual bool HandleMouseButtonDoubleClickEvent(FSlateApplication& SlateApp, const FPointerEvent& MouseEvent) override
+	virtual bool
+	HandleMouseButtonDoubleClickEvent(FSlateApplication& SlateApp, const FPointerEvent& MouseEvent) override
 	{
 		HandleKey(MouseEvent.GetEffectingButton());
 		return true;
@@ -47,7 +42,8 @@ public:
 		return true;
 	}
 
-	virtual bool HandleMouseWheelOrGestureEvent(FSlateApplication& SlateApp, const FPointerEvent& InWheelEvent, const FPointerEvent* InGestureEvent) override
+	virtual bool HandleMouseWheelOrGestureEvent(FSlateApplication& SlateApp, const FPointerEvent& InWheelEvent,
+	                                            const FPointerEvent* InGestureEvent) override
 	{
 		if (InWheelEvent.GetWheelDelta() != 0)
 		{
@@ -64,21 +60,15 @@ public:
 	FSettingsPressAnyKeyInputPreProcessorKeySelected OnKeySelected;
 
 private:
-	void HandleKey(const FKey& Key)
+	void HandleKey(const FKey& Key) const
 	{
 		// Cancel this process if it's Escape, Touch, or a gamepad key.
-		if (Key == EKeys::LeftCommand || Key == EKeys::RightCommand)
-		{
-			// Ignore
-		}
-		else if (Key == EKeys::Escape || Key.IsTouch() || Key.IsGamepadKey())
-		{
+		if (Key == EKeys::LeftCommand || Key == EKeys::RightCommand) return ;
+
+		if (Key == EKeys::Escape || Key.IsTouch() || Key.IsGamepadKey())
 			OnKeySelectionCanceled.Broadcast();
-		}
 		else
-		{
 			OnKeySelected.Broadcast(Key);
-		}
 	}
 };
 
@@ -111,39 +101,40 @@ void UGameSettingPressAnyKey::NativeOnDeactivated()
 
 void UGameSettingPressAnyKey::HandleKeySelected(FKey InKey)
 {
-	if (!bKeySelected)
+	if (bKeySelected) return;
+
+	bKeySelected = true;
+	Dismiss([this, InKey]()
 	{
-		bKeySelected = true;
-		Dismiss([this, InKey]() {
-			OnKeySelected.Broadcast(InKey);
-		});
-	}
+		OnKeySelected.Broadcast(InKey);
+	});
 }
 
 void UGameSettingPressAnyKey::HandleKeySelectionCanceled()
 {
-	if (!bKeySelected)
+	if (bKeySelected) return;
+
+	bKeySelected = true;
+	Dismiss([this]()
 	{
-		bKeySelected = true;
-		Dismiss([this]() {
-			OnKeySelectionCanceled.Broadcast();
-		});
-	}
+		OnKeySelectionCanceled.Broadcast();
+	});
 }
 
 void UGameSettingPressAnyKey::Dismiss(TFunction<void()> PostDismissCallback)
 {
 	// We delay a tick so that we're done processing input.
-	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(this, [this, PostDismissCallback](float DeltaTime)
-	{
-		QUICK_SCOPE_CYCLE_COUNTER(STAT_UGameSettingPressAnyKey_Dismiss);
+	FTSTicker::GetCoreTicker().AddTicker(FTickerDelegate::CreateWeakLambda(
+		this, [this, PostDismissCallback](float DeltaTime)
+		{
+			QUICK_SCOPE_CYCLE_COUNTER(STAT_UGameSettingPressAnyKey_Dismiss);
 
-		FSlateApplication::Get().UnregisterInputPreProcessor(InputProcessor);
+			FSlateApplication::Get().UnregisterInputPreProcessor(InputProcessor);
 
-		DeactivateWidget();
+			DeactivateWidget();
 
-		PostDismissCallback();
+			PostDismissCallback();
 
-		return false;
-	}));
+			return false;
+		}));
 }

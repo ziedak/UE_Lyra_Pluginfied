@@ -26,4 +26,3 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool ExecuteActionForSetting(FGameplayTag ActionTag, UGameSetting* InSetting);
 };
-

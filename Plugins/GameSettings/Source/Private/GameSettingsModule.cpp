@@ -11,9 +11,6 @@ public:
 	FGameSettingsModule();
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
-
-private:
-
 };
 
 

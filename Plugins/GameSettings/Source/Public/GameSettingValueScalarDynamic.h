@@ -15,7 +15,7 @@ class UObject;
 // UGameSettingValueScalarDynamic
 //////////////////////////////////////////////////////////////////////////
 
-typedef TFunction<FText(double SourceValue, double NormalizedValue)> FSettingScalarFormatFunction;
+using FSettingScalarFormatFunction = TFunction<FText(double SourceValue, double NormalizedValue)>;
 
 UCLASS()
 class GAMESETTINGS_API UGameSettingValueScalarDynamic : public UGameSettingValueScalar
@@ -23,6 +23,18 @@ class GAMESETTINGS_API UGameSettingValueScalarDynamic : public UGameSettingValue
 	GENERATED_BODY()
 
 public:
+	static UGameSettingValueScalarDynamic* CreateSettings(const FName& DevName,
+	                                                      const FText& DisplayName,
+	                                                      const FText& Description,
+	                                                      const TSharedRef<FGameSettingDataSource>&
+	                                                      Getter,
+	                                                      const TSharedRef<FGameSettingDataSource>&
+	                                                      Setter,
+	                                                      const float DefaultValue,
+	                                                      const FSettingScalarFormatFunction&
+	                                                      DisplayFormat,
+	                                                      const TSharedRef<FGameSettingEditCondition>&
+	                                                      EditCondition);
 	static FSettingScalarFormatFunction Raw;
 	static FSettingScalarFormatFunction RawOneDecimal;
 	static FSettingScalarFormatFunction RawTwoDecimals;
@@ -31,12 +43,11 @@ public:
 	static FSettingScalarFormatFunction SourceAsPercent1;
 	static FSettingScalarFormatFunction SourceAsPercent100;
 	static FSettingScalarFormatFunction SourceAsInteger;
+
 private:
 	static const FNumberFormattingOptions& GetOneDecimalFormattingOptions();
-	
-public:
-	UGameSettingValueScalarDynamic();
 
+public:
 	/** UGameSettingValue */
 	virtual void Startup() override;
 	virtual void StoreInitial() override;
@@ -44,24 +55,29 @@ public:
 	virtual void RestoreToInitial() override;
 
 	/** UGameSettingValueScalar */
-	virtual TOptional<double> GetDefaultValue() const override;
-	virtual void SetValue(double Value, EGameSettingChangeReason Reason = EGameSettingChangeReason::Change) override;
+	virtual TOptional<double> GetDefaultValue() const override { return DefaultValue; };
+	void SetDefaultValue(const double InValue) { DefaultValue = InValue; }
+
 	virtual double GetValue() const override;
-	virtual TRange<double> GetSourceRange() const override;
-	virtual double GetSourceStep() const override;
+	virtual void SetValue(double InValue, EGameSettingChangeReason Reason = EGameSettingChangeReason::Change) override;
+
+	virtual TRange<double> GetSourceRange() const override { return SourceRange; };
+
+	void SetSourceRangeAndStep(const TRange<double>& InRange, const double InStep)
+	{
+		SourceRange = InRange;
+		SourceStep = InStep;
+	};
+
+	virtual double GetSourceStep() const override { return SourceStep; };
 	virtual FText GetFormattedText() const override;
 
 	/** UGameSettingValueDiscreteDynamic */
-	void SetDynamicGetter(const TSharedRef<FGameSettingDataSource>& InGetter);
-	void SetDynamicSetter(const TSharedRef<FGameSettingDataSource>& InSetter);
-	void SetDefaultValue(double InValue);
+	void SetDynamicGetter(const TSharedRef<FGameSettingDataSource>& InGetter) { Getter = InGetter; }
+	void SetDynamicSetter(const TSharedRef<FGameSettingDataSource>& InSetter) { Setter = InSetter; }
 
-	/**  */
-	void SetDisplayFormat(FSettingScalarFormatFunction InDisplayFormat);
-	
-	/**  */
-	void SetSourceRangeAndStep(const TRange<double>& InRange, double InSourceStep);
-	
+	void SetDisplayFormat(const FSettingScalarFormatFunction& InDisplayFormat) { DisplayFormat = InDisplayFormat; }
+
 	/**
 	 * The SetSourceRangeAndStep defines the actual range the numbers could move in, but often
 	 * the true minimum for the user is greater than the minimum source range, so for example, the range
@@ -69,7 +85,7 @@ public:
 	 * a bar that travels from 0 to 100, the user can't set anything lower than some minimum, e.g. 1.
 	 * That is the Minimum Limit.
 	 */
-	void SetMinimumLimit(const TOptional<double>& InMinimum);
+	void SetMinimumLimit(const TOptional<double>& InMinimum) { Minimum = InMinimum; };
 
 	/**
 	 * The SetSourceRangeAndStep defines the actual range the numbers could move in, but rarely
@@ -78,15 +94,13 @@ public:
 	 * a bar that travels from 0 to 100, the user can't set anything lower than some maximum, e.g. 95.
 	 * That is the Maximum Limit.
 	 */
-	void SetMaximumLimit(const TOptional<double>& InMaximum);
-	
+	void SetMaximumLimit(const TOptional<double>& InMaximum) { Maximum = InMaximum; };
+
 protected:
 	/** UGameSettingValue */
 	virtual void OnInitialized() override;
 
 	void OnDataSourcesReady();
-
-protected:
 
 	TSharedPtr<FGameSettingDataSource> Getter;
 	TSharedPtr<FGameSettingDataSource> Setter;

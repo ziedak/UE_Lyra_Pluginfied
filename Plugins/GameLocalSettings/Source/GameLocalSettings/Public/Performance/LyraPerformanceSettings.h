@@ -75,7 +75,6 @@ public:
 	// Helper method to get the performance settings object, directed via platform settings
 	static const ULyraPlatformSpecificRenderingSettings* Get();
 
-public:
 	// The default variant suffix to append, should typically be a member of
 	// UserFacingDeviceProfileOptions unless there is only one for the current platform
 	//
@@ -108,7 +107,8 @@ public:
 	// Potential frame rates to display for mobile
 	// Note: This is further limited by Lyra.DeviceProfile.Mobile.MaxFrameRate from the
 	// platform-specific device profile and what the platform frame pacer reports as supported
-	UPROPERTY(EditAnywhere, Config, Category=VideoSettings, meta=(EditCondition="FramePacingMode==ELyraFramePacingMode::MobileStyle", ForceUnits=Hz))
+	UPROPERTY(EditAnywhere, Config, Category=VideoSettings,
+		meta=(EditCondition="FramePacingMode==ELyraFramePacingMode::MobileStyle", ForceUnits=Hz))
 	TArray<int32> MobileFrameRateLimits;
 };
 

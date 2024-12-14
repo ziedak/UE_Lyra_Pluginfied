@@ -15,9 +15,11 @@ UCLASS(Config = Game)
 class GAS_API UGAssetManager : public UBaseAssetManager
 {
 	GENERATED_BODY()
+
 public:
 	// Returns the AssetManager singleton object.
 	static UGAssetManager& Get();
+
 protected:
 	// Global game data asset to use (DefaultGame.ini).
 	UPROPERTY(Config)
@@ -38,8 +40,9 @@ protected:
 
 	// Sets up the ability system
 	void InitializeGameplayCueManager() const;
-public:
-	 const UGasGameData& GetGameData();
 
-	 UGasPawnData* GetDefaultPawnData() const;
+public:
+	const UGasGameData& GetGameData();
+
+	UGasPawnData* GetDefaultPawnData() const;
 };

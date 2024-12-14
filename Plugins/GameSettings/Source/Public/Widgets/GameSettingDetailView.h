@@ -22,6 +22,7 @@ UCLASS(Abstract)
 class GAMESETTINGS_API UGameSettingDetailView : public UUserWidget
 {
 	GENERATED_BODY()
+
 public:
 	UGameSettingDetailView(const FObjectInitializer& ObjectInitializer);
 
@@ -37,7 +38,6 @@ protected:
 
 	void CreateDetailsExtension(UGameSetting* InSetting, TSubclassOf<UGameSettingDetailExtension> ExtensionClass);
 
-protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UGameSettingVisualData> VisualData;
 
@@ -49,7 +49,7 @@ protected:
 
 	TSharedPtr<FStreamableHandle> StreamingHandle;
 
-private:	// Bound Widgets
+private: // Bound Widgets
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UCommonTextBlock> Text_SettingName;
 
@@ -61,7 +61,7 @@ private:	// Bound Widgets
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UCommonRichTextBlock> RichText_WarningDetails;
-	
+
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional, BlueprintProtected = true, AllowPrivateAccess = true))
 	TObjectPtr<UCommonRichTextBlock> RichText_DisabledDetails;
 

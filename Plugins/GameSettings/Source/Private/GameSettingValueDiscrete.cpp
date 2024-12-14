@@ -11,11 +11,6 @@
 // UGameSettingValueDiscrete
 //--------------------------------------
 
-UGameSettingValueDiscrete::UGameSettingValueDiscrete()
-{
-
-}
-
 FString UGameSettingValueDiscrete::GetAnalyticsValue() const
 {
 	const TArray<FText> Options = GetDiscreteOptions();
@@ -33,4 +28,3 @@ FString UGameSettingValueDiscrete::GetAnalyticsValue() const
 }
 
 #undef LOCTEXT_NAMESPACE
-

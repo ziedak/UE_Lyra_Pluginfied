@@ -23,7 +23,8 @@ TSubclassOf<UGameSettingListEntryBase> UGameSettingVisualData::GetEntryForSettin
 
 	// Check if there's a specific entry widget for a setting by name.  Hopefully this is super rare.
 	{
-		TSubclassOf<UGameSettingListEntryBase> EntryWidgetClassPtr = EntryWidgetForName.FindRef(InSetting->GetDevName());
+		TSubclassOf<UGameSettingListEntryBase> EntryWidgetClassPtr = EntryWidgetForName.
+			FindRef(InSetting->GetDevName());
 		if (EntryWidgetClassPtr)
 		{
 			return EntryWidgetClassPtr;
@@ -48,7 +49,8 @@ TSubclassOf<UGameSettingListEntryBase> UGameSettingVisualData::GetEntryForSettin
 	return TSubclassOf<UGameSettingListEntryBase>();
 }
 
-TArray<TSoftClassPtr<UGameSettingDetailExtension>> UGameSettingVisualData::GatherDetailExtensions(UGameSetting* InSetting)
+TArray<TSoftClassPtr<UGameSettingDetailExtension>> UGameSettingVisualData::GatherDetailExtensions(
+	UGameSetting* InSetting)
 {
 	TArray<TSoftClassPtr<UGameSettingDetailExtension>> Extensions;
 

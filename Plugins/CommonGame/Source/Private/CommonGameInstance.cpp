@@ -38,7 +38,7 @@ void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo
 {
 	// By default show errors and disconnect if play privilege for first player is lost
 	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable &&
-		NewAvailability != ECommonUserAvailability::NowAvailable)
+	    NewAvailability != ECommonUserAvailability::NowAvailable)
 	{
 		UE_LOG(LogCommonGame, Error,
 		       TEXT("HandlePrivilegeChanged: Player %d no longer has permission to play the game!"),

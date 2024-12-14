@@ -10,14 +10,20 @@
 class FSettingFilterExpressionContext : public ITextFilterExpressionContext
 {
 public:
-	explicit FSettingFilterExpressionContext(const UGameSetting& InSetting) : Setting(InSetting) {}
-
-	virtual bool TestBasicStringExpression(const FTextFilterString& InValue, const ETextFilterTextComparisonMode InTextComparisonMode) const override
+	explicit FSettingFilterExpressionContext(const UGameSetting& InSetting) : Setting(InSetting)
 	{
-		return TextFilterUtils::TestBasicStringExpression(Setting.GetDescriptionPlainText(), InValue, InTextComparisonMode);
 	}
 
-	virtual bool TestComplexExpression(const FName& InKey, const FTextFilterString& InValue, const ETextFilterComparisonOperation InComparisonOperation, const ETextFilterTextComparisonMode InTextComparisonMode) const override
+	virtual bool TestBasicStringExpression(const FTextFilterString& InValue,
+	                                       const ETextFilterTextComparisonMode InTextComparisonMode) const override
+	{
+		return TextFilterUtils::TestBasicStringExpression(Setting.GetDescriptionPlainText(), InValue,
+		                                                  InTextComparisonMode);
+	}
+
+	virtual bool TestComplexExpression(const FName& InKey, const FTextFilterString& InValue,
+	                                   const ETextFilterComparisonOperation InComparisonOperation,
+	                                   const ETextFilterTextComparisonMode InTextComparisonMode) const override
 	{
 		return false;
 	}
@@ -56,55 +62,30 @@ bool FGameSettingFilterState::DoesSettingPassFilter(const UGameSetting& InSettin
 {
 	const FGameSettingEditableState& EditableState = InSetting.GetEditState();
 
-	if (!bIncludeHidden && !EditableState.IsVisible())
-	{
+	if ((!bIncludeHidden && !EditableState.IsVisible()) ||
+		(!bIncludeDisabled && !EditableState.IsEnabled()) ||
+		(!bIncludeResetTable && !EditableState.IsResetTable()))
+	
 		return false;
-	}
+	
+	
 
-	if (!bIncludeDisabled && !EditableState.IsEnabled())
+	if (SettingAllowList.Num() > 0 && !SettingAllowList.Contains(&InSetting))
 	{
-		return false;
-	}
-
-	if (!bIncludeResetable && !EditableState.IsResetable())
-	{
-		return false;
-	}
-
-	// Are we filtering settings?
-	if (SettingAllowList.Num() > 0)
-	{
-		if (!SettingAllowList.Contains(&InSetting))
+		const UGameSetting* NextSetting = &InSetting;
+		while (const UGameSetting* Parent = NextSetting->GetSettingParent())
 		{
-			bool bAllowed = false;
-			const UGameSetting* NextSetting = &InSetting;
-			while (const UGameSetting* Parent = NextSetting->GetSettingParent())
-			{
-				if (SettingAllowList.Contains(Parent))
-				{
-					bAllowed = true;
-					break;
-				}
-
-				NextSetting = Parent;
-			}
-
-			if (!bAllowed)
-			{
-				return false;
-			}
+			if (SettingAllowList.Contains(Parent))
+				return true;
+			
+			NextSetting = Parent;
 		}
-	}
-
-	// TODO more filters...
-
-	// Always search text last, it's generally the most expensive filter.
-	if (!SearchTextEvaluator.TestTextFilter(FSettingFilterExpressionContext(InSetting)))
-	{
 		return false;
 	}
-
-	return true;
+	// TODO more filters...
+	// Always search text last, it's generally the most expensive filter.
+	return SearchTextEvaluator.TestTextFilter(FSettingFilterExpressionContext(InSetting));
+	
 }
 
 //--------------------------------------
@@ -127,7 +108,8 @@ void FGameSettingEditableState::Hide(const FString& DevReason)
 void FGameSettingEditableState::Disable(const FText& Reason)
 {
 #if !UE_BUILD_SHIPPING
-	ensureAlwaysMsgf(!Reason.IsEmpty(), TEXT("To disable a setting, you must provide a reason that we can show players."));
+	ensureAlwaysMsgf(!Reason.IsEmpty(),
+	                 TEXT("To disable a setting, you must provide a reason that we can show players."));
 #endif
 
 	bEnabled = false;
@@ -143,10 +125,5 @@ void FGameSettingEditableState::DisableOption(const FString& Option)
 	DisabledOptions.Add(Option);
 }
 
-void FGameSettingEditableState::UnableToReset()
-{
-	bResetable = false;
-}
 
 #undef LOCTEXT_NAMESPACE
-

@@ -37,7 +37,7 @@ enum class ELyraDisplayablePerformanceStat : uint8
 
 	// server tick rate (in Hz)
 	ServerFPS,
-	
+
 	// idle time spent waiting for vsync or frame rate limit (in seconds)
 	IdleTime,
 

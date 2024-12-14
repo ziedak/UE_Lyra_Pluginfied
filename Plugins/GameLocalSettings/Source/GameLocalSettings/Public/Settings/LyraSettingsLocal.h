@@ -5,6 +5,8 @@
 #include "GameFramework/GameUserSettings.h"
 // #include "InputConfig/LyraMappableConfigPair.h"
 #include "InputCoreTypes.h"
+#include "DeviceProfiles/DeviceProfileManager.h"
+#include "Performance/LyraPerformanceSettings.h"
 
 #include "LyraSettingsLocal.generated.h"
 
@@ -35,7 +37,7 @@ struct FLyraScalabilitySnapshot
  * ULyraSettingsLocal
  */
 UCLASS()
-class ULyraSettingsLocal : public UGameUserSettings
+class GAMELOCALSETTINGS_API ULyraSettingsLocal : public UGameUserSettings
 {
 	GENERATED_BODY()
 
@@ -65,7 +67,6 @@ public:
 	//////////////////////////////////////////////////////////////////
 	// Frontend state
 
-public:
 	void SetShouldUseFrontendPerformanceSettings(bool bInFrontEnd);
 
 protected:
@@ -100,7 +101,7 @@ private:
 	// Brightness/Gamma
 public:
 	UFUNCTION()
-	float GetDisplayGamma() const;
+	float GetDisplayGamma() const { return DisplayGamma; };
 	UFUNCTION()
 	void SetDisplayGamma(float InGamma);
 
@@ -114,17 +115,17 @@ private:
 	// Display
 public:
 	UFUNCTION()
-	float GetFrameRateLimit_OnBattery() const;
+	float GetFrameRateLimit_OnBattery() const { return FrameRateLimit_OnBattery; };
 	UFUNCTION()
 	void SetFrameRateLimit_OnBattery(float NewLimitFPS);
 
 	UFUNCTION()
-	float GetFrameRateLimit_InMenu() const;
+	float GetFrameRateLimit_InMenu() const { return FrameRateLimit_InMenu; };
 	UFUNCTION()
 	void SetFrameRateLimit_InMenu(float NewLimitFPS);
 
 	UFUNCTION()
-	float GetFrameRateLimit_WhenBackgrounded() const;
+	float GetFrameRateLimit_WhenBackgrounded() const { return FrameRateLimit_WhenBackgrounded; };
 	UFUNCTION()
 	void SetFrameRateLimit_WhenBackgrounded(float NewLimitFPS);
 
@@ -196,19 +197,36 @@ private:
 
 	int32 DesiredMobileFrameRateLimit = 0;
 
-private:
 	//////////////////////////////////////////////////////////////////
 	// Display - Console quality presets
 public:
 	UFUNCTION()
-	FString GetDesiredDeviceProfileQualitySuffix() const;
+	FString GetDesiredDeviceProfileQualitySuffix() const { return DesiredUserChosenDeviceProfileSuffix; };
 	UFUNCTION()
-	void SetDesiredDeviceProfileQualitySuffix(const FString& InDesiredSuffix);
+	void SetDesiredDeviceProfileQualitySuffix(const FString& InDesiredSuffix)
+	{
+		DesiredUserChosenDeviceProfileSuffix = InDesiredSuffix;
+	};
 
 protected:
 	/** Updates device profiles, FPS mode etc for the current game mode */
 	void UpdateGameModeDeviceProfileAndFps();
-
+	FString GetBasePlatformName() const;
+	FName GetPlatformName() const;
+	TArray<FString> BuildComposedNamesToFind(const FString& BasePlatformName,
+																 const FString& EffectiveUserSuffix,
+																 const FString& ExperienceSuffix) const;
+	FString FindActualProfileToApply(UDeviceProfileManager& Manager,
+														 const TArray<FString>& ComposedNamesToFind,
+														 const FName& PlatformName) const;
+	FString GetEffectiveUserSuffix(const TArray<FLyraQualityDeviceProfileVariant>& UserFacingVariants,
+												   const int32 PlatformMaxRefreshRate) const;
+	void ApplyFrameSyncType() const;
+	void ApplyTargetFPS() const;
+	void ApplyDeviceProfileIfNeeded(UDeviceProfileManager& Manager, const FString& ActualProfileToApply);
+	void RestoreDefaultDeviceProfile(UDeviceProfileManager& Manager);
+	void ApplyNewDeviceProfile(UDeviceProfileManager& Manager, const FString& ActualProfileToApply);
+	void UpdateFramePacing(ELyraFramePacingMode FramePacingMode);
 	void UpdateConsoleFramePacing() const;
 	void UpdateDesktopFramePacing();
 	void UpdateMobileFramePacing();
@@ -225,6 +243,8 @@ private:
 	UPROPERTY(config)
 	FString UserChosenDeviceProfileSuffix;
 
+	UPROPERTY(config)
+	bool bMobileDisableResolutionReset=true;
 	//////////////////////////////////////////////////////////////////
 	// Audio - Volume
 public:
@@ -232,10 +252,9 @@ public:
 
 	FAudioDeviceChanged OnAudioOutputDeviceChanged;
 
-public:
 	/** Returns if we're using headphone mode (HRTF) **/
 	UFUNCTION()
-	bool IsHeadphoneModeEnabled() const;
+	bool IsHeadphoneModeEnabled() const { return bUseHeadphoneMode; };
 
 	/** Enables or disables headphone mode (HRTF) - NOTE this setting will be overruled if au.DisableBinauralSpatialization is set */
 	UFUNCTION()
@@ -245,7 +264,6 @@ public:
 	UFUNCTION()
 	bool CanModifyHeadphoneModeEnabled() const;
 
-public:
 	/** Whether we *want* to use headphone mode (HRTF); may or may not actually be applied **/
 	UPROPERTY(Transient)
 	bool bDesiredHeadphoneMode;
@@ -258,7 +276,7 @@ private:
 public:
 	/** Returns if we're using High Dynamic Range Audio mode (HDR Audio) **/
 	UFUNCTION()
-	bool IsHDRAudioModeEnabled() const;
+	bool IsHDRAudioModeEnabled() const { return bUseHDRAudioMode; };
 
 	/** Enables or disables High Dynamic Range Audio mode (HDR Audio) */
 	UFUNCTION()
@@ -268,7 +286,6 @@ public:
 	UPROPERTY(config)
 	bool bUseHDRAudioMode;
 
-public:
 	/** Returns true if this platform can run the auto benchmark */
 	UFUNCTION(BlueprintCallable, Category = Settings)
 	bool CanRunAutoBenchmark() const;
@@ -285,33 +302,32 @@ public:
 	void ApplyScalabilitySettings() const;
 
 	UFUNCTION()
-	float GetOverallVolume() const;
+	float GetOverallVolume() const { return OverallVolume; };
 	UFUNCTION()
 	void SetOverallVolume(float InVolume);
 
 	UFUNCTION()
-	float GetMusicVolume() const;
+	float GetMusicVolume() const { return MusicVolume; };
 	UFUNCTION()
 	void SetMusicVolume(float InVolume);
 
 	UFUNCTION()
-	float GetSoundFXVolume() const;
+	float GetSoundFXVolume() const { return SoundFXVolume; };
 	UFUNCTION()
 	void SetSoundFXVolume(float InVolume);
 
 	UFUNCTION()
-	float GetDialogueVolume() const;
+	float GetDialogueVolume() const { return DialogueVolume; };
 	UFUNCTION()
 	void SetDialogueVolume(float InVolume);
 
 	UFUNCTION()
-	float GetVoiceChatVolume() const;
+	float GetVoiceChatVolume() const { return VoiceChatVolume; };
 	UFUNCTION()
 	void SetVoiceChatVolume(float InVolume);
 
 	//////////////////////////////////////////////////////////////////
 	// Audio - Sound
-public:
 	/** Returns the user's audio device id */
 	UFUNCTION()
 	FString GetAudioOutputDeviceId() const { return AudioOutputDeviceId; }
@@ -337,17 +353,18 @@ public:
 	float GetSafeZone() const { return SafeZoneScale >= 0 ? SafeZoneScale : 0; }
 
 	UFUNCTION()
-	void SetSafeZone(float Value)
+	void SetSafeZone(const float Value)
 	{
 		SafeZoneScale = Value;
 		ApplySafeZoneScale();
 	}
 
 	void ApplySafeZoneScale() const;
+	void SetVolume(const FString& VolumeType, float InVolume);
 
 private:
 	void SetVolumeForControlBus(USoundControlBus* InSoundControlBus, float InVolume);
-
+	USoundControlBus* LoadControlBus(UObject* ObjPath, const FString& VolumeType);
 	//////////////////////////////////////////////////////////////////
 	// Keybindings
 public:
@@ -355,10 +372,11 @@ public:
 	// example, Win64 games could be played with both an XBox or Playstation controller.
 	UFUNCTION()
 	void SetControllerPlatform(const FName InControllerPlatform);
-	UFUNCTION()
-	FName GetControllerPlatform() const;
 
-	PRAGMA_DISABLE_DEPRECATION_WARNINGS
+	UFUNCTION()
+	FName GetControllerPlatform() const { return ControllerPlatform; };
+
+	// PRAGMA_DISABLE_DEPRECATION_WARNINGS
 	//UEnhancedInputUserSettings
 	// class UE_DEPRECATED(5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings") FInputConfigDelegate;	
 	// DECLARE_EVENT_OneParam(ULyraSettingsLocal, FInputConfigDelegate, const FLoadedMappableConfigPair& /*Config*/);
@@ -489,10 +507,10 @@ private:
 	// TArray<FLoadedMappableConfigPair> RegisteredInputConfigs;
 
 	/** Array of custom key mappings that have been set by the player. Empty by default. */
-	UE_DEPRECATED(5.3, "CustomKeyboardConfig has been deprecated in favor of Enhanced Input User Settings")
-	TMap<FName, FKey> CustomKeyboardConfig;
+	// UE_DEPRECATED(5.3, "CustomKeyboardConfig has been deprecated in favor of Enhanced Input User Settings")
+	// TMap<FName, FKey> CustomKeyboardConfig;
 
-	PRAGMA_ENABLE_DEPRECATION_WARNINGS
+	// PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 	// Replays
 public:
@@ -500,13 +518,13 @@ public:
 	bool ShouldAutoRecordReplays() const { return bShouldAutoRecordReplays; }
 
 	UFUNCTION()
-	void SetShouldAutoRecordReplays(bool bEnabled) { bShouldAutoRecordReplays = bEnabled; }
+	void SetShouldAutoRecordReplays(const bool bEnabled) { bShouldAutoRecordReplays = bEnabled; }
 
 	UFUNCTION()
 	int32 GetNumberOfReplaysToKeep() const { return NumberOfReplaysToKeep; }
 
 	UFUNCTION()
-	void SetNumberOfReplaysToKeep(int32 InNumberOfReplays) { NumberOfReplaysToKeep = InNumberOfReplays; }
+	void SetNumberOfReplaysToKeep(const int32 InNumberOfReplays) { NumberOfReplaysToKeep = InNumberOfReplays; }
 
 private:
 	UPROPERTY(Config)
@@ -515,10 +533,8 @@ private:
 	UPROPERTY(Config)
 	int32 NumberOfReplaysToKeep = 5;
 
-private:
 	void OnAppActivationStateChanged(bool bIsActive);
 	void ReapplyThingsDueToPossibleDeviceProfileChange();
 
-private:
 	FDelegateHandle OnApplicationActivationStateChangedHandle;
 };

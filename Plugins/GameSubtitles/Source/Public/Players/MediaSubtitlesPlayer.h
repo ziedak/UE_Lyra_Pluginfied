@@ -20,17 +20,12 @@ struct FFrame;
 UCLASS(BlueprintType)
 class GAMESUBTITLES_API UMediaSubtitlesPlayer
 	: public UObject
-	, public FTickableGameObject
+	  , public FTickableGameObject
 {
 	GENERATED_UCLASS_BODY()
-
-public:
-
 	/** The subtitles to use for this player. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Subtitles Source")
 	TObjectPtr<UOverlays> SourceSubtitles;
-
-public:
 
 	virtual void BeginDestroy() override;
 
@@ -50,15 +45,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Game Subtitles|Subtitles Player")
 	void BindToMediaPlayer(UMediaPlayer* InMediaPlayer);
 
-public:
-
 	//~ FTickableGameObject interface
 	virtual void Tick(float DeltaSeconds) override;
-	virtual ETickableTickType GetTickableTickType() const override { return (HasAnyFlags(RF_ClassDefaultObject) ? ETickableTickType::Never : ETickableTickType::Always); }
-	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UMediaSubtitlesPlayer, STATGROUP_Tickables); }
+
+	virtual ETickableTickType GetTickableTickType() const override
+	{
+		return (HasAnyFlags(RF_ClassDefaultObject) ? ETickableTickType::Never : ETickableTickType::Always);
+	}
+
+	virtual TStatId GetStatId() const override
+	{
+		RETURN_QUICK_DECLARE_CYCLE_STAT(UMediaSubtitlesPlayer, STATGROUP_Tickables);
+	}
 
 private:
-
 	/** A reference to our media player */
 	TWeakObjectPtr<class UMediaPlayer> MediaPlayer;
 

@@ -38,7 +38,8 @@ void ULyraSettingsListEntrySetting_KeyboardInput::NativeOnInitialized()
 void ULyraSettingsListEntrySetting_KeyboardInput::HandlePrimaryKeyClicked()
 {
 	UGameSettingPressAnyKey* PressAnyKeyPanel = CastChecked<UGameSettingPressAnyKey>(
-		UCommonUIExtensions::PushContentToLayer_ForPlayer(GetOwningLocalPlayer(), PressAnyKeyLayer,
+		UCommonUIExtensions::PushContentToLayer_ForPlayer(GetOwningLocalPlayer(),
+		                                                  PressAnyKeyLayer,
 		                                                  PressAnyKeyPanelClass));
 	PressAnyKeyPanel->OnKeySelected.AddUObject(this, &ThisClass::HandlePrimaryKeySelected, PressAnyKeyPanel);
 	PressAnyKeyPanel->OnKeySelectionCanceled.AddUObject(this, &ThisClass::HandleKeySelectionCanceled, PressAnyKeyPanel);
@@ -112,17 +113,14 @@ void ULyraSettingsListEntrySetting_KeyboardInput::ChangeBinding(int32 InKeyBindS
 	KeyAlreadyBoundWarning->SetCancelText(FText::Format(
 		LOCTEXT("CancelText", "Press escape to cancel, or press {InKey} again to confirm rebinding."), Args));
 
-	if (InKeyBindSlot == 1)
-	{
-		KeyAlreadyBoundWarning->OnKeySelected.AddUObject(this, &ThisClass::HandleSecondaryDuplicateKeySelected,
-		                                                 KeyAlreadyBoundWarning);
-	}
-	else
-	{
-		KeyAlreadyBoundWarning->OnKeySelected.AddUObject(this, &ThisClass::HandlePrimaryDuplicateKeySelected,
-		                                                 KeyAlreadyBoundWarning);
-	}
-	KeyAlreadyBoundWarning->OnKeySelectionCanceled.AddUObject(this, &ThisClass::HandleKeySelectionCanceled,
+	KeyAlreadyBoundWarning->OnKeySelected.AddUObject(this,
+	                                                 InKeyBindSlot == 1
+		                                                 ? &ThisClass::HandleSecondaryDuplicateKeySelected
+		                                                 : &ThisClass::HandlePrimaryDuplicateKeySelected,
+	                                                 KeyAlreadyBoundWarning);
+
+	KeyAlreadyBoundWarning->OnKeySelectionCanceled.AddUObject(this,
+	                                                          &ThisClass::HandleKeySelectionCanceled,
 	                                                          KeyAlreadyBoundWarning);
 }
 
@@ -157,7 +155,9 @@ void ULyraSettingsListEntrySetting_KeyboardInput::OnSettingChanged()
 void ULyraSettingsListEntrySetting_KeyboardInput::Refresh() const
 {
 	if (!(ensure(KeyboardInputSetting)))
+	{
 		return;
+	}
 
 	if (Button_PrimaryKey && Button_PrimaryKey->Implements<UButtonInterface>())
 	{
@@ -166,6 +166,11 @@ void ULyraSettingsListEntrySetting_KeyboardInput::Refresh() const
 			IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Button_PrimaryKey does not Implement IButtonInterface"));
+	}
+
 	if (Button_SecondaryKey && Button_SecondaryKey->Implements<UButtonInterface>())
 	{
 		if (const auto IButton_SecondaryKey = Cast<IButtonInterface>(Button_SecondaryKey))
@@ -174,12 +179,18 @@ void ULyraSettingsListEntrySetting_KeyboardInput::Refresh() const
 				SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Button_SecondaryKey does not Implement IButtonInterface"));
+	}
 	// Button_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 	// Button_SecondaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 
 	// Only display the reset to default button if a mapping is customized
 	if (!(ensure(Button_ResetToDefault)))
+	{
 		return;
+	}
 	if (KeyboardInputSetting->IsMappingCustomized())
 	{
 		Button_ResetToDefault->SetVisibility(ESlateVisibility::Visible);

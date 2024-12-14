@@ -37,7 +37,9 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 	UWorld* World = MySubsystem->GetGameInstance()->GetWorld();
 	if (!World)
+	{
 		return;
+	}
 
 	auto GameState = World->GetGameState();
 	if (GameState && GameState->Implements<UGameStateFps>())
@@ -56,7 +58,9 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 	const APlayerController* LocalPC = GEngine->GetFirstLocalPlayerController(World);
 	if (!LocalPC)
+	{
 		return;
+	}
 
 	if (const APlayerState* PS = LocalPC->GetPlayerState<APlayerState>())
 	{
@@ -65,7 +69,9 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 	const UNetConnection* NetConnection = LocalPC->GetNetConnection();
 	if (!NetConnection)
+	{
 		return;
+	}
 
 	const UNetConnection::FNetConnectionPacketLoss& InLoss = NetConnection->GetInLossPercentage();
 	CachedPacketLossIncomingPercent = InLoss.GetAvgLossPercentage();
@@ -77,11 +83,11 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 	CachedPacketSizeIncoming = (NetConnection->InPacketsPerSecond != 0)
 		                           ? (NetConnection->InBytesPerSecond / static_cast<float>(NetConnection->
-			                           InPacketsPerSecond))
+			                              InPacketsPerSecond))
 		                           : 0.0f;
 	CachedPacketSizeOutgoing = (NetConnection->OutPacketsPerSecond != 0)
 		                           ? (NetConnection->OutBytesPerSecond / static_cast<float>(NetConnection->
-			                           OutPacketsPerSecond))
+			                              OutPacketsPerSecond))
 		                           : 0.0f;
 }
 

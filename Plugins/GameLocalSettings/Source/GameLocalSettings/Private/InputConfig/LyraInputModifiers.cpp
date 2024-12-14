@@ -159,7 +159,7 @@ FLinearColor ULyraInputModifierDeadZone::GetVisualizationColor_Implementation(
 {
 	// Taken from UInputModifierDeadZone::GetVisualizationColor_Implementation
 	if (FinalValue.GetValueType() == EInputActionValueType::Boolean || FinalValue.GetValueType() ==
-		EInputActionValueType::Axis1D)
+	    EInputActionValueType::Axis1D)
 	{
 		return FLinearColor(FinalValue.Get<float>() == 0.f ? 1.f : 0.f, 0.f, 0.f);
 	}

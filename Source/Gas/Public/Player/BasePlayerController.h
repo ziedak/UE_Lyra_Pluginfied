@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonPlayerController.h"
+#include "Settings/LyraSettingsShared.h"
 #include "BasePlayerController.generated.h"
 
 
@@ -22,20 +23,25 @@ class GAS_API ABasePlayerController : public ACommonPlayerController
 public:
 	// Sets default values for this actor's properties
 	ABasePlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual void BeginPlay() override;
 	virtual void SetPlayer(UPlayer* InPlayer) override;
+	void OnSettingsChanged( ULyraSettingsShared* InSettings);
 
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
 	ABasePlayerState* GetBasePlayerState() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const;
-	
+
 	//~AController interface
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void OnUnPossess() override;
 	virtual void InitPlayerState() override;
+	void BroadcastOnPlayerStateChanged();
+	void OnPlayerStateChanged();
+	virtual void UpdateForceFeedback(IInputInterface* InputInterface, int32 ControllerId) override;
 
 	//~APlayerController interface
-	virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
+	//virtual void PreProcessInput(const float DeltaTime, const bool bGamePaused) override;
 	virtual void PostProcessInput(const float DeltaTime, const bool bGamePaused) override;
 };

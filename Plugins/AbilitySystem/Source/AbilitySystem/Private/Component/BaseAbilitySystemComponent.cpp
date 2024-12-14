@@ -206,7 +206,7 @@ void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bRepl
 	{
 		const EAbilityActivationPolicy ActivationPolicy = Ability->GetActivationPolicy();
 		return ((ActivationPolicy == EAbilityActivationPolicy::OnInputTriggered) || (ActivationPolicy ==
-			EAbilityActivationPolicy::WhileInputActive));
+			        EAbilityActivationPolicy::WhileInputActive));
 	};
 
 	CancelAbilitiesByFunc(ShouldCancelFunc, bReplicateCancelAbility);
@@ -404,8 +404,8 @@ void UBaseAbilitySystemComponent::AddAbilityToActivationGroup(EAbilityActivation
 
 	// Check for multiple exclusive abilities running.
 	const int32 ExclusiveCount = ActivationGroupCounts[static_cast<uint8>(
-			EAbilityActivationGroup::Exclusive_Replaceable)] +
-		ActivationGroupCounts[static_cast<uint8>(EAbilityActivationGroup::Exclusive_Blocking)];
+		                             EAbilityActivationGroup::Exclusive_Replaceable)] +
+	                             ActivationGroupCounts[static_cast<uint8>(EAbilityActivationGroup::Exclusive_Blocking)];
 	if (ExclusiveCount > 1)
 	{
 		LOG_ERROR(LogGAS, "AddAbilityToActivationGroup: Multiple exclusive abilities are running.");
@@ -417,9 +417,10 @@ void UBaseAbilitySystemComponent::RemoveAbilityFromActivationGroup(EAbilityActiv
                                                                    const UBaseGameplayAbility* Ability)
 {
 	check(Ability);
-	check(ActivationGroupCounts[static_cast<uint8>(Group)] > 0);
+	const auto GroupUnit = static_cast<uint8>(Group);
+	check(ActivationGroupCounts[GroupUnit] > 0);
 
-	ActivationGroupCounts[static_cast<uint8>(Group)]--;
+	ActivationGroupCounts[GroupUnit]--;
 }
 
 // This function cancels all abilities in the specified activation group.
@@ -640,8 +641,8 @@ void UBaseAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGamepl
 
 /**
  *  This function is called when an ability fails to activate.
- * @param Ability 
- * @param FailureReason 
+ * @param Ability
+ * @param FailureReason
  */
 void UBaseAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(
 	const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason)
@@ -651,8 +652,8 @@ void UBaseAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(
 
 /**
  *  This function is called when an ability fails to activate.
- * @param Ability 
- * @param FailureReason 
+ * @param Ability
+ * @param FailureReason
  */
 void UBaseAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ability,
                                                       const FGameplayTagContainer& FailureReason) const

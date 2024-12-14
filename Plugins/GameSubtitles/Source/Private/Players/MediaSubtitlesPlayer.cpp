@@ -11,8 +11,8 @@
 
 UMediaSubtitlesPlayer::UMediaSubtitlesPlayer(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
-	, MediaPlayer(nullptr)
-	, bEnabled(false)
+	  , MediaPlayer(nullptr)
+	  , bEnabled(false)
 {
 }
 
@@ -48,7 +48,7 @@ void UMediaSubtitlesPlayer::BindToMediaPlayer(UMediaPlayer* InMediaPlayer)
 
 void UMediaSubtitlesPlayer::Tick(float DeltaSeconds)
 {
-    QUICK_SCOPE_CYCLE_COUNTER(STAT_UMediaSubtitlesPlayer_Tick);
+	QUICK_SCOPE_CYCLE_COUNTER(STAT_UMediaSubtitlesPlayer_Tick);
 
 	if (bEnabled && SourceSubtitles)
 	{
@@ -73,4 +73,3 @@ void UMediaSubtitlesPlayer::Tick(float DeltaSeconds)
 		}
 	}
 }
-

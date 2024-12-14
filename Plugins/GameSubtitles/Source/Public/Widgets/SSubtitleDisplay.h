@@ -18,25 +18,25 @@ struct FSlateBrush;
 class GAMESUBTITLES_API SSubtitleDisplay : public SCompoundWidget
 {
 public:
-
 	SLATE_BEGIN_ARGS(SSubtitleDisplay)
-		: _TextStyle( &FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText") )
-		, _WrapTextAt(0.f)
-		, _ManualSubtitles(false)
-		{}
+			: _TextStyle(&FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText"))
+			  , _WrapTextAt(0.f)
+			  , _ManualSubtitles(false)
+		{
+		}
 
-	SLATE_STYLE_ARGUMENT( FTextBlockStyle, TextStyle )
+		SLATE_STYLE_ARGUMENT(FTextBlockStyle, TextStyle)
 
-	/** Whether text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
-	SLATE_ATTRIBUTE( float, WrapTextAt )
+		/** Whether text wraps onto a new line when it's length exceeds this width; if this value is zero or negative, no wrapping occurs. */
+		SLATE_ATTRIBUTE(float, WrapTextAt)
 
-	SLATE_ATTRIBUTE(bool, ManualSubtitles )
+		SLATE_ATTRIBUTE(bool, ManualSubtitles)
 
 	SLATE_END_ARGS()
 
-	~SSubtitleDisplay();
+	virtual ~SSubtitleDisplay() override;
 
-	void Construct( const FArguments& InArgs );
+	void Construct(const FArguments& InArgs);
 
 	void SetTextStyle(const FTextBlockStyle& InTextStyle);
 
@@ -51,8 +51,6 @@ public:
 
 private:
 	void HandleSubtitleChanged(const FText& SubtitleText);
-
-private:
 
 	TSharedPtr<class SBorder> Background;
 

@@ -24,7 +24,7 @@ enum class EColorBlindMode : uint8
 };
 
 UENUM(BlueprintType)
-enum class ELyraAllowBackgroundAudioSetting : uint8
+enum class EBackgroundAudioSetting : uint8
 {
 	Off,
 	AllSounds,
@@ -33,7 +33,7 @@ enum class ELyraAllowBackgroundAudioSetting : uint8
 };
 
 UENUM(BlueprintType)
-enum class ELyraGamepadSensitivity : uint8
+enum class EGamepadSensitivity : uint8
 {
 	Invalid = 0 UMETA(Hidden),
 
@@ -61,7 +61,7 @@ class ULocalPlayer;
  *
  */
 UCLASS()
-class ULyraSettingsShared : public ULocalPlayerSaveGame
+class GAMELOCALSETTINGS_API ULyraSettingsShared : public ULocalPlayerSaveGame
 {
 	GENERATED_BODY()
 
@@ -70,11 +70,12 @@ public:
 
 	FOnSettingChangedEvent OnSettingChanged;
 
-public:
 	ULyraSettingsShared();
 
 	//~ULocalPlayerSaveGame interface
-	virtual int32 GetLatestDataVersion() const override;
+	// 0 = before subclassing ULocalPlayerSaveGame
+	// 1 = first proper version
+	virtual int32 GetLatestDataVersion() const override { return 1; };
 	//~End of ULocalPlayerSaveGame interface
 
 	/** Creates a temporary settings object, this will be replaced by one loaded from the user's save game */
@@ -90,21 +91,22 @@ public:
 
 	/** Saves the settings to disk */
 	void SaveSettings();
+	void ApplyInputSettings() const;
 
 	/** Applies the current settings to the player */
 	void ApplySettings();
 
-public:
 #pragma region ColorBlindOptions
+
 	////////////////////////////////////////////////////////
 	// Color Blind Options
 	UFUNCTION()
-	EColorBlindMode GetColorBlindMode() const;
+	EColorBlindMode GetColorBlindMode() const { return ColorBlindMode; };
 	UFUNCTION()
 	void SetColorBlindMode(EColorBlindMode InMode);
 
 	UFUNCTION()
-	int32 GetColorBlindStrength() const;
+	int32 GetColorBlindStrength() const { return ColorBlindStrength; };
 	UFUNCTION()
 	void SetColorBlindStrength(int32 InColorBlindStrength);
 
@@ -282,23 +284,23 @@ private:
 	// Shared audio settings
 public:
 	UFUNCTION()
-	ELyraAllowBackgroundAudioSetting GetAllowAudioInBackgroundSetting() const { return AllowAudioInBackground; }
+	EBackgroundAudioSetting GetAllowAudioInBackgroundSetting() const { return AllowAudioInBackground; }
 
 	UFUNCTION()
-	void SetAllowAudioInBackgroundSetting(ELyraAllowBackgroundAudioSetting NewValue);
+	void SetAllowAudioInBackgroundSetting(EBackgroundAudioSetting NewValue);
 
 	void ApplyBackgroundAudioSettings() const;
 
 private:
 	UPROPERTY()
-	ELyraAllowBackgroundAudioSetting AllowAudioInBackground = ELyraAllowBackgroundAudioSetting::Off;
+	EBackgroundAudioSetting AllowAudioInBackground = EBackgroundAudioSetting::Off;
 #pragma endregion
 #pragma region CultureLanguage
 	////////////////////////////////////////////////////////
 	// Culture / language
 public:
 	/** Gets the pending culture */
-	const FString& GetPendingCulture() const;
+	const FString& GetPendingCulture() const { return PendingCulture; };
 
 	/** Sets the pending culture to apply */
 	void SetPendingCulture(const FString& NewCulture);
@@ -307,7 +309,7 @@ public:
 	void OnCultureChanged();
 
 	/** Clears the pending culture to apply */
-	void ClearPendingCulture();
+	void ClearPendingCulture() { PendingCulture.Reset(); };
 
 	bool IsUsingDefaultCulture() const;
 
@@ -315,6 +317,8 @@ public:
 	bool ShouldResetToDefaultCulture() const { return bResetToDefaultCulture; }
 
 	void ApplyCultureSettings();
+	void ApplyDefaultCulture();
+	void ApplyPendingCulture() const;
 	void ResetCultureToCurrentSettings();
 
 private:
@@ -324,9 +328,10 @@ private:
 
 	/* If true, resets the culture to default. */
 	bool bResetToDefaultCulture = false;
-
+#pragma endregion
+#pragma region MouseSensitivity
 	////////////////////////////////////////////////////////
-	// Gamepad Sensitivity
+	// Mouse Sensitivity
 public:
 	UFUNCTION()
 	double GetMouseSensitivityX() const { return MouseSensitivityX; }
@@ -404,20 +409,20 @@ private:
 	// Gamepad Sensitivity
 public:
 	UFUNCTION()
-	ELyraGamepadSensitivity GetGamepadLookSensitivityPreset() const { return GamepadLookSensitivityPreset; }
+	EGamepadSensitivity GetGamepadLookSensitivityPreset() const { return GamepadLookSensitivityPreset; }
 
 	UFUNCTION()
-	void SetLookSensitivityPreset(const ELyraGamepadSensitivity NewValue)
+	void SetLookSensitivityPreset(const EGamepadSensitivity NewValue)
 	{
 		ChangeValueAndDirty(GamepadLookSensitivityPreset, NewValue);
 		ApplyInputSensitivity();
 	}
 
 	UFUNCTION()
-	ELyraGamepadSensitivity GetGamepadTargetingSensitivityPreset() const { return GamepadTargetingSensitivityPreset; }
+	EGamepadSensitivity GetGamepadTargetingSensitivityPreset() const { return GamepadTargetingSensitivityPreset; }
 
 	UFUNCTION()
-	void SetGamepadTargetingSensitivityPreset(ELyraGamepadSensitivity NewValue)
+	void SetGamepadTargetingSensitivityPreset(EGamepadSensitivity NewValue)
 	{
 		ChangeValueAndDirty(GamepadTargetingSensitivityPreset, NewValue);
 		ApplyInputSensitivity();
@@ -427,12 +432,12 @@ public:
 
 private:
 	UPROPERTY()
-	ELyraGamepadSensitivity GamepadLookSensitivityPreset = ELyraGamepadSensitivity::Normal;
+	EGamepadSensitivity GamepadLookSensitivityPreset = EGamepadSensitivity::Normal;
 	UPROPERTY()
-	ELyraGamepadSensitivity GamepadTargetingSensitivityPreset = ELyraGamepadSensitivity::Normal;
+	EGamepadSensitivity GamepadTargetingSensitivityPreset = EGamepadSensitivity::Normal;
 
 #pragma endregion
-#pragma region  DirtyChangeReporting
+#pragma region DirtyChangeReporting
 	/// Dirty and Change Reporting
 public:
 	bool IsDirty() const { return bIsDirty; }
@@ -443,7 +448,9 @@ private:
 	bool ChangeValueAndDirty(T& CurrentValue, const T& NewValue)
 	{
 		if (CurrentValue == NewValue)
+		{
 			return false;
+		}
 
 		CurrentValue = NewValue;
 		bIsDirty = true;
@@ -452,6 +459,5 @@ private:
 	}
 
 	bool bIsDirty = false;
-};
-
 #pragma endregion
+};

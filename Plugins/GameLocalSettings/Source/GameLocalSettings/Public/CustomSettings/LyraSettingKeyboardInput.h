@@ -23,7 +23,7 @@ public:
 	ULyraSettingKeyboardInput();
 
 	void InitializeInputData(const UEnhancedPlayerMappableKeyProfile* KeyProfile, const FKeyMappingRow& MappingData,
-	                         const FPlayerMappableKeyQueryOptions& QueryOptions);
+	                         const FPlayerMappableKeyQueryOptions& InQueryOptions);
 
 	FText GetKeyTextFromSlot(const EPlayerMappableKeySlot InSlot) const;
 
@@ -53,7 +53,6 @@ protected:
 	/** ULyraSetting */
 	virtual void OnInitialized() override;
 
-protected:
 	/** The name of this action's mappings */
 	FName ActionMappingName;
 

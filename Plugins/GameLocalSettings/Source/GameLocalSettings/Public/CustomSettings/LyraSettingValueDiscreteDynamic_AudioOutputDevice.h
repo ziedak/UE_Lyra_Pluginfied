@@ -18,7 +18,7 @@ class ULyraSettingValueDiscreteDynamic_AudioOutputDevice : public UGameSettingVa
 	GENERATED_BODY()
 
 public:
-	virtual ~ULyraSettingValueDiscreteDynamic_AudioOutputDevice() = default;
+	virtual ~ULyraSettingValueDiscreteDynamic_AudioOutputDevice() override = default;
 
 	/** UGameSettingValueDiscrete */
 	virtual void SetDiscreteOptionByIndex(int32 Index) override;
@@ -34,10 +34,10 @@ public:
 	void OnCompletedDeviceSwap(const FSwapAudioOutputResult& SwapResult);
 
 	UFUNCTION()
-	void DeviceAddedOrRemoved(FString DeviceId);
+	void DeviceAddedOrRemoved(FString DeviceId) const;
 
 	UFUNCTION()
-	void DefaultDeviceChanged(EAudioDeviceChangedRole InRole, FString DeviceId);
+	void DefaultDeviceChanged(EAudioDeviceChangedRole InRole, FString DeviceId) const;
 
 protected:
 	TArray<FAudioOutputDeviceInfo> OutputDevices;

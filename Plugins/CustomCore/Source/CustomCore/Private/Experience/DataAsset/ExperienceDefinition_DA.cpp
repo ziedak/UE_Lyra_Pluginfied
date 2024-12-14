@@ -60,7 +60,7 @@ EDataValidationResult UExperienceDefinition_DA::IsDataValid(FDataValidationConte
 	                                       "Blueprint subclasses of Blueprint experiences is not currently supported (use composition via ActionSets instead). Parent class was {0} but should be {1}."),
 	                               FText::AsCultureInvariant(GetPathNameSafe(ParentClass)),
 	                               FText::AsCultureInvariant(GetPathNameSafe(FirstNativeParent))
-	));
+		));
 	return EDataValidationResult::Invalid;
 }
 #endif

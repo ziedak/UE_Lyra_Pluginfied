@@ -13,13 +13,18 @@ class ULocalPlayer;
 class GAMESETTINGS_API FGameSettingDataSource : public TSharedFromThis<FGameSettingDataSource>
 {
 public:
-	virtual ~FGameSettingDataSource() { }
+	virtual ~FGameSettingDataSource()
+	{
+	}
 
 	/**
 	 * Some settings may take an async amount of time to finish initializing.  The settings system will wait
 	 * for all settings to be ready before showing the setting.
 	 */
-	virtual void Startup(ULocalPlayer* InLocalPlayer, FSimpleDelegate StartupCompleteCallback) { StartupCompleteCallback.ExecuteIfBound(); }
+	virtual void Startup(ULocalPlayer* InLocalPlayer, FSimpleDelegate StartupCompleteCallback)
+	{
+		StartupCompleteCallback.ExecuteIfBound();
+	}
 
 	virtual bool Resolve(ULocalPlayer* InContext) = 0;
 

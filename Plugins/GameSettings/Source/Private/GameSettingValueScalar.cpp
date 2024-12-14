@@ -11,12 +11,8 @@
 // UGameSettingValueScalar
 //--------------------------------------
 
-UGameSettingValueScalar::UGameSettingValueScalar()
-{
 
-}
-
-void UGameSettingValueScalar::SetValueNormalized(double NormalizedValue)
+void UGameSettingValueScalar::SetValueNormalized(const double NormalizedValue)
 {
 	SetValue(FMath::GetMappedRangeValueClamped(TRange<double>(0, 1), GetSourceRange(), NormalizedValue));
 }
@@ -27,4 +23,3 @@ double UGameSettingValueScalar::GetValueNormalized() const
 }
 
 #undef LOCTEXT_NAMESPACE
-

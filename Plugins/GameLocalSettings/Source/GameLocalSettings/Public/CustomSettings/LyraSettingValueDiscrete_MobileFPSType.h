@@ -17,7 +17,9 @@ class ULyraSettingValueDiscrete_MobileFPSType : public UGameSettingValueDiscrete
 	GENERATED_BODY()
 
 public:
-	ULyraSettingValueDiscrete_MobileFPSType();
+	ULyraSettingValueDiscrete_MobileFPSType(): InitialValue(0)
+	{
+	};
 
 	//~UGameSettingValue interface
 	virtual void StoreInitial() override;
@@ -42,7 +44,6 @@ protected:
 
 	static FText MakeLimitString(int32 Number);
 
-protected:
 	int32 InitialValue;
 	TSortedMap<int32, FText> FPSOptions;
 };

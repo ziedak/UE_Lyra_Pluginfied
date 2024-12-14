@@ -29,7 +29,6 @@ class ULyraSafeZoneEditor : public UCommonActivatableWidget, public IGameSetting
 public:
 	FSimpleMulticastDelegate OnSafeZoneSet;
 
-public:
 	ULyraSafeZoneEditor(const FObjectInitializer& Initializer);
 
 	// Begin IGameSettingActionInterface
