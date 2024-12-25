@@ -5,7 +5,7 @@
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
 
-#include "LyraInputConfig.generated.h"
+#include "LyraInputConfig_DA.generated.h"
 
 class UInputAction;
 class UObject;
@@ -34,20 +34,20 @@ struct FLyraInputAction
  *	Non-mutable data asset that contains input configuration properties.
  */
 UCLASS(BlueprintType, Const)
-class GAMELOCALSETTINGS_API ULyraInputConfig : public UDataAsset
+class GAMELOCALSETTINGS_API ULyraInputConfig_DA : public UDataAsset
 {
 	GENERATED_BODY()
 
 public:
-	ULyraInputConfig(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
+	ULyraInputConfig_DA(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer)
 	{
 	};
 
 	UFUNCTION(BlueprintCallable, Category = "Lyra|Pawn")
-	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+	const UInputAction* FindNativeInputActionForTag(const FGameplayTag& InInputTag, bool bLogNotFound = true) const;
 
 	UFUNCTION(BlueprintCallable, Category = "Lyra|Pawn")
-	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InputTag, bool bLogNotFound = true) const;
+	const UInputAction* FindAbilityInputActionForTag(const FGameplayTag& InInputTag, bool bLogNotFound = true) const;
 
 	// List of input actions used by the owner.  These input actions are mapped to a gameplay tag and must be manually bound.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "InputAction"))

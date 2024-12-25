@@ -35,9 +35,7 @@ const FName UHeroComponent::NAME_ACTOR_FEATURE_NAME("Hero");
 UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	  //  AbilityCameraMode(nullptr),
-	  bReadyToBindInputs(false)
-{
-}
+	  bReadyToBindInputs(false) {}
 
 // void UHeroComponent::SetAbilityCameraMode(TSubclassOf<UBaseCameraMode> CameraMode,
 // 	const FGameplayAbilitySpecHandle& OwningSpecHandle)
@@ -54,13 +52,10 @@ UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 // {
 // }
 
-void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig* InputConfig)
+void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn)
-	{
-		return;
-	}
+	if (!Pawn) { return; }
 
 	// do we need those checks?
 	const APlayerController* PC = GetController<APlayerController>();
@@ -73,20 +68,14 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig* InputConfi
 	check(Subsystem);
 
 	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp)
-	{
-		return;
-	}
+	if (!PawnExtComp) { return; }
 
 	const auto InputComponent = Pawn->FindComponentByClass<ULyraInputComponent>();
 	if (!(ensureMsgf(InputComponent,
 	                 TEXT(
 		                 "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs."
 		                 " Change the input component to ULyraInputComponent or a subclass of it."
-	                 ))))
-	{
-		return;
-	}
+	                 )))) { return; }
 
 	TArray<uint32> BindHandles;
 	InputComponent->BindAbilityActionList(InputConfig,
@@ -96,7 +85,7 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig* InputConfi
 	                                      /*out*/ BindHandles);
 }
 
-void UHeroComponent::RemoveAdditionalInputConfig(const ULyraInputConfig* InputConfig) const
+void UHeroComponent::RemoveAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig) const
 {
 	//@TODO: Implement me! what the heck is this function supposed to do?
 }
@@ -196,10 +185,7 @@ bool UHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
 	check(Manager);
 	APawn* Pawn = GetPawn<APawn>();
 
-	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED)
-	{
-		return CanTransitionToSpawned(Pawn);
-	}
+	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED) { return CanTransitionToSpawned(Pawn); }
 
 	if (CurrentState == InitStateTags::SPAWNED && DesiredState == InitStateTags::DATA_AVAILABLE)
 	{
@@ -219,34 +205,21 @@ bool UHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
 	return false;
 }
 
-bool UHeroComponent::CanTransitionToSpawned(const APawn* Pawn) const
-{
-	return Pawn != nullptr;
-}
 
 bool UHeroComponent::CanTransitionToDataAvailable(const APawn* Pawn) const
 {
-	if (!GetPlayerState<ABasePlayerState>())
-	{
-		return false;
-	}
+	if (!GetPlayerState<ABasePlayerState>()) { return false; }
 
 	if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 	{
 		const AController* Controller = GetController<AController>();
 		const bool bHasControllerPairedWithPlayerState = Controller && Controller->PlayerState && Controller->
-		                                                 PlayerState->GetOwner() == Controller;
+			PlayerState->GetOwner() == Controller;
 
-		if (!bHasControllerPairedWithPlayerState)
-		{
-			return false;
-		}
+		if (!bHasControllerPairedWithPlayerState) { return false; }
 	}
 
-	if (!Pawn->IsLocallyControlled() || Pawn->IsBotControlled())
-	{
-		return true;
-	}
+	if (!Pawn->IsLocallyControlled() || Pawn->IsBotControlled()) { return true; }
 
 	const ABasePlayerController* PC = GetController<ABasePlayerController>();
 	return Pawn->InputComponent && PC && PC->GetLocalPlayer();
@@ -274,17 +247,11 @@ bool UHeroComponent::CanTransitionToGameplayReady() const
 void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
                                            FGameplayTag DesiredState)
 {
-	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED)
-	{
-		return;
-	}
+	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED) { return; }
 
 	const APawn* Pawn = GetPawn<APawn>();
 	ABasePlayerState* BasePS = GetPlayerState<ABasePlayerState>();
-	if (!ensure(Pawn && BasePS))
-	{
-		return;
-	}
+	if (!ensure(Pawn && BasePS)) { return; }
 
 	const UGasPawnData* PawnData = nullptr;
 
@@ -297,32 +264,21 @@ void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manag
 		PawnExtComp->InitializeAbilitySystem(BasePS->GetBaseAbilitySystemComponent(), BasePS);
 	}
 
-
-	if (ABasePlayerController* LyraPC = GetController<ABasePlayerController>())
-	{
-		if (Pawn->InputComponent)
-		{
-			InitializePlayerInput(Pawn->InputComponent);
-		}
-	}
+	if (Pawn->InputComponent) { InitializePlayerInput(Pawn->InputComponent); }
 
 	// Hook up the delegate for all pawns, in case we spectate later
-	if (PawnData)
-	{
-		// 	if (ULyraCameraComponent* CameraComponent = ULyraCameraComponent::FindCameraComponent(Pawn))
-		// 	{
-		// 		CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
-		// 	}
-	}
+	if (!PawnData) {}
+
+	// 	if (ULyraCameraComponent* CameraComponent = ULyraCameraComponent::FindCameraComponent(Pawn))
+	// 	{
+	// 		CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
+	// 	}
 }
 
 void UHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
 {
 	if (Params.FeatureName != UPawnExtensionComponent::Name_ActorFeatureName || Params.FeatureState !=
-	    InitStateTags::DATA_INITIALIZED)
-	{
-		return;
-	}
+		InitStateTags::DATA_INITIALIZED) { return; }
 
 	// If the extension component says all other components are initialized,
 	// try to progress to next state
@@ -389,111 +345,12 @@ void UHeroComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-// void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)
-// {
-// 	check(PlayerInputComponent);
-//
-// 	const APawn* Pawn = GetPawn<APawn>();
-// 	if (!Pawn)
-// 		return;
-// 	const APlayerController* PC = GetController<APlayerController>();
-// 	check(PC);
-//
-// 	const ULocalPlayer* LP = PC->GetLocalPlayer();
-// 	check(LP);
-//
-// 	UEnhancedInputLocalPlayerSubsystem* Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
-// 	check(Subsystem);
-//
-// 	Subsystem->ClearAllMappings();
-//
-// 	if (const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
-// 	{
-// 		if (const UGasPawnData* PawnData = PawnExtComp->GetPawnData<UGasPawnData>())
-// 		{
-// 			if (const ULyraInputConfig* InputConfig = PawnData->InputConfig)
-// 			{
-// 				for (const auto& [InputMapping, Priority, bRegisterWithSettings] : DefaultInputMappings)
-// 				{
-// 					const UInputMappingContext* Imc = InputMapping.Get();
-// 					if (!Imc)
-// 					{
-// 						LOG_ERROR(LogGAS, "--------------- not found ----------%s",*Imc->GetName());
-// 						continue;
-// 					}
-// 					else
-// 					{
-// 						LOG_INFO(LogGAS, "---------------%s found ----------",*Imc->GetName());
-// 					}
-// 					if (!bRegisterWithSettings)
-// 						continue;
-//
-// 					if (UEnhancedInputUserSettings* Settings = Subsystem->GetUserSettings())
-// 					{
-// 						Settings->RegisterInputMappingContext(Imc);
-// 					}
-//
-// 					FModifyContextOptions Options = {};
-// 					Options.bIgnoreAllPressedKeysUntilRelease = false;
-// 					// Actually add the config to the local player
-// 					Subsystem->AddMappingContext(Imc, Priority, Options);
-// 				}
-//
-// 				// The Lyra Input Component has some additional functions to map Gameplay Tags to an Input Action.
-// 				// If you want this functionality but still want to change your input component class, make it a subclass
-// 				// of the ULyraInputComponent or modify this component accordingly.
-// 				ULyraInputComponent* LyraIc = Cast<ULyraInputComponent>(PlayerInputComponent);
-// 				if (ensureMsgf(
-// 					LyraIc,
-// 					TEXT(
-// 						"Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. "
-// 						"Change the input component to ULyraInputComponent or a subclass of it."
-// 					)))
-// 				{
-// 					// Add the key mappings that may have been set by the player
-// 					LyraIc->AddInputMappings(InputConfig, Subsystem);
-//
-// 					// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
-// 					// be triggered directly by these input actions Triggered events.
-// 					TArray<uint32> BindHandles;
-// 					LyraIc->BindAbilityActionList(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
-// 					                              &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
-//
-// 					LyraIc->BindNativeAction(InputConfig, InputTags::MOVE, ETriggerEvent::Triggered, this,
-// 					                         &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
-// 					LyraIc->BindNativeAction(InputConfig, InputTags::LOOK_MOUSE, ETriggerEvent::Triggered, this,
-// 					                         &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
-// 					LyraIc->BindNativeAction(InputConfig, InputTags::LOOK_STICK, ETriggerEvent::Triggered, this,
-// 					                         &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
-// 					// LyraIc->BindNativeAction(InputConfig, InputTags::CROUCH, ETriggerEvent::Triggered, this,
-// 					//                          &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
-// 					LyraIc->BindNativeAction(InputConfig, InputTags::AUTORUN, ETriggerEvent::Triggered, this,
-// 					                         &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
-// 				}
-// 			}
-// 		}
-// 	}
-// 	if (ensure(!bReadyToBindInputs))
-// 	{
-// 		bReadyToBindInputs = true;
-// 	}
-//
-// 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
-// 		const_cast<APlayerController*>(PC), NAME_BIND_INPUTS_NOW);
-// 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
-// 		const_cast<APawn*>(Pawn), NAME_BIND_INPUTS_NOW);
-// }
-
-
 void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
 
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn)
-	{
-		return;
-	}
+	if (!Pawn) { return; }
 
 	const APlayerController* PC = GetController<APlayerController>();
 	check(PC);
@@ -504,24 +361,11 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	check(Subsystem);
 
-	Subsystem->ClearAllMappings();
+	RegisterInputMappings(Subsystem);
+	BindInputActions(PlayerInputComponent, Subsystem);
 
-	if (const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn))
-	{
-		if (const UGasPawnData* PawnData = PawnExtComp->GetPawnData<UGasPawnData>())
-		{
-			if (const ULyraInputConfig* InputConfig = PawnData->InputConfig)
-			{
-				RegisterInputMappings(Subsystem, InputConfig);
-				BindInputActions(PlayerInputComponent, Subsystem, InputConfig);
-			}
-		}
-	}
 
-	if (ensure(!bReadyToBindInputs))
-	{
-		bReadyToBindInputs = true;
-	}
+	if (ensure(!bReadyToBindInputs)) { bReadyToBindInputs = true; }
 
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
 		const_cast<APlayerController*>(PC), NAME_BIND_INPUTS_NOW);
@@ -529,29 +373,35 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 		const_cast<APawn*>(Pawn), NAME_BIND_INPUTS_NOW);
 }
 
-void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem,
-                                           const ULyraInputConfig* InputConfig)
+void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
+	Subsystem->ClearAllMappings();
 	for (const auto& [InputMapping, Priority, bRegisterWithSettings] : DefaultInputMappings)
 	{
 		const UInputMappingContext* Imc = InputMapping.Get();
 		if (!Imc)
 		{
-			LOG_ERROR(LogGAS, "--------------- not found ----------%s", *Imc->GetName());
+			LOG_ERROR(LogGAS, "Imc not found ");
 			continue;
 		}
 
-		LOG_INFO(LogGAS, "---------------%s found ", *Imc->GetName());
+		LOG_INFO(LogGAS, "%s found ", *Imc->GetName());
 
 		if (!bRegisterWithSettings)
 		{
+			LOG_INFO(LogGAS, "%s found but will not be registered because bRegisterWithSettings is false",
+			         *Imc->GetName());
 			continue;
 		}
 
-		if (UEnhancedInputUserSettings* Settings = Subsystem->GetUserSettings())
+		const auto Settings = Subsystem->GetUserSettings();
+		if (!Settings)
 		{
-			Settings->RegisterInputMappingContext(Imc);
+			LOG_INFO(LogGAS, "Settings not found ");
+			continue;
 		}
+
+		Settings->RegisterInputMappingContext(Imc);
 
 		FModifyContextOptions Options = {};
 		Options.bIgnoreAllPressedKeysUntilRelease = false;
@@ -561,16 +411,25 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 }
 
 void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
-                                      const UEnhancedInputLocalPlayerSubsystem* Subsystem,
-                                      const ULyraInputConfig* InputConfig)
+                                      const UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
+	const auto Pawn = GetPawn<APawn>();
+	if (!Pawn) { return; }
+
+	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
+	if (!PawnExtComp) { return; }
+
+	const auto PawnData = PawnExtComp->GetPawnData<UGasPawnData>();
+	if (!PawnData) { return; }
+
+	const auto InputConfig = PawnData->InputConfig;
+	if (!InputConfig) { return; }
+
 	const auto InputComponent = Cast<ULyraInputComponent>(PlayerInputComponent);
-	if (!(ensureMsgf(InputComponent,
-	                 TEXT(
-		                 "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. "
-		                 "Change the input component to ULyraInputComponent or a subclass of it."
-	                 ))))
+	if (!InputComponent)
 	{
+		LOG_ERROR(LogGAS, "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. "
+		          "Change the input component to ULyraInputComponent or a subclass of it.");
 		return;
 	}
 
@@ -598,15 +457,10 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn)
-	{
-		return;
-	}
+	if (!Pawn) { return; }
+
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp)
-	{
-		return;
-	}
+	if (!PawnExtComp) { return; }
 
 	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
 	{
@@ -617,15 +471,10 @@ void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)
 void UHeroComponent::Input_AbilityInputTagReleased(const FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn)
-	{
-		return;
-	}
+	if (!Pawn) { return; }
+
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp)
-	{
-		return;
-	}
+	if (!PawnExtComp) { return; }
 
 	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
 	{
@@ -660,4 +509,5 @@ void UHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 void UHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)
 {
 	// todo impl
+	LOG_INFO(LogGAS, "--------------- Input_AutoRun ----------");
 }

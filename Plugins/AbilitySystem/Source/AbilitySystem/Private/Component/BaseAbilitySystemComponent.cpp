@@ -46,10 +46,7 @@ void UBaseAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AAc
 
 	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
 
-	if (!bHasNewPawnAvatar)
-	{
-		return;
-	}
+	if (!bHasNewPawnAvatar) { return; }
 
 	NotifyAbilitiesOfNewPawnAvatar();
 	RegisterWithGlobalSystem();
@@ -63,10 +60,7 @@ void UBaseAbilitySystemComponent::NotifyAbilitiesOfNewPawnAvatar()
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
 		UBaseGameplayAbility* AbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability);
-		if (!AbilityCDO)
-		{
-			continue;
-		}
+		if (!AbilityCDO) { continue; }
 
 		if (AbilityCDO->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
 		{
@@ -90,10 +84,7 @@ void UBaseAbilitySystemComponent::RegisterWithGlobalSystem()
 	// Register with the global system once we actually have a pawn avatar.
 	// We wait until this time since some globally-applied effects may require an avatar.
 	if (UGlobalGasWorldSubsystem* GlobalGasWorldSubsystem = UWorld::GetSubsystem<
-		UGlobalGasWorldSubsystem>(GetWorld()))
-	{
-		GlobalGasWorldSubsystem->RegisterAsc(this);
-	}
+		UGlobalGasWorldSubsystem>(GetWorld())) { GlobalGasWorldSubsystem->RegisterAsc(this); }
 }
 
 //@TODO: Implement this
@@ -202,11 +193,10 @@ void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbili
 // This function cancels all abilities that are currently active.
 void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bReplicateCancelAbility)
 {
-	auto ShouldCancelFunc = [this](const UBaseGameplayAbility* Ability, FGameplayAbilitySpecHandle Handle)
-	{
+	auto ShouldCancelFunc = [this](const UBaseGameplayAbility* Ability, FGameplayAbilitySpecHandle Handle){
 		const EAbilityActivationPolicy ActivationPolicy = Ability->GetActivationPolicy();
 		return ((ActivationPolicy == EAbilityActivationPolicy::OnInputTriggered) || (ActivationPolicy ==
-			        EAbilityActivationPolicy::WhileInputActive));
+			EAbilityActivationPolicy::WhileInputActive));
 	};
 
 	CancelAbilitiesByFunc(ShouldCancelFunc, bReplicateCancelAbility);
@@ -215,10 +205,7 @@ void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bRepl
 // This function sets the ability input tag that was pressed.
 void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid())
-	{
-		return;
-	}
+	if (!InputTag.IsValid()) { return; }
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -233,10 +220,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& 
 // This function sets the ability input tag as released.
 void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid())
-	{
-		return;
-	}
+	if (!InputTag.IsValid()) { return; }
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -252,7 +236,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag&
 void UBaseAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGamePaused)
 {
 	// If the ability system is blocked, clear the ability input and return.
-	if (HasMatchingGameplayTag(GameplayInputTags::ABILITY_INPUT_BLOCKED))
+	if (HasMatchingGameplayTag(BaseGameplayTags::ABILITY_INPUT_BLOCKED))
 	{
 		ClearAbilityInput();
 		return;
@@ -319,10 +303,7 @@ TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessPressedAbil
 		}
 		AbilitySpec->InputPressed = true;
 
-		if (AbilitySpec->IsActive())
-		{
-			AbilitySpecInputPressed(*AbilitySpec);
-		}
+		if (AbilitySpec->IsActive()) { AbilitySpecInputPressed(*AbilitySpec); }
 		else
 		{
 			// If the ability is not active, check if it should be activated.
@@ -345,17 +326,11 @@ void UBaseAbilitySystemComponent::ProcessReleasedAbilities()
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputReleasedSpecHandlesList)
 	{
 		FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle);
-		if (!AbilitySpec)
-		{
-			continue;
-		}
+		if (!AbilitySpec) { continue; }
 
 		AbilitySpec->InputPressed = false;
 
-		if (AbilitySpec->IsActive())
-		{
-			AbilitySpecInputReleased(*AbilitySpec);
-		}
+		if (AbilitySpec->IsActive()) { AbilitySpecInputReleased(*AbilitySpec); }
 	}
 }
 
@@ -404,8 +379,8 @@ void UBaseAbilitySystemComponent::AddAbilityToActivationGroup(EAbilityActivation
 
 	// Check for multiple exclusive abilities running.
 	const int32 ExclusiveCount = ActivationGroupCounts[static_cast<uint8>(
-		                             EAbilityActivationGroup::Exclusive_Replaceable)] +
-	                             ActivationGroupCounts[static_cast<uint8>(EAbilityActivationGroup::Exclusive_Blocking)];
+			EAbilityActivationGroup::Exclusive_Replaceable)] +
+		ActivationGroupCounts[static_cast<uint8>(EAbilityActivationGroup::Exclusive_Blocking)];
 	if (ExclusiveCount > 1)
 	{
 		LOG_ERROR(LogGAS, "AddAbilityToActivationGroup: Multiple exclusive abilities are running.");
@@ -429,8 +404,7 @@ void UBaseAbilitySystemComponent::CancelActivationGroupAbilities(EAbilityActivat
                                                                  const bool bReplicateCancelAbility)
 {
 	auto ShouldCancelFunc = [this, Group, IgnoreAbility](const UBaseGameplayAbility* Ability,
-	                                                     FGameplayAbilitySpecHandle Handle)
-	{
+	                                                     FGameplayAbilitySpecHandle Handle){
 		return ((Ability->GetActivationGroup() == Group) && (Ability != IgnoreAbility));
 	};
 
@@ -512,10 +486,7 @@ void UBaseAbilitySystemComponent::GetAdditionalActivationTagRequirements(const F
                                                                          FGameplayTagContainer& OutActivationBlocked)
 const
 {
-	if (!TagRelationshipMapping)
-	{
-		return;
-	}
+	if (!TagRelationshipMapping) { return; }
 	// Get the required and blocked activation tags from the tag relationship mapping.
 	TagRelationshipMapping->GetRequiredAndBlockedActivationTags(AbilityTags, &OutActivationRequired,
 	                                                            &OutActivationBlocked);

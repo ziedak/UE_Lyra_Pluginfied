@@ -39,13 +39,13 @@ DECLARE_LOG_CATEGORY_EXTERN(LogLyraGameSettingRegistry, Log, Log);
 
 #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettings, GetSharedSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetSharedSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
 }))
 
 #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettings, GetLocalSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetLocalSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
 }))
 /**

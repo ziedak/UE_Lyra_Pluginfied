@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "BotControllerInterface.generated.h"
+#include "IBotControllerInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE()

@@ -36,11 +36,13 @@ protected:
 	void HandleClearClicked() const;
 	void HandleResetToDefaultClicked() const;
 
-	void HandlePrimaryKeySelected(FKey InKey, UGameSettingPressAnyKey* PressAnyKeyPanel);
-	void HandleSecondaryKeySelected(FKey InKey, UGameSettingPressAnyKey* PressAnyKeyPanel);
-	void HandlePrimaryDuplicateKeySelected(FKey InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const;
-	void HandleSecondaryDuplicateKeySelected(FKey InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const;
-	void ChangeBinding(int32 BindSlot, FKey InKey);
+	void HandlePrimaryKeySelected(const FKey& InKey, UGameSettingPressAnyKey* PressAnyKeyPanel);
+	void HandleSecondaryKeySelected(const FKey& InKey, UGameSettingPressAnyKey* PressAnyKeyPanel);
+	void HandlePrimaryDuplicateKeySelected(const FKey& InKey,
+	                                       UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const;
+	void HandleSecondaryDuplicateKeySelected(const FKey& InKey,
+	                                         UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const;
+	void ChangeBinding(int32 InKeyBindSlot, const FKey& InKey);
 	void HandleKeySelectionCanceled(UGameSettingPressAnyKey* PressAnyKeyPanel) const;
 	void HandleKeySelectionCanceled(UKeyAlreadyBoundWarning* PressAnyKeyPanel) const;
 

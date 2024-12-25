@@ -21,15 +21,13 @@ class UActorComponent;
 const FName UPawnExtensionComponent::Name_ActorFeatureName("PawnExtension");
 
 UPawnExtensionComponent::UPawnExtensionComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	  PawnData(nullptr),
+	  AbilitySystemComponent(nullptr)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.bCanEverTick = false;
-
 	SetIsReplicatedByDefault(true);
-
-	PawnData = nullptr;
-	AbilitySystemComponent = nullptr;
 }
 
 #pragma region IGameFrameworkInitStateInterface
@@ -48,28 +46,18 @@ bool UPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager*
 	check(Manager);
 	APawn* Pawn = GetPawn<APawn>();
 	// As long as we are on a valid pawn, we count as spawned
-	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED && Pawn)
-	{
-		return true;
-	}
-
+	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED && Pawn) { return true; }
 
 	if (CurrentState == InitStateTags::SPAWNED && DesiredState == InitStateTags::DATA_AVAILABLE)
 	{
 		// Pawn data is required.
-		if (!PawnData)
-		{
-			return false;
-		}
+		if (!PawnData) { return false; }
 
 
 		const bool bHasAuthority = Pawn->HasAuthority();
 		const bool bIsLocallyControlled = Pawn->IsLocallyControlled();
 		// Check for being possessed by a controller.
-		if ((bHasAuthority || bIsLocallyControlled) && !GetController<AController>())
-		{
-			return false;
-		}
+		if ((bHasAuthority || bIsLocallyControlled) && !GetController<AController>()) { return false; }
 
 		return true;
 	}
@@ -90,10 +78,7 @@ void UPawnExtensionComponent::HandleChangeInitState(UGameFrameworkComponentManag
                                                     FGameplayTag CurrentState,
                                                     FGameplayTag DesiredState)
 {
-	if (DesiredState != InitStateTags::DATA_INITIALIZED)
-	{
-		return;
-	}
+	if (DesiredState != InitStateTags::DATA_INITIALIZED) { return; }
 
 	IGameFrameworkInitStateInterface::HandleChangeInitState(Manager, CurrentState, DesiredState);
 	// This is currently all handled by other components listening to this state change
@@ -104,15 +89,9 @@ void UPawnExtensionComponent::OnActorInitStateChanged(const FActorInitStateChang
 	IGameFrameworkInitStateInterface::OnActorInitStateChanged(Params);
 
 	// If another feature is now in DataAvailable, see if we should transition to DataInitialized
-	if (Params.FeatureName == Name_ActorFeatureName)
-	{
-		return;
-	}
+	if (Params.FeatureName == Name_ActorFeatureName) { return; }
 
-	if (Params.FeatureState != InitStateTags::DATA_AVAILABLE)
-	{
-		return;
-	}
+	if (Params.FeatureState != InitStateTags::DATA_AVAILABLE) { return; }
 
 	CheckDefaultInitialization();
 }
@@ -143,10 +122,7 @@ void UPawnExtensionComponent::SetPawnData(const UGasPawnData* InPawnData)
 	// Only the server should be setting the pawn data
 	APawn* Pawn = GetPawnChecked<APawn>();
 
-	if (Pawn->GetLocalRole() != ROLE_Authority)
-	{
-		return;
-	}
+	if (Pawn && Pawn->GetLocalRole() != ROLE_Authority) { return; }
 
 	// If we already have a PawnData, we should not be setting it again
 	if (PawnData)
@@ -162,34 +138,25 @@ void UPawnExtensionComponent::SetPawnData(const UGasPawnData* InPawnData)
 	CheckDefaultInitialization();
 }
 
-void UPawnExtensionComponent::OnRep_PawnData()
-{
-	CheckDefaultInitialization();
-}
+void UPawnExtensionComponent::OnRep_PawnData() { CheckDefaultInitialization(); }
 
-void UPawnExtensionComponent::InitializeAbilitySystem(UBaseAbilitySystemComponent* InASC, AActor* InOwnerActor)
+void UPawnExtensionComponent::InitializeAbilitySystem(UBaseAbilitySystemComponent* InAsc, AActor* InOwnerActor)
 {
-	check(InASC);
+	check(InAsc);
 	check(InOwnerActor);
 
 	// The ability system component hasn't changed.
-	if (AbilitySystemComponent == InASC)
-	{
-		return;
-	}
+	if (AbilitySystemComponent == InAsc) { return; }
 
 	// Clean up the old ability system component.
-	if (AbilitySystemComponent)
-	{
-		UninitializeAbilitySystem();
-	}
+	if (AbilitySystemComponent) { UninitializeAbilitySystem(); }
 
 	APawn* Pawn = GetPawnChecked<APawn>();
-	const AActor* ExistingAvatar = InASC->GetAvatarActor();
+	const AActor* ExistingAvatar = InAsc->GetAvatarActor();
 
 	UE_LOG(LogTemp, Verbose,
 	       TEXT("Setting up ASC [%s] on pawn [%s] owner [%s], existing [%s] "),
-	       *GetNameSafe(InASC),
+	       *GetNameSafe(InAsc),
 	       *GetNameSafe(Pawn),
 	       *GetNameSafe(InOwnerActor),
 	       *GetNameSafe(ExistingAvatar));
@@ -209,13 +176,10 @@ void UPawnExtensionComponent::InitializeAbilitySystem(UBaseAbilitySystemComponen
 		}
 	}
 
-	AbilitySystemComponent = InASC;
+	AbilitySystemComponent = InAsc;
 	AbilitySystemComponent->InitAbilityActorInfo(InOwnerActor, Pawn);
 
-	if (ensure(PawnData))
-	{
-		InASC->SetTagRelationshipMapping(PawnData->TagRelationshipMapping);
-	}
+	if (ensure(PawnData)) { InAsc->SetTagRelationshipMapping(PawnData->TagRelationshipMapping); }
 
 	OnAbilitySystemInitialized.Broadcast();
 }
@@ -230,18 +194,12 @@ void UPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall(
 	}
 
 	// If the ability system is already initialized, call the delegate immediately
-	if (AbilitySystemComponent)
-	{
-		Delegate.Execute();
-	}
+	if (AbilitySystemComponent) { Delegate.Execute(); }
 }
 
 void UPawnExtensionComponent::UninitializeAbilitySystem()
 {
-	if (!AbilitySystemComponent)
-	{
-		return;
-	}
+	if (!AbilitySystemComponent) { return; }
 	// Uninitialize the ASC if we're still the avatar actor (otherwise another pawn already did it when they became the avatar actor)
 	if (AbilitySystemComponent->GetAvatarActor() == GetOwner())
 	{
@@ -264,10 +222,7 @@ void UPawnExtensionComponent::UninitializeAbilitySystem()
 
 void UPawnExtensionComponent::OnAbilitySystemUninitialized_Register(const FSimpleMulticastDelegate::FDelegate& Delegate)
 {
-	if (OnAbilitySystemUninitialized.IsBoundToObject(Delegate.GetUObject()))
-	{
-		return;
-	}
+	if (OnAbilitySystemUninitialized.IsBoundToObject(Delegate.GetUObject())) { return; }
 
 	OnAbilitySystemUninitialized.Add(Delegate);
 }
@@ -285,15 +240,9 @@ void UPawnExtensionComponent::HandleControllerChanged()
 	CheckDefaultInitialization();
 }
 
-void UPawnExtensionComponent::HandlePlayerStateReplicated()
-{
-	CheckDefaultInitialization();
-}
+void UPawnExtensionComponent::HandlePlayerStateReplicated() { CheckDefaultInitialization(); }
 
-void UPawnExtensionComponent::SetupPlayerInputComponent()
-{
-	CheckDefaultInitialization();
-}
+void UPawnExtensionComponent::SetupPlayerInputComponent() { CheckDefaultInitialization(); }
 
 void UPawnExtensionComponent::OnRegister()
 {

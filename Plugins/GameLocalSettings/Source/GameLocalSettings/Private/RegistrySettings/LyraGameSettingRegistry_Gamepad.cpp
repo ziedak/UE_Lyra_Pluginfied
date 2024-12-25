@@ -9,7 +9,7 @@
 #include "Settings/LyraSettingsShared.h"
 #include "NativeGameplayTags.h"
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 
 #define LOCTEXT_NAMESPACE "Lyra"
 

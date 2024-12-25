@@ -6,7 +6,7 @@
 #include "EngineUtils.h"
 #include "Engine/PlayerStartPIE.h"
 #include "GameFramework/PlayerState.h"
-#include "Interface/SpawnInterface.h"
+#include "Interface/IPlayerSpawnInterface.h"
 #include "GameFramework/Controller.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(PlayerSpawningManagerComponent)
@@ -119,7 +119,7 @@ AActor* UPlayerSpawningManagerComponent::ChoosePlayerStart(AController* Player)
 	}
 
 
-	if (const auto BaseStart = Cast<ISpawnInterface>(PlayerStart))
+	if (const auto BaseStart = Cast<IPlayerSpawnInterface>(PlayerStart))
 	{
 		BaseStart->TryClaim(Player);
 	}
@@ -192,7 +192,7 @@ APlayerStart* UPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlayerSta
 		//const EPlayerStartLocationOccupancy State = StartPoint->GetLocationOccupancy(Controller);
 
 		EPlayerStartLocationOccupancy State = EPlayerStartLocationOccupancy::Full;
-		if (const auto BaseStart = Cast<ISpawnInterface>(StartPoint))
+		if (const auto BaseStart = Cast<IPlayerSpawnInterface>(StartPoint))
 		{
 			State = BaseStart->GetLocationOccupancy(Controller);
 		}

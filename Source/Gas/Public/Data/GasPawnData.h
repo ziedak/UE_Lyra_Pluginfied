@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "InputConfig/LyraInputConfig.h"
+#include "InputConfig/LyraInputConfig_DA.h"
 #include "Engine/DataAsset.h"
 #include "GasPawnData.generated.h"
 
@@ -39,7 +39,7 @@ public:
 
 	// Input configuration used by player controlled pawns to create input mappings and bind input actions.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Input")
-	const ULyraInputConfig* InputConfig;
+	const ULyraInputConfig_DA* InputConfig;
 
 	//// Default camera mode used by player controlled pawns.
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Camera")

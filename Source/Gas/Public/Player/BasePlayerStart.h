@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/PlayerStart.h"
-#include "Interface/SpawnInterface.h"
+#include "Interface/IPlayerSpawnInterface.h"
 #include "BasePlayerStart.generated.h"
 
 
@@ -15,7 +15,7 @@
  * Base player starts that can be used by a lot of modes.
  */
 UCLASS(Config = Game)
-class GAS_API ABasePlayerStart : public APlayerStart, public ISpawnInterface
+class GAS_API ABasePlayerStart : public APlayerStart, public IPlayerSpawnInterface
 {
 	GENERATED_BODY()
 

@@ -8,7 +8,7 @@
 #include "Messaging/CommonMessagingSubsystem.h"
 // #include "Messaging/CommonMessagingSubsystem.h"
 // #include "Player/LyraLocalPlayer.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 #include "Settings/LyraSettingsShared.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraSettingValueDiscrete_Language)
@@ -58,9 +58,9 @@ void ULyraSettingValueDiscrete_Language::ResetToDefault()
 
 void ULyraSettingValueDiscrete_Language::RestoreToInitial()
 {
-	if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettings>()) return;
+	if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettingsInterface>()) return;
 
-	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
+	const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer);
 	if (!ISharedSettings) return;
 
 	if (ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings())
@@ -78,7 +78,7 @@ void ULyraSettingValueDiscrete_Language::RestoreToInitial()
 
 void ULyraSettingValueDiscrete_Language::SetDiscreteOptionByIndex(int32 Index)
 {
-	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
+	const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer);
 	if (!ISharedSettings) return;
 
 	ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings();
@@ -110,7 +110,7 @@ int32 ULyraSettingValueDiscrete_Language::GetDiscreteOptionIndex() const
 {
 	//const ULyraSettingsShared* Settings = CastChecked<ULyraLocalPlayer>(LocalPlayer)->GetSharedSettings()
 
-	const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer);
+	const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer);
 	if (!ISharedSettings) return 0;
 
 	const ULyraSettingsShared* Settings = ISharedSettings->GetSharedSettings();

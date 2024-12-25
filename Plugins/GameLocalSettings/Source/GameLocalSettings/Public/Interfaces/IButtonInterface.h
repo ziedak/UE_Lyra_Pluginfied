@@ -3,7 +3,7 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "ButtonInterface.generated.h"
+#include "IButtonInterface.generated.h"
 
 UINTERFACE()
 class UButtonInterface : public UInterface
@@ -11,13 +11,12 @@ class UButtonInterface : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class GAMELOCALSETTINGS_API IButtonInterface
 {
 	GENERATED_BODY()
 
 public:
-	virtual void SetButtonText(const FText& InText) =0;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Interface")
+	void SetButtonText(const FText& InText);
+	virtual void SetButtonText_Implementation(const FText& InText) {};
 };

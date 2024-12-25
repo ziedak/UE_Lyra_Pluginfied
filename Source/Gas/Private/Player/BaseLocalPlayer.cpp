@@ -14,7 +14,9 @@ void UBaseLocalPlayer::PostInitProperties()
 	Super::PostInitProperties();
 
 	if (ULyraSettingsLocal* LocalSettings = GetLocalSettings())
+	{
 		LocalSettings->OnAudioOutputDeviceChanged.AddUObject(this, &ThisClass::OnAudioOutputDeviceChanged);
+	}
 }
 
 void UBaseLocalPlayer::SwitchController(APlayerController* PC)
@@ -37,9 +39,19 @@ void UBaseLocalPlayer::InitOnlineSession()
 	Super::InitOnlineSession();
 }
 
-ULyraSettingsLocal* UBaseLocalPlayer::GetLocalSettings() const
+ULyraSettingsLocal* UBaseLocalPlayer::GetLocalSettings() const { return ULyraSettingsLocal::Get(); }
+
+ULyraSettingsShared* UBaseLocalPlayer::GetSharedSettings() const
 {
-	return ULyraSettingsLocal::Get();
+	if (SharedSettings) { return SharedSettings; }
+
+	// On PC, it's okay to use the sync load because it only checks the disk,
+	// This could use a platform tag to check for proper save support instead
+
+	if (bCanLoadBeforeLogin) { return ULyraSettingsShared::LoadOrCreateSettings(this); }
+
+	// We need to wait for user login to get the real settings so return temp ones
+	return ULyraSettingsShared::CreateTemporarySettings(this);
 }
 
 void UBaseLocalPlayer::OnPlayerControllerChanged(APlayerController* NewController)
@@ -64,26 +76,11 @@ void UBaseLocalPlayer::OnPlayerControllerChanged(APlayerController* NewControlle
 	// 	ConditionalBroadcastTeamChanged(this, OldTeamID, NewTeamID);
 }
 
-ULyraSettingsShared* UBaseLocalPlayer::GetSharedSettings() const
-{
-	if (SharedSettings)
-		return SharedSettings;
-
-	// On PC it's okay to use the sync load because it only checks the disk
-	// This could use a platform tag to check for proper save support instead
-	const bool bCanLoadBeforeLogin = PLATFORM_DESKTOP;
-	if (bCanLoadBeforeLogin)
-		return ULyraSettingsShared::LoadOrCreateSettings(this);
-
-	// We need to wait for user login to get the real settings so return temp ones
-	return ULyraSettingsShared::CreateTemporarySettings(this);
-}
 
 void UBaseLocalPlayer::LoadSharedSettingsFromDisk(const bool bForceLoad)
 {
 	// Already loaded once, don't reload
-	if (!bForceLoad && SharedSettings && GetCachedUniqueNetId() == NetIdForSharedSettings)
-		return;
+	if (!bForceLoad && SharedSettings && GetCachedUniqueNetId() == NetIdForSharedSettings) { return; }
 
 	ensure(
 		ULyraSettingsShared::AsyncLoadOrCreateSettings(this,
@@ -94,8 +91,7 @@ void UBaseLocalPlayer::LoadSharedSettingsFromDisk(const bool bForceLoad)
 void UBaseLocalPlayer::OnSharedSettingsLoaded(ULyraSettingsShared* LoadedOrCreatedSettings)
 {
 	// The settings are applied before it gets here
-	if (!(ensure(LoadedOrCreatedSettings)))
-		return;
+	if (!(ensure(LoadedOrCreatedSettings))) { return; }
 
 	// This will replace the temporary or previously loaded object which will GC out normally
 	SharedSettings = LoadedOrCreatedSettings;

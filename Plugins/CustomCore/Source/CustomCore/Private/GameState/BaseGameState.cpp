@@ -1,7 +1,6 @@
-#include "BaseGameState.h"
+#include "GameState/BaseGameState.h"
 #include "AbilitySystemComponent.h"
 #include "Experience/ExperienceManagerComponent.h"
-#include "GameFramework/PlayerState.h"
 #include "MessageRuntime/GameplayMessageSubsystem.h"
 #include "MessageVerb/VerbMessage.h"
 #include "Net/UnrealNetwork.h"
@@ -55,9 +54,7 @@ void ABaseGameState::Tick(float DeltaSeconds)
 void ABaseGameState::SetServerFPS(const float NewServerFPS)
 {
 	if (GetLocalRole() != ROLE_Authority || ServerFPS == NewServerFPS)
-	{
 		return;
-	}
 
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ServerFPS, this);
 	ServerFPS = NewServerFPS;
@@ -66,9 +63,7 @@ void ABaseGameState::SetServerFPS(const float NewServerFPS)
 void ABaseGameState::MulticastMessageToClients_Unreliable_Implementation(const FVerbMessage Message)
 {
 	if (GetNetMode() == NM_Client)
-	{
 		UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message);
-	}
 }
 
 void ABaseGameState::MulticastMessageToClients_Reliable_Implementation(const FVerbMessage Message)
@@ -76,15 +71,3 @@ void ABaseGameState::MulticastMessageToClients_Reliable_Implementation(const FVe
 	MulticastMessageToClients_Unreliable_Implementation(Message);
 }
 
-void ABaseGameState::SeamlessTravelTransitionCheckpoint(bool bToTransitionMap)
-{
-	// Remove inactive and bots
-	for (int32 i = PlayerArray.Num() - 1; i >= 0; i--)
-	{
-		auto PlayerState = PlayerArray[i];
-		if (PlayerState && (PlayerState->IsABot() || PlayerState->IsInactive()))
-		{
-			RemovePlayerState(PlayerState);
-		}
-	}
-}

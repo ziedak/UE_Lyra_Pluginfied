@@ -70,7 +70,7 @@ Saved/*
 Intermediate/*
 Plugins/*/Intermediate/*
 Plugins/*/Saved/*
-Plugins/vc-ue-extensions/
+Plugins/vc-ue-extensions/*
 # Cache files for the editor to use
 DerivedDataCache/*
 

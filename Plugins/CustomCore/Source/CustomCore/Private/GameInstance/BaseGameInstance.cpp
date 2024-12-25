@@ -133,22 +133,7 @@ bool UBaseGameInstance::CanJoinRequestedSession() const
 	return Super::CanJoinRequestedSession();
 }
 
-void UBaseGameInstance::HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error,
-                                               ECommonUserPrivilege RequestedPrivilege,
-                                               ECommonUserOnlineContext OnlineContext)
-{
-	Super::HandlerUserInitialized(UserInfo, bSuccess, Error, RequestedPrivilege, OnlineContext);
 
-	// If login succeeded, tell the local player to load their settings
-	if (!bSuccess || !(ensure(UserInfo)))
-	{
-	}
-
-	//@TODO: Implement this
-	// There will not be a local player attached to the dedicated server user
-	// if (ULyraLocalPlayer* LocalPlayer = Cast<ULyraLocalPlayer>(GetLocalPlayerByIndex(UserInfo->LocalPlayerIndex)))
-	// 	LocalPlayer->LoadSharedSettingsFromDisk();
-}
 
 void UBaseGameInstance::ReceivedNetworkEncryptionToken(const FString& EncryptionToken,
                                                        const FOnEncryptionKeyResponse& Delegate)

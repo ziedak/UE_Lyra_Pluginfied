@@ -3,18 +3,18 @@
 #pragma once
 
 #include "UObject/Interface.h"
-#include "PlayerSharedSettings.generated.h"
+#include "IPlayerSharedSettingsInterface.generated.h"
 
 class ULyraSettingsLocal;
 class ULyraSettingsShared;
 
 UINTERFACE()
-class UPlayerSharedSettings : public UInterface
+class UPlayerSharedSettingsInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class GAMELOCALSETTINGS_API IPlayerSharedSettings
+class GAMELOCALSETTINGS_API IPlayerSharedSettingsInterface
 {
 	GENERATED_BODY()
 

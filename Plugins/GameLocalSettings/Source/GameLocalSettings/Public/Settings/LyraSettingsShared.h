@@ -66,7 +66,7 @@ class GAMELOCALSETTINGS_API ULyraSettingsShared : public ULocalPlayerSaveGame
 	GENERATED_BODY()
 
 public:
-	DECLARE_EVENT_OneParam(ULyraSettingsShared, FOnSettingChangedEvent, ULyraSettingsShared* Settings);
+	DECLARE_EVENT_OneParam(ULyraSettingsShared, FOnSettingChangedEvent, const ULyraSettingsShared* Settings);
 
 	FOnSettingChangedEvent OnSettingChanged;
 
@@ -78,7 +78,7 @@ public:
 	virtual int32 GetLatestDataVersion() const override { return 1; };
 	//~End of ULocalPlayerSaveGame interface
 
-	/** Creates a temporary settings object, this will be replaced by one loaded from the user's save game */
+	/** Creates a temporary settings object, this will be replaced by one loaded from the user's save_game */
 	static ULyraSettingsShared* CreateTemporarySettings(const ULocalPlayer* LocalPlayer);
 
 	/** Synchronously loads a settings object, this is not valid to call before login */
@@ -447,10 +447,7 @@ private:
 	template <typename T>
 	bool ChangeValueAndDirty(T& CurrentValue, const T& NewValue)
 	{
-		if (CurrentValue == NewValue)
-		{
-			return false;
-		}
+		if (CurrentValue == NewValue) { return false; }
 
 		CurrentValue = NewValue;
 		bIsDirty = true;

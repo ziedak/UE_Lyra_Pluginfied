@@ -9,6 +9,7 @@
 #include "Player/BaseLocalPlayer.h"
 #include "Player/BasePlayerState.h"
 #include "Settings/LyraSettingsShared.h"
+#include "UI/BaseHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerController)
 
@@ -23,9 +24,7 @@ namespace Lyra::Input
 
 // Sets default values
 ABasePlayerController::ABasePlayerController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
+	: Super(ObjectInitializer) {}
 
 void ABasePlayerController::BeginPlay()
 {
@@ -45,7 +44,7 @@ void ABasePlayerController::SetPlayer(UPlayer* InPlayer)
 	}
 }
 
-void ABasePlayerController::OnSettingsChanged(ULyraSettingsShared* InSettings)
+void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings)
 {
 	bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled();
 }
@@ -61,6 +60,10 @@ UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponen
 	return BasePS ? BasePS->GetBaseAbilitySystemComponent() : nullptr;
 }
 
+ABaseHud* ABasePlayerController::GetBaseHUD() const
+{
+	return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed);
+}
 
 void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
@@ -72,10 +75,7 @@ void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool b
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
-void ABasePlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-}
+void ABasePlayerController::OnPossess(APawn* InPawn) { Super::OnPossess(InPawn); }
 
 void ABasePlayerController::OnUnPossess()
 {
@@ -84,10 +84,7 @@ void ABasePlayerController::OnUnPossess()
 	{
 		if (UAbilitySystemComponent* Asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(PlayerState))
 		{
-			if (Asc->GetAvatarActor() == PawnBeingUnpossessed)
-			{
-				Asc->SetAvatarActor(nullptr);
-			}
+			if (Asc->GetAvatarActor() == PawnBeingUnpossessed) { Asc->SetAvatarActor(nullptr); }
 		}
 	}
 
@@ -100,10 +97,7 @@ void ABasePlayerController::InitPlayerState()
 	BroadcastOnPlayerStateChanged();
 }
 
-void ABasePlayerController::BroadcastOnPlayerStateChanged()
-{
-	OnPlayerStateChanged();
-}
+void ABasePlayerController::BroadcastOnPlayerStateChanged() { OnPlayerStateChanged(); }
 
 void ABasePlayerController::OnPlayerStateChanged()
 {

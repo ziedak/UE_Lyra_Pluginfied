@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "ModularGameState.h"
+#include "Interfaces/IGameStateFpsInterface.h"
+
 #include "BaseGameState.generated.h"
 
 class UAbilitySystemComponent;
@@ -14,7 +16,7 @@ struct FVerbMessage;
  * 
  */
 UCLASS(Config = Game)
-class CUSTOMCORE_API ABaseGameState : public AModularGameStateBase, public IAbilitySystemInterface
+class CUSTOMCORE_API ABaseGameState : public AModularGameStateBase, public IAbilitySystemInterface, public IGameStateFpsInterface
 {
 	GENERATED_BODY()
 
@@ -32,9 +34,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 #pragma endregion IAbilitySystemInterface
 
-#pragma region AGameStateBase interface
-	virtual void SeamlessTravelTransitionCheckpoint(bool bToTransitionMap) override;
-#pragma endregion AGameStateBase interface
+
 
 	// Send a message that all clients will (probably) get
 	// (use only for client notifications like eliminations, server join messages, etc... that can handle being lost)
@@ -47,7 +47,7 @@ public:
 	void MulticastMessageToClients_Reliable(const FVerbMessage Message);
 
 	// Gets the server's FPS, replicated to clients
-	float GetServerFPS() const { return ServerFPS; };
+	virtual float GetServerFPS() const override { return ServerFPS; };
 
 private:
 	// Handles loading and managing the current gameplay experience

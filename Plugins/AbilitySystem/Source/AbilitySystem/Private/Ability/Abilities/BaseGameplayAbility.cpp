@@ -54,29 +54,17 @@ APlayerController* UBaseGameplayAbility::GetPlayerControllerFromActorInfo() cons
 
 AController* UBaseGameplayAbility::GetControllerFromActorInfo() const
 {
-	if (!CurrentActorInfo)
-	{
-		return nullptr;
-	}
+	if (!CurrentActorInfo) { return nullptr; }
 
-	if (AController* PC = CurrentActorInfo->PlayerController.Get())
-	{
-		return PC;
-	}
+	if (AController* PC = CurrentActorInfo->PlayerController.Get()) { return PC; }
 
 	// Look for a player controller or pawn in the owner chain.
 	AActor* TestActor = CurrentActorInfo->OwnerActor.Get();
 	while (TestActor)
 	{
-		if (AController* C = Cast<AController>(TestActor))
-		{
-			return C;
-		}
+		if (AController* C = Cast<AController>(TestActor)) { return C; }
 
-		if (const APawn* Pawn = Cast<APawn>(TestActor))
-		{
-			return Pawn->GetController();
-		}
+		if (const APawn* Pawn = Cast<APawn>(TestActor)) { return Pawn->GetController(); }
 
 		TestActor = TestActor->GetOwner();
 	}
@@ -108,36 +96,24 @@ void UBaseGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActor
 	const AActor* AvatarActor = ActorInfo->AvatarActor.Get();
 
 	// If avatar actor is torn off or about to die, don't try to activate until we get the new one.
-	if (!ASC || !AvatarActor || AvatarActor->GetTearOff() || (AvatarActor->GetLifeSpan() > 0.0f))
-	{
-		return;
-	}
+	if (!ASC || !AvatarActor || AvatarActor->GetTearOff() || (AvatarActor->GetLifeSpan() > 0.0f)) { return; }
 
 	const bool bIsLocalExecution = (NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalPredicted) || (
-		                               NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalOnly);
+		NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::LocalOnly);
 	const bool bIsServerExecution = (NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerOnly) || (
-		                                NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerInitiated);
+		NetExecutionPolicy == EGameplayAbilityNetExecutionPolicy::ServerInitiated);
 
 	const bool bClientShouldActivate = ActorInfo->IsLocallyControlled() && bIsLocalExecution;
 	const bool bServerShouldActivate = ActorInfo->IsNetAuthority() && bIsServerExecution;
 
-	if (bClientShouldActivate || bServerShouldActivate)
-	{
-		ASC->TryActivateAbility(Spec.Handle);
-	}
+	if (bClientShouldActivate || bServerShouldActivate) { ASC->TryActivateAbility(Spec.Handle); }
 }
 
 bool UBaseGameplayAbility::CanChangeActivationGroup(EAbilityActivationGroup NewGroup) const
 {
-	if (!IsInstantiated() || !IsActive())
-	{
-		return false;
-	}
+	if (!IsInstantiated() || !IsActive()) { return false; }
 
-	if (ActivationGroup == NewGroup)
-	{
-		return true;
-	}
+	if (ActivationGroup == NewGroup) { return true; }
 
 	UBaseAbilitySystemComponent* BaseASC = GetBaseAbilitySystemComponentFromActorInfo();
 	check(BaseASC);
@@ -149,10 +125,7 @@ bool UBaseGameplayAbility::CanChangeActivationGroup(EAbilityActivationGroup NewG
 	}
 
 	// This ability can't become replaceable if it can't be canceled.
-	if ((NewGroup == EAbilityActivationGroup::Exclusive_Replaceable) && !CanBeCanceled())
-	{
-		return false;
-	}
+	if ((NewGroup == EAbilityActivationGroup::Exclusive_Replaceable) && !CanBeCanceled()) { return false; }
 
 	return true;
 }
@@ -161,10 +134,7 @@ bool UBaseGameplayAbility::ChangeActivationGroup(EAbilityActivationGroup NewGrou
 {
 	ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(ChangeActivationGroup, false);
 
-	if (!CanChangeActivationGroup(NewGroup))
-	{
-		return false;
-	}
+	if (!CanChangeActivationGroup(NewGroup)) { return false; }
 
 	if (ActivationGroup != NewGroup)
 	{
@@ -226,10 +196,7 @@ void UBaseGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagCon
 	}
 }
 
-void UBaseGameplayAbility::OnPawnAvatarSet()
-{
-	K2_OnPawnAvatarSet();
-}
+void UBaseGameplayAbility::OnPawnAvatarSet() { K2_OnPawnAvatarSet(); }
 
 void UBaseGameplayAbility::GetAbilitySource(const FGameplayAbilitySpecHandle Handle,
                                             const FGameplayAbilityActorInfo* ActorInfo,
@@ -257,28 +224,16 @@ bool UBaseGameplayAbility::CanActivateAbility(const FGameplayAbilitySpecHandle H
                                               const FGameplayTagContainer* TargetTags,
                                               FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
-	{
-		return false;
-	}
+	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid()) { return false; }
 
-	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
-	{
-		return false;
-	}
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags)) { return false; }
 
 	//@TODO Possibly remove after setting up tag relationships
 	const UBaseAbilitySystemComponent* Asc = CastChecked<
 		UBaseAbilitySystemComponent>(ActorInfo->AbilitySystemComponent.Get());
-	if (!Asc->IsActivationGroupBlocked(ActivationGroup))
-	{
-		return true;
-	}
+	if (!Asc->IsActivationGroupBlocked(ActivationGroup)) { return true; }
 	// If the activation group is blocked, add the relevant tag to the OptionalRelevantTags container and return false
-	if (OptionalRelevantTags)
-	{
-		OptionalRelevantTags->AddTag(AbilityTags::ACTIVATE_FAIL_ACTIVATION_GROUP);
-	}
+	if (OptionalRelevantTags) { OptionalRelevantTags->AddTag(AbilityTags::ACTIVATE_FAIL_ACTIVATION_GROUP); }
 
 	return false;
 }
@@ -337,23 +292,14 @@ bool UBaseGameplayAbility::CheckCost(const FGameplayAbilitySpecHandle Handle,
                                      const FGameplayAbilityActorInfo* ActorInfo,
                                      OUT FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if (!Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) || !ActorInfo)
-	{
-		return false;
-	}
+	if (!Super::CheckCost(Handle, ActorInfo, OptionalRelevantTags) || !ActorInfo) { return false; }
 
 	// Verify we can afford any additional costs
 	for (const TObjectPtr<UBaseAbilityCost>& AdditionalCost : AdditionalCosts)
 	{
-		if (AdditionalCost != nullptr)
-		{
-			continue;
-		}
+		if (AdditionalCost != nullptr) { continue; }
 
-		if (!AdditionalCost->CheckCost(this, Handle, ActorInfo, /*inout*/ OptionalRelevantTags))
-		{
-			return false;
-		}
+		if (!AdditionalCost->CheckCost(this, Handle, ActorInfo, /*inout*/ OptionalRelevantTags)) { return false; }
 	}
 
 	return true;
@@ -369,29 +315,19 @@ void UBaseGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	//this a lambda function  is used to determine if the ability actually hit a target.
 	// It checks if the actor is the network authority and if the ability system component has target data with hit results
 	// Used to determine if the ability actually hit a target (as some costs are only spent on successful attempts)
-	auto DetermineIfAbilityHitTarget = [&]()
-	{
-		if (ActorInfo->IsNetAuthority())
-		{
-			return false;
-		}
+	auto DetermineIfAbilityHitTarget = [&](){
+		if (ActorInfo->IsNetAuthority()) { return false; }
 
 		const UBaseAbilitySystemComponent* Asc = Cast<UBaseAbilitySystemComponent>(
 			ActorInfo->AbilitySystemComponent.Get());
 
-		if (!Asc)
-		{
-			return false;
-		}
+		if (!Asc) { return false; }
 
 		FGameplayAbilityTargetDataHandle TargetData;
 		Asc->GetAbilityTargetData(Handle, ActivationInfo, TargetData);
 		for (int32 TargetDataIdx = 0; TargetDataIdx < TargetData.Data.Num(); ++TargetDataIdx)
 		{
-			if (UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetData, TargetDataIdx))
-			{
-				return true;
-			}
+			if (UAbilitySystemBlueprintLibrary::TargetDataHasHitResult(TargetData, TargetDataIdx)) { return true; }
 		}
 
 		return false;
@@ -402,10 +338,7 @@ void UBaseGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 	bool bHasDeterminedIfAbilityHitTarget = false;
 	for (const TObjectPtr<UBaseAbilityCost>& AdditionalCost : AdditionalCosts)
 	{
-		if (AdditionalCost == nullptr)
-		{
-			continue;
-		}
+		if (AdditionalCost == nullptr) { continue; }
 
 		if (AdditionalCost->ShouldOnlyApplyCostOnHit())
 		{
@@ -415,10 +348,7 @@ void UBaseGameplayAbility::ApplyCost(const FGameplayAbilitySpecHandle Handle,
 				bHasDeterminedIfAbilityHitTarget = true;
 			}
 
-			if (!bAbilityHitTarget)
-			{
-				continue;
-			}
+			if (!bAbilityHitTarget) { continue; }
 		}
 
 		AdditionalCost->ApplyCost(this, Handle, ActorInfo, ActivationInfo);
@@ -462,10 +392,7 @@ void UBaseGameplayAbility::ApplyAbilityTagsToGameplayEffectSpec(FGameplayEffectS
 	if (const FHitResult* HitResult = Spec.GetContext().GetHitResult())
 	{
 		if (const UPhysicalMaterialWithTags* PhysMatWithTags = Cast<const UPhysicalMaterialWithTags>(
-			HitResult->PhysMaterial.Get()))
-		{
-			Spec.CapturedTargetTags.GetSpecTags().AppendTags(PhysMatWithTags->Tags);
-		}
+			HitResult->PhysMaterial.Get())) { Spec.CapturedTargetTags.GetSpecTags().AppendTags(PhysMatWithTags->Tags); }
 	}
 } //todo: verify this
 bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySystemComponent& AbilitySystemComponent,
@@ -478,15 +405,12 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 	bool bBlocked = false;
 	bool bMissing = false;
 
-	UAbilitySystemGlobals& AbilitySystemGlobals = UAbilitySystemGlobals::Get();
+	const UAbilitySystemGlobals& AbilitySystemGlobals = UAbilitySystemGlobals::Get();
 	const FGameplayTag& BlockedTag = AbilitySystemGlobals.ActivateFailTagsBlockedTag;
 	const FGameplayTag& MissingTag = AbilitySystemGlobals.ActivateFailTagsMissingTag;
 
 	// Check if any of this ability's tags are currently blocked
-	if (AbilitySystemComponent.AreAbilityTagsBlocked(AbilityTags))
-	{
-		bBlocked = true;
-	}
+	if (AbilitySystemComponent.AreAbilityTagsBlocked(AbilityTags)) { bBlocked = true; }
 
 	const UBaseAbilitySystemComponent* ASC = Cast<UBaseAbilitySystemComponent>(&AbilitySystemComponent);
 
@@ -497,10 +421,7 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 	AllBlockedTags = ActivationBlockedTags;
 
 	// Expand our ability tags to add additional required/blocked tags
-	if (ASC)
-	{
-		ASC->GetAdditionalActivationTagRequirements(AbilityTags, AllRequiredTags, AllBlockedTags);
-	}
+	if (ASC) { ASC->GetAdditionalActivationTagRequirements(AbilityTags, AllRequiredTags, AllBlockedTags); }
 
 	// Check to see the required/blocked tags for this ability
 	if (AllBlockedTags.Num() || AllRequiredTags.Num())
@@ -521,31 +442,18 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 			bBlocked = true;
 		}
 
-		if (!AbilitySystemComponentTags.HasAll(AllRequiredTags))
-		{
-			bMissing = true;
-		}
+		if (!AbilitySystemComponentTags.HasAll(AllRequiredTags)) { bMissing = true; }
 	}
 
 	const auto TagsCheck = [&bBlocked,&bMissing](const FGameplayTagContainer* Tags,
 	                                             const FGameplayTagContainer& BlockedTags,
-	                                             const FGameplayTagContainer& RequiredTags)
-	{
-		if (!Tags)
-		{
-			return;
-		}
+	                                             const FGameplayTagContainer& RequiredTags){
+		if (!Tags) { return; }
 		if (BlockedTags.Num() || RequiredTags.Num())
 		{
-			if (Tags->HasAny(BlockedTags))
-			{
-				bBlocked = true;
-			}
+			if (Tags->HasAny(BlockedTags)) { bBlocked = true; }
 
-			if (!Tags->HasAll(RequiredTags))
-			{
-				bMissing = true;
-			}
+			if (!Tags->HasAll(RequiredTags)) { bMissing = true; }
 		}
 	};
 	// Check to see if the source has any blocked or required tags for this ability to activate on it
@@ -558,20 +466,14 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 	// If we are blocked or missing, add the relevant tags to the OptionalRelevantTags container
 	if (bBlocked)
 	{
-		if (OptionalRelevantTags && BlockedTag.IsValid())
-		{
-			OptionalRelevantTags->AddTag(BlockedTag);
-		}
+		if (OptionalRelevantTags && BlockedTag.IsValid()) { OptionalRelevantTags->AddTag(BlockedTag); }
 		return false;
 	}
 
 	// If we are missing required tags, add the relevant tags to the OptionalRelevantTags container
 	if (bMissing)
 	{
-		if (OptionalRelevantTags && MissingTag.IsValid())
-		{
-			OptionalRelevantTags->AddTag(MissingTag);
-		}
+		if (OptionalRelevantTags && MissingTag.IsValid()) { OptionalRelevantTags->AddTag(MissingTag); }
 		return false;
 	}
 

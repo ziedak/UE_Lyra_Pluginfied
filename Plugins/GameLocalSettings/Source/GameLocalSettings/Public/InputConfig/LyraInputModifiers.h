@@ -35,7 +35,7 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
 	FName ZAxisScalarSettingName = NAME_None;
 
-	/** Set the maximium value of this setting on each axis. */
+	/** Set the maximum value of this setting on each axis. */
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings)
 	FVector MaxValueClamp = FVector(10.0, 10.0, 10.0);
 
@@ -51,7 +51,7 @@ protected:
 	TArray<const FProperty*> PropertyCache;
 };
 
-/** Represents which stick that this deadzone is for, either the move or the look stick */
+/** Represents which stick that this dead-zone is for, either the move or the look stick */
 UENUM()
 enum class EDeadzoneStick : uint8
 {
@@ -92,7 +92,7 @@ protected:
 	                                                          FInputActionValue FinalValue) const override;
 };
 
-/** The type of targeting sensitity that should be considered */
+/** The type of targeting sensitivity that should be considered */
 UENUM()
 enum class ELyraTargetingType : uint8
 {
@@ -114,7 +114,7 @@ public:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category=Settings, Config)
 	ELyraTargetingType TargetingType = ELyraTargetingType::Normal;
 
-	/** Asset that gives us access to the float scalar value being used for sensitivty */
+	/** Asset that gives us access to the float scalar value being used for sensitivity */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AssetBundles="Client,Server"))
 	TObjectPtr<const ULyraAimSensitivityData> SensitivityLevelTable;
 

@@ -8,7 +8,7 @@
 #include "Components/PawnComponent.h"
 #include "HeroComponent.generated.h"
 
-class ULyraInputConfig;
+class ULyraInputConfig_DA;
 // class UBaseCameraMode;
 struct FInputMappingContextAndPriority;
 // @TODO :implement function that uses CameraMode
@@ -41,10 +41,10 @@ public:
 	//void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
 
 	/** Adds mode-specific input config */
-	void AddAdditionalInputConfig(const ULyraInputConfig* InputConfig);
+	void AddAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig);
 
 	/** Removes a mode-specific input config if it has been added */
-	void RemoveAdditionalInputConfig(const ULyraInputConfig* InputConfig) const;
+	void RemoveAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig) const;
 
 	/** True if this is controlled by a real player and has progressed far enough in initialization where additional input bindings can be added */
 	FORCEINLINE bool IsReadyToBindInputs() const { return bReadyToBindInputs; };
@@ -61,7 +61,7 @@ public:
 	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
 	                                FGameplayTag DesiredState) const override;
 
-	bool CanTransitionToSpawned(const APawn* Pawn) const;
+	bool CanTransitionToSpawned(const APawn* Pawn) const { return Pawn != nullptr; };
 	bool CanTransitionToDataAvailable(const APawn* Pawn) const;
 	bool CanTransitionToDataInitialized(const UGameFrameworkComponentManager* Manager, APawn* Pawn) const;
 	bool CanTransitionToGameplayReady() const;
@@ -78,9 +78,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void InitializePlayerInput(UInputComponent* PlayerInputComponent);
-	void RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem, const ULyraInputConfig* InputConfig);
-	void BindInputActions(UInputComponent* PlayerInputComponent, const UEnhancedInputLocalPlayerSubsystem* Subsystem,
-	                      const ULyraInputConfig* InputConfig);
+	void RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem);
+	void BindInputActions(UInputComponent* PlayerInputComponent, const UEnhancedInputLocalPlayerSubsystem* Subsystem);
 
 	void Input_AbilityInputTagPressed(const FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(const FGameplayTag InputTag);

@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "GameStateFps.generated.h"
+#include "IGameStateFpsInterface.generated.h"
 
 UINTERFACE()
-class UGameStateFps : public UInterface
+class UGameStateFpsInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class GAMELOCALSETTINGS_API IGameStateFps
+class GAMELOCALSETTINGS_API IGameStateFpsInterface
 {
 	GENERATED_BODY()
 

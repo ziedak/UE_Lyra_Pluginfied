@@ -37,10 +37,7 @@ void UGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating(FGameFea
 {
 	FPerContextData& ActiveData = ContextData.FindOrAdd(Context);
 	if (!ensure(ActiveData.ExtensionRequestHandles.IsEmpty()) ||
-	    !ensure(ActiveData.ControllersAddedTo.IsEmpty()))
-	{
-		Reset(ActiveData);
-	}
+		!ensure(ActiveData.ControllersAddedTo.IsEmpty())) { Reset(ActiveData); }
 	Super::OnGameFeatureActivating(Context);
 }
 
@@ -49,10 +46,7 @@ void UGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating(FGameF
 	Super::OnGameFeatureDeactivating(Context);
 
 	FPerContextData* ActiveData = ContextData.Find(Context);
-	if (ensure(ActiveData))
-	{
-		Reset(*ActiveData);
-	}
+	if (ensure(ActiveData)) { Reset(*ActiveData); }
 }
 
 void UGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering()
@@ -77,47 +71,43 @@ void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts()
 
 void UGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance(UGameInstance* GameInstance)
 {
-	if (GameInstance != nullptr && !GameInstance->OnLocalPlayerAddedEvent.IsBoundToObject(this))
-	{
-		GameInstance->OnLocalPlayerAddedEvent.AddUObject(
-			this, &UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer);
-		GameInstance->OnLocalPlayerRemovedEvent.AddUObject(
-			this, &UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer);
+	if (!GameInstance || GameInstance->OnLocalPlayerAddedEvent.IsBoundToObject(this)) { return; }
+	GameInstance->OnLocalPlayerAddedEvent.AddUObject(
+		this, &UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer);
 
-		for (TArray<ULocalPlayer*>::TConstIterator LocalPlayerIterator = GameInstance->GetLocalPlayerIterator();
-		     LocalPlayerIterator; ++LocalPlayerIterator)
-		{
-			RegisterInputMappingContextsForLocalPlayer(*LocalPlayerIterator);
-		}
+	GameInstance->OnLocalPlayerRemovedEvent.AddUObject(
+		this, &UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer);
+
+	for (TArray<ULocalPlayer*>::TConstIterator LocalPlayerIterator = GameInstance->GetLocalPlayerIterator();
+	     LocalPlayerIterator; ++LocalPlayerIterator)
+	{
+		RegisterInputMappingContextsForLocalPlayer(*LocalPlayerIterator);
 	}
 }
 
 void UGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)
 {
-	if (ensure(LocalPlayer))
+	if (!(ensure(LocalPlayer))) { return; }
+
+
+	const auto EiSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	if (!EiSubsystem) { return; }
+
+	UEnhancedInputUserSettings* Settings = EiSubsystem->GetUserSettings();
+	if (!Settings) { return; }
+
+	auto& AssetManager = UBaseAssetManager::Get();
+	if (!AssetManager.IsInitialized()) { return; }
+
+	for (const FInputMappingContextAndPriority& Entry : InputMappings)
 	{
-		UBaseAssetManager& AssetManager = UBaseAssetManager::Get();
+		// Skip entries that don't want to be registered
+		if (!Entry.bRegisterWithSettings) { continue; }
 
-		if (UEnhancedInputLocalPlayerSubsystem* EISubsystem = ULocalPlayer::GetSubsystem<
-			UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+		// Register this IMC with the settings!
+		if (const UInputMappingContext* Imc = AssetManager.GetAsset(Entry.InputMapping))
 		{
-			if (UEnhancedInputUserSettings* Settings = EISubsystem->GetUserSettings())
-			{
-				for (const FInputMappingContextAndPriority& Entry : InputMappings)
-				{
-					// Skip entries that don't want to be registered
-					if (!Entry.bRegisterWithSettings)
-					{
-						continue;
-					}
-
-					// Register this IMC with the settings!
-					if (UInputMappingContext* IMC = AssetManager.GetAsset(Entry.InputMapping))
-					{
-						Settings->RegisterInputMappingContext(IMC);
-					}
-				}
-			}
+			Settings->RegisterInputMappingContext(Imc);
 		}
 	}
 }
@@ -138,51 +128,34 @@ void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts()
 void UGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance(
 	UGameInstance* GameInstance)
 {
-	if (GameInstance != nullptr)
-	{
-		GameInstance->OnLocalPlayerAddedEvent.RemoveAll(this);
-		GameInstance->OnLocalPlayerRemovedEvent.RemoveAll(this);
+	if (!GameInstance) { return; }
+	GameInstance->OnLocalPlayerAddedEvent.RemoveAll(this);
+	GameInstance->OnLocalPlayerRemovedEvent.RemoveAll(this);
 
-		for (TArray<ULocalPlayer*>::TConstIterator LocalPlayerIterator = GameInstance->GetLocalPlayerIterator();
-		     LocalPlayerIterator; ++LocalPlayerIterator)
-		{
-			UnregisterInputMappingContextsForLocalPlayer(*LocalPlayerIterator);
-		}
+	for (TArray<ULocalPlayer*>::TConstIterator LocalPlayerIterator = GameInstance->GetLocalPlayerIterator();
+	     LocalPlayerIterator; ++LocalPlayerIterator)
+	{
+		UnregisterInputMappingContextsForLocalPlayer(*LocalPlayerIterator);
 	}
 }
 
 void UGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer(ULocalPlayer* LocalPlayer)
 {
-	if (!(ensure(LocalPlayer)))
-	{
-		return;
-	}
-	const UEnhancedInputLocalPlayerSubsystem* EISubsystem = ULocalPlayer::GetSubsystem<
+	if (!(ensure(LocalPlayer))) { return; }
+	const UEnhancedInputLocalPlayerSubsystem* EiSubsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-	if (!EISubsystem)
-	{
-		return;
-	}
+	if (!EiSubsystem) { return; }
 
-	UEnhancedInputUserSettings* Settings = EISubsystem->GetUserSettings();
-	if (!Settings)
-	{
-		return;
-	}
+	UEnhancedInputUserSettings* Settings = EiSubsystem->GetUserSettings();
+	if (!Settings) { return; }
 
 	for (const auto& [InputMapping, Priority, bRegisterWithSettings] : InputMappings)
 	{
 		// Skip entries that don't want to be registered
-		if (!bRegisterWithSettings)
-		{
-			continue;
-		}
+		if (!bRegisterWithSettings) { continue; }
 
 		// Register this IMC with the settings!
-		if (const UInputMappingContext* Imc = InputMapping.Get())
-		{
-			Settings->UnregisterInputMappingContext(Imc);
-		}
+		if (const UInputMappingContext* Imc = InputMapping.Get()) { Settings->UnregisterInputMappingContext(Imc); }
 	}
 }
 
@@ -213,25 +186,23 @@ void UGameFeatureAction_AddInputContextMapping::AddToWorld(const FWorldContext& 
                                                            const FGameFeatureStateChangeContext& ChangeContext)
 {
 	const UWorld* World = WorldContext.World();
+
 	const UGameInstance* GameInstance = WorldContext.OwningGameInstance;
+	if (!GameInstance || !World || !World->IsGameWorld()) { return; }
+
 	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
-	if (!GameInstance || !World || !World->IsGameWorld())
-	{
-		return;
-	}
+	const auto ComponentManager = UGameInstance::GetSubsystem<UGameFrameworkComponentManager>(GameInstance);
+	if (!ComponentManager) { return; }
 
-	if (UGameFrameworkComponentManager* ComponentManager = UGameInstance::GetSubsystem<
-		UGameFrameworkComponentManager>(GameInstance))
-	{
-		UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
-			UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
-				this, &ThisClass::HandleControllerExtension, ChangeContext);
-		TSharedPtr<FComponentRequestHandle> ExtensionRequestHandle =
-			ComponentManager->AddExtensionHandler(APlayerController::StaticClass(), AddAbilitiesDelegate);
+	const UGameFrameworkComponentManager::FExtensionHandlerDelegate AddAbilitiesDelegate =
+		UGameFrameworkComponentManager::FExtensionHandlerDelegate::CreateUObject(
+			this, &ThisClass::HandleControllerExtension, ChangeContext);
 
-		ActiveData.ExtensionRequestHandles.Add(ExtensionRequestHandle);
-	}
+	const TSharedPtr<FComponentRequestHandle> ExtensionRequestHandle =
+		ComponentManager->AddExtensionHandler(APlayerController::StaticClass(), AddAbilitiesDelegate);
+
+	ActiveData.ExtensionRequestHandles.Add(ExtensionRequestHandle);
 }
 
 void UGameFeatureAction_AddInputContextMapping::Reset(FPerContextData& ActiveData)
@@ -241,14 +212,8 @@ void UGameFeatureAction_AddInputContextMapping::Reset(FPerContextData& ActiveDat
 	while (!ActiveData.ControllersAddedTo.IsEmpty())
 	{
 		TWeakObjectPtr<APlayerController> ControllerPtr = ActiveData.ControllersAddedTo.Top();
-		if (ControllerPtr.IsValid())
-		{
-			RemoveInputMapping(ControllerPtr.Get(), ActiveData);
-		}
-		else
-		{
-			ActiveData.ControllersAddedTo.Pop();
-		}
+		if (ControllerPtr.IsValid()) { RemoveInputMapping(ControllerPtr.Get(), ActiveData); }
+		else { ActiveData.ControllersAddedTo.Pop(); }
 	}
 }
 
@@ -259,13 +224,15 @@ void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(
 	FPerContextData& ActiveData = ContextData.FindOrAdd(ChangeContext);
 
 	// TODO Why does this code mix and match controllers and local players? ControllersAddedTo is never modified
-	if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved) || (EventName ==
-		    UGameFrameworkComponentManager::NAME_ReceiverRemoved))
+	if (EventName == UGameFrameworkComponentManager::NAME_ExtensionRemoved ||
+		EventName == UGameFrameworkComponentManager::NAME_ReceiverRemoved)
 	{
 		RemoveInputMapping(AsController, ActiveData);
-	} //TODO : implement this
-	else if ((EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded) || (
-		         EventName == UHeroComponent::NAME_BIND_INPUTS_NOW))
+		return;
+	}
+
+	if (EventName == UGameFrameworkComponentManager::NAME_ExtensionAdded
+		|| EventName == UHeroComponent::NAME_BIND_INPUTS_NOW)
 	{
 		AddInputMappingForPlayer(AsController->GetLocalPlayer(), ActiveData);
 	}
@@ -274,10 +241,7 @@ void UGameFeatureAction_AddInputContextMapping::HandleControllerExtension(
 void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer* Player, FPerContextData& ActiveData)
 {
 	const ULocalPlayer* LocalPlayer = Cast<ULocalPlayer>(Player);
-	if (!LocalPlayer)
-	{
-		return;
-	}
+	if (!LocalPlayer) { return; }
 
 	UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	if (!InputSystem)
@@ -291,10 +255,7 @@ void UGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer(UPlayer
 
 	for (const auto& [InputMapping, Priority, bRegisterWithSettings] : InputMappings)
 	{
-		if (const UInputMappingContext* Imc = InputMapping.Get())
-		{
-			InputSystem->AddMappingContext(Imc, Priority);
-		}
+		if (const UInputMappingContext* Imc = InputMapping.Get()) { InputSystem->AddMappingContext(Imc, Priority); }
 	}
 }
 

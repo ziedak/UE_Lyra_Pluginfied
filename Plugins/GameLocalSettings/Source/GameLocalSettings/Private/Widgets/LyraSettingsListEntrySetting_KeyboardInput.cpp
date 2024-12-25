@@ -6,7 +6,7 @@
 #include "CommonUIExtensions.h"
 #include "NativeGameplayTags.h"
 #include "CustomSettings/LyraSettingKeyboardInput.h"
-#include "Widgets/ButtonInterface.h"
+#include "Interfaces/IButtonInterface.h"
 #include "Widgets/Misc/GameSettingPressAnyKey.h"
 #include "Widgets/Misc/KeyAlreadyBoundWarning.h"
 
@@ -55,34 +55,34 @@ void ULyraSettingsListEntrySetting_KeyboardInput::HandleSecondaryKeyClicked()
 }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandlePrimaryKeySelected(
-	FKey InKey, UGameSettingPressAnyKey* PressAnyKeyPanel)
+	const FKey& InKey, UGameSettingPressAnyKey* PressAnyKeyPanel)
 {
 	PressAnyKeyPanel->OnKeySelected.RemoveAll(this);
 	ChangeBinding(0, InKey);
 }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandleSecondaryKeySelected(
-	FKey InKey, UGameSettingPressAnyKey* PressAnyKeyPanel)
+	const FKey& InKey, UGameSettingPressAnyKey* PressAnyKeyPanel)
 {
 	PressAnyKeyPanel->OnKeySelected.RemoveAll(this);
 	ChangeBinding(1, InKey);
 }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandlePrimaryDuplicateKeySelected(
-	FKey InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const
+	const FKey& InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const
 {
 	DuplicateKeyPressAnyKeyPanel->OnKeySelected.RemoveAll(this);
 	KeyboardInputSetting->ChangeBinding(0, OriginalKeyToBind);
 }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandleSecondaryDuplicateKeySelected(
-	FKey InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const
+	const FKey& InKey, UKeyAlreadyBoundWarning* DuplicateKeyPressAnyKeyPanel) const
 {
 	DuplicateKeyPressAnyKeyPanel->OnKeySelected.RemoveAll(this);
 	KeyboardInputSetting->ChangeBinding(1, OriginalKeyToBind);
 }
 
-void ULyraSettingsListEntrySetting_KeyboardInput::ChangeBinding(int32 InKeyBindSlot, FKey InKey)
+void ULyraSettingsListEntrySetting_KeyboardInput::ChangeBinding(const int32 InKeyBindSlot, const FKey& InKey)
 {
 	OriginalKeyToBind = InKey;
 	TArray<FName> ActionsForKey;
@@ -98,10 +98,7 @@ void ULyraSettingsListEntrySetting_KeyboardInput::ChangeBinding(int32 InKeyBindS
 		                                                  KeyAlreadyBoundWarningPanelClass));
 
 	FString ActionNames;
-	for (FName ActionName : ActionsForKey)
-	{
-		ActionNames += ActionName.ToString() += ", ";
-	}
+	for (FName ActionName : ActionsForKey) { ActionNames += ActionName.ToString() += ", "; }
 
 	FFormatNamedArguments Args;
 	Args.Add(TEXT("InKey"), InKey.GetDisplayName());
@@ -125,16 +122,10 @@ void ULyraSettingsListEntrySetting_KeyboardInput::ChangeBinding(int32 InKeyBindS
 }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandleKeySelectionCanceled(
-	UGameSettingPressAnyKey* PressAnyKeyPanel) const
-{
-	PressAnyKeyPanel->OnKeySelectionCanceled.RemoveAll(this);
-}
+	UGameSettingPressAnyKey* PressAnyKeyPanel) const { PressAnyKeyPanel->OnKeySelectionCanceled.RemoveAll(this); }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandleKeySelectionCanceled(
-	UKeyAlreadyBoundWarning* PressAnyKeyPanel) const
-{
-	PressAnyKeyPanel->OnKeySelectionCanceled.RemoveAll(this);
-}
+	UKeyAlreadyBoundWarning* PressAnyKeyPanel) const { PressAnyKeyPanel->OnKeySelectionCanceled.RemoveAll(this); }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::HandleClearClicked() const
 {
@@ -147,50 +138,43 @@ void ULyraSettingsListEntrySetting_KeyboardInput::HandleResetToDefaultClicked() 
 	KeyboardInputSetting->ResetToDefault();
 }
 
-void ULyraSettingsListEntrySetting_KeyboardInput::OnSettingChanged()
-{
-	Refresh();
-}
+void ULyraSettingsListEntrySetting_KeyboardInput::OnSettingChanged() { Refresh(); }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::Refresh() const
 {
-	if (!(ensure(KeyboardInputSetting)))
-	{
-		return;
-	}
+	if (!(ensure(KeyboardInputSetting))) { return; }
 
 	if (Button_PrimaryKey && Button_PrimaryKey->Implements<UButtonInterface>())
 	{
-		if (const auto IButton_PrimaryKey = Cast<IButtonInterface>(Button_PrimaryKey))
-		{
-			IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
-		}
+		IButtonInterface::Execute_SetButtonText(Button_PrimaryKey,
+		                                        KeyboardInputSetting->GetKeyTextFromSlot(
+			                                        EPlayerMappableKeySlot::First));
+		// if (const auto IButton_PrimaryKey = Cast<IButtonInterface>(Button_PrimaryKey))
+		// {
+		// 	//IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
+		// }
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Button_PrimaryKey does not Implement IButtonInterface"));
-	}
+	else { UE_LOG(LogTemp, Error, TEXT("Button_PrimaryKey does not Implement IButtonInterface")); }
 
 	if (Button_SecondaryKey && Button_SecondaryKey->Implements<UButtonInterface>())
 	{
-		if (const auto IButton_SecondaryKey = Cast<IButtonInterface>(Button_SecondaryKey))
-		{
-			IButton_SecondaryKey->
-				SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
-		}
+		IButtonInterface::Execute_SetButtonText(Button_SecondaryKey,
+		                                        KeyboardInputSetting->GetKeyTextFromSlot(
+			                                        EPlayerMappableKeySlot::Second));
+
+		// if (const auto IButton_SecondaryKey = Cast<IButtonInterface>(Button_SecondaryKey))
+		// {
+		// 	IButton_SecondaryKey->
+		// 		SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
+		// }
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Button_SecondaryKey does not Implement IButtonInterface"));
-	}
+	else { UE_LOG(LogTemp, Error, TEXT("Button_SecondaryKey does not Implement IButtonInterface")); }
 	// Button_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 	// Button_SecondaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 
 	// Only display the reset to default button if a mapping is customized
-	if (!(ensure(Button_ResetToDefault)))
-	{
-		return;
-	}
+	if (!(ensure(Button_ResetToDefault))) { return; }
+
 	if (KeyboardInputSetting->IsMappingCustomized())
 	{
 		Button_ResetToDefault->SetVisibility(ESlateVisibility::Visible);

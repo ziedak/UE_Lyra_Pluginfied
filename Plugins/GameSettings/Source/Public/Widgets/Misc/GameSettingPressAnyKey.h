@@ -21,7 +21,7 @@ class GAMESETTINGS_API UGameSettingPressAnyKey : public UCommonActivatableWidget
 public:
 	UGameSettingPressAnyKey(const FObjectInitializer& Initializer);
 
-	DECLARE_EVENT_OneParam(UGameSettingPressAnyKey, FOnKeySelected, FKey);
+	DECLARE_EVENT_OneParam(UGameSettingPressAnyKey, FOnKeySelected, const FKey&);
 
 	FOnKeySelected OnKeySelected;
 

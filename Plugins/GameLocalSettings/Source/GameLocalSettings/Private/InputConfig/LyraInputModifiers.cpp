@@ -20,10 +20,7 @@ namespace LyraInputModifiersHelpers
 	/** Returns the owning LyraLocalPlayer of an Enhanced Player Input pointer */
 	static ULocalPlayer* GetLocalPlayer(const UEnhancedPlayerInput* PlayerInput)
 	{
-		if (!PlayerInput)
-		{
-			return nullptr;
-		}
+		if (!PlayerInput) { return nullptr; }
 
 		if (APlayerController* PC = Cast<APlayerController>(PlayerInput->GetOuter()))
 		{
@@ -159,10 +156,7 @@ FLinearColor ULyraInputModifierDeadZone::GetVisualizationColor_Implementation(
 {
 	// Taken from UInputModifierDeadZone::GetVisualizationColor_Implementation
 	if (FinalValue.GetValueType() == EInputActionValueType::Boolean || FinalValue.GetValueType() ==
-	    EInputActionValueType::Axis1D)
-	{
-		return FLinearColor(FinalValue.Get<float>() == 0.f ? 1.f : 0.f, 0.f, 0.f);
-	}
+		EInputActionValueType::Axis1D) { return FLinearColor(FinalValue.Get<float>() == 0.f ? 1.f : 0.f, 0.f, 0.f); }
 	return FLinearColor(
 		(FinalValue.Get<FVector2D>().X == 0.f ? 0.5f : 0.f) + (FinalValue.Get<FVector2D>().Y == 0.f ? 0.5f : 0.f), 0.f,
 		0.f);

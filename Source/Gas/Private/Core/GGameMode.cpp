@@ -6,6 +6,8 @@
 #include "Character/BaseCharacter.h"
 #include "Character/Components/PawnExtensionComponent.h"
 #include "Core/GAssetManager.h"
+#include "Core/GGameState.h"
+#include "Core/GGameSession.h"
 #include "Player/BasePlayerController.h"
 #include "Player/BasePlayerState.h"
 #include "Data/GasPawnData.h"
@@ -13,23 +15,18 @@
 #include "Experience/DataAsset/ExperienceDefinition_DA.h"
 #include "GameFramework/GameStateBase.h"
 
-void AGGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-
-	
-}
+void AGGameMode::BeginPlay() { Super::BeginPlay(); }
 
 AGGameMode::AGGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	//GameStateClass = ABaseGameState::StaticClass();
-	//GameSessionClass = ABaseGameSession::StaticClass();
+	GameStateClass = AGGameState::StaticClass();
+	GameSessionClass = AGGameSession::StaticClass();
 	PlayerControllerClass = ABasePlayerController::StaticClass();
 	//ReplaySpectatorPlayerControllerClass = ABaseReplayPlayerController::StaticClass();
 	PlayerStateClass = ABasePlayerState::StaticClass();
 	DefaultPawnClass = ABaseCharacter::StaticClass();
-	//HUDClass = ABaseHUD::StaticClass();
+	HUDClass = ABaseHud::StaticClass();
 }
 
 APawn* AGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,
@@ -57,10 +54,7 @@ APawn* AGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPl
 
 	if (UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(SpawnedPawn))
 	{
-		if (const UGasPawnData* PawnData = GetPawnDataForController(NewPlayer))
-		{
-			PawnExtComp->SetPawnData(PawnData);
-		}
+		if (const UGasPawnData* PawnData = GetPawnDataForController(NewPlayer)) { PawnExtComp->SetPawnData(PawnData); }
 		else
 		{
 			UE_LOG(LogTemp, Error, TEXT("Game mode was unable to set PawnData on the spawned pawn [%s]."),
@@ -81,10 +75,7 @@ const UGasPawnData* AGGameMode::GetPawnDataForController(const AController* InCo
 	{
 		if (const ABasePlayerState* BasePS = InController->GetPlayerState<ABasePlayerState>())
 		{
-			if (const UGasPawnData* PawnData = BasePS->GetPawnData<UGasPawnData>())
-			{
-				return PawnData;
-			}
+			if (const UGasPawnData* PawnData = BasePS->GetPawnData<UGasPawnData>()) { return PawnData; }
 		}
 	}
 
@@ -96,15 +87,11 @@ const UGasPawnData* AGGameMode::GetPawnDataForController(const AController* InCo
 
 	// Experience not loaded yet, so there is no pawn data to be had
 	if (!ExperienceComponent->IsExperienceLoaded())
-	{
 		return nullptr;
-	}
 
 	const UExperienceDefinition_DA* Experience = ExperienceComponent->GetCurrentExperienceChecked();
 	if (Experience->DefaultPawnData)
-	{
 		return static_cast<const UGasPawnData*>(Experience->DefaultPawnData);
-	}
 
 	//----- Experience is loaded and there's still no pawn data, fall back to the default for now
 	return UGAssetManager::Get().GetDefaultPawnData();
@@ -112,12 +99,9 @@ const UGasPawnData* AGGameMode::GetPawnDataForController(const AController* InCo
 
 UClass* AGGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
-	if (const UGasPawnData* PawnData = GetPawnDataForController(InController))
-	{
-		if (PawnData->PawnClass)
-		{
-			return PawnData->PawnClass;
-		}
-	}
+	const UGasPawnData* PawnData = GetPawnDataForController(InController);
+	if (PawnData && PawnData->PawnClass)
+		return PawnData->PawnClass;
+	
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }

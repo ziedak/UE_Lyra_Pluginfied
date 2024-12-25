@@ -11,7 +11,7 @@
 #include "Settings/LyraSettingsShared.h"
 // #include "PlayerMappableInputConfig.h"
 #include "EditCondition/WhenPlatformSupportsMouseAndKeyboard.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 
 class ULocalPlayer;
 

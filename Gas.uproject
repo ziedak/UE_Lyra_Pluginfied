@@ -63,6 +63,14 @@
       "Enabled": true
     },
     {
+      "Name": "GameLocalSettings",
+      "Enabled": true
+    },
+    {
+      "Name": "UIExtension",
+      "Enabled": true
+    },
+    {
       "Name": "N10XSourceCodeAccess",
       "Enabled": false
     },

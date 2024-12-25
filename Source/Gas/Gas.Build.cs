@@ -21,15 +21,16 @@ public class Gas : ModuleRules
 			"NetCore",
 			"PhysicsCore",
 			"AbilitySystem",
-			"CustomCore"
+			"CustomCore",
+			"GameLocalSettings",
+			"CommonGame"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[]
 		{
-			"CommonGame",
 			"CommonUser",
 			"CommonInput",
-			"GameLocalSettings",
+			"CommonUI",
 			"GameplayAbilities",
 			"GameplayMessageRuntime",
 			"AudioMixer",
@@ -37,7 +38,9 @@ public class Gas : ModuleRules
 			"GameplayTasks",
 			"SignificanceManager",
 			"Slate",
-			"SlateCore"
+			"SlateCore",
+			"UMG",
+			"UIExtension" // This module allows for extending the user interface.
 		});
 
 		//custom plugin dependencies

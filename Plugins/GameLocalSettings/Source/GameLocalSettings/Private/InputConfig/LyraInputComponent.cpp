@@ -11,9 +11,9 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraInputComponent)
 
-class ULyraInputConfig;
+class ULyraInputConfig_DA;
 
-void ULyraInputComponent::AddInputMappings(const ULyraInputConfig* InputConfig,
+void ULyraInputComponent::AddInputMappings(const ULyraInputConfig_DA* InputConfig,
                                            const UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const
 {
 	check(InputConfig);
@@ -22,7 +22,7 @@ void ULyraInputComponent::AddInputMappings(const ULyraInputConfig* InputConfig,
 	// Here you can handle any custom logic to add something from your input config if required
 }
 
-void ULyraInputComponent::RemoveInputMappings(const ULyraInputConfig* InputConfig,
+void ULyraInputComponent::RemoveInputMappings(const ULyraInputConfig_DA* InputConfig,
                                               const UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const
 {
 	check(InputConfig);

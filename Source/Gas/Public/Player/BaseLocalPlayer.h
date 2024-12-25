@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonLocalPlayer.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 #include "BaseLocalPlayer.generated.h"
 
 class ULyraSettingsLocal;
@@ -14,7 +15,7 @@ struct FSwapAudioOutputResult;
  * 
  */
 UCLASS()
-class GAS_API UBaseLocalPlayer : public UCommonLocalPlayer
+class GAS_API UBaseLocalPlayer : public UCommonLocalPlayer, public IPlayerSharedSettingsInterface
 {
 	GENERATED_BODY()
 
@@ -40,11 +41,12 @@ public:
 
 	/** Gets the local settings for this player, this is read from config files at process startup and is always valid */
 	UFUNCTION()
-	ULyraSettingsLocal* GetLocalSettings() const;
+	virtual ULyraSettingsLocal* GetLocalSettings() const override;
 
 	/** Gets the shared setting for this player, this is read using the save game system so may not be correct until after user login */
 	UFUNCTION()
-	ULyraSettingsShared* GetSharedSettings() const;
+	virtual ULyraSettingsShared* GetSharedSettings() const override;
+
 
 	/** Starts an async request to load the shared settings, this will call OnSharedSettingsLoaded after loading or creating new ones */
 	void LoadSharedSettingsFromDisk(bool bForceLoad = false);
@@ -53,13 +55,15 @@ public:
 
 	void OnAudioOutputDeviceChanged(const FString& InAudioOutputDeviceId);
 
-	 UFUNCTION()
-	void OnCompletedAudioDeviceSwap(const FSwapAudioOutputResult& SwapResult);
+	UFUNCTION()
+	static void OnCompletedAudioDeviceSwap(const FSwapAudioOutputResult& SwapResult);
 
 	void OnPlayerControllerChanged(APlayerController* NewController);
 
 	// UFUNCTION()
 	// void OnControllerChangedTeam(UObject* TeamAgent, int32 OldTeam, int32 NewTeam);
+	UPROPERTY()
+	bool bCanLoadBeforeLogin = PLATFORM_DESKTOP;
 
 	UPROPERTY(Transient)
 	mutable TObjectPtr<ULyraSettingsShared> SharedSettings;

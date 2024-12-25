@@ -6,14 +6,12 @@
 #include "Settings/LyraSettingsLocal.h"
 #include "Settings/LyraSettingsShared.h"
 // #include "Player/LyraLocalPlayer.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 #include "UObject/EnumProperty.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraGameSettingRegistry)
 
-namespace
-{
-	
-}
+namespace {}
+
 DEFINE_LOG_CATEGORY(LogLyraGameSettingRegistry);
 
 #define LOCTEXT_NAMESPACE "Lyra"
@@ -38,16 +36,18 @@ ULyraGameSettingRegistry* ULyraGameSettingRegistry::Get(ULocalPlayer* InLocalPla
 
 bool ULyraGameSettingRegistry::IsFinishedInitializing() const
 {
-	if (!Super::IsFinishedInitializing()) return false;
+	if (!Super::IsFinishedInitializing()) { return false; }
 
-	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettings>())
+	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 	{
 		UE_LOG(LogLyraGameSettingRegistry, Error, TEXT("OwningLocalPlayer does not Implement IPlayerSharedSettings"));
 		return true;
 	}
 
-	if (const auto ISharedSettings = Cast<IPlayerSharedSettings>(OwningLocalPlayer))
-		return ISharedSettings->GetSharedSettings()== nullptr;
+	if (const auto ISharedSettings = Cast<IPlayerSharedSettingsInterface>(OwningLocalPlayer))
+	{
+		return ISharedSettings->GetSharedSettings() == nullptr;
+	}
 
 
 	// ULyraLocalPlayer* LocalPlayer = Cast<ULyraLocalPlayer>(OwningLocalPlayer);
@@ -80,13 +80,13 @@ void ULyraGameSettingRegistry::SaveChanges()
 {
 	Super::SaveChanges();
 
-	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettings>())
+	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 	{
 		UE_LOG(LogLyraGameSettingRegistry, Error, TEXT("OwningLocalPlayer does not Implement IPlayerSharedSettings"));
 		return;
 	}
 
-	if (const auto ISharedSettings = Cast<IPlayerSharedSettings>(OwningLocalPlayer))
+	if (const auto ISharedSettings = Cast<IPlayerSharedSettingsInterface>(OwningLocalPlayer))
 	{
 		ISharedSettings->GetLocalSettings()->ApplySettings(false);
 		ISharedSettings->GetSharedSettings()->ApplySettings();
@@ -100,7 +100,6 @@ void ULyraGameSettingRegistry::SaveChanges()
 	// 	LocalPlayer->GetSharedSettings()->SaveSettings();
 	// }
 }
-
 
 
 #undef LOCTEXT_NAMESPACE

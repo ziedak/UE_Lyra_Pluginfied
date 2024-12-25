@@ -15,7 +15,7 @@ namespace StateTags
 
 namespace DataTags
 {
-	UE_DEFINE_GAMEPLAY_TAG(Damage, "Data.Damage");
+	UE_DEFINE_GAMEPLAY_TAG(DAMAGE, "Data.Damage");
 }
 
 namespace AbilityTags
@@ -50,6 +50,8 @@ namespace InputTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(LOOK_STICK, "InputTag.Look.Stick", "Look (stick) input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CROUCH, "InputTag.Crouch", "Crouch input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(AUTORUN, "InputTag.AutoRun", "Auto-run input.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(JUMP, "InputTag.Jump", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(TEST, "InputTag.Test", "");
 }
 
 namespace BaseGameplayTags
@@ -58,13 +60,26 @@ namespace BaseGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_IMMUNITY, "Gameplay.DamageImmunity");
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_SELF_DESTRUCT, "Gameplay.Damage.SelfDestruct");
 	UE_DEFINE_GAMEPLAY_TAG(FELL_OUT_OF_WORLD, "Gameplay.Damage.FellOutOfWorld");
-	UE_DEFINE_GAMEPLAY_TAG(GAS_DAMAGE_MESSAGE, "Gas.Damage.Message");
-	//UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Elimination_Message, "Gas.Elimination.Message");
+	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_MESSAGE, "Gameplay.Damage.Message");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ABILITY_INPUT_BLOCKED, "Gameplay.AbilityInputBlocked", "Clear Ability Input");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ELIMINATION_MESSAGE, "Gameplay.Elimination.Message",
+	                               "Defines a native gameplay tag such that it's only available to the cpp file you define it in")
+	;
 }
 
-namespace GameplayInputTags
+namespace GameplayCueTags
 {
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ABILITY_INPUT_BLOCKED, "Gameplay.AbilityInputBlocked", " Clear Ability Input");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CHARACTER_DAMAGE_TAKEN, "GameplayCue.Character.DamageTaken", "")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(CHARACTER_HEAL, "GameplayCue.Character.Heal", "")
+}
+
+namespace GameplayEffectTags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(DAMAGETRAIT_BASIC, "GameplayEffect.DamageTrait.Basic", "")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(DAMAGETRAIT_INSTANT, "GameplayEffect.DamageTrait.Instant", "")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(HEAL, "GameplayEffect.Heal", "")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(HEAL_INSTANT, "GameplayEffect.Heal.Instant", "")
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(HEAL_PERIODIC, "GameplayEffect.Heal.Periodic", "")
 }
 
 namespace GameplayEventTags
@@ -104,6 +119,22 @@ namespace DebuffTags
 	UE_DEFINE_GAMEPLAY_TAG(STUN, "Debuff.Stun")
 }
 
+namespace PlatformTags
+{
+	UE_DEFINE_GAMEPLAY_TAG(TRAIT_INPUT_HARDWARECURSOR, "Platform.Trait.Input.HardwareCursor");
+	UE_DEFINE_GAMEPLAY_TAG(TRAIT_BINAURAL_SETTING_CONTROLLED_BY_OS,
+							  "Platform.Trait.BinauralSettingControlledByOS");
+}
+
+namespace UITags
+{
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(LAYER_GAME, "UI.Layer.Game", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(LAYER_GAMEMENU, "UI.Layer.GameMenu", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(LAYER_MENU, "UI.Layer.Menu", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(LAYER_MODAL, "UI.Layer.Modal", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ACTION_ESCAPE, "UI.Action.Escape", "");
+}
+
 namespace MovementTags
 {
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(MODE_WALKING, "Movement.Mode.Walking", "Default Character movement tag");
@@ -112,7 +143,7 @@ namespace MovementTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(MODE_SWIMMING, "Movement.Mode.Swimming", "Default Character movement tag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(MODE_FLYING, "Movement.Mode.Flying", "Default Character movement tag");
 
-	// When extending Lyra, you can create your own movement modes but you need to update GetCustomMovementModeTagMap()
+	// When extending Lyra, you can create your own movement modes, but you need to update GetCustomMovementModeTagMap()
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(MODE_CUSTOM, "Movement.Mode.Custom",
 	                               "This is invalid and should be replaced with custom tags.  See LyraGameplayTags::CustomMovementModeTagMap.")
 	;
@@ -136,7 +167,8 @@ namespace MovementTags
 	};
 }
 
-FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString)
+
+FGameplayTag FindTagByString(const FString& TagString, const bool bMatchPartialString)
 {
 	const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
 	FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);

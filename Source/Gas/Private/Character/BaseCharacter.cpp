@@ -23,13 +23,13 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	// Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated.
 	NetCullDistanceSquared = 900000000.0f; // 3000 * 3000
 
-	PawnExtComponent = CreateDefaultSubobject<UPawnExtensionComponent>(TEXT("PawnExtensionComponent"));
+	PawnExtComponent = CreateDefaultSubobject<UPawnExtensionComponent>("PawnExtensionComponent");
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
 		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemInitialized));
 	PawnExtComponent->OnAbilitySystemUninitialized_Register(
 		FSimpleMulticastDelegate::FDelegate::CreateUObject(this, &ThisClass::OnAbilitySystemUninitialized));
 
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
 	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
 }
@@ -51,10 +51,7 @@ UBaseAbilitySystemComponent* ABaseCharacter::GetBaseAbilitySystemComponent() con
 
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
-	if (PawnExtComponent)
-	{
-		return PawnExtComponent->GetBaseAbilitySystemComponent();
-	}
+	if (PawnExtComponent) { return PawnExtComponent->GetBaseAbilitySystemComponent(); }
 
 	return nullptr;
 }
@@ -106,13 +103,9 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
-void ABaseCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
-{
-}
+void ABaseCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) {}
 
-void ABaseCharacter::NotifyControllerChanged()
-{
-}
+void ABaseCharacter::NotifyControllerChanged() {}
 
 #pragma endregion
 
@@ -128,30 +121,21 @@ void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) c
 bool ABaseCharacter::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
-	{
-		return false;
-	}
+	if (!BaseAsc) { return false; }
 	return BaseAsc->HasMatchingGameplayTag(TagToCheck);
 }
 
 bool ABaseCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
-	{
-		return false;
-	}
+	if (!BaseAsc) { return false; }
 	return BaseAsc->HasAllMatchingGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
-	{
-		return false;
-	}
+	if (!BaseAsc) { return false; }
 	return BaseAsc->HasAnyMatchingGameplayTags(TagContainer);
 }
 
@@ -160,16 +144,10 @@ bool ABaseCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& Tag
 bool ABaseCharacter::UpdateSharedReplication()
 {
 	// We cannot fast-rep right now. Don't send anything.
-	if (GetLocalRole() != ROLE_Authority)
-	{
-		return false;
-	}
+	if (GetLocalRole() != ROLE_Authority) { return false; }
 
 	FSharedRepMovement SharedMovement;
-	if (!SharedMovement.FillForCharacter(this))
-	{
-		return false;
-	}
+	if (!SharedMovement.FillForCharacter(this)) { return false; }
 
 	// Only call FastSharedReplication if data has changed since the last frame.
 	// Skipping this call will cause replication to reuse the same bunch that we previously
@@ -187,16 +165,10 @@ bool ABaseCharacter::UpdateSharedReplication()
 
 void ABaseCharacter::FastSharedReplication_Implementation(const FSharedRepMovement& SharedRepMovement)
 {
-	if (GetWorld()->IsPlayingReplay())
-	{
-		return;
-	}
+	if (GetWorld()->IsPlayingReplay()) { return; }
 
 	// Timestamp is checked to reject old moves.
-	if (GetLocalRole() != ROLE_SimulatedProxy)
-	{
-		return;
-	}
+	if (GetLocalRole() != ROLE_SimulatedProxy) { return; }
 
 	// Timestamp
 	ReplicatedServerLastTransformUpdateTimeStamp = SharedRepMovement.RepTimeStamp;
@@ -237,10 +209,7 @@ void ABaseCharacter::OnAbilitySystemInitialized()
 	InitializeGameplayTags();
 }
 
-void ABaseCharacter::OnAbilitySystemUninitialized()
-{
-	HealthComponent->UninitializeFromAbilitySystem();
-}
+void ABaseCharacter::OnAbilitySystemUninitialized() { HealthComponent->UninitializeFromAbilitySystem(); }
 
 void ABaseCharacter::PossessedBy(AController* NewController)
 {
@@ -285,18 +254,12 @@ void ABaseCharacter::InitializeGameplayTags() const
 	// Clear tags that may be lingering on the ability system from the previous pawn.
 	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap)
 	{
-		if (TagMapping.Value.IsValid())
-		{
-			BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
-		}
+		if (TagMapping.Value.IsValid()) { BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
 	}
 
 	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap)
 	{
-		if (TagMapping.Value.IsValid())
-		{
-			BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
-		}
+		if (TagMapping.Value.IsValid()) { BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
 	}
 	// todo :implement this
 	// Set the default movement mode tag.
@@ -309,10 +272,7 @@ void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType)
 	HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/true);
 }
 
-void ABaseCharacter::OnDeathStarted(AActor* OwningActor)
-{
-	DisableMovementAndCollision();
-}
+void ABaseCharacter::OnDeathStarted(AActor* OwningActor) { DisableMovementAndCollision(); }
 
 void ABaseCharacter::OnDeathFinished(AActor* OwningActor)
 {
@@ -321,10 +281,7 @@ void ABaseCharacter::OnDeathFinished(AActor* OwningActor)
 
 void ABaseCharacter::DisableMovementAndCollision() const
 {
-	if (Controller)
-	{
-		Controller->SetIgnoreMoveInput(true);
-	}
+	if (Controller) { Controller->SetIgnoreMoveInput(true); }
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	check(CapsuleComp);
@@ -356,10 +313,7 @@ void ABaseCharacter::UninitAndDestroy()
 	// (otherwise another pawn already did it when they became the avatar actor)
 	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
 	{
-		if (BaseAsc->GetAvatarActor() == this)
-		{
-			PawnExtComponent->UninitializeAbilitySystem();
-		}
+		if (BaseAsc->GetAvatarActor() == this) { PawnExtComponent->UninitializeAbilitySystem(); }
 	}
 
 	SetActorHiddenInGame(true);
@@ -378,20 +332,14 @@ void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode, const 
                                         const bool bTagEnabled) const
 {
 	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
-	{
-		return;
-	}
+	if (!BaseAsc) { return; }
 
 	const FGameplayTag* MovementModeTag;
 	if (MovementMode == MOVE_Custom)
 	{
 		MovementModeTag = MovementTags::CustomMovementModeTagMap.Find(CustomMovementMode);
 	}
-	else
-	{
-		MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode);
-	}
+	else { MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode); }
 
 	if (MovementModeTag && MovementModeTag->IsValid())
 	{
@@ -425,6 +373,4 @@ bool ABaseCharacter::CanJumpInternal_Implementation() const
 	return JumpIsAllowedInternal();
 }
 
-void ABaseCharacter::OnRep_ReplicatedAcceleration() const
-{
-}
+void ABaseCharacter::OnRep_ReplicatedAcceleration() const {}

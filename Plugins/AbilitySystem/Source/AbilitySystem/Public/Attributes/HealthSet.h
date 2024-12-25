@@ -51,7 +51,7 @@ protected:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 private:
-	float GetMinimumHealth(const FGameplayEffectModCallbackData& Data) const;
+	static float GetMinimumHealth(const FGameplayEffectModCallbackData& Data);
 	void HandleDamage(const FGameplayEffectModCallbackData& Data, float MinimumHealth);
 	void HandleHealing(const FGameplayEffectModCallbackData& Data, float MinimumHealth);
 	void BroadcastDamageMessage(const FGameplayEffectModCallbackData& Data) const;

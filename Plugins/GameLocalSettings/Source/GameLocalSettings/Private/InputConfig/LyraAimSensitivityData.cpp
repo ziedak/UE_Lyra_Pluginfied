@@ -29,6 +29,6 @@ ULyraAimSensitivityData::ULyraAimSensitivityData(const FObjectInitializer& Objec
 float ULyraAimSensitivityData::SensitivityEnumToFloat(const EGamepadSensitivity InSensitivity) const
 {
 	if (const auto Sens = SensitivityMap.Find(InSensitivity))
-		return *Sens;
+		return *Sens; 
 	return 1.0f;
 }

@@ -64,7 +64,7 @@ public:
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const { return AbilitySystemComponent; }
 
 	/** Should be called by the owning pawn to become the avatar of the ability system. */
-	void InitializeAbilitySystem(UBaseAbilitySystemComponent* InASC, AActor* InOwnerActor);
+	void InitializeAbilitySystem(UBaseAbilitySystemComponent* InAsc, AActor* InOwnerActor);
 
 	/** Should be called by the owning pawn to remove itself as the avatar of the ability system. */
 	void UninitializeAbilitySystem();

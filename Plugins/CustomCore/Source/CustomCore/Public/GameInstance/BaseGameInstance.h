@@ -7,10 +7,11 @@
 
 #include "BaseGameInstance.generated.h"
 
+enum class ECommonUserOnlineContext : uint8;
 /**
  * 
  */
-UCLASS(Config = Game)
+UCLASS(Abstract)
 class CUSTOMCORE_API UBaseGameInstance : public UCommonGameInstance
 {
 	GENERATED_BODY()
@@ -23,9 +24,6 @@ public :
 
 	APlayerController* GetPrimaryPlayerController() const;
 	virtual bool CanJoinRequestedSession() const override;
-	virtual void HandlerUserInitialized(const UCommonUserInfo* UserInfo, bool bSuccess, FText Error,
-	                                    ECommonUserPrivilege RequestedPrivilege,
-	                                    ECommonUserOnlineContext OnlineContext) override;
 
 	virtual void ReceivedNetworkEncryptionToken(const FString& EncryptionToken,
 	                                            const FOnEncryptionKeyResponse& Delegate) override;

@@ -11,7 +11,7 @@
 #include "Settings/LyraSettingsLocal.h"
 #include "Settings/LyraSettingsShared.h"
 #include "NativeGameplayTags.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 
 
 class ULocalPlayer;

@@ -16,21 +16,20 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HealthComponent)
 
-// Defines a native gameplay tag such that it's only available to the cpp file you define it in.
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_GAS_ELIMINATION_MESSAGE, "GAS.Elimination.Message");
+
+// UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_GAS_ELIMINATION_MESSAGE, "GAS.Elimination.Message");
 
 
 UHealthComponent::UHealthComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	  AbilitySystemComponent(nullptr),
+	  HealthSet(nullptr),
+	  DeathState(EDeathState::NotDead)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 	PrimaryComponentTick.bCanEverTick = false;
 
 	SetIsReplicatedByDefault(true);
-
-	AbilitySystemComponent = nullptr;
-	HealthSet = nullptr;
-	DeathState = EDeathState::NotDead;
 }
 
 void UHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -47,23 +46,23 @@ void UHealthComponent::OnUnregister()
 	Super::OnUnregister();
 }
 
-void UHealthComponent::InitializeWithAbilitySystem(UBaseAbilitySystemComponent* InASC)
+void UHealthComponent::InitializeWithAbilitySystem(UBaseAbilitySystemComponent* InAsc)
 {
-	AActor* Owner = GetOwner();
+	const AActor* Owner = GetOwner();
 	check(Owner);
 	if (AbilitySystemComponent)
 	{
-		ULOG_ERROR(
+		LOG_ERROR(
 			LogGAS,
 			"HealthComponent: Health component for owner [%s] has already been initialized with an ability system.",
 			*GetNameSafe(Owner));
 		return;
 	}
 
-	AbilitySystemComponent = InASC;
+	AbilitySystemComponent = InAsc;
 	if (!AbilitySystemComponent)
 	{
-		ULOG_ERROR(
+		LOG_ERROR(
 			LogGAS,
 			"HealthComponent: Health component for owner [%s] failed to initialize with an ability system.",
 			*GetNameSafe(Owner));
@@ -74,7 +73,7 @@ void UHealthComponent::InitializeWithAbilitySystem(UBaseAbilitySystemComponent* 
 	HealthSet = AbilitySystemComponent->GetSet<UHealthSet>();
 	if (!HealthSet)
 	{
-		ULOG_ERROR(
+		LOG_ERROR(
 			LogGAS,
 			"HealthComponent: Cannot initialize health component for owner [%s] with NULL health set on the ability system."
 			, *GetNameSafe(Owner));
@@ -110,17 +109,11 @@ void UHealthComponent::UninitializeFromAbilitySystem()
 	AbilitySystemComponent = nullptr;
 }
 
-float UHealthComponent::GetHealth() const
-{
-	return (HealthSet ? HealthSet->GetHealth() : 0.0f);
-}
+float UHealthComponent::GetHealth() const { return (HealthSet ? HealthSet->GetHealth() : 0.0f); }
 
 float UHealthComponent::GetHealthNormalized() const
 {
-	if (!HealthSet)
-	{
-		return 0.0f;
-	}
+	if (!HealthSet) { return 0.0f; }
 
 	const float Health = GetHealth();
 	const float MaxHealth = GetMaxHealth();
@@ -128,17 +121,11 @@ float UHealthComponent::GetHealthNormalized() const
 	return ((MaxHealth > 0.0f) ? (Health / MaxHealth) : 0.0f);
 }
 
-float UHealthComponent::GetMaxHealth() const
-{
-	return (HealthSet ? HealthSet->GetMaxHealth() : 0.0f);
-}
+float UHealthComponent::GetMaxHealth() const { return (HealthSet ? HealthSet->GetMaxHealth() : 0.0f); }
 
 void UHealthComponent::StartDeath()
 {
-	if (DeathState != EDeathState::NotDead)
-	{
-		return;
-	}
+	if (DeathState != EDeathState::NotDead) { return; }
 
 	DeathState = EDeathState::DeathStarted;
 
@@ -158,17 +145,11 @@ void UHealthComponent::StartDeath()
 
 void UHealthComponent::FinishDeath()
 {
-	if (DeathState != EDeathState::DeathStarted)
-	{
-		return;
-	}
+	if (DeathState != EDeathState::DeathStarted) { return; }
 
 	DeathState = EDeathState::DeathFinished;
 
-	if (AbilitySystemComponent)
-	{
-		AbilitySystemComponent->SetLooseGameplayTagCount(StatusTags::DEATH_DEAD, 1);
-	}
+	if (AbilitySystemComponent) { AbilitySystemComponent->SetLooseGameplayTagCount(StatusTags::DEATH_DEAD, 1); }
 
 	AActor* Owner = GetOwner();
 	check(Owner);
@@ -180,10 +161,7 @@ void UHealthComponent::FinishDeath()
 
 void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 {
-	if (DeathState != EDeathState::NotDead || !AbilitySystemComponent)
-	{
-		return;
-	}
+	if (DeathState != EDeathState::NotDead || !AbilitySystemComponent) { return; }
 
 	const TSubclassOf<UGameplayEffect> DamageGE = UBaseAssetManager::GetSubclass(
 		UGasGameData::Get().DamageGameplayEffect_SetByCaller);
@@ -219,10 +197,7 @@ void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 
 	DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::DAMAGE_SELF_DESTRUCT);
 
-	if (bFellOutOfWorld)
-	{
-		DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::FELL_OUT_OF_WORLD);
-	}
+	if (bFellOutOfWorld) { DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::FELL_OUT_OF_WORLD); }
 
 	const float DamageMagnitude = GetMaxHealth();
 	DamageEffectSpec->SetSetByCallerMagnitude(SetByCallerTags::DAMAGE, DamageMagnitude);
@@ -241,27 +216,24 @@ void UHealthComponent::ClearGameplayTags() const
 
 void UHealthComponent::HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
                                            const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
-                                           float OldValue, float NewValue)
+                                           const float OldValue, const float NewValue)
 {
 	OnHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
 void UHealthComponent::HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
                                               const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
-                                              float OldValue, float NewValue)
+                                              const float OldValue, const float NewValue)
 {
 	OnMaxHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
 void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser,
-                                         const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
+                                         const FGameplayEffectSpec* DamageEffectSpec, const float DamageMagnitude,
                                          float OldValue, float NewValue)
 {
 #if WITH_SERVER_CODE
-	if (!AbilitySystemComponent || !DamageEffectSpec)
-	{
-		return;
-	}
+	if (!AbilitySystemComponent || !DamageEffectSpec) { return; }
 
 	//Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 	//This is done in a prediction window to ensure the event is sent in the correct order.
@@ -288,7 +260,7 @@ void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* Damag
 	// This is also done on the server only to avoid spamming the message system.
 	{
 		FVerbMessage VerbMessage;
-		VerbMessage.Verb = TAG_GAS_ELIMINATION_MESSAGE;
+		VerbMessage.Verb = BaseGameplayTags::ELIMINATION_MESSAGE;
 		VerbMessage.Instigator = DamageInstigator;
 		VerbMessage.InstigatorTags = *DamageEffectSpec->CapturedSourceTags.GetAggregatedTags();
 		VerbMessage.Target = UVerbMessageHelpers::GetPlayerStateFromObject(AbilitySystemComponent->GetAvatarActor());
@@ -322,10 +294,7 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 
 	if (OldDeathState == EDeathState::NotDead)
 	{
-		if (NewDeathState == EDeathState::DeathStarted)
-		{
-			StartDeath();
-		}
+		if (NewDeathState == EDeathState::DeathStarted) { StartDeath(); }
 		else if (NewDeathState == EDeathState::DeathFinished)
 		{
 			StartDeath();

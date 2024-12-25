@@ -44,7 +44,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformTraitEnableActive", "Platform Trait Override\nEnabling {0}"),
 			FText::AsCultureInvariant(AdditionalPlatformTraitsToEnable.ToStringSimple())
-			));
+		));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -55,7 +55,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformTraitSuppressionActive", "Platform Trait Override\nSuppressing {0}"),
 			FText::AsCultureInvariant(AdditionalPlatformTraitsToSuppress.ToStringSimple())
-			));
+		));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -66,7 +66,7 @@ void UPlatformEmulationSettings::OnPlayInEditorStarted() const
 		FNotificationInfo Info(FText::Format(
 			LOCTEXT("PlatformOverrideActive", "Platform Override Active\nPretending to be {0}"),
 			FText::FromName(PretendPlatform)
-			));
+		));
 		Info.ExpireDuration = 3.0f;
 		FSlateNotificationManager::Get().AddNotification(Info);
 	}
@@ -77,15 +77,12 @@ void UPlatformEmulationSettings::ApplySettings()
 	UCommonUIVisibilitySubsystem::SetDebugVisibilityConditions(AdditionalPlatformTraitsToEnable,
 	                                                           AdditionalPlatformTraitsToSuppress);
 
-	if (GIsEditor && PretendPlatform != LastAppliedPretendPlatform)
-	{
-		ChangeActivePretendPlatform(PretendPlatform);
-	}
+	if (GIsEditor && PretendPlatform != LastAppliedPretendPlatform) { ChangeActivePretendPlatform(PretendPlatform); }
 
 	PickReasonableBaseDeviceProfile();
 }
 
-void UPlatformEmulationSettings::ChangeActivePretendPlatform(FName NewPlatformName)
+void UPlatformEmulationSettings::ChangeActivePretendPlatform(const FName NewPlatformName)
 {
 	LastAppliedPretendPlatform = NewPlatformName;
 	PretendPlatform = NewPlatformName;
@@ -115,26 +112,14 @@ TArray<FName> UPlatformEmulationSettings::GetKnownDeviceProfiles() const
 	const UDeviceProfileManager& Manager = UDeviceProfileManager::Get();
 	Results.Reserve(Manager.Profiles.Num() + 1);
 
-	if (PretendPlatform == NAME_None)
-	{
-		Results.Add(NAME_None);
-	}
+	if (PretendPlatform == NAME_None) { Results.Add(NAME_None); }
 
 	for (const TObjectPtr<UDeviceProfile>& Profile : Manager.Profiles)
 	{
-		bool bIncludeEntry = true;
-		if (PretendPlatform != NAME_None)
-		{
-			if (Profile->DeviceType != PretendPlatform.ToString())
-			{
-				bIncludeEntry = false;
-			}
-		}
+		if (PretendPlatform != NAME_None &&
+			Profile->DeviceType != PretendPlatform.ToString()) { continue; }
 
-		if (bIncludeEntry)
-		{
-			Results.Add(Profile->GetFName());
-		}
+		Results.Add(Profile->GetFName());
 	}
 #endif
 
@@ -148,11 +133,8 @@ void UPlatformEmulationSettings::PickReasonableBaseDeviceProfile()
 	if (UDeviceProfile* ProfilePtr = Manager.FindProfile(PretendBaseDeviceProfile.ToString(), /*bCreateOnFail=*/ false))
 	{
 		const bool bIsCompatible = (PretendPlatform == NAME_None) || (ProfilePtr->DeviceType == PretendPlatform.
-		                                                              ToString());
-		if (!bIsCompatible)
-		{
-			PretendBaseDeviceProfile = NAME_None;
-		}
+			ToString());
+		if (!bIsCompatible) { PretendBaseDeviceProfile = NAME_None; }
 	}
 
 	if ((PretendPlatform != NAME_None) && (PretendBaseDeviceProfile == NAME_None))
@@ -167,10 +149,7 @@ void UPlatformEmulationSettings::PickReasonableBaseDeviceProfile()
 			{
 				const FName TestName = Profile->GetFName();
 				if ((ShortestMatchingProfileName == NAME_None) || (TestName.GetStringLength() <
-				                                                   ShortestMatchingProfileName.GetStringLength()))
-				{
-					ShortestMatchingProfileName = TestName;
-				}
+					ShortestMatchingProfileName.GetStringLength())) { ShortestMatchingProfileName = TestName; }
 			}
 		}
 		PretendBaseDeviceProfile = ShortestMatchingProfileName;

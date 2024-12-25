@@ -65,8 +65,7 @@ ULyraSettingsShared* ULyraSettingsShared::LoadOrCreateSettings(const ULocalPlaye
 bool ULyraSettingsShared::AsyncLoadOrCreateSettings(const ULocalPlayer* LocalPlayer, FOnSettingsLoadedEvent Delegate)
 {
 	const FOnLocalPlayerSaveGameLoadedNative Lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda([Delegate]
-	(ULocalPlayerSaveGame* LoadedSave)
-		{
+	(ULocalPlayerSaveGame* LoadedSave){
 			ULyraSettingsShared* LoadedSettings = CastChecked<ULyraSettingsShared>(LoadedSave);
 
 			LoadedSettings->ApplySettings();
@@ -87,10 +86,11 @@ void ULyraSettingsShared::SaveSettings()
 	const auto EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer);
 
-	if (!EnhancedInputLocalPlayerSubsystem)
-		return;
+	if (!EnhancedInputLocalPlayerSubsystem) { return; }
 	if (UEnhancedInputUserSettings* InputSettings = EnhancedInputLocalPlayerSubsystem->GetUserSettings())
+	{
 		InputSettings->AsyncSaveSettings();
+	}
 }
 
 void ULyraSettingsShared::ApplySettings()
@@ -98,7 +98,6 @@ void ULyraSettingsShared::ApplySettings()
 	ApplySubtitleOptions();
 	ApplyBackgroundAudioSettings();
 	ApplyCultureSettings();
-
 	ApplyInputSettings();
 }
 
@@ -107,11 +106,12 @@ void ULyraSettingsShared::ApplyInputSettings() const
 	const auto EnhancedInputLocalPlayerSubsystem = ULocalPlayer::GetSubsystem<
 		UEnhancedInputLocalPlayerSubsystem>(OwningPlayer);
 
-	if (!EnhancedInputLocalPlayerSubsystem)
-		return;
+	if (!EnhancedInputLocalPlayerSubsystem) { return; }
 
 	if (UEnhancedInputUserSettings* InputSettings = EnhancedInputLocalPlayerSubsystem->GetUserSettings())
+	{
 		InputSettings->ApplySettings();
+	}
 }
 
 void ULyraSettingsShared::ApplySubtitleOptions() const
@@ -132,13 +132,12 @@ void ULyraSettingsShared::ApplySubtitleOptions() const
 
 void ULyraSettingsShared::SetAllowAudioInBackgroundSetting(const EBackgroundAudioSetting NewValue)
 {
-	if (ChangeValueAndDirty(AllowAudioInBackground, NewValue))
-		ApplyBackgroundAudioSettings();
+	if (ChangeValueAndDirty(AllowAudioInBackground, NewValue)) { ApplyBackgroundAudioSettings(); }
 }
 
 void ULyraSettingsShared::ApplyBackgroundAudioSettings() const
 {
-	if (!OwningPlayer || !OwningPlayer->IsPrimaryPlayer()) return;
+	if (!OwningPlayer || !OwningPlayer->IsPrimaryPlayer()) { return; }
 
 	const auto UnfocusedVolumeMultiplier = AllowAudioInBackground != EBackgroundAudioSetting::Off
 		                                       ? 1.0f
@@ -154,8 +153,7 @@ void ULyraSettingsShared::ApplyCultureSettings()
 		return;
 	}
 
-	if (!PendingCulture.IsEmpty())
-		ApplyPendingCulture();
+	if (!PendingCulture.IsEmpty()) { ApplyPendingCulture(); }
 
 	ClearPendingCulture();
 }
@@ -178,8 +176,7 @@ void ULyraSettingsShared::ApplyDefaultCulture()
 void ULyraSettingsShared::ApplyPendingCulture() const
 {
 	// SetCurrentCulture may trigger PendingCulture to be cleared (if a culture change is broadcast) so we take a copy of it to work with
-	if (!FInternationalization::Get().SetCurrentCulture(PendingCulture))
-		return;
+	if (!FInternationalization::Get().SetCurrentCulture(PendingCulture)) { return; }
 
 	// Note: This is intentionally saved to the users config
 	// We need to localize text before the player logs in and very early in the loading screen
@@ -223,15 +220,12 @@ void ULyraSettingsShared::ResetToDefaultCulture()
 
 //////////////////////////////////////////////////////////////////////
 
-void ULyraSettingsShared::ApplyInputSensitivity() const
-{
-}
+void ULyraSettingsShared::ApplyInputSensitivity() const {}
 
 void ULyraSettingsShared::SetColorBlindStrength(int32 InColorBlindStrength)
 {
 	InColorBlindStrength = FMath::Clamp(InColorBlindStrength, 0, 10);
-	if (ColorBlindStrength == InColorBlindStrength)
-		return;
+	if (ColorBlindStrength == InColorBlindStrength) { return; }
 
 	ColorBlindStrength = InColorBlindStrength;
 	FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
@@ -243,8 +237,7 @@ void ULyraSettingsShared::SetColorBlindStrength(int32 InColorBlindStrength)
 
 void ULyraSettingsShared::SetColorBlindMode(const EColorBlindMode InMode)
 {
-	if (ColorBlindMode == InMode)
-		return;
+	if (ColorBlindMode == InMode) { return; }
 
 	ColorBlindMode = InMode;
 	FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(

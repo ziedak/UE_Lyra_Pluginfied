@@ -19,7 +19,7 @@
 #include "Experience/DataAsset/UserFacingExperienceDefinition_DA.h"
 #include "GameMode/BaseWorldSettings.h"
 #include "GameState/PlayerSpawningManagerComponent.h"
-#include "Interface/BotControllerInterface.h"
+#include "Interface/IBotControllerInterface.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Log/Loggger.h"

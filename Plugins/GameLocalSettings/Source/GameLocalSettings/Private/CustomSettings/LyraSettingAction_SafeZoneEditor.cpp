@@ -5,7 +5,7 @@
 //#include "DataSource/GameSettingDataSource.h"
 //#include "Player/LyraLocalPlayer.h"
 #include "RegistrySettings/LyraGameSettingRegistry.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 #include "Widgets/Layout/SSafeZone.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraSettingAction_SafeZoneEditor)

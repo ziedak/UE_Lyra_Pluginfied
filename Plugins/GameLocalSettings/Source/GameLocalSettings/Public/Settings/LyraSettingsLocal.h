@@ -360,7 +360,7 @@ public:
 	}
 
 	void ApplySafeZoneScale() const;
-	void SetVolume(const FString& VolumeType, float InVolume);
+	void SetVolume(const FName VolumeType, float InVolume);
 
 private:
 	void SetVolumeForControlBus(USoundControlBus* InSoundControlBus, float InVolume);

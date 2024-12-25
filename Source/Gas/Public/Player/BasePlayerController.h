@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "CommonPlayerController.h"
 #include "Settings/LyraSettingsShared.h"
+#include "UI/BaseHud.h"
 #include "BasePlayerController.generated.h"
 
 
 class ABasePlayerState;
+class ABaseHud;
 class UBaseAbilitySystemComponent;
 /**
  * ABasePlayerController
@@ -25,13 +27,16 @@ public:
 	ABasePlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 	virtual void BeginPlay() override;
 	virtual void SetPlayer(UPlayer* InPlayer) override;
-	void OnSettingsChanged( ULyraSettingsShared* InSettings);
+	void OnSettingsChanged(const ULyraSettingsShared* InSettings);
 
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
 	ABasePlayerState* GetBasePlayerState() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
+	ABaseHud* GetBaseHUD() const;
 
 	//~AController interface
 	virtual void OnPossess(APawn* InPawn) override;

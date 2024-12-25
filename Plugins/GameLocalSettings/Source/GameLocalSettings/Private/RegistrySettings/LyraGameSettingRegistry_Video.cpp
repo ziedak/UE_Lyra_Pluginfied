@@ -16,7 +16,7 @@
 #include "Settings/LyraSettingsShared.h"
 #include "NativeGameplayTags.h"
 #include "Performance/LyraPerformanceSettings.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 // #include "Player/LyraLocalPlayer.h"
 
 #define LOCTEXT_NAMESPACE "Lyra"
@@ -89,10 +89,10 @@ public:
 	                            EGameSettingChangeReason Reason) const override
 	{
 		// TODO for now this applies the setting immediately
-		if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettings>())
+		if (!LocalPlayer || !LocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 			return;
 
-		if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
+		if (const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer))
 			ISharedSettings->GetLocalSettings()->ApplyScalabilitySettings();
 		// const ULyraLocalPlayer* LyraLocalPlayer = CastChecked<ULyraLocalPlayer>(LocalPlayer);
 		// LyraLocalPlayer->GetLocalSettings()->ApplyScalabilitySettings();
@@ -367,9 +367,9 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 				}
 				else
 				{
-					if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettings>())
+					if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 					{
-						if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
+						if (const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer))
 						{
 							// We don't save state until users apply the settings.
 							constexpr bool bImmediatelySaveState = false;
@@ -393,9 +393,9 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeVideoSettings(ULocal
 					const bool bCanUseDueToMobile = (PlatformSettings->FramePacingMode ==
 						ELyraFramePacingMode::MobileStyle);
 
-					if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettings>())
+					if (LocalPlayer && LocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 					{
-						if (const auto ISharedSettings = CastChecked<IPlayerSharedSettings>(LocalPlayer))
+						if (const auto ISharedSettings = CastChecked<IPlayerSharedSettingsInterface>(LocalPlayer))
 						{
 							const bool bCanBenchmark = ISharedSettings->GetLocalSettings()->CanRunAutoBenchmark();
 

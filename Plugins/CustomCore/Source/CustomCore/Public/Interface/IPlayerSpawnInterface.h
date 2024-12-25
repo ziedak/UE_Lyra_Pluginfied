@@ -5,16 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameState/PlayerSpawningManagerComponent.h"
 #include "UObject/Interface.h"
-#include "SpawnInterface.generated.h"
+#include "IPlayerSpawnInterface.generated.h"
 
 
 UINTERFACE()
-class USpawnInterface : public UInterface
+class UPlayerSpawnInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class CUSTOMCORE_API ISpawnInterface
+class CUSTOMCORE_API IPlayerSpawnInterface
 {
 	GENERATED_BODY()
 

@@ -13,9 +13,7 @@ UHealthSet::UHealthSet()
 	  MaxHealth(100.0f),
 	  bOutOfHealth(false),
 	  MaxHealthBeforeAttributeChange(0.0f),
-	  HealthBeforeAttributeChange(0.0f)
-{
-}
+	  HealthBeforeAttributeChange(0.0f) {}
 
 void UHealthSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -76,10 +74,7 @@ void UHealthSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue) const
 
 bool UHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
 {
-	if (!Super::PreGameplayEffectExecute(Data))
-	{
-		return false;
-	}
+	if (!Super::PreGameplayEffectExecute(Data)) { return false; }
 
 	// Handle modifying incoming normal damage
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
@@ -123,14 +118,8 @@ void UHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData&
 	AActor* Instigator = EffectContext.GetOriginalInstigator();
 	AActor* Causer = EffectContext.GetEffectCauser();
 
-	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
-	{
-		HandleDamage(Data, MinimumHealth);
-	}
-	else if (Data.EvaluatedData.Attribute == GetHealingAttribute())
-	{
-		HandleHealing(Data, MinimumHealth);
-	}
+	if (Data.EvaluatedData.Attribute == GetDamageAttribute()) { HandleDamage(Data, MinimumHealth); }
+	else if (Data.EvaluatedData.Attribute == GetHealingAttribute()) { HandleHealing(Data, MinimumHealth); }
 	else if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), MinimumHealth, GetMaxHealth()));
@@ -156,7 +145,7 @@ void UHealthSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData&
 	bOutOfHealth = (GetHealth() <= 0.0f);
 }
 
-float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data) const
+float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data)
 {
 	const bool bIsDamageFromSelfDestruct = Data.EffectSpec.GetDynamicAssetTags().HasTagExact(
 		BaseGameplayTags::DAMAGE_SELF_DESTRUCT);
@@ -165,10 +154,7 @@ float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data) c
 
 #if !UE_BUILD_SHIPPING
 	if (!bIsDamageFromSelfDestruct && (Data.Target.HasMatchingGameplayTag(CheatTags::GODMODE) || Data.Target.
-	                                   HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH)))
-	{
-		MinimumHealth = 1.0f;
-	}
+		HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH))) { MinimumHealth = 1.0f; }
 #endif
 
 	return MinimumHealth;
@@ -176,10 +162,7 @@ float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data) c
 
 void UHealthSet::HandleDamage(const FGameplayEffectModCallbackData& Data, const float MinimumHealth)
 {
-	if (Data.EvaluatedData.Magnitude > 0.0f)
-	{
-		BroadcastDamageMessage(Data);
-	}
+	if (Data.EvaluatedData.Magnitude > 0.0f) { BroadcastDamageMessage(Data); }
 
 	SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetMaxHealth()));
 	SetDamage(0.0f);
@@ -194,7 +177,7 @@ void UHealthSet::HandleHealing(const FGameplayEffectModCallbackData& Data, const
 void UHealthSet::BroadcastDamageMessage(const FGameplayEffectModCallbackData& Data) const
 {
 	FVerbMessage Message;
-	Message.Verb = BaseGameplayTags::GAS_DAMAGE_MESSAGE;
+	Message.Verb = BaseGameplayTags::DAMAGE_MESSAGE;
 	Message.Instigator = Data.EffectSpec.GetEffectContext().GetEffectCauser();
 	Message.InstigatorTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
 	Message.Target = GetOwningActor();
@@ -320,10 +303,7 @@ void UHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, float 
 		}
 	}
 
-	if (bOutOfHealth && (GetHealth() > 0.0f))
-	{
-		bOutOfHealth = false;
-	}
+	if (bOutOfHealth && (GetHealth() > 0.0f)) { bOutOfHealth = false; }
 }
 
 

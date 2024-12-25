@@ -11,14 +11,14 @@ class UInputMappingContext;
 class UPlayer;
 class APlayerController;
 struct FComponentRequestHandle;
-class ULyraInputConfig;
+class ULyraInputConfig_DA;
 
 /**
  * Adds InputMappingContext to local players' EnhancedInput system. 
  * Expects that local players are set up to use the EnhancedInput system.
  */
 UCLASS(MinimalAPI, meta = (DisplayName = "Add Input Binds"))
-class UGameFeatureAction_AddInputBinding : public UGameFeatureAction_WorldActionBase
+class UGameFeatureAction_AddInputBinding final : public UGameFeatureAction_WorldActionBase
 {
 	GENERATED_BODY()
 
@@ -35,7 +35,7 @@ public:
 	//~ End UObject interface
 
 	UPROPERTY(EditAnywhere, Category="Input", meta=(AssetBundles="Client,Server"))
-	TArray<TSoftObjectPtr<const ULyraInputConfig>> InputConfigs;
+	TArray<TSoftObjectPtr<const ULyraInputConfig_DA>> InputConfigs;
 
 private:
 	struct FPerContextData
@@ -49,12 +49,9 @@ private:
 	//~ Begin UGameFeatureAction_WorldActionBase interface
 	virtual void AddToWorld(const FWorldContext& WorldContext,
 	                        const FGameFeatureStateChangeContext& ChangeContext) override;
-	//~ End UGameFeatureAction_WorldActionBase interface
 
 	void Reset(FPerContextData& ActiveData);
 	void HandlePawnExtension(AActor* Actor, FName EventName, FGameFeatureStateChangeContext ChangeContext);
 	void AddInputMappingForPlayer(APawn* Pawn, FPerContextData& ActiveData);
 	void RemoveInputMapping(APawn* Pawn, FPerContextData& ActiveData);
-
-
 };

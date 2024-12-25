@@ -7,7 +7,7 @@
 // #include "EditCondition/WhenPlatformHasTrait.h"
 #include "Settings/LyraSettingsLocal.h"
 #include "GameSettingValueDiscreteDynamic.h"
-#include "RegistrySettings/PlayerSharedSettings.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 // #include "Replays/LyraReplaySubsystem.h"
 #define LOCTEXT_NAMESPACE "Lyra"
 

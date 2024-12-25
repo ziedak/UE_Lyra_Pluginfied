@@ -11,11 +11,10 @@
  * 
  */
 UCLASS()
-class GAS_API UGameFeature_HotfixManager : public UObject, public IGameFeatureStateChangeObserver
+class GAS_API UGameFeature_HotfixManager final : public UObject, public IGameFeatureStateChangeObserver
 {
 	GENERATED_BODY()
 
 public:
 	virtual void OnGameFeatureLoading(const UGameFeatureData* GameFeatureData, const FString& PluginURL) override;
-
 };
