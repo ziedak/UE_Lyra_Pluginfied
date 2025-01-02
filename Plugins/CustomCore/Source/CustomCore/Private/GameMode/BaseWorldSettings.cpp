@@ -6,7 +6,7 @@
 #include "EngineUtils.h"
 #include "Engine/AssetManager.h"
 #include "GameFramework/PlayerStart.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 #include "Misc/UObjectToken.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseWorldSettings)
@@ -15,7 +15,7 @@
 FPrimaryAssetId ABaseWorldSettings::GetDefaultGameplayExperience() const
 {
 	FPrimaryAssetId Result;
-	if (DefaultGameplayExperience.IsNull()) return Result;
+	if (DefaultGameplayExperience.IsNull()) { return Result; }
 
 	Result = UAssetManager::Get().GetPrimaryAssetIdForPath(DefaultGameplayExperience.ToSoftObjectPath());
 

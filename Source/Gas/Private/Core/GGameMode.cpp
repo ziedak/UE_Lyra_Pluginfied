@@ -15,7 +15,6 @@
 #include "Experience/DataAsset/ExperienceDefinition_DA.h"
 #include "GameFramework/GameStateBase.h"
 
-void AGGameMode::BeginPlay() { Super::BeginPlay(); }
 
 AGGameMode::AGGameMode(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -27,6 +26,33 @@ AGGameMode::AGGameMode(const FObjectInitializer& ObjectInitializer)
 	PlayerStateClass = ABasePlayerState::StaticClass();
 	DefaultPawnClass = ABaseCharacter::StaticClass();
 	HUDClass = ABaseHud::StaticClass();
+}
+
+const UGasPawnData* AGGameMode::GetPawnDataForController(const AController* InController) const
+{
+	// See if pawn data is already set on the player state
+	if (InController)
+	{
+		if (const ABasePlayerState* BasePS = InController->GetPlayerState<ABasePlayerState>())
+		{
+			if (const UGasPawnData* PawnData = BasePS->GetPawnData<UGasPawnData>()) { return PawnData; }
+		}
+	}
+
+	// If not, fall back to the default for the current experience
+	check(GameState);
+	const UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<
+		UExperienceManagerComponent>();
+	check(ExperienceComponent);
+
+	// Experience not loaded yet, so there is no pawn data to be had
+	if (!ExperienceComponent->IsExperienceLoaded()) { return nullptr; }
+
+	const UExperienceDefinition_DA* Experience = ExperienceComponent->GetCurrentExperienceChecked();
+	if (Experience->DefaultPawnData) { return static_cast<const UGasPawnData*>(Experience->DefaultPawnData); }
+
+	//----- Experience is loaded and there's still no pawn data, fall back to the default for now
+	return UGAssetManager::Get().GetDefaultPawnData();
 }
 
 APawn* AGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer,
@@ -68,40 +94,10 @@ APawn* AGGameMode::SpawnDefaultPawnAtTransform_Implementation(AController* NewPl
 }
 
 
-const UGasPawnData* AGGameMode::GetPawnDataForController(const AController* InController) const
-{
-	// See if pawn data is already set on the player state
-	if (InController)
-	{
-		if (const ABasePlayerState* BasePS = InController->GetPlayerState<ABasePlayerState>())
-		{
-			if (const UGasPawnData* PawnData = BasePS->GetPawnData<UGasPawnData>()) { return PawnData; }
-		}
-	}
-
-	// If not, fall back to the default for the current experience
-	check(GameState);
-	const UExperienceManagerComponent* ExperienceComponent = GameState->FindComponentByClass<
-		UExperienceManagerComponent>();
-	check(ExperienceComponent);
-
-	// Experience not loaded yet, so there is no pawn data to be had
-	if (!ExperienceComponent->IsExperienceLoaded())
-		return nullptr;
-
-	const UExperienceDefinition_DA* Experience = ExperienceComponent->GetCurrentExperienceChecked();
-	if (Experience->DefaultPawnData)
-		return static_cast<const UGasPawnData*>(Experience->DefaultPawnData);
-
-	//----- Experience is loaded and there's still no pawn data, fall back to the default for now
-	return UGAssetManager::Get().GetDefaultPawnData();
-}
-
 UClass* AGGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	const UGasPawnData* PawnData = GetPawnDataForController(InController);
-	if (PawnData && PawnData->PawnClass)
-		return PawnData->PawnClass;
-	
+	if (PawnData && PawnData->PawnClass) { return PawnData->PawnClass; }
+
 	return Super::GetDefaultPawnClassForController_Implementation(InController);
 }

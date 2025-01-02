@@ -3,13 +3,11 @@
 #include "Global/GlobalAppliedAbilityList.h"
 #include "Global/GlobalAppliedEffectList.h"
 #include"Component/BaseAbilitySystemComponent.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GlobalGasWorldSubsystem)
 
-UGlobalGasWorldSubsystem::UGlobalGasWorldSubsystem()
-{
-}
+UGlobalGasWorldSubsystem::UGlobalGasWorldSubsystem() {}
 
 void UGlobalGasWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -23,10 +21,7 @@ void UGlobalGasWorldSubsystem::ApplyAbilityToAll(TSubclassOf<UGameplayAbility> A
 	if (Ability.Get() != nullptr && !AppliedAbilities.Contains(Ability))
 	{
 		FGlobalAppliedAbilityList& GlobalAppliedAbilities = AppliedAbilities.Add(Ability);
-		for (auto& ASC : RegisteredASCs)
-		{
-			GlobalAppliedAbilities.AddToAsc(Ability, ASC.Get());
-		}
+		for (auto& ASC : RegisteredASCs) { GlobalAppliedAbilities.AddToAsc(Ability, ASC.Get()); }
 	}
 }
 
@@ -35,10 +30,7 @@ void UGlobalGasWorldSubsystem::ApplyEffectToAll(TSubclassOf<UGameplayEffect> Eff
 	if (Effect.Get() != nullptr && !AppliedEffects.Contains(Effect))
 	{
 		FGlobalAppliedEffectList& GlobalAppliedEffects = AppliedEffects.Add(Effect);
-		for (auto& Asc : RegisteredASCs)
-		{
-			GlobalAppliedEffects.AddToAsc(Effect, Asc.Get());
-		}
+		for (auto& Asc : RegisteredASCs) { GlobalAppliedEffects.AddToAsc(Effect, Asc.Get()); }
 	}
 }
 
@@ -71,14 +63,8 @@ void UGlobalGasWorldSubsystem::RegisterAsc(UBaseAbilitySystemComponent* Asc)
 	check(Asc);
 	RegisteredASCs.Add(Asc);
 
-	for (auto& Pair : AppliedAbilities)
-	{
-		Pair.Value.AddToAsc(Pair.Key, Asc);
-	}
-	for (auto& Pair : AppliedEffects)
-	{
-		Pair.Value.AddToAsc(Pair.Key, Asc);
-	}
+	for (auto& Pair : AppliedAbilities) { Pair.Value.AddToAsc(Pair.Key, Asc); }
+	for (auto& Pair : AppliedEffects) { Pair.Value.AddToAsc(Pair.Key, Asc); }
 }
 
 void UGlobalGasWorldSubsystem::UnregisterAsc(UBaseAbilitySystemComponent* Asc)
@@ -86,12 +72,6 @@ void UGlobalGasWorldSubsystem::UnregisterAsc(UBaseAbilitySystemComponent* Asc)
 	check(Asc);
 	RegisteredASCs.Remove(Asc);
 
-	for (auto& Pair : AppliedAbilities)
-	{
-		Pair.Value.RemoveFromAsc(Asc);
-	}
-	for (auto& Pair : AppliedEffects)
-	{
-		Pair.Value.RemoveFromAsc(Asc);
-	}
+	for (auto& Pair : AppliedAbilities) { Pair.Value.RemoveFromAsc(Asc); }
+	for (auto& Pair : AppliedEffects) { Pair.Value.RemoveFromAsc(Asc); }
 }

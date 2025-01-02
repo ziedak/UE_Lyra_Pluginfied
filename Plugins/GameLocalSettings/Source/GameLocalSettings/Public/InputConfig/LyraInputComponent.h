@@ -65,20 +65,22 @@ void ULyraInputComponent::BindAbilityActionList(const ULyraInputConfig_DA* Input
 {
 	check(InputConfig);
 
-	for (const auto& [InputAction, InputTag] : InputConfig->AbilityInputActions)
+	for (const auto Action : InputConfig->AbilityInputActions)
 	{
-		if (!InputAction || !InputTag.IsValid()) { continue; }
+		if (!Action.InputAction || !Action.InputTag.IsValid()) { continue; }
 
 		if (PressedFunc)
 		{
 			BindHandles.Add(
-				BindAction(InputAction, ETriggerEvent::Triggered, Object, PressedFunc, InputTag).GetHandle());
+				BindAction(Action.InputAction, ETriggerEvent::Triggered, Object, PressedFunc, Action.InputTag).
+				GetHandle());
 		}
 
 		if (ReleasedFunc)
 		{
 			BindHandles.Add(
-				BindAction(InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, InputTag).GetHandle());
+				BindAction(Action.InputAction, ETriggerEvent::Completed, Object, ReleasedFunc, Action.InputTag).
+				GetHandle());
 		}
 	}
 }

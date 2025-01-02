@@ -3,7 +3,7 @@
 
 // #include "Data/GasGameData.h"
 // #include "Data/GasPawnData.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 // #include "Global/BaseGameplayCueManager.h"
 #include "Misc/ScopedSlowTask.h"
 #include "Misc/App.h"
@@ -14,7 +14,7 @@ static FAutoConsoleCommand CVarDumpLoadedAssets(
 	TEXT("Lyra.DumpLoadedAssets"),
 	TEXT("Shows all assets that were loaded via the asset manager and are currently in memory."),
 	FConsoleCommandDelegate::CreateStatic(UBaseAssetManager::DumpLoadedAssets)
-	);
+);
 
 UBaseAssetManager& UBaseAssetManager::Get()
 {
@@ -22,10 +22,7 @@ UBaseAssetManager& UBaseAssetManager::Get()
 
 	if (GEngine->AssetManager)
 	{
-		if (UBaseAssetManager* Singleton = Cast<UBaseAssetManager>(GEngine->AssetManager))
-		{
-			return *Singleton;
-		}
+		if (UBaseAssetManager* Singleton = Cast<UBaseAssetManager>(GEngine->AssetManager)) { return *Singleton; }
 	}
 
 	ULOG_FATAL(LogGAS, "Invalid AssetManagerClassName in DefaultEngine.ini.  It must be set to BaseAssetManager!");
@@ -63,10 +60,7 @@ void UBaseAssetManager::DumpLoadedAssets()
  */
 UObject* UBaseAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPath)
 {
-	if (!AssetPath.IsValid())
-	{
-		return nullptr;
-	}
+	if (!AssetPath.IsValid()) { return nullptr; }
 
 	const FString AssetName = AssetPath.GetAssetName();
 	const FString AssetPathString = AssetPath.ToString();
@@ -86,10 +80,7 @@ UObject* UBaseAssetManager::SynchronousLoadAsset(const FSoftObjectPath& AssetPat
 	if (IsInitialized())
 	{
 		if (UObject* LoadedAsset = GetStreamableManager().LoadSynchronous(
-			AssetPath, ShouldLogAssetLoads()))
-		{
-			return LoadedAsset;
-		}
+			AssetPath, ShouldLogAssetLoads())) { return LoadedAsset; }
 	}
 	// Use LoadObject if asset manager isn't ready yet.
 	return AssetPath.TryLoad();
@@ -108,10 +99,8 @@ bool UBaseAssetManager::ShouldLogAssetLoads()
 void UBaseAssetManager::AddLoadedAsset(const UObject* Asset)
 {
 	FScopeLock LoadedAssetsLock(&LoadedAssetsCritical);
-	if (!ensureAlways(Asset))
-	{
-		return;
-	}
+	// Check if the asset is valid before adding it to the loaded assets array.
+	if (!ensureAlways(Asset)) { return; }
 	// Lock the critical section to prevent multiple threads from accessing the loaded assets array at the same time.
 	LoadedAssets.Add(Asset);
 }
@@ -219,10 +208,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 	if (IsRunningDedicatedServer())
 	{
 		// no need for periodic progress updates, just run the jobs
-		for (FBaseAssetManagerStartupJob& StartupJob : StartupJobs)
-		{
-			StartupJob.DoJob();
-		}
+		for (FBaseAssetManagerStartupJob& StartupJob : StartupJobs) { StartupJob.DoJob(); }
 	}
 	else
 	{
@@ -235,10 +221,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 		// If we have jobs, run them and update progress (if we have a delegate bound)
 		// Calculate the total weight of all jobs
 		float TotalJobValue = 0.0f;
-		for (const FBaseAssetManagerStartupJob& StartupJob : StartupJobs)
-		{
-			TotalJobValue += StartupJob.JobWeight;
-		}
+		for (const FBaseAssetManagerStartupJob& StartupJob : StartupJobs) { TotalJobValue += StartupJob.JobWeight; }
 
 		float AccumulatedJobValue = 0.0f;
 		// Run all the jobs and update progress as we go along	(if we have a delegate bound)
@@ -247,8 +230,7 @@ void UBaseAssetManager::DoAllStartupJobs()
 			const float JobValue = StartupJob.JobWeight;
 			// Bind a lambda to the substep delegate to update the progress bar
 			StartupJob.SubstepProgressDelegate.BindLambda(
-				[This = this, AccumulatedJobValue, JobValue, TotalJobValue](const float NewProgress)
-				{
+				[This = this, AccumulatedJobValue, JobValue, TotalJobValue](const float NewProgress){
 					const float SubstepAdjustment = FMath::Clamp(NewProgress, 0.0f, 1.0f) * JobValue;
 					const float OverAllPercentWithSubstep = (AccumulatedJobValue + SubstepAdjustment) / TotalJobValue;
 

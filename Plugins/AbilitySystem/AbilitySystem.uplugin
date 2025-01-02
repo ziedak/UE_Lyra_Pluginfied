@@ -33,6 +33,10 @@
     {
       "Name": "GameplayMessageRouter",
       "Enabled": true
+    },
+    {
+      "Name": "Logger",
+      "Enabled": true
     }
   ]
 }

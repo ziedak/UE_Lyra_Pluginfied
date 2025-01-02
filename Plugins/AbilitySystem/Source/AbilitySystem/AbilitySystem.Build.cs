@@ -45,7 +45,8 @@ public class AbilitySystem : ModuleRules
 				"Slate",
 				"SlateCore",
 				"PhysicsCore",
-				"NetCore"
+				"NetCore",
+				"Logger"
 				// ... add private dependencies that you statically link with here ...	
 			}
 		);

@@ -12,35 +12,32 @@ UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHos
 
 	const UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::ReturnNull);
 	const UGameInstance* GameInstance = World ? World->GetGameInstance() : nullptr;
-	UCommonSession_HostSessionRequest* Result = nullptr;
-	UCommonSessionSubsystem* Subsystem = GameInstance
-		                                     ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
-		                                     : nullptr;
-	if (Subsystem)
-	{
-		Result = Subsystem->CreateOnlineHostSessionRequest();
-	}
+	UCommonSession_HostSessionRequest* HostSessionRequest = nullptr;
+	UCommonSessionSubsystem* SessionSubsystem = GameInstance
+		                                            ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
+		                                            : nullptr;
+	if (SessionSubsystem) { HostSessionRequest = SessionSubsystem->CreateOnlineHostSessionRequest(); }
 
-	if (!Result)
+	if (!HostSessionRequest)
 	{
 		// Couldn't use the subsystem so create one
-		Result = NewObject<UCommonSession_HostSessionRequest>();
-		Result->OnlineMode = ECommonSessionOnlineMode::Online;
-		Result->bUseLobbies = true;
+		HostSessionRequest = NewObject<UCommonSession_HostSessionRequest>();
+		HostSessionRequest->OnlineMode = ECommonSessionOnlineMode::Online;
+		HostSessionRequest->bUseLobbies = true;
 	}
-	Result->MapID = MapID;
-	Result->ModeNameForAdvertisement = UserFacingExperienceName;
-	Result->ExtraArgs = ExtraArgs;
-	Result->ExtraArgs.Add(TEXT("Experience"), ExperienceName);
-	Result->MaxPlayerCount = MaxPlayerCount;
+	HostSessionRequest->MapID = MapID;
+	HostSessionRequest->ModeNameForAdvertisement = UserFacingExperienceName;
+	HostSessionRequest->ExtraArgs = ExtraArgs;
+	HostSessionRequest->ExtraArgs.Add(TEXT("Experience"), ExperienceName);
+	HostSessionRequest->MaxPlayerCount = MaxPlayerCount;
 
 	// if (ULyraReplaySubsystem::DoesPlatformSupportReplays())
 	// {
 	// 	if (bRecordReplay)
 	// 	{
-	// 		Result->ExtraArgs.Add(TEXT("DemoRec"), FString());
+	// 		HostSessionRequest->ExtraArgs.Add(TEXT("DemoRec"), FString());
 	// 	}
 	// }
 
-	return Result;
+	return HostSessionRequest;
 }

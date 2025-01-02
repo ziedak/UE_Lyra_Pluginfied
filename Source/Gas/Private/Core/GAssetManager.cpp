@@ -7,12 +7,9 @@
 #include "Global/BaseGameplayCueManager.h"
 #include "Data/GasGameData.h"
 #include "Data/GasPawnData.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
-UGAssetManager& UGAssetManager::Get()
-{
-	return Get2<UGAssetManager>();
-}
+UGAssetManager& UGAssetManager::Get() { return Get2<UGAssetManager>(); }
 
 void UGAssetManager::StartInitialLoading()
 {
@@ -50,15 +47,9 @@ void UGAssetManager::InitializeGameplayCueManager() const
 	Gcm->LoadAlwaysLoadedCues();
 }
 
-const UGasGameData& UGAssetManager::GetGameData()
-{
-	return GetOrLoadTypedGameData<UGasGameData>(BaseGameDataPath);
-}
+const UGasGameData& UGAssetManager::GetGameData() { return GetOrLoadTypedGameData<UGasGameData>(BaseGameDataPath); }
 
-UGasPawnData* UGAssetManager::GetDefaultPawnData() const
-{
-	return GetAsset(DefaultPawnData);
-}
+UGasPawnData* UGAssetManager::GetDefaultPawnData() const { return GetAsset(DefaultPawnData); }
 
 
 #if WITH_EDITOR

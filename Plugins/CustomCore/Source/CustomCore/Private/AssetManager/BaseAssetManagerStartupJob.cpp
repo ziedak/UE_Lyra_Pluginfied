@@ -1,6 +1,6 @@
 #include "AssetManager/BaseAssetManagerStartupJob.h"
+#include"Log/Log.h"
 
-#include"Log/Loggger.h"
 //	1.	The function starts by declaring a variable JobStartTime and assigning it the current time in seconds using FPlatformTime::Seconds().
 //			This variable will be used to measure the time taken to complete the job.
 //	2.	Next, a shared pointer Handle is declared.This pointer will be used to hold an instance of FStreamableHandle.

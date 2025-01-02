@@ -1,0 +1,50 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "CustomUI",
+  "Description": "",
+  "Category": "Other",
+  "CreatedBy": "Zied Akremi",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "IsExperimentalVersion": false,
+  "Installed": false,
+  "Modules": [
+    {
+      "Name": "CustomUI",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "CommonUser",
+      "Enabled": true
+    },
+    {
+      "Name": "GameSettings",
+      "Enabled": true
+    },
+    {
+      "Name": "CommonLoadingScreen",
+      "Enabled": true
+    },
+    {
+      "Name": "CommonGame",
+      "Enabled": true
+    },
+    {
+      "Name": "AsyncMixin",
+      "Enabled": true
+    },
+    {
+      "Name": "ControlFlows",
+      "Enabled": true
+    }
+  ]
+}

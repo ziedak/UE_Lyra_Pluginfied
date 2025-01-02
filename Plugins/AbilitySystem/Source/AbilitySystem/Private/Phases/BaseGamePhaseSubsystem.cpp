@@ -4,19 +4,14 @@
 #include "Enums/PhaseTagMatchType.h"
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Engine/World.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 #include "GameFramework/GameStateBase.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseGamePhaseSubsystem)
 
-UBaseGamePhaseSubsystem::UBaseGamePhaseSubsystem()
-{
-}
+UBaseGamePhaseSubsystem::UBaseGamePhaseSubsystem() {}
 
-void UBaseGamePhaseSubsystem::PostInitialize()
-{
-	Super::PostInitialize();
-}
+void UBaseGamePhaseSubsystem::PostInitialize() { Super::PostInitialize(); }
 
 bool UBaseGamePhaseSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -43,10 +38,7 @@ void UBaseGamePhaseSubsystem::StartPhase(const TSubclassOf<UBaseGamePhaseAbility
                                          const FBaseGamePhaseDelegate& PhaseEndedCallback)
 {
 	auto ASC = GetBaseAbilitySystemComponent();
-	if (!ensure(ASC))
-	{
-		return;
-	}
+	if (!ensure(ASC)) { return; }
 	// Give the ability and activate it once to start the phase immediately (if it's not already active) and then end it when it's done.
 	// This is a simple way to handle phases that are meant to be short-lived.
 	// If you want a phase to be long-lived, you should give the ability to the player's ASC and activate it when you want to start the phase.
@@ -83,10 +75,7 @@ void UBaseGamePhaseSubsystem::WhenPhaseStartsOrIsActive(const FGameplayTag Phase
 
 	PhaseStartObservers.Add(Observer);
 
-	if (IsPhaseActive(PhaseTag))
-	{
-		WhenPhaseActive.ExecuteIfBound(PhaseTag);
-	}
+	if (IsPhaseActive(PhaseTag)) { WhenPhaseActive.ExecuteIfBound(PhaseTag); }
 }
 
 void UBaseGamePhaseSubsystem::WhenPhaseEnds(FGameplayTag PhaseTag,
@@ -106,10 +95,7 @@ bool UBaseGamePhaseSubsystem::IsPhaseActive(const FGameplayTag& PhaseTag) const
 	for (const auto& Kvp : ActivePhaseMap)
 	{
 		const FBaseGamePhaseEntry& PhaseEntry = Kvp.Value;
-		if (PhaseEntry.PhaseTag.MatchesTag(PhaseTag))
-		{
-			return true;
-		}
+		if (PhaseEntry.PhaseTag.MatchesTag(PhaseTag)) { return true; }
 	}
 
 	return false;
@@ -119,10 +105,7 @@ void UBaseGamePhaseSubsystem::OnBeginPhase(const UBaseGamePhaseAbility* PhaseAbi
                                            const FGameplayAbilitySpecHandle PhaseAbilityHandle)
 {
 	const auto Asc = GetBaseAbilitySystemComponent();
-	if (!ensure(Asc))
-	{
-		return;
-	}
+	if (!ensure(Asc)) { return; }
 
 	const FGameplayTag IncomingPhaseTag = PhaseAbility->GetGamePhaseTag();
 	ULOG_INFO(LogGAS, "Beginning Phase '%s' (%s)", *IncomingPhaseTag.ToString(), *GetNameSafe(PhaseAbility));
@@ -130,10 +113,7 @@ void UBaseGamePhaseSubsystem::OnBeginPhase(const UBaseGamePhaseAbility* PhaseAbi
 	TArray<FGameplayAbilitySpec*> ActivePhases;
 	for (const auto& Kvp : ActivePhaseMap)
 	{
-		if (FGameplayAbilitySpec* Spec = Asc->FindAbilitySpecFromHandle(Kvp.Key))
-		{
-			ActivePhases.Add(Spec);
-		}
+		if (FGameplayAbilitySpec* Spec = Asc->FindAbilitySpecFromHandle(Kvp.Key)) { ActivePhases.Add(Spec); }
 	}
 
 	// End any active phases that don't match the incoming phase tag (i.e. they are sub-phases of the incoming phase)
@@ -160,8 +140,7 @@ void UBaseGamePhaseSubsystem::OnBeginPhase(const UBaseGamePhaseAbility* PhaseAbi
 
 			FGameplayAbilitySpecHandle HandleToEnd = ActivePhase->Handle;
 			Asc->CancelAbilitiesByFunc(
-				[HandleToEnd](const UBaseGameplayAbility* Ability, FGameplayAbilitySpecHandle Handle)
-				{
+				[HandleToEnd](const UBaseGameplayAbility* Ability, FGameplayAbilitySpecHandle Handle){
 					return Handle == HandleToEnd;
 				}, true);
 		}
@@ -181,10 +160,7 @@ void UBaseGamePhaseSubsystem::OnBeginPhase(const UBaseGamePhaseAbility* PhaseAbi
 	// or when any phase that matches "Game.Playing.*" is active.
 	for (const FPhaseObserver& Observer : PhaseStartObservers)
 	{
-		if (Observer.IsMatch(IncomingPhaseTag))
-		{
-			Observer.PhaseCallback.ExecuteIfBound(IncomingPhaseTag);
-		}
+		if (Observer.IsMatch(IncomingPhaseTag)) { Observer.PhaseCallback.ExecuteIfBound(IncomingPhaseTag); }
 	}
 }
 
@@ -206,10 +182,7 @@ void UBaseGamePhaseSubsystem::OnEndPhase(const UBaseGamePhaseAbility* PhaseAbili
 	// The observer will be called when the phase ends, depending on the match type specified.
 	for (const FPhaseObserver& Observer : PhaseEndObservers)
 	{
-		if (Observer.IsMatch(EndedPhaseAbility))
-		{
-			Observer.PhaseCallback.ExecuteIfBound(EndedPhaseAbility);
-		}
+		if (Observer.IsMatch(EndedPhaseAbility)) { Observer.PhaseCallback.ExecuteIfBound(EndedPhaseAbility); }
 	}
 }
 
@@ -240,8 +213,7 @@ void UBaseGamePhaseSubsystem::K2_StartPhase(TSubclassOf<UBaseGamePhaseAbility> P
 	const FBaseGamePhaseDelegate PhaseEndedCallback = FBaseGamePhaseDelegate::CreateWeakLambda(
 		const_cast<UObject*>(
 			PhaseEndedDelegate.GetUObject()),
-		[PhaseEndedDelegate](const UBaseGamePhaseAbility* PhaseAbility)
-		{
+		[PhaseEndedDelegate](const UBaseGamePhaseAbility* PhaseAbility){
 			PhaseEndedDelegate.ExecuteIfBound(PhaseAbility);
 		});
 
@@ -254,10 +226,7 @@ void UBaseGamePhaseSubsystem::K2_WhenPhaseStartsOrIsActive(const FGameplayTag Ph
 {
 	const FBaseGamePhaseTagDelegate ActiveDelegate = FBaseGamePhaseTagDelegate::CreateWeakLambda(
 		WhenPhaseActive.GetUObject(),
-		[WhenPhaseActive](const FGameplayTag& PhaseTag)
-		{
-			WhenPhaseActive.ExecuteIfBound(PhaseTag);
-		});
+		[WhenPhaseActive](const FGameplayTag& PhaseTag){ WhenPhaseActive.ExecuteIfBound(PhaseTag); });
 
 	WhenPhaseStartsOrIsActive(PhaseTag, MatchType, ActiveDelegate);
 }
@@ -268,10 +237,7 @@ void UBaseGamePhaseSubsystem::K2_WhenPhaseEnds(const FGameplayTag PhaseTag,
 {
 	const FBaseGamePhaseTagDelegate EndedDelegate = FBaseGamePhaseTagDelegate::CreateWeakLambda(
 		WhenPhaseEnd.GetUObject(),
-		[WhenPhaseEnd](const FGameplayTag& PhaseTag)
-		{
-			WhenPhaseEnd.ExecuteIfBound(PhaseTag);
-		});
+		[WhenPhaseEnd](const FGameplayTag& PhaseTag){ WhenPhaseEnd.ExecuteIfBound(PhaseTag); });
 
 	WhenPhaseEnds(PhaseTag, MatchType, EndedDelegate);
 }

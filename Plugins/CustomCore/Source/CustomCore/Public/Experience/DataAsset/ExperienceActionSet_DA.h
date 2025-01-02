@@ -24,16 +24,13 @@ public :
 	UPROPERTY(EditAnywhere, Category="Feature Dependencies")
 	TArray<FString> GameFeaturesToEnableList;
 
-
 	//~UObject interface
 #if WITH_EDITOR
 	virtual EDataValidationResult IsDataValid(class FDataValidationContext& Context) const override;
 #endif
-	//~End of UObject interface
 
 	//~UPrimaryDataAsset interface
 #if WITH_EDITORONLY_DATA
 	virtual void UpdateAssetBundleData() override;
 #endif
-	//~End of UPrimaryDataAsset interface
 };

@@ -15,7 +15,7 @@
 #include "Enums/AbilityActivationPolicy.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Physics/PhysicalMaterialWithTags.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseGameplayAbility)
 
 #define ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN(FunctionName, ReturnValue)																				\

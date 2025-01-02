@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonPlayerController.h"
 #include "Settings/LyraSettingsShared.h"
-#include "UI/BaseHud.h"
+#include "UI/Hud/BaseHud.h"
 #include "BasePlayerController.generated.h"
 
 

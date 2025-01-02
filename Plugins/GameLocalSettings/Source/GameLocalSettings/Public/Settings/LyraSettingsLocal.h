@@ -59,7 +59,6 @@ public:
 	virtual void ApplyNonResolutionSettings() override;
 	virtual int32 GetOverallScalabilityLevel() const override;
 	virtual void SetOverallScalabilityLevel(int32 Value) override;
-	//~End of UGameUserSettings interface
 
 	void OnExperienceLoaded();
 	void OnHotfixDeviceProfileApplied();
@@ -203,10 +202,7 @@ public:
 	UFUNCTION()
 	FString GetDesiredDeviceProfileQualitySuffix() const { return DesiredUserChosenDeviceProfileSuffix; };
 	UFUNCTION()
-	void SetDesiredDeviceProfileQualitySuffix(const FString& InDesiredSuffix)
-	{
-		DesiredUserChosenDeviceProfileSuffix = InDesiredSuffix;
-	};
+	void SetDesiredDeviceProfileQualitySuffix(const FString& InDesiredSuffix) { DesiredUserChosenDeviceProfileSuffix = InDesiredSuffix; };
 
 protected:
 	/** Updates device profiles, FPS mode etc for the current game mode */
@@ -214,13 +210,13 @@ protected:
 	FString GetBasePlatformName() const;
 	FName GetPlatformName() const;
 	TArray<FString> BuildComposedNamesToFind(const FString& BasePlatformName,
-																 const FString& EffectiveUserSuffix,
-																 const FString& ExperienceSuffix) const;
+	                                         const FString& EffectiveUserSuffix,
+	                                         const FString& ExperienceSuffix) const;
 	FString FindActualProfileToApply(UDeviceProfileManager& Manager,
-														 const TArray<FString>& ComposedNamesToFind,
-														 const FName& PlatformName) const;
+	                                 const TArray<FString>& ComposedNamesToFind,
+	                                 const FName& PlatformName) const;
 	FString GetEffectiveUserSuffix(const TArray<FLyraQualityDeviceProfileVariant>& UserFacingVariants,
-												   const int32 PlatformMaxRefreshRate) const;
+	                               const int32 PlatformMaxRefreshRate) const;
 	void ApplyFrameSyncType() const;
 	void ApplyTargetFPS() const;
 	void ApplyDeviceProfileIfNeeded(UDeviceProfileManager& Manager, const FString& ActualProfileToApply);
@@ -244,7 +240,7 @@ private:
 	FString UserChosenDeviceProfileSuffix;
 
 	UPROPERTY(config)
-	bool bMobileDisableResolutionReset=true;
+	bool bMobileDisableResolutionReset = true;
 	//////////////////////////////////////////////////////////////////
 	// Audio - Volume
 public:
@@ -360,7 +356,7 @@ public:
 	}
 
 	void ApplySafeZoneScale() const;
-	void SetVolume(const FName VolumeType, float InVolume);
+	void SetVolume(FName VolumeType, float InVolume);
 
 private:
 	void SetVolumeForControlBus(USoundControlBus* InSoundControlBus, float InVolume);

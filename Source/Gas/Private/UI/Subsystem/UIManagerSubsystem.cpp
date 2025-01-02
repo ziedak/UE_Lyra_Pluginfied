@@ -30,7 +30,7 @@ bool UUIManagerSubsystem::Tick(float DeltaTime)
 void UUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
 {
 	const UGameUIPolicy* UIPolicy = GetCurrentUIPolicy();
-	if (!UIPolicy) { return; }
+	if (!UIPolicy) return;
 
 	for (const ULocalPlayer* LocalPlayer : GetGameInstance()->GetLocalPlayers())
 	{
@@ -39,15 +39,14 @@ void UUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
 		if (const APlayerController* PC = LocalPlayer->GetPlayerController(GetWorld()))
 		{
 			const AHUD* HUD = PC->GetHUD();
-			if (HUD && !HUD->bShowHUD) { bShouldShowUI = false; }
+			if (HUD && !HUD->bShowHUD) bShouldShowUI = false;
 		}
-
-		if (UPrimaryGameLayout* RootLayout = UIPolicy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-		{
-			const ESlateVisibility DesiredVisibility = bShouldShowUI
-				                                           ? ESlateVisibility::SelfHitTestInvisible
-				                                           : ESlateVisibility::Collapsed;
-			if (DesiredVisibility != RootLayout->GetVisibility()) { RootLayout->SetVisibility(DesiredVisibility); }
-		}
+		UPrimaryGameLayout* RootLayout = UIPolicy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer));
+		if (!RootLayout) continue;
+		//TODO verify this 
+		const ESlateVisibility DesiredVisibility = bShouldShowUI
+			                                           ? ESlateVisibility::SelfHitTestInvisible
+			                                           : ESlateVisibility::Collapsed;
+		if (DesiredVisibility != RootLayout->GetVisibility()) RootLayout->SetVisibility(DesiredVisibility);
 	}
 }

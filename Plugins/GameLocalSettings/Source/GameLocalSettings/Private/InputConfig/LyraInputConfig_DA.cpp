@@ -11,9 +11,9 @@
 const UInputAction* ULyraInputConfig_DA::FindNativeInputActionForTag(const FGameplayTag& InInputTag,
                                                                      const bool bLogNotFound) const
 {
-	for (const auto& [InputAction, InputTag] : NativeInputActions)
+	for (const auto Action : NativeInputActions)
 	{
-		if (InputAction && (InputTag == InInputTag)) { return InputAction; }
+		if (Action.InputAction && Action.InputTag == InInputTag) { return Action.InputAction; }
 	}
 
 	if (bLogNotFound)
@@ -29,9 +29,9 @@ const UInputAction* ULyraInputConfig_DA::FindAbilityInputActionForTag(const FGam
                                                                       const bool bLogNotFound) const
 {
 	//  Iterate through the AbilityInputActions array and return the InputAction that matches the InputTag.
-	for (const auto& [InputAction, InputTag] : AbilityInputActions)
+	for (const auto Action : AbilityInputActions)
 	{
-		if (InputAction && InputTag == InInputTag) { return InputAction; }
+		if (Action.InputAction && Action.InputTag == InInputTag) { return Action.InputAction; }
 	}
 
 	if (bLogNotFound)

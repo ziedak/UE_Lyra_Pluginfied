@@ -39,8 +39,8 @@ class GAS_API ABasePlayerState : public AModularPlayerState, public IAbilitySyst
 public:
 	ABasePlayerState(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	// UFUNCTION(BlueprintCallable, Category = "Base|PlayerState")
-	// ABasePlayerController* GeBasePlayerController() const;
+	UFUNCTION(BlueprintCallable, Category = "Base|PlayerState")
+	ABasePlayerController* GeBasePlayerController() const { return Cast<ABasePlayerController>(GetOwner()); };
 
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerState")
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const { return AbilitySystemComponent; }
@@ -86,9 +86,6 @@ protected:
 	// Could replace this with custom replication
 	UFUNCTION()
 	FRotator GetReplicatedViewRotation() const { return ReplicatedViewRotation; }
-
-
-	ABasePlayerController* GetBasePlayerController() const { return Cast<ABasePlayerController>(GetOwner()); }
 
 private:
 	UFUNCTION()

@@ -17,7 +17,8 @@ public class CustomCore : ModuleRules
 				"CoreUObject", // This module provides the UObject system, which is the base class for most of the objects in Unreal Engine.
 				"GameplayAbilities",
 				"DTLSHandlerComponent", // This module handles DTLS (Datagram Transport Layer Security) 
-				"CommonLoadingScreen", "GameLocalSettings" // This module provides functionalities for common loading screens.
+				"CommonLoadingScreen",
+				"GameLocalSettings" // This module provides functionalities for common loading screens.
 			}
 		);
 
@@ -37,7 +38,7 @@ public class CustomCore : ModuleRules
 				"Slate", // This module is the user interface framework for Unreal Engine, used for creating in-game and editor UI.
 				"SlateCore", // This module provides the core functionalities for the Slate UI framework.
 				"UMG", // The Unreal Motion Graphics module is used for creating complex user interfaces. 
-				
+				"Logger" // This module provides logging functionalities.
 			}
 		);
 

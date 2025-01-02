@@ -53,6 +53,14 @@
     {
       "Name": "GameFeatures",
       "Enabled": true
+    },
+    {
+      "Name": "GameLocalSettings",
+      "Enabled": true
+    },
+    {
+      "Name": "Logger",
+      "Enabled": true
     }
   ]
 }

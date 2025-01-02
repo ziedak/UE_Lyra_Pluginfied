@@ -1,7 +1,7 @@
 #include "Abilities/GameplayAbility_Death.h"
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Tags/BaseGameplayTags.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 //TODO : verify this
 // #include "Trace/Trace.inl"
 #include "Character/Components/HealthComponent.h"
@@ -56,10 +56,7 @@ void UGameplayAbility_Death::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		LogGAS, "UGameplayAbility_Death::ActivateAbility Ability [%s] failed to change activation group to blocking.",
 		*GetName());
 
-	if (bAutoStartDeath)
-	{
-		StartDeath();
-	}
+	if (bAutoStartDeath) { StartDeath(); }
 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }

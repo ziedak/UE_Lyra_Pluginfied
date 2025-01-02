@@ -26,7 +26,7 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeMouseAndKeyboardSett
 
 
 	Screen->AddSetting(AddMouseSensitivitySettings());
-	AddKeyBindingSettings(Screen,InLocalPlayer);
+	AddKeyBindingSettings(Screen, InLocalPlayer);
 
 	return Screen;
 }
@@ -162,12 +162,14 @@ void ULyraGameSettingRegistry::AddKeyBindingSettings(UGameSettingCollection* Scr
 		static const FText DefaultDevDisplayName = NSLOCTEXT("LyraInputSettings", "LyraInputDefaults",
 		                                                     "Default Experiences");
 
-		if (DisplayCategory.IsEmpty()) DisplayCategory = DefaultDevDisplayName;
+		if (DisplayCategory.IsEmpty()) { DisplayCategory = DefaultDevDisplayName; }
 		const FString DisplayCatString = DisplayCategory.ToString();
 
 		// If we have already created a setting collection for this category, then return it
 		if (UGameSettingCollection** ExistingCategory = CategoryToSettingCollection.Find(DisplayCatString))
+		{
 			return *ExistingCategory;
+		}
 
 		// Otherwise, create a new setting collection and add it to the screen
 		UGameSettingCollection* ConfigSettingCollection = NewObject<UGameSettingCollection>();
@@ -191,7 +193,7 @@ void ULyraGameSettingRegistry::AddKeyBindingSettings(UGameSettingCollection* Scr
 		for (const TPair<FName, FKeyMappingRow>& RowPair : Profile->GetPlayerMappingRows())
 		{
 			// Create a setting row for anything with valid mappings and that we haven't created yet
-			if (!RowPair.Value.HasAnyMappings()) continue;
+			if (!RowPair.Value.HasAnyMappings()) { continue; }
 
 			// We only want keyboard keys on this settings screen, so we will filter down by mappings
 			// that are set to keyboard keys

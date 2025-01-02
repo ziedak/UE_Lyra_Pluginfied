@@ -1,7 +1,7 @@
 #include "Abilities/GameplayAbility_Jump.h"
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Tags/BaseGameplayTags.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameplayAbility_Jump)
 
@@ -18,10 +18,7 @@ bool UGameplayAbility_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle 
                                                const FGameplayTagContainer* TargetTags,
                                                FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid())
-	{
-		return false;
-	}
+	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid()) { return false; }
 	//TODO: implement this
 	//const ALyraCharacter* LyraCharacter = Cast<ALyraCharacter>(ActorInfo->AvatarActor.Get());
 	//if (!LyraCharacter || !LyraCharacter->CanJump())
@@ -29,10 +26,7 @@ bool UGameplayAbility_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle 
 	//	return false;
 	//}
 
-	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
-	{
-		return false;
-	}
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags)) { return false; }
 
 	return true;
 }

@@ -148,7 +148,7 @@ public:
 	{
 		UpdateCache();
 
-		for (const FLimitPair& Pair : Thresholds) { if (TestValue >= Pair.Limit) { return Pair.Value; } }
+		for (const FLimitPair& Pair : Thresholds) { if (TestValue >= Pair.Limit) return Pair.Value; }
 
 		return DefaultValue;
 	}
@@ -174,7 +174,7 @@ public:
 				Result = Pair.Value;
 				bFirstValue = false;
 			}
-			else { Result = FMath::Min(Result, Pair.Value); }
+			else Result = FMath::Min(Result, Pair.Value);
 		}
 
 		return Result;
@@ -227,10 +227,7 @@ private:
 
 namespace LyraSettingsHelpers
 {
-	bool HasPlatformTrait(const FGameplayTag Tag)
-	{
-		return ICommonUIModule::GetSettings().GetPlatformTraits().HasTag(Tag);
-	}
+	bool HasPlatformTrait(const FGameplayTag Tag) { return ICommonUIModule::GetSettings().GetPlatformTraits().HasTag(Tag); }
 
 	// Returns the max level from the integer scalability settings (ignores ResolutionQuality)
 	int32 GetHighestLevelOfAnyScalabilityChannel(const Scalability::FQualityLevels& ScalabilityQuality)
@@ -291,19 +288,13 @@ namespace LyraSettingsHelpers
 
 	int32 GetApplicableOverallQualityLimit(const int32 FrameRate) { return OverallQualityLimits.Query(FrameRate); }
 
-	float GetApplicableResolutionQualityLimit(const int32 FrameRate)
-	{
-		return ResolutionQualityLimits.Query(FrameRate);
-	}
+	float GetApplicableResolutionQualityLimit(const int32 FrameRate) { return ResolutionQualityLimits.Query(FrameRate); }
 
-	float GetApplicableResolutionQualityRecommendation(const int32 FrameRate)
-	{
-		return ResolutionQualityRecommendations.Query(FrameRate);
-	}
+	float GetApplicableResolutionQualityRecommendation(const int32 FrameRate) { return ResolutionQualityRecommendations.Query(FrameRate); }
 
 	int32 ConstrainFrameRateToBeCompatibleWithOverallQuality(const int32 FrameRate, const int32 OverallQuality)
 	{
-		const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+		const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 		const TArray<int32>& PossibleRates = PlatformSettings->MobileFrameRateLimits;
 
 		// Choose the closest frame rate (without going over) to the user preferred one that is supported and compatible with the desired overall quality
@@ -341,8 +332,10 @@ ULyraSettingsLocal::ULyraSettingsLocal()
 	ULyraSettingsLocal::SetToDefaults();
 }
 
-// PRAGMA_ENABLE_DEPRECATION_WARNINGS
+ULyraSettingsLocal* ULyraSettingsLocal::Get() { return GEngine ? CastChecked<ULyraSettingsLocal>(GEngine->GetGameUserSettings()) : nullptr; }
 
+// PRAGMA_ENABLE_DEPRECATION_WARNINGS
+#pragma region UGameUserSettings overrides
 void ULyraSettingsLocal::SetToDefaults()
 {
 	Super::SetToDefaults();
@@ -351,7 +344,7 @@ void ULyraSettingsLocal::SetToDefaults()
 	bUseHDRAudioMode = false;
 	bSoundControlBusMixLoaded = false;
 
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 	UserChosenDeviceProfileSuffix = PlatformSettings->DefaultDeviceProfileSuffix;
 	DesiredUserChosenDeviceProfileSuffix = UserChosenDeviceProfileSuffix;
 
@@ -368,8 +361,8 @@ void ULyraSettingsLocal::LoadSettings(bool bForceReload)
 	Super::LoadSettings(bForceReload);
 
 	// Console platforms use rhi.SyncInterval to limit framerate
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) { FrameRateLimit = 0.0f; }
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) FrameRateLimit = 0.0f;
 
 	// Enable HRTF if needed
 	bDesiredHeadphoneMode = bUseHeadphoneMode;
@@ -404,10 +397,6 @@ void ULyraSettingsLocal::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-ULyraSettingsLocal* ULyraSettingsLocal::Get()
-{
-	return GEngine ? CastChecked<ULyraSettingsLocal>(GEngine->GetGameUserSettings()) : nullptr;
-}
 
 void ULyraSettingsLocal::ConfirmVideoMode()
 {
@@ -418,50 +407,36 @@ void ULyraSettingsLocal::ConfirmVideoMode()
 // Combines two limits, always taking the minimum of the two (with special handling for values of <= 0 meaning unlimited)
 float CombineFrameRateLimits(const float Limit1, const float Limit2)
 {
-	if (Limit1 <= 0.0f) { return Limit2; }
-	if (Limit2 <= 0.0f) { return Limit1; }
+	if (Limit1 <= 0.0f) return Limit2;
+	if (Limit2 <= 0.0f) return Limit1;
 	return FMath::Min(Limit1, Limit2);
 }
 
 float ULyraSettingsLocal::GetEffectiveFrameRateLimit()
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 
 #if WITH_EDITOR
-	if (GIsEditor && !CVarApplyFrameRateSettingsInPIE.GetValueOnGameThread())
-	{
-		return Super::GetEffectiveFrameRateLimit();
-	}
+	if (GIsEditor && !CVarApplyFrameRateSettingsInPIE.GetValueOnGameThread()) return Super::GetEffectiveFrameRateLimit();
 #endif
 
-	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) { return 0.0f; }
+	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) return 0.0f;
 
 	float EffectiveFrameRateLimit = Super::GetEffectiveFrameRateLimit();
 
-	if (ShouldUseFrontendPerformanceSettings())
-	{
-		EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_InMenu);
-	}
+	if (ShouldUseFrontendPerformanceSettings()) EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_InMenu);
 
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::DesktopStyle) { return EffectiveFrameRateLimit; }
+	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::DesktopStyle) return EffectiveFrameRateLimit;
 
-	if (FPlatformMisc::IsRunningOnBattery())
-	{
-		EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_OnBattery);
-	}
+	if (FPlatformMisc::IsRunningOnBattery()) EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_OnBattery);
 
-	if (FSlateApplication::IsInitialized() && !FSlateApplication::Get().IsActive())
-	{
-		EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_WhenBackgrounded);
-	}
+	if (FSlateApplication::IsInitialized() && !FSlateApplication::Get().IsActive()) EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_WhenBackgrounded);
 
 	return EffectiveFrameRateLimit;
 }
+#pragma endregion
 
-int32 ULyraSettingsLocal::GetHighestLevelOfAnyScalabilityChannel() const
-{
-	return LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel(ScalabilityQuality);
-}
+int32 ULyraSettingsLocal::GetHighestLevelOfAnyScalabilityChannel() const { return LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel(ScalabilityQuality); }
 
 void ULyraSettingsLocal::OverrideQualityLevelsToScalabilityMode(const FLyraScalabilitySnapshot& InMode,
                                                                 Scalability::FQualityLevels& InOutLevels) const
@@ -554,7 +529,7 @@ void ULyraSettingsLocal::OnHotfixDeviceProfileApplied() { ReapplyThingsDueToPoss
 
 void ULyraSettingsLocal::ReapplyThingsDueToPossibleDeviceProfileChange() { ApplyNonResolutionSettings(); }
 
-void ULyraSettingsLocal::SetShouldUseFrontendPerformanceSettings(bool bInFrontEnd)
+void ULyraSettingsLocal::SetShouldUseFrontendPerformanceSettings(const bool bInFrontEnd)
 {
 	bInFrontEndForPerformancePurposes = bInFrontEnd;
 	UpdateEffectiveFrameRateLimit();
@@ -563,23 +538,24 @@ void ULyraSettingsLocal::SetShouldUseFrontendPerformanceSettings(bool bInFrontEn
 bool ULyraSettingsLocal::ShouldUseFrontendPerformanceSettings() const
 {
 #if WITH_EDITOR
-	if (GIsEditor && !CVarApplyFrontEndPerformanceOptionsInPIE.GetValueOnGameThread()) { return false; }
+	if (GIsEditor && !CVarApplyFrontEndPerformanceOptionsInPIE.GetValueOnGameThread()) return false;
 #endif
 
 	return bInFrontEndForPerformancePurposes;
 }
 
-ELyraStatDisplayMode ULyraSettingsLocal::GetPerfStatDisplayState(ELyraDisplayablePerformanceStat Stat) const
+ELyraStatDisplayMode ULyraSettingsLocal::GetPerfStatDisplayState(const ELyraDisplayablePerformanceStat Stat) const
 {
-	if (const ELyraStatDisplayMode* DisplayMode = DisplayStatList.Find(Stat)) { return *DisplayMode; }
+	if (const ELyraStatDisplayMode* DisplayMode = DisplayStatList.Find(Stat)) return *DisplayMode;
 
 	return ELyraStatDisplayMode::Hidden;
 }
 
-void ULyraSettingsLocal::SetPerfStatDisplayState(ELyraDisplayablePerformanceStat Stat, ELyraStatDisplayMode DisplayMode)
+void ULyraSettingsLocal::SetPerfStatDisplayState(const ELyraDisplayablePerformanceStat Stat,
+                                                 const ELyraStatDisplayMode DisplayMode)
 {
-	if (DisplayMode == ELyraStatDisplayMode::Hidden) { DisplayStatList.Remove(Stat); }
-	else { DisplayStatList.FindOrAdd(Stat) = DisplayMode; }
+	if (DisplayMode == ELyraStatDisplayMode::Hidden) DisplayStatList.Remove(Stat);
+	else DisplayStatList.FindOrAdd(Stat) = DisplayMode;
 
 	PerfStatSettingsChangedEvent.Broadcast();
 }
@@ -591,7 +567,7 @@ void ULyraSettingsLocal::SetDisplayGamma(const float InGamma)
 	ApplyDisplayGamma();
 }
 
-void ULyraSettingsLocal::ApplyDisplayGamma() const { if (GEngine) { GEngine->DisplayGamma = DisplayGamma; } }
+void ULyraSettingsLocal::ApplyDisplayGamma() const { if (GEngine) GEngine->DisplayGamma = DisplayGamma; }
 
 
 void ULyraSettingsLocal::SetFrameRateLimit_OnBattery(const float NewLimitFPS)
@@ -601,14 +577,14 @@ void ULyraSettingsLocal::SetFrameRateLimit_OnBattery(const float NewLimitFPS)
 }
 
 
-void ULyraSettingsLocal::SetFrameRateLimit_InMenu(float NewLimitFPS)
+void ULyraSettingsLocal::SetFrameRateLimit_InMenu(const float NewLimitFPS)
 {
 	FrameRateLimit_InMenu = NewLimitFPS;
 	UpdateEffectiveFrameRateLimit();
 }
 
 
-void ULyraSettingsLocal::SetFrameRateLimit_WhenBackgrounded(float NewLimitFPS)
+void ULyraSettingsLocal::SetFrameRateLimit_WhenBackgrounded(const float NewLimitFPS)
 {
 	FrameRateLimit_WhenBackgrounded = NewLimitFPS;
 	UpdateEffectiveFrameRateLimit();
@@ -622,20 +598,11 @@ void ULyraSettingsLocal::SetFrameRateLimit_Always(const float NewLimitFPS)
 	UpdateEffectiveFrameRateLimit();
 }
 
-void ULyraSettingsLocal::UpdateEffectiveFrameRateLimit()
-{
-	if (!IsRunningDedicatedServer()) { SetFrameRateLimitCVar(GetEffectiveFrameRateLimit()); }
-}
+void ULyraSettingsLocal::UpdateEffectiveFrameRateLimit() { if (!IsRunningDedicatedServer()) SetFrameRateLimitCVar(GetEffectiveFrameRateLimit()); }
 
-int32 ULyraSettingsLocal::GetDefaultMobileFrameRate()
-{
-	return CVarDeviceProfileDrivenMobileDefaultFrameRate.GetValueOnGameThread();
-}
+int32 ULyraSettingsLocal::GetDefaultMobileFrameRate() { return CVarDeviceProfileDrivenMobileDefaultFrameRate.GetValueOnGameThread(); }
 
-int32 ULyraSettingsLocal::GetMaxMobileFrameRate()
-{
-	return CVarDeviceProfileDrivenMobileMaxFrameRate.GetValueOnGameThread();
-}
+int32 ULyraSettingsLocal::GetMaxMobileFrameRate() { return CVarDeviceProfileDrivenMobileMaxFrameRate.GetValueOnGameThread(); }
 
 bool ULyraSettingsLocal::IsSupportedMobileFramePace(const int32 TestFPS)
 {
@@ -648,15 +615,9 @@ bool ULyraSettingsLocal::IsSupportedMobileFramePace(const int32 TestFPS)
 	return bIsDefault || (bDoesNotExceedLimit && bIsSupportedPace);
 }
 
-int32 ULyraSettingsLocal::GetFirstFrameRateWithQualityLimit() const
-{
-	return LyraSettingsHelpers::GetFirstFrameRateWithQualityLimit();
-}
+int32 ULyraSettingsLocal::GetFirstFrameRateWithQualityLimit() const { return LyraSettingsHelpers::GetFirstFrameRateWithQualityLimit(); }
 
-int32 ULyraSettingsLocal::GetLowestQualityWithFrameRateLimit() const
-{
-	return LyraSettingsHelpers::GetLowestQualityWithFrameRateLimit();
-}
+int32 ULyraSettingsLocal::GetLowestQualityWithFrameRateLimit() const { return LyraSettingsHelpers::GetLowestQualityWithFrameRateLimit(); }
 
 void ULyraSettingsLocal::ResetToMobileDeviceDefaults()
 {
@@ -675,7 +636,7 @@ void ULyraSettingsLocal::ResetToMobileDeviceDefaults()
 
 int32 ULyraSettingsLocal::GetMaxSupportedOverallQualityLevel() const
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 	return PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle
 	       && DeviceDefaultScalabilitySettings.bHasOverrides
 		       ? LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel(DeviceDefaultScalabilitySettings.Qualities)
@@ -684,8 +645,8 @@ int32 ULyraSettingsLocal::GetMaxSupportedOverallQualityLevel() const
 
 void ULyraSettingsLocal::SetMobileFPSMode(const int32 NewLimitFPS)
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) { return; }
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
 
 	if (MobileFrameRateLimit != NewLimitFPS)
 	{
@@ -708,15 +669,15 @@ void ULyraSettingsLocal::SetDesiredMobileFrameRateLimit(const int32 NewLimitFPS)
 
 void ULyraSettingsLocal::ClampMobileFPSQualityLevels(const bool bWriteBack)
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) { return; }
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
 	const int32 QualityLimit = LyraSettingsHelpers::GetApplicableOverallQualityLimit(DesiredMobileFrameRateLimit);
 	const int32 CurrentQualityLevel = GetHighestLevelOfAnyScalabilityChannel();
 
-	if (QualityLimit < 0 || CurrentQualityLevel <= QualityLimit) { return; }
+	if (QualityLimit < 0 || CurrentQualityLevel <= QualityLimit) return;
 	SetOverallScalabilityLevel(QualityLimit);
 
-	if (bWriteBack) { SetQualityLevels(ScalabilityQuality); }
+	if (bWriteBack) SetQualityLevels(ScalabilityQuality);
 
 	UE_LOG(LogConsoleResponse, Log, TEXT("Mobile FPS clamped overall quality (%d -> %d)."), CurrentQualityLevel,
 	       QualityLimit);
@@ -724,18 +685,15 @@ void ULyraSettingsLocal::ClampMobileFPSQualityLevels(const bool bWriteBack)
 
 void ULyraSettingsLocal::ClampMobileQuality()
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) { return; }
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
 
 	// Clamp the resultant settings to the device default, it's known viable maximum.
 	// This is a clamp rather than override to preserve allowed user settings
 	Scalability::FQualityLevels CurrentLevels = Scalability::GetQualityLevels();
 
 	/** On mobile, disables the 3D Resolution clamp that reverts the setting set by the user on boot.*/
-	if (bMobileDisableResolutionReset)
-	{
-		DeviceDefaultScalabilitySettings.Qualities.ResolutionQuality = CurrentLevels.ResolutionQuality;
-	}
+	if (bMobileDisableResolutionReset) DeviceDefaultScalabilitySettings.Qualities.ResolutionQuality = CurrentLevels.ResolutionQuality;
 
 	ClampQualityLevelsToDeviceProfile(DeviceDefaultScalabilitySettings.Qualities, /*inout*/ CurrentLevels);
 	SetQualityLevels(CurrentLevels);
@@ -752,9 +710,7 @@ void ULyraSettingsLocal::ClampMobileQuality()
 
 	// Choose the closest supported frame rate to the user desired setting without going over the device imposed limit
 	const TArray<int32>& PossibleRates = PlatformSettings->MobileFrameRateLimits;
-	const int32 LimitIndex = PossibleRates.FindLastByPredicate([this](const int32& TestRate){
-		return (TestRate <= DesiredMobileFrameRateLimit) && IsSupportedMobileFramePace(TestRate);
-	});
+	const int32 LimitIndex = PossibleRates.FindLastByPredicate([this](const int32& TestRate){ return TestRate <= DesiredMobileFrameRateLimit && IsSupportedMobileFramePace(TestRate); });
 	const int32 ActualLimitFPS = PossibleRates.IsValidIndex(LimitIndex)
 		                             ? PossibleRates[LimitIndex]
 		                             : GetDefaultMobileFrameRate();
@@ -806,17 +762,17 @@ void ULyraSettingsLocal::RemapMobileResolutionQuality(const int32 FromFPS, const
 
 void ULyraSettingsLocal::SetHeadphoneModeEnabled(const bool bEnabled)
 {
-	if (!CanModifyHeadphoneModeEnabled()) { return; }
+	if (!CanModifyHeadphoneModeEnabled()) return;
 
 	static IConsoleVariable* BinauralSpatializationDisabledCVar = IConsoleManager::Get().FindConsoleVariable(
 		TEXT("au.DisableBinauralSpatialization"));
 
-	if (!BinauralSpatializationDisabledCVar) { return; }
+	if (!BinauralSpatializationDisabledCVar) return;
 
 	BinauralSpatializationDisabledCVar->Set(!bEnabled, ECVF_SetByGameSetting);
 
 	// Only save settings if the setting actually changed
-	if (bUseHeadphoneMode == bEnabled) { return; }
+	if (bUseHeadphoneMode == bEnabled) return;
 
 	bUseHeadphoneMode = bEnabled;
 	SaveSettings();
@@ -841,17 +797,18 @@ void ULyraSettingsLocal::SetHDRAudioModeEnabled(const bool bEnabled)
 {
 	bUseHDRAudioMode = bEnabled;
 
-	if (!GEngine) { return; }
+	if (!GEngine) return;
 	const UWorld* World = GEngine->GetCurrentPlayWorld();
-	if (!World) { return; }
+	if (!World) return;
 
 	if (const auto LyraAudioMixEffectsSubsystem = World->GetSubsystem<
-		ULyraAudioMixEffectsSubsystem>()) { LyraAudioMixEffectsSubsystem->ApplyDynamicRangeEffectsChains(bEnabled); }
+		ULyraAudioMixEffectsSubsystem>())
+		LyraAudioMixEffectsSubsystem->ApplyDynamicRangeEffectsChains(bEnabled);
 }
 
 bool ULyraSettingsLocal::CanRunAutoBenchmark() const
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 	return PlatformSettings && PlatformSettings->bSupportsAutomaticVideoQualityBenchmark;
 }
 
@@ -868,7 +825,7 @@ void ULyraSettingsLocal::RunAutoBenchmark(const bool bSaveImmediately)
 	// Always apply, optionally save
 	ApplyScalabilitySettings();
 
-	if (bSaveImmediately) { SaveSettings(); }
+	if (bSaveImmediately) SaveSettings();
 }
 
 void ULyraSettingsLocal::ApplyScalabilitySettings() const { SetQualityLevels(ScalabilityQuality); }
@@ -876,7 +833,7 @@ void ULyraSettingsLocal::ApplyScalabilitySettings() const { SetQualityLevels(Sca
 void ULyraSettingsLocal::SetOverallVolume(const float InVolume)
 {
 	OverallVolume = InVolume;
-	SetVolume("Overall", OverallVolume);
+	SetVolume(L"Overall", OverallVolume);
 }
 
 void ULyraSettingsLocal::SetMusicVolume(const float InVolume)
@@ -907,14 +864,14 @@ void ULyraSettingsLocal::SetVolumeForControlBus(USoundControlBus* InSoundControl
 {
 	// Check to see if references to the control buses and control bus mixes have been loaded yet
 	// Will likely need to be loaded if this function is the first time a setter has been called
-	if (!bSoundControlBusMixLoaded) { LoadUserControlBusMix(); }
+	if (!bSoundControlBusMixLoaded) LoadUserControlBusMix();
 
 	// Ensure it's been loaded before continuing
 	ensureMsgf(bSoundControlBusMixLoaded, TEXT("UserControlBusMix Settings Failed to Load."));
 
 	// Assuming everything has been loaded correctly, we retrieve the world and use AudioModulationStatics to update the Control Bus Volume values and
 	// apply the settings to the cached User Control Bus Mix
-	if (!GEngine || !InSoundControlBus || !bSoundControlBusMixLoaded) { return; }
+	if (!GEngine || !InSoundControlBus || !bSoundControlBusMixLoaded) return;
 
 	if (const UWorld* AudioWorld = GEngine->GetCurrentPlayWorld())
 	{
@@ -944,20 +901,21 @@ void ULyraSettingsLocal::SetAudioOutputDeviceId(const FString& InAudioOutputDevi
 
 void ULyraSettingsLocal::ApplySafeZoneScale() const { SSafeZone::SetGlobalSafeZoneScale(GetSafeZone()); }
 
-void ULyraSettingsLocal::SetVolume(const FName VolumeType, const float InVolume)
+void ULyraSettingsLocal::SetVolume(FName VolumeType, const float InVolume)
 {
 	// Check to see if references to the control buses and control bus mixes have been loaded yet
 	// Will likely need to be loaded if this function is the first time a setter has been called from the UI
-	if (!bSoundControlBusMixLoaded) { LoadUserControlBusMix(); }
+	if (!bSoundControlBusMixLoaded) LoadUserControlBusMix();
 
 	// Ensure it's been loaded before continuing
 	ensureMsgf(bSoundControlBusMixLoaded, TEXT("UserControlBusMix Settings Failed to Load."));
 
 	// Locate the locally cached bus and set the volume on it
 	const TObjectPtr<USoundControlBus>* ControlBusDblPtr = ControlBusMap.Find(VolumeType);
-	if (!ControlBusDblPtr) { return; }
+	if (!ControlBusDblPtr) return;
 
-	if (USoundControlBus* ControlBusPtr = *ControlBusDblPtr) { SetVolumeForControlBus(ControlBusPtr, InVolume); }
+	//if (USoundControlBus* ControlBusPtr = *ControlBusDblPtr) { SetVolumeForControlBus(ControlBusPtr, InVolume); }
+	if (USoundControlBus* ControlBusPtr = ControlBusDblPtr->Get()) SetVolumeForControlBus(ControlBusPtr, InVolume);
 }
 
 void ULyraSettingsLocal::ApplyNonResolutionSettings()
@@ -965,24 +923,18 @@ void ULyraSettingsLocal::ApplyNonResolutionSettings()
 	Super::ApplyNonResolutionSettings();
 
 	// In this section, update each Control Bus to the currently cached UI settings
-	SetVolume(TEXT("Overall"), OverallVolume);
-	SetVolume(TEXT("Music"), MusicVolume);
-	SetVolume(TEXT("SoundFX"), SoundFXVolume);
-	SetVolume(TEXT("Dialogue"), DialogueVolume);
-	SetVolume(TEXT("VoiceChat"), VoiceChatVolume);
+	SetOverallVolume(OverallVolume);
+	SetMusicVolume(MusicVolume);
+	SetSoundFXVolume(SoundFXVolume);
+	SetDialogueVolume(DialogueVolume);
+	SetVoiceChatVolume(VoiceChatVolume);
 
 
-	if (UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(GetTypedOuter<ULocalPlayer>()))
-	{
-		InputSubsystem->SetGamepadInputType(ControllerPlatform);
-	}
+	if (UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(GetTypedOuter<ULocalPlayer>())) InputSubsystem->SetGamepadInputType(ControllerPlatform);
 
-	if (bUseHeadphoneMode != bDesiredHeadphoneMode) { SetHeadphoneModeEnabled(bDesiredHeadphoneMode); }
+	if (bUseHeadphoneMode != bDesiredHeadphoneMode) SetHeadphoneModeEnabled(bDesiredHeadphoneMode);
 
-	if (DesiredUserChosenDeviceProfileSuffix != UserChosenDeviceProfileSuffix)
-	{
-		UserChosenDeviceProfileSuffix = DesiredUserChosenDeviceProfileSuffix;
-	}
+	if (DesiredUserChosenDeviceProfileSuffix != UserChosenDeviceProfileSuffix) UserChosenDeviceProfileSuffix = DesiredUserChosenDeviceProfileSuffix;
 
 	if (FApp::CanEverRender())
 	{
@@ -996,7 +948,7 @@ void ULyraSettingsLocal::ApplyNonResolutionSettings()
 
 int32 ULyraSettingsLocal::GetOverallScalabilityLevel() const
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 
 	return PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle
 		       ? GetHighestLevelOfAnyScalabilityChannel()
@@ -1013,8 +965,8 @@ void ULyraSettingsLocal::SetOverallScalabilityLevel(int32 Value)
 
 	Super::SetOverallScalabilityLevel(Value);
 
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) { return; }
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
 
 	// Restore the resolution quality, mobile decouples this from overall quality
 	ScalabilityQuality.ResolutionQuality = CurrentMobileResolutionQuality;
@@ -1022,23 +974,17 @@ void ULyraSettingsLocal::SetOverallScalabilityLevel(int32 Value)
 	// Changing the overall quality can end up adjusting the frame rate on mobile since there are limits
 	const int32 ConstrainedFrameRateLimit = LyraSettingsHelpers::ConstrainFrameRateToBeCompatibleWithOverallQuality(
 		DesiredMobileFrameRateLimit, Value);
-	if (ConstrainedFrameRateLimit != DesiredMobileFrameRateLimit)
-	{
-		SetDesiredMobileFrameRateLimit(ConstrainedFrameRateLimit);
-	}
+	if (ConstrainedFrameRateLimit != DesiredMobileFrameRateLimit) SetDesiredMobileFrameRateLimit(ConstrainedFrameRateLimit);
 }
 
 void ULyraSettingsLocal::SetControllerPlatform(const FName InControllerPlatform)
 {
-	if (ControllerPlatform == InControllerPlatform) { return; }
+	if (ControllerPlatform == InControllerPlatform) return;
 
 	ControllerPlatform = InControllerPlatform;
 
 	// Apply the change to the common input subsystem so that we refresh any input icons we're using.
-	if (UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(GetTypedOuter<ULocalPlayer>()))
-	{
-		InputSubsystem->SetGamepadInputType(ControllerPlatform);
-	}
+	if (UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(GetTypedOuter<ULocalPlayer>())) InputSubsystem->SetGamepadInputType(ControllerPlatform);
 }
 
 //
@@ -1212,7 +1158,7 @@ void ULyraSettingsLocal::SetControllerPlatform(const FName InControllerPlatform)
 // PRAGMA_ENABLE_DEPRECATION_WARNINGS
 USoundControlBus* ULyraSettingsLocal::LoadControlBus(UObject* ObjPath, const FString& VolumeType)
 {
-	if (!ObjPath) { return nullptr; }
+	if (!ObjPath) return nullptr;
 	const auto ControlBus = Cast<USoundControlBus>(ObjPath);
 
 	if (!ControlBus)
@@ -1222,38 +1168,43 @@ USoundControlBus* ULyraSettingsLocal::LoadControlBus(UObject* ObjPath, const FSt
 		return nullptr;
 	}
 
-	ControlBusMap.Add(*VolumeType, ControlBus);
+
 	return ControlBus;
 }
 
 void ULyraSettingsLocal::LoadUserControlBusMix()
 {
-	if (!GEngine) { return; }
+	if (!GEngine) return;
 	const UWorld* World = GEngine->GetCurrentPlayWorld();
-	if (!World) { return; }
+	if (!World) return;
 	const ULyraAudioSettings* AudioSettings = GetDefault<ULyraAudioSettings>();
-	if (!AudioSettings) { return; }
+	if (!AudioSettings) return;
 
 	ControlBusMap.Empty();
 
 	auto ObjPath = AudioSettings->OverallVolumeControlBus.TryLoad();
 	auto OverallControlBus = LoadControlBus(ObjPath, "Overall");
+	ControlBusMap.Add("Overall", OverallControlBus);
 
-	ObjPath = AudioSettings->OverallVolumeControlBus.TryLoad();
+	ObjPath = AudioSettings->MusicVolumeControlBus.TryLoad();
 	auto MusicControlBus = LoadControlBus(ObjPath, "Music");
+	ControlBusMap.Add("Music", MusicControlBus);
 
-	ObjPath = AudioSettings->OverallVolumeControlBus.TryLoad();
+	ObjPath = AudioSettings->SoundFXVolumeControlBus.TryLoad();
 	auto SoundFXControlBus = LoadControlBus(ObjPath, "SoundFX");
+	ControlBusMap.Add("SoundFX", SoundFXControlBus);
 
-	ObjPath = AudioSettings->OverallVolumeControlBus.TryLoad();
+	ObjPath = AudioSettings->DialogueVolumeControlBus.TryLoad();
 	auto DialogueControlBus = LoadControlBus(ObjPath, "Dialogue");
+	ControlBusMap.Add("Dialogue", DialogueControlBus);
 
-	ObjPath = AudioSettings->OverallVolumeControlBus.TryLoad();
+	ObjPath = AudioSettings->VoiceChatVolumeControlBus.TryLoad();
 	auto VoiceChatControlBus = LoadControlBus(ObjPath, "VoiceChat");
+	ControlBusMap.Add("VoiceChat", VoiceChatControlBus);
 
-
+	// Load the User Settings Control Bus Mix
 	ObjPath = AudioSettings->UserSettingsControlBusMix.TryLoad();
-	if (!ObjPath) { return; }
+	if (!ObjPath) return;
 	USoundControlBusMix* SoundControlBusMix = Cast<USoundControlBusMix>(ObjPath);
 	if (!SoundControlBusMix)
 	{
@@ -1296,15 +1247,15 @@ void ULyraSettingsLocal::OnAppActivationStateChanged(bool bIsActive)
 void ULyraSettingsLocal::UpdateGameModeDeviceProfileAndFps()
 {
 #if WITH_EDITOR
-	if (GIsEditor && !CVarApplyDeviceProfilesInPIE.GetValueOnGameThread()) { return; }
+	if (GIsEditor && !CVarApplyDeviceProfilesInPIE.GetValueOnGameThread()) return;
 #endif
 
 	UDeviceProfileManager& Manager = UDeviceProfileManager::Get();
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 	const TArray<FLyraQualityDeviceProfileVariant>& UserFacingVariants = PlatformSettings->
 		UserFacingDeviceProfileOptions;
 
-	FString ExperienceSuffix;
+	const FString ExperienceSuffix;
 	const int32 PlatformMaxRefreshRate = FPlatformMisc::GetMaxRefreshRate();
 	const FString EffectiveUserSuffix = GetEffectiveUserSuffix(UserFacingVariants, PlatformMaxRefreshRate);
 
@@ -1331,14 +1282,12 @@ void ULyraSettingsLocal::UpdateGameModeDeviceProfileAndFps()
 FString ULyraSettingsLocal::GetEffectiveUserSuffix(const TArray<FLyraQualityDeviceProfileVariant>& UserFacingVariants,
                                                    const int32 PlatformMaxRefreshRate) const
 {
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 
-	int32 SuffixIndex = UserFacingVariants.IndexOfByPredicate([&](const FLyraQualityDeviceProfileVariant& Data){
-		return Data.DeviceProfileSuffix == UserChosenDeviceProfileSuffix;
-	});
+	int32 SuffixIndex = UserFacingVariants.IndexOfByPredicate([&](const FLyraQualityDeviceProfileVariant& Data){ return Data.DeviceProfileSuffix == UserChosenDeviceProfileSuffix; });
 	while (UserFacingVariants.IsValidIndex(SuffixIndex))
 	{
-		if (PlatformMaxRefreshRate >= UserFacingVariants[SuffixIndex].MinRefreshRate) { break; }
+		if (PlatformMaxRefreshRate >= UserFacingVariants[SuffixIndex].MinRefreshRate) break;
 
 		--SuffixIndex;
 	}
@@ -1355,7 +1304,7 @@ FString ULyraSettingsLocal::GetBasePlatformName() const
 	{
 		const auto Settings = GetDefault<UPlatformEmulationSettings>();
 		const FName PretendBaseDeviceProfile = Settings->GetPretendBaseDeviceProfile();
-		if (PretendBaseDeviceProfile != NAME_None) { BasePlatformName = PretendBaseDeviceProfile.ToString(); }
+		if (PretendBaseDeviceProfile != NAME_None) BasePlatformName = PretendBaseDeviceProfile.ToString();
 	}
 #endif
 	return BasePlatformName;
@@ -1386,15 +1335,9 @@ TArray<FString> ULyraSettingsLocal::BuildComposedNamesToFind(const FString& Base
 		ComposedNamesToFind.Add(
 			FString::Printf(TEXT("%s_%s_%s"), *BasePlatformName, *EffectiveUserSuffix, *ExperienceSuffix));
 	}
-	if (bHadUserSuffix)
-	{
-		ComposedNamesToFind.Add(FString::Printf(TEXT("%s_%s"), *BasePlatformName, *EffectiveUserSuffix));
-	}
-	if (bHadExperienceSuffix)
-	{
-		ComposedNamesToFind.Add(FString::Printf(TEXT("%s_%s"), *BasePlatformName, *ExperienceSuffix));
-	}
-	if (GIsEditor) { ComposedNamesToFind.Add(BasePlatformName); }
+	if (bHadUserSuffix) ComposedNamesToFind.Add(FString::Printf(TEXT("%s_%s"), *BasePlatformName, *EffectiveUserSuffix));
+	if (bHadExperienceSuffix) ComposedNamesToFind.Add(FString::Printf(TEXT("%s_%s"), *BasePlatformName, *ExperienceSuffix));
+	if (GIsEditor) ComposedNamesToFind.Add(BasePlatformName);
 	return ComposedNamesToFind;
 }
 
@@ -1405,14 +1348,11 @@ FString ULyraSettingsLocal::FindActualProfileToApply(UDeviceProfileManager& Mana
 	FString ActualProfileToApply;
 	for (const FString& TestProfileName : ComposedNamesToFind)
 	{
-		if (!Manager.HasLoadableProfileName(TestProfileName, PlatformName)) { continue; }
+		if (!Manager.HasLoadableProfileName(TestProfileName, PlatformName)) continue;
 
 		ActualProfileToApply = TestProfileName;
 		const UDeviceProfile* Profile = Manager.FindProfile(TestProfileName, /*bCreateOnFail=*/ false);
-		if (!Profile)
-		{
-			Profile = Manager.CreateProfile(TestProfileName, TEXT(""), TestProfileName, *PlatformName.ToString());
-		}
+		if (!Profile) Profile = Manager.CreateProfile(TestProfileName, TEXT(""), TestProfileName, *PlatformName.ToString());
 
 		UE_LOG(LogConsoleResponse, Log, TEXT("Profile %s exists"), *Profile->GetName());
 		break;
@@ -1474,14 +1414,11 @@ void ULyraSettingsLocal::UpdateFramePacing(const ELyraFramePacingMode FramePacin
 {
 	switch (FramePacingMode)
 	{
-	case ELyraFramePacingMode::MobileStyle:
-		UpdateMobileFramePacing();
+	case ELyraFramePacingMode::MobileStyle: UpdateMobileFramePacing();
 		break;
-	case ELyraFramePacingMode::ConsoleStyle:
-		UpdateConsoleFramePacing();
+	case ELyraFramePacingMode::ConsoleStyle: UpdateConsoleFramePacing();
 		break;
-	case ELyraFramePacingMode::DesktopStyle:
-		UpdateDesktopFramePacing();
+	case ELyraFramePacingMode::DesktopStyle: UpdateDesktopFramePacing();
 		break;
 	}
 }
@@ -1497,7 +1434,7 @@ void ULyraSettingsLocal::UpdateFramePacing(const ELyraFramePacingMode FramePacin
 //
 // 	UDeviceProfileManager& Manager = UDeviceProfileManager::Get();
 //
-// 	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+// 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 // 	const TArray<FLyraQualityDeviceProfileVariant>& UserFacingVariants = PlatformSettings->
 // 		UserFacingDeviceProfileOptions;
 //
@@ -1651,7 +1588,7 @@ void ULyraSettingsLocal::UpdateConsoleFramePacing() const
 void ULyraSettingsLocal::ApplyFrameSyncType() const
 {
 	const int32 FrameSyncType = CVarDeviceProfileDrivenFrameSyncType.GetValueOnGameThread();
-	if (FrameSyncType == -1) { return; }
+	if (FrameSyncType == -1) return;
 
 	UE_LOG(LogConsoleResponse, Log, TEXT("Setting frame sync mode to %d."), FrameSyncType);
 	SetSyncTypeCVar(FrameSyncType);
@@ -1660,7 +1597,7 @@ void ULyraSettingsLocal::ApplyFrameSyncType() const
 void ULyraSettingsLocal::ApplyTargetFPS() const
 {
 	const int32 TargetFPS = CVarDeviceProfileDrivenTargetFps.GetValueOnGameThread();
-	if (TargetFPS == -1) { return; }
+	if (TargetFPS == -1) return;
 
 	UE_LOG(LogConsoleResponse, Log, TEXT("Setting frame pace to %d Hz."), TargetFPS);
 	FPlatformRHIFramePacer::SetFramePace(TargetFPS);
@@ -1687,11 +1624,9 @@ void ULyraSettingsLocal::UpdateMobileFramePacing()
 	//@TODO: Handle different limits for in-front-end or low-battery mode on mobile
 
 	// Choose the closest supported frame rate to the user desired setting without going over the device imposed limit
-	const ULyraPlatformSpecificRenderingSettings* PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 	const TArray<int32>& PossibleRates = PlatformSettings->MobileFrameRateLimits;
-	const int32 LimitIndex = PossibleRates.FindLastByPredicate([this](const int32& TestRate){
-		return (TestRate <= MobileFrameRateLimit) && IsSupportedMobileFramePace(TestRate);
-	});
+	const int32 LimitIndex = PossibleRates.FindLastByPredicate([this](const int32& TestRate){ return (TestRate <= MobileFrameRateLimit) && IsSupportedMobileFramePace(TestRate); });
 	const int32 TargetFPS = PossibleRates.IsValidIndex(LimitIndex)
 		                        ? PossibleRates[LimitIndex]
 		                        : GetDefaultMobileFrameRate();
@@ -1708,7 +1643,7 @@ void ULyraSettingsLocal::UpdateDynamicResFrameTime(const float TargetFPS) const
 {
 	static IConsoleVariable* CVarDyResFrameTimeBudget = IConsoleManager::Get().FindConsoleVariable(
 		TEXT("r.DynamicRes.FrameTimeBudget"));
-	if (!CVarDyResFrameTimeBudget || !(ensure(TargetFPS > 0.0f))) { return; }
+	if (!CVarDyResFrameTimeBudget || !(ensure(TargetFPS > 0.0f))) return;
 
 	const float DyResFrameTimeBudget = 1000.0f / TargetFPS;
 	CVarDyResFrameTimeBudget->Set(DyResFrameTimeBudget, ECVF_SetByGameSetting);

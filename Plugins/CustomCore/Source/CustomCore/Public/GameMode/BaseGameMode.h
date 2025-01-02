@@ -19,8 +19,7 @@ class UGasPawnData;
  *
  * This is called after the player has finished initialization
  */
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLyraGameModePlayerInitialized, AGameModeBase* /*GameMode*/,
-                                     AController* /*NewPlayer*/);
+
 
 /** 
  * ALyraGameMode
@@ -33,7 +32,7 @@ class CUSTOMCORE_API ABaseGameMode : public AModularGameModeBase
 	GENERATED_BODY()
 
 public:
-	ABaseGameMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	ABaseGameMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()): Super(ObjectInitializer) {}
 
 	// UFUNCTION(BlueprintCallable, Category = "Lyra|Pawn")
 	//  UGasPawnData* GetPawnDataForController(const AController* InController) const;
@@ -70,24 +69,27 @@ public:
 	// Agnostic version of PlayerCanRestart that can be used for both player bots and players
 	virtual bool ControllerCanRestart(AController* Controller);
 
-	// Delegate called on player initialization, described above 
+	// Delegate called on player initialization, described above
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLyraGameModePlayerInitialized, AGameModeBase* /*GameMode*/,
+	                                     AController* /*NewPlayer*/);
 	FOnLyraGameModePlayerInitialized OnGameModePlayerInitialized;
 
 protected:
-	//@TODO implement this
 	void OnExperienceLoaded(const UExperienceDefinition_DA* CurrentExperience);
 	bool IsExperienceLoaded() const;
 
 	void OnMatchAssignmentGiven(const FPrimaryAssetId& ExperienceId, const FString& ExperienceIdSource) const;
-
 	void HandleMatchAssignmentIfNotExpectingOne();
+
+private:
 	FPrimaryAssetId GetExperienceFromOptions(FString& ExperienceIdSource) const;
-	FPrimaryAssetId GetExperienceFromEditor(const UWorld* World, FString& ExperienceIdSource) const;
+	FPrimaryAssetId GetExperienceFromEditor(FString& ExperienceIdSource) const;
 	FPrimaryAssetId GetExperienceFromCommandLine(FString& ExperienceIdSource) const;
-	FPrimaryAssetId GetExperienceFromWorldSettings(UWorld* World, FString& ExperienceIdSource) const;
+	FPrimaryAssetId GetExperienceFromWorldSettings(FString& ExperienceIdSource) const;
 	FPrimaryAssetId GetDefaultExperience(FString& ExperienceIdSource);
 	bool ValidateExperienceAssetData(const FPrimaryAssetId& ExperienceId) const;
 
+protected:
 	bool TryDedicatedServerLogin();
 	void HostDedicatedServerMatch(ECommonSessionOnlineMode OnlineMode) const;
 	UUserFacingExperienceDefinition_DA* LoadUserExperience() const;
@@ -97,6 +99,7 @@ protected:
 	UCommonSession_HostSessionRequest* CreateHostSessionRequest(
 		const UUserFacingExperienceDefinition_DA* UserExperience,
 		ECommonSessionOnlineMode OnlineMode) const;
+
 	void HostGameSession(UCommonSession_HostSessionRequest* HostRequest) const;
 
 	UFUNCTION()

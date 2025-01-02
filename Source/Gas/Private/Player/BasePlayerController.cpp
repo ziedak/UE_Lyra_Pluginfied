@@ -9,7 +9,7 @@
 #include "Player/BaseLocalPlayer.h"
 #include "Player/BasePlayerState.h"
 #include "Settings/LyraSettingsShared.h"
-#include "UI/BaseHUD.h"
+#include "UI/Hud/BaseHUD.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerController)
 

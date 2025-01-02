@@ -12,10 +12,7 @@ UAsyncAction_ExperienceReady* UAsyncAction_ExperienceReady::WaitForExperienceRea
 		WorldContextObject,
 		EGetWorldErrorMode::LogAndReturnNull);
 
-	if (!World)
-	{
-		return nullptr;
-	}
+	if (!World) { return nullptr; }
 
 	const auto Action = NewObject<UAsyncAction_ExperienceReady>();
 	Action->WorldPtr = World;
@@ -34,7 +31,7 @@ void UAsyncAction_ExperienceReady::Activate()
 		return;
 	}
 
-	if (AGameStateBase* GameState = World->GetGameState())
+	if (const AGameStateBase* GameState = World->GetGameState())
 	{
 		Step2_ListenToExperienceLoading(GameState);
 		return;
@@ -44,10 +41,7 @@ void UAsyncAction_ExperienceReady::Activate()
 
 void UAsyncAction_ExperienceReady::Step1_HandleGameStateSet(AGameStateBase* GameState)
 {
-	if (UWorld* World = WorldPtr.Get())
-	{
-		World->GameStateSetEvent.RemoveAll(this);
-	}
+	if (UWorld* World = WorldPtr.Get()) { World->GameStateSetEvent.RemoveAll(this); }
 
 	Step2_ListenToExperienceLoading(GameState);
 }

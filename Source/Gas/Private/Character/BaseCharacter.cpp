@@ -261,10 +261,10 @@ void ABaseCharacter::InitializeGameplayTags() const
 	{
 		if (TagMapping.Value.IsValid()) { BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
 	}
-	// todo :implement this
+
 	// Set the default movement mode tag.
-	// UBaseCharacterMovementComponent* BaseMoveComp = CastChecked<UBaseCharacterMovementComponent>(GetCharacterMovement());
-	// SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
+	UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
+	SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
 }
 
 void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType)
@@ -288,11 +288,10 @@ void ABaseCharacter::DisableMovementAndCollision() const
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	// todo : implement this
 	// Stop movement and disable movement.
-	// UBaseCharacterMovementComponent* BaseMoveComp = CastChecked<UBaseCharacterMovementComponent>(GetCharacterMovement());
-	// BaseMoveComp->StopMovementImmediately();
-	// BaseMoveComp->DisableMovement();
+	UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
+	BaseMoveComp->StopMovementImmediately();
+	BaseMoveComp->DisableMovement();
 }
 
 void ABaseCharacter::DestroyDueToDeath()
@@ -322,10 +321,9 @@ void ABaseCharacter::UninitAndDestroy()
 void ABaseCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
-	// UBaseCharacterMovementComponent* BaseMoveComp = CastChecked<UBaseCharacterMovementComponent>(GetCharacterMovement());
-	//
-	// SetMovementModeTag(PrevMovementMode, PreviousCustomMode, false);
-	// SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
+	const UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
+	SetMovementModeTag(PrevMovementMode, PreviousCustomMode, false);
+	SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
 }
 
 void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode, const uint8 CustomMovementMode,

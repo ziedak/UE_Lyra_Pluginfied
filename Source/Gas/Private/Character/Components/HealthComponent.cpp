@@ -11,7 +11,7 @@
 #include "MessageVerb/VerbMessageHelpers.h"
 #include "AssetManager/BaseAssetManager.h"
 #include "Tags/BaseGameplayTags.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HealthComponent)

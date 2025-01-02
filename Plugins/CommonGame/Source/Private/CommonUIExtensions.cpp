@@ -21,9 +21,7 @@ ECommonInputType UCommonUIExtensions::GetOwningPlayerInputType(const UUserWidget
 	{
 		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
 			WidgetContextObject->GetOwningLocalPlayer()))
-		{
 			return InputSubsystem->GetCurrentInputType();
-		}
 	}
 
 	return ECommonInputType::Count;
@@ -35,9 +33,7 @@ bool UCommonUIExtensions::IsOwningPlayerUsingTouch(const UUserWidget* WidgetCont
 	{
 		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
 			WidgetContextObject->GetOwningLocalPlayer()))
-		{
 			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Touch;
-		}
 	}
 	return false;
 }
@@ -48,9 +44,7 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UUserWidget* WidgetCo
 	{
 		if (const UCommonInputSubsystem* InputSubsystem = UCommonInputSubsystem::Get(
 			WidgetContextObject->GetOwningLocalPlayer()))
-		{
 			return InputSubsystem->GetCurrentInputType() == ECommonInputType::Gamepad;
-		}
 	}
 	return false;
 }
@@ -58,32 +52,23 @@ bool UCommonUIExtensions::IsOwningPlayerUsingGamepad(const UUserWidget* WidgetCo
 UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(
 	const ULocalPlayer* LocalPlayer, FGameplayTag LayerName, TSubclassOf<UCommonActivatableWidget> WidgetClass)
 {
-	if (!ensure(LocalPlayer) || !ensure(WidgetClass != nullptr))
-	{
-		return nullptr;
-	}
+	if (!ensure(LocalPlayer) || !ensure(WidgetClass != nullptr)) return nullptr;
+	UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>();
+	if (!UIManager) return nullptr;
 
-	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
-	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-			{
-				return RootLayout->PushWidgetToLayerStack(LayerName, WidgetClass);
-			}
-		}
-	}
+	UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy();
+	if (!Policy) return nullptr;
 
-	return nullptr;
+	UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer));
+	if (!RootLayout) return nullptr;
+
+	return RootLayout->PushWidgetToLayerStack(LayerName, WidgetClass);
 }
 
 void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlayer* LocalPlayer, FGameplayTag LayerName,
                                                                TSoftClassPtr<UCommonActivatableWidget> WidgetClass)
 {
-	if (!ensure(LocalPlayer) || !ensure(!WidgetClass.IsNull()))
-	{
-		return;
-	}
+	if (!ensure(LocalPlayer) || !ensure(!WidgetClass.IsNull())) return;
 
 	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
@@ -115,9 +100,7 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 			{
 				if (UPrimaryGameLayout* RootLayout = Policy->
 					GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-				{
 					RootLayout->FindAndRemoveWidgetFromLayer(ActivatableWidget);
-				}
 			}
 		}
 	}
@@ -125,10 +108,7 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 
 ULocalPlayer* UCommonUIExtensions::GetLocalPlayerFromController(APlayerController* PlayerController)
 {
-	if (PlayerController)
-	{
-		return Cast<ULocalPlayer>(PlayerController->Player);
-	}
+	if (PlayerController) return Cast<ULocalPlayer>(PlayerController->Player);
 
 	return nullptr;
 }
@@ -163,10 +143,7 @@ void UCommonUIExtensions::ResumeInputForPlayer(APlayerController* PlayerControll
 
 void UCommonUIExtensions::ResumeInputForPlayer(ULocalPlayer* LocalPlayer, FName SuspendToken)
 {
-	if (SuspendToken == NAME_None)
-	{
-		return;
-	}
+	if (SuspendToken == NAME_None) return;
 
 	if (UCommonInputSubsystem* CommonInputSubsystem = UCommonInputSubsystem::Get(LocalPlayer))
 	{

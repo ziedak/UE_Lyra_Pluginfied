@@ -20,9 +20,8 @@ class GAS_API ABasePlayerStart : public APlayerStart, public IPlayerSpawnInterfa
 	GENERATED_BODY()
 
 public:
-	ABasePlayerStart(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()) : Super(ObjectInitializer)
-	{
-	}
+	ABasePlayerStart(
+		const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()) : Super(ObjectInitializer) {}
 
 	const FGameplayTagContainer& GetGameplayTags() { return StartPointTags; }
 

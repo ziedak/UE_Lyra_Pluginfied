@@ -32,15 +32,13 @@ void UPlayerSpawningManagerComponent::InitializeComponent()
 
 	FWorldDelegates::LevelAddedToWorld.AddUObject(this, &ThisClass::OnLevelAdded);
 
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
+	check(World);
 	World->AddOnActorSpawnedHandler(FOnActorSpawned::FDelegate::CreateUObject(this, &ThisClass::HandleOnActorSpawned));
 
 	for (TActorIterator<APlayerStart> It(World); It; ++It)
 	{
-		if (APlayerStart* PlayerStart = *It)
-		{
-			CachedPlayerStarts.Add(PlayerStart);
-		}
+		if (APlayerStart* PlayerStart = *It) { CachedPlayerStarts.Add(PlayerStart); }
 	}
 }
 
@@ -61,10 +59,7 @@ void UPlayerSpawningManagerComponent::OnLevelAdded(ULevel* InLevel, UWorld* InWo
 
 void UPlayerSpawningManagerComponent::HandleOnActorSpawned(AActor* SpawnedActor)
 {
-	if (APlayerStart* PlayerStart = Cast<APlayerStart>(SpawnedActor))
-	{
-		CachedPlayerStarts.Add(PlayerStart);
-	}
+	if (APlayerStart* PlayerStart = Cast<APlayerStart>(SpawnedActor)) { CachedPlayerStarts.Add(PlayerStart); }
 }
 
 // ABaseGameMode Proxied Calls - Need to handle when someone chooses
@@ -73,16 +68,10 @@ void UPlayerSpawningManagerComponent::HandleOnActorSpawned(AActor* SpawnedActor)
 
 AActor* UPlayerSpawningManagerComponent::ChoosePlayerStart(AController* Player)
 {
-	if (!Player)
-	{
-		return nullptr;
-	}
+	if (!Player) { return nullptr; }
 
 #if WITH_EDITOR
-	if (APlayerStart* PlayerStart = FindPlayFromHereStart(Player))
-	{
-		return PlayerStart;
-	}
+	if (APlayerStart* PlayerStart = FindPlayFromHereStart(Player)) { return PlayerStart; }
 #endif
 
 	TArray<APlayerStart*> StarterPoints;
@@ -102,10 +91,7 @@ AActor* UPlayerSpawningManagerComponent::ChoosePlayerStart(AController* Player)
 		// start dedicated spectators at any random starting location, but they do not claim it
 		if (PlayerState->IsOnlyASpectator())
 		{
-			if (!StarterPoints.IsEmpty())
-			{
-				return StarterPoints[FMath::RandRange(0, StarterPoints.Num() - 1)];
-			}
+			if (!StarterPoints.IsEmpty()) { return StarterPoints[FMath::RandRange(0, StarterPoints.Num() - 1)]; }
 
 			return nullptr;
 		}
@@ -113,16 +99,10 @@ AActor* UPlayerSpawningManagerComponent::ChoosePlayerStart(AController* Player)
 
 	AActor* PlayerStart = OnChoosePlayerStart(Player, StarterPoints);
 
-	if (!PlayerStart)
-	{
-		PlayerStart = GetFirstRandomUnoccupiedPlayerStart(Player, StarterPoints);
-	}
+	if (!PlayerStart) { PlayerStart = GetFirstRandomUnoccupiedPlayerStart(Player, StarterPoints); }
 
 
-	if (const auto BaseStart = Cast<IPlayerSpawnInterface>(PlayerStart))
-	{
-		BaseStart->TryClaim(Player);
-	}
+	if (const auto BaseStart = Cast<IPlayerSpawnInterface>(PlayerStart)) { BaseStart->TryClaim(Player); }
 
 
 	// if (APlayerStart* BaseStart = Cast<APlayerStart>(PlayerStart))
@@ -137,10 +117,7 @@ APlayerStart* UPlayerSpawningManagerComponent::FindPlayFromHereStart(const ACont
 	const UWorld* World = GetWorld();
 
 	// Only 'Play From Here' for a player controller, bots etc. should all spawn from normal spawn points.
-	if (!Player->IsA<APlayerController>() || !World)
-	{
-		return nullptr;
-	}
+	if (!Player->IsA<APlayerController>() || !World) { return nullptr; }
 
 	for (TActorIterator<APlayerStart> It(World); It; ++It)
 	{
@@ -158,7 +135,7 @@ APlayerStart* UPlayerSpawningManagerComponent::FindPlayFromHereStart(const ACont
 
 bool UPlayerSpawningManagerComponent::ControllerCanRestart(AController* Player) const
 {
-	bool bCanRestart = true;
+	constexpr bool bCanRestart = true;
 
 	// TODO Can they restart?
 
@@ -167,7 +144,7 @@ bool UPlayerSpawningManagerComponent::ControllerCanRestart(AController* Player) 
 
 void UPlayerSpawningManagerComponent::OnFinishRestartPlayer(AController* Player, const FRotator& StartRotation)
 {
-	// TODO Finish Restart Player
+	//  Finish Restart Player
 }
 
 void UPlayerSpawningManagerComponent::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
@@ -179,10 +156,7 @@ void UPlayerSpawningManagerComponent::FinishRestartPlayer(AController* NewPlayer
 APlayerStart* UPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlayerStart(
 	AController* Controller, const TArray<APlayerStart*>& FoundStartPoints) const
 {
-	if (!Controller)
-	{
-		return nullptr;
-	}
+	if (!Controller) { return nullptr; }
 
 	TArray<APlayerStart*> UnOccupiedStartPoints;
 	TArray<APlayerStart*> OccupiedStartPoints;
@@ -197,15 +171,9 @@ APlayerStart* UPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlayerSta
 			State = BaseStart->GetLocationOccupancy(Controller);
 		}
 
-		if (State == EPlayerStartLocationOccupancy::Empty)
-		{
-			UnOccupiedStartPoints.Add(StartPoint);
-		}
+		if (State == EPlayerStartLocationOccupancy::Empty) { UnOccupiedStartPoints.Add(StartPoint); }
 
-		if (State == EPlayerStartLocationOccupancy::Partial)
-		{
-			OccupiedStartPoints.Add(StartPoint);
-		}
+		if (State == EPlayerStartLocationOccupancy::Partial) { OccupiedStartPoints.Add(StartPoint); }
 	}
 
 	if (UnOccupiedStartPoints.Num() > 0)

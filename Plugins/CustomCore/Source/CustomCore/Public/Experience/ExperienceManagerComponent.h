@@ -66,19 +66,13 @@ public:
 	const UExperienceDefinition_DA* GetCurrentExperienceChecked() const;
 
 	// Returns true if the experience is fully loaded
-	FORCEINLINE bool IsExperienceLoaded() const
-	{
-		return LoadState == EExperienceLoadState::Loaded && CurrentExperience;
-	}
+	FORCEINLINE bool IsExperienceLoaded() const { return LoadState == EExperienceLoadState::Loaded && CurrentExperience; }
 
 private:
-	UFUNCTION()
-	void OnRep_CurrentExperience();
-
 	TSharedPtr<FStreamableHandle> CreateStreamableHandle(const TSet<FPrimaryAssetId>& BundleAssetList,
 	                                                     const TSet<FSoftObjectPath>& RawAssetList,
 	                                                     const TArray<FName>& BundlesToLoad) const;
-	TSet<FPrimaryAssetId> PrepareAssetLists(const TSet<FSoftObjectPath>& RawAssetList) const;
+	TSet<FPrimaryAssetId> PrepareAssetLists() const;
 	TArray<FName> PrepareBundlesToLoad() const;
 	void PreloadAssets(const TArray<FName>& BundlesToLoad) const;
 	void StartExperienceLoad();
@@ -94,14 +88,14 @@ private:
 
 	void OnActionDeactivationCompleted();
 	void OnAllActionsDeactivated();
-	void ActivateListOfActions(const TArray<UGameFeatureAction*>& ActionList,
-	                           FGameFeatureActivatingContext& Context) const;
+	void ActivateListOfActions(const TArray<UGameFeatureAction*>& ActionList, FGameFeatureActivatingContext& Context) const;
 
-	void DeactivateListOfActions(const TArray<UGameFeatureAction*>& ActionList,
-	                             FGameFeatureDeactivatingContext& Context) const;
+	void DeactivateListOfActions(const TArray<UGameFeatureAction*>& ActionList, FGameFeatureDeactivatingContext& Context) const;
 	void DeactivateLoadedFeatures();
 	void HandlePartiallyLoadedState();
 
+	UFUNCTION()
+	void OnRep_CurrentExperience();
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentExperience)
 	TObjectPtr<const UExperienceDefinition_DA> CurrentExperience;
 

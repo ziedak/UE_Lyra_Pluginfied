@@ -8,7 +8,7 @@
 #include "Enums/AbilityActivationPolicy.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Tags/BaseAbilityTagRelationshipMapping.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseAbilitySystemComponent)
 

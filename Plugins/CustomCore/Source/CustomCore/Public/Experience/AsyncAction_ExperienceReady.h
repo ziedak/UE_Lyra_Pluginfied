@@ -6,7 +6,7 @@
 #include "AsyncAction_ExperienceReady.generated.h"
 
 class UExperienceDefinition_DA;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FExperienceReadyAsyncDelegate);
+
 
 /**
 * Asynchronously waits for the game state to be ready and valid and then calls the OnReady event.  Will call OnReady
@@ -18,9 +18,7 @@ class CUSTOMCORE_API UAsyncAction_ExperienceReady : public UBlueprintAsyncAction
 	GENERATED_BODY()
 
 public:
-	UAsyncAction_ExperienceReady(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-	{
-	}
+	UAsyncAction_ExperienceReady(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 
 	// Waits for the experience to be determined and loaded
 	UFUNCTION(BlueprintCallable, meta=(WorldContext="WorldContextObject", BlueprintInternalUseOnly="true"))
@@ -28,6 +26,8 @@ public:
 
 	virtual void Activate() override;
 	// Called when the experience has been determined and is ready/loaded
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FExperienceReadyAsyncDelegate);
+
 	UPROPERTY(BlueprintAssignable)
 	FExperienceReadyAsyncDelegate OnExperienceReadyAsyncDelegate;
 

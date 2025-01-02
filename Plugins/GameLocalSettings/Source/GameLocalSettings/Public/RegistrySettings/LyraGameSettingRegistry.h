@@ -52,7 +52,7 @@ GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
  * 
  */
 UCLASS()
-class ULyraGameSettingRegistry : public UGameSettingRegistry
+class GAMELOCALSETTINGS_API ULyraGameSettingRegistry : public UGameSettingRegistry
 {
 	GENERATED_BODY()
 

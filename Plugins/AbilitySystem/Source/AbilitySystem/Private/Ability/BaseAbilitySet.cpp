@@ -4,12 +4,10 @@
 #include "AbilitySet/GrantedHandlesData.h"
 #include "AbilitySet/GameplayAbilityData.h"
 #include "AbilitySet/AttributeSetData.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseAbilitySet)
 
-UBaseAbilitySet::UBaseAbilitySet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-{
-}
+UBaseAbilitySet::UBaseAbilitySet(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {}
 
 void UBaseAbilitySet::GiveToAbilitySystem(UBaseAbilitySystemComponent* BaseAsc, FGrantedHandlesData* OutGrantedHandles,
                                           UObject* SourceObject) const
@@ -17,10 +15,7 @@ void UBaseAbilitySet::GiveToAbilitySystem(UBaseAbilitySystemComponent* BaseAsc, 
 	check(BaseAsc);
 	//must be authoritative to grant abilities, effects, and attributes
 	// to give or take ability sets
-	if (!BaseAsc->IsOwnerActorAuthoritative())
-	{
-		return;
-	}
+	if (!BaseAsc->IsOwnerActorAuthoritative()) { return; }
 
 	// Grant the gameplay abilities.
 	GrantGameplayAbilities(BaseAsc, OutGrantedHandles, SourceObject);
@@ -54,10 +49,7 @@ void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAS
 
 		const FGameplayAbilitySpecHandle AbilitySpecHandle = BaseASC->GiveAbility(AbilitySpec);
 
-		if (OutGrantedHandles)
-		{
-			OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
-		}
+		if (OutGrantedHandles) { OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle); }
 	}
 }
 
@@ -79,10 +71,7 @@ void UBaseAbilitySet::GrantGameplayEffects(UBaseAbilitySystemComponent* BaseAsc,
 		const FActiveGameplayEffectHandle GameplayEffectHandle = BaseAsc->ApplyGameplayEffectToSelf(
 			GE, EffectLevel, BaseAsc->MakeEffectContext());
 
-		if (OutGrantedHandles)
-		{
-			OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle);
-		}
+		if (OutGrantedHandles) { OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle); }
 	}
 }
 
@@ -103,9 +92,6 @@ void UBaseAbilitySet::GrantAttributeSets(UBaseAbilitySystemComponent* BaseASC,
 		UAttributeSet* NewSet = NewObject<UAttributeSet>(BaseASC->GetOwner(), AttributeSet);
 		BaseASC->AddAttributeSetSubobject(NewSet);
 
-		if (OutGrantedHandles)
-		{
-			OutGrantedHandles->AddAttributeSet(NewSet);
-		}
+		if (OutGrantedHandles) { OutGrantedHandles->AddAttributeSet(NewSet); }
 	}
 }

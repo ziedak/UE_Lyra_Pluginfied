@@ -20,9 +20,7 @@ struct FFrame;
 struct FLyraPerformanceStatCache : IPerformanceDataConsumer
 {
 	FLyraPerformanceStatCache(ULyraPerformanceStatSubsystem* InSubsystem)
-		: MySubsystem(InSubsystem)
-	{
-	}
+		: MySubsystem(InSubsystem) {}
 
 	//~IPerformanceDataConsumer interface
 	virtual void StartCharting() override;
@@ -50,7 +48,7 @@ protected:
 
 // Subsystem to allow access to performance stats for display purposes
 UCLASS(BlueprintType)
-class ULyraPerformanceStatSubsystem : public UGameInstanceSubsystem
+class GAMELOCALSETTINGS_API ULyraPerformanceStatSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 

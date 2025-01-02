@@ -10,7 +10,7 @@
 #include "Player/BasePlayerState.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Data/GasPawnData.h"
-#include "Log/Loggger.h"
+#include "Log/Log.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
@@ -376,9 +376,9 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
 	Subsystem->ClearAllMappings();
-	for (const auto& [InputMapping, Priority, bRegisterWithSettings] : DefaultInputMappings)
+	for (const auto Im : DefaultInputMappings)
 	{
-		const UInputMappingContext* Imc = InputMapping.Get();
+		const UInputMappingContext* Imc = Im.InputMapping.Get();
 		if (!Imc)
 		{
 			LOG_ERROR(LogGAS, "Imc not found ");
@@ -387,7 +387,7 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 
 		LOG_INFO(LogGAS, "%s found ", *Imc->GetName());
 
-		if (!bRegisterWithSettings)
+		if (!Im.bRegisterWithSettings)
 		{
 			LOG_INFO(LogGAS, "%s found but will not be registered because bRegisterWithSettings is false",
 			         *Imc->GetName());
@@ -406,7 +406,7 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 		FModifyContextOptions Options = {};
 		Options.bIgnoreAllPressedKeysUntilRelease = false;
 		// Actually add the config to the local player
-		Subsystem->AddMappingContext(Imc, Priority, Options);
+		Subsystem->AddMappingContext(Imc, Im.Priority, Options);
 	}
 }
 
@@ -438,20 +438,21 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 
 	// This is where we actually bind and input action to a gameplay tag, which means that Gameplay Ability Blueprints will
 	// be triggered directly by these input actions Triggered events.
+	constexpr auto bLogIfNotFound = true;
 	TArray<uint32> BindHandles;
 	InputComponent->BindAbilityActionList(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed,
 	                                      &ThisClass::Input_AbilityInputTagReleased, /*out*/ BindHandles);
 
 	InputComponent->BindNativeAction(InputConfig, InputTags::MOVE, ETriggerEvent::Triggered, this,
-	                                 &ThisClass::Input_Move, /*bLogIfNotFound=*/ false);
+	                                 &ThisClass::Input_Move, bLogIfNotFound);
 	InputComponent->BindNativeAction(InputConfig, InputTags::LOOK_MOUSE, ETriggerEvent::Triggered, this,
-	                                 &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/ false);
+	                                 &ThisClass::Input_LookMouse, bLogIfNotFound);
 	InputComponent->BindNativeAction(InputConfig, InputTags::LOOK_STICK, ETriggerEvent::Triggered, this,
-	                                 &ThisClass::Input_LookStick, /*bLogIfNotFound=*/ false);
+	                                 &ThisClass::Input_LookStick, bLogIfNotFound);
 	// InputComponent->BindNativeAction(InputConfig, InputTags::CROUCH, ETriggerEvent::Triggered, this,
-	//                          &ThisClass::Input_Crouch, /*bLogIfNotFound=*/ false);
+	//                          &ThisClass::Input_Crouch, bLogIfNotFound);
 	InputComponent->BindNativeAction(InputConfig, InputTags::AUTORUN, ETriggerEvent::Triggered, this,
-	                                 &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/ false);
+	                                 &ThisClass::Input_AutoRun, bLogIfNotFound);
 }
 
 void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)

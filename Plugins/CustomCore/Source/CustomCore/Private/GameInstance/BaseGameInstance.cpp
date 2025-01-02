@@ -49,8 +49,7 @@ namespace Lyra
 	static FAutoConsoleCommandWithWorldAndArgs CmdGenerateDTLSCertificate(
 		TEXT("GenerateDTLSCertificate"),
 		TEXT("Generate a DTLS self-signed certificate for testing and export to PEM."),
-		FConsoleCommandWithWorldAndArgsDelegate::CreateLambda([](const TArray<FString>& InArgs, UWorld* InWorld)
-		{
+		FConsoleCommandWithWorldAndArgsDelegate::CreateLambda([](const TArray<FString>& InArgs, UWorld* InWorld){
 			if (InArgs.Num() == 1)
 			{
 				const FString& CertName = InArgs[0];
@@ -60,22 +59,16 @@ namespace Lyra
 				if (Cert.IsValid())
 				{
 					const FString CertPath = FPaths::ProjectContentDir() / TEXT("DTLS") / FPaths::MakeValidFileName(
-						                         FString::Printf(TEXT("%s.pem"), *CertName));
+						FString::Printf(TEXT("%s.pem"), *CertName));
 
 					if (!Cert->ExportCertificate(CertPath))
 					{
 						UE_LOG(LogTemp, Error, TEXT("GenerateDTLSCertificate: Failed to export certificate."));
 					}
 				}
-				else
-				{
-					UE_LOG(LogTemp, Error, TEXT("GenerateDTLSCertificate: Failed to generate certificate."));
-				}
+				else { UE_LOG(LogTemp, Error, TEXT("GenerateDTLSCertificate: Failed to generate certificate.")); }
 			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("GenerateDTLSCertificate: Invalid argument(s)."));
-			}
+			else { UE_LOG(LogTemp, Error, TEXT("GenerateDTLSCertificate: Invalid argument(s).")); }
 		}));
 #endif // UE_BUILD_SHIPPING
 #endif // UE_WITH_DTLS
@@ -98,12 +91,9 @@ void UBaseGameInstance::Init()
 	}
 
 	// Initialize the debug key with a set value for AES256. This is not secure and for example purposes only.
-	DebugTestEncryptionKey.SetNum(32);
+	DebugTestEncryptionKey.SetNum(32); // 256 bits
 
-	for (int32 i = 0; i < DebugTestEncryptionKey.Num(); ++i)
-	{
-		DebugTestEncryptionKey[i] = static_cast<uint8>(i);
-	}
+	for (int32 i = 0; i < DebugTestEncryptionKey.Num(); ++i) { DebugTestEncryptionKey[i] = static_cast<uint8>(i); }
 
 	if (UCommonSessionSubsystem* SessionSubsystem = GetSubsystem<UCommonSessionSubsystem>())
 	{
@@ -121,10 +111,6 @@ void UBaseGameInstance::Shutdown()
 	Super::Shutdown();
 }
 
-APlayerController* UBaseGameInstance::GetPrimaryPlayerController() const
-{
-	return Super::GetPrimaryPlayerController(false);
-}
 
 bool UBaseGameInstance::CanJoinRequestedSession() const
 {
@@ -132,7 +118,6 @@ bool UBaseGameInstance::CanJoinRequestedSession() const
 	// This will be fleshed out to check the player's state
 	return Super::CanJoinRequestedSession();
 }
-
 
 
 void UBaseGameInstance::ReceivedNetworkEncryptionToken(const FString& EncryptionToken,
@@ -171,10 +156,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionToken(const FString& Encryption
 
 				Cert = FDTLSCertStore::Get().GetCert(EncryptionToken);
 
-				if (!Cert.IsValid())
-				{
-					Cert = FDTLSCertStore::Get().ImportCert(CertPath, EncryptionToken);
-				}
+				if (!Cert.IsValid()) { Cert = FDTLSCertStore::Get().ImportCert(CertPath, EncryptionToken); }
 			}
 
 			if (Cert.IsValid())
@@ -186,7 +168,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionToken(const FString& Encryption
 					TArrayView<const uint8> Fingerprint = Cert->GetFingerprint();
 
 					FString DebugFile = FPaths::Combine(*FPaths::ProjectSavedDir(), TEXT("DTLS")) /
-					                    FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
+						FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
 
 					FString FingerprintStr = BytesToHex(Fingerprint.GetData(), Fingerprint.Num());
 					FFileHelper::SaveStringToFile(FingerprintStr, *DebugFile);
@@ -245,7 +227,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyRespo
 			{
 				// But for testing purposes...
 				FString DebugFile = FPaths::Combine(*FPaths::ProjectSavedDir(), TEXT("DTLS")) /
-				                    FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
+					FPaths::MakeValidFileName(EncryptionToken) + TEXT("_server.txt");
 				FString FingerprintStr;
 				FFileHelper::LoadFileToString(FingerprintStr, *DebugFile);
 
@@ -258,10 +240,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyRespo
 				const FString CertPath = FPaths::ProjectContentDir() / TEXT("DTLS") / TEXT("LyraTest.pem");
 
 				TSharedPtr<FDTLSCertificate> Cert = FDTLSCertStore::Get().GetCert(EncryptionToken);
-				if (!Cert.IsValid())
-				{
-					Cert = FDTLSCertStore::Get().ImportCert(CertPath, EncryptionToken);
-				}
+				if (!Cert.IsValid()) { Cert = FDTLSCertStore::Get().ImportCert(CertPath, EncryptionToken); }
 
 				if (Cert.IsValid())
 				{
@@ -291,7 +270,7 @@ void UBaseGameInstance::ReceivedNetworkEncryptionAck(const FOnEncryptionKeyRespo
 	Delegate.ExecuteIfBound(Response);
 }
 
-void UBaseGameInstance::OnPreClientTravelToSession(FString& URL)
+void UBaseGameInstance::OnPreClientTravelToSession(FString& URL) const
 {
 	// Add debug encryption token if desired.
 	if (Lyra::bTestEncryption)
@@ -299,10 +278,10 @@ void UBaseGameInstance::OnPreClientTravelToSession(FString& URL)
 #if UE_WITH_DTLS
 		if (Lyra::bUseDTLSEncryption)
 		{
-			APlayerController* const PlayerController = GetFirstLocalPlayerController();
+			const APlayerController* PlayerController = GetFirstLocalPlayerController();
 
 			if (PlayerController && PlayerController->PlayerState && PlayerController->PlayerState->GetUniqueId().
-			    IsValid())
+				IsValid())
 			{
 				const FUniqueNetIdRepl& PlayerUniqueId = PlayerController->PlayerState->GetUniqueId();
 				const FString EncryptionToken = PlayerUniqueId.ToString();

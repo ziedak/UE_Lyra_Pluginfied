@@ -15,7 +15,6 @@ class GAS_API AGGameMode : public ABaseGameMode
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay() override;
 	AGGameMode(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	UFUNCTION(BlueprintCallable, Category = "Lyra|Pawn")
@@ -25,5 +24,4 @@ public:
 
 	virtual APawn*
 	SpawnDefaultPawnAtTransform_Implementation(AController* NewPlayer, const FTransform& SpawnTransform) override;
-
 };
