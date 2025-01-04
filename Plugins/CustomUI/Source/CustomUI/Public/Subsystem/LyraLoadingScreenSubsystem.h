@@ -5,7 +5,6 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Templates/SubclassOf.h"
 
-#include "UObject/WeakObjectPtr.h"
 #include "LyraLoadingScreenSubsystem.generated.h"
 
 class UObject;
@@ -26,11 +25,11 @@ class CUSTOMUI_API ULyraLoadingScreenSubsystem : public UGameInstanceSubsystem
 public:
 	ULyraLoadingScreenSubsystem();
 
-	// Sets the loading screen widget class to display inside of the loading screen widget host
+	// Sets the loading screen widget class to display inside the loading screen widget host
 	UFUNCTION(BlueprintCallable)
 	void SetLoadingScreenContentWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 
-	// Returns the last set loading screen widget class to display inside of the loading screen widget host
+	// Returns the last set loading screen widget class to display inside the loading screen widget host
 	UFUNCTION(BlueprintPure)
 	TSubclassOf<UUserWidget> GetLoadingScreenContentWidget() const;
 

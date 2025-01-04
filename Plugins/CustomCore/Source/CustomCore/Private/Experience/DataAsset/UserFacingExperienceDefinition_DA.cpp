@@ -16,7 +16,7 @@ UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHos
 	UCommonSessionSubsystem* SessionSubsystem = GameInstance
 		                                            ? GameInstance->GetSubsystem<UCommonSessionSubsystem>()
 		                                            : nullptr;
-	if (SessionSubsystem) { HostSessionRequest = SessionSubsystem->CreateOnlineHostSessionRequest(); }
+	if (SessionSubsystem) HostSessionRequest = SessionSubsystem->CreateOnlineHostSessionRequest();
 
 	if (!HostSessionRequest)
 	{
@@ -24,6 +24,9 @@ UCommonSession_HostSessionRequest* UUserFacingExperienceDefinition_DA::CreateHos
 		HostSessionRequest = NewObject<UCommonSession_HostSessionRequest>();
 		HostSessionRequest->OnlineMode = ECommonSessionOnlineMode::Online;
 		HostSessionRequest->bUseLobbies = true;
+		//HostSessionRequest->bUseLobbiesVoiceChat = false;
+		// We always enable presence on this session because it is the primary session used for matchmaking. For online systems that care about presence, only the primary session should have presence enabled
+		//HostSessionRequest->bUsePresence = !IsRunningDedicatedServer();
 	}
 	HostSessionRequest->MapID = MapID;
 	HostSessionRequest->ModeNameForAdvertisement = UserFacingExperienceName;

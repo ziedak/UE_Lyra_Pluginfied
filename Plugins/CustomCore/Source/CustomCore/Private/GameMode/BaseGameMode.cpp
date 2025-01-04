@@ -40,13 +40,13 @@ void ABaseGameMode::HandleMatchAssignmentIfNotExpectingOne()
 
 	FString ExperienceIdSource = TEXT("Not_Found");
 	FPrimaryAssetId ExperienceId = GetExperienceFromOptions(ExperienceIdSource);
-	if (!ExperienceId.IsValid()) { ExperienceId = GetExperienceFromEditor(ExperienceIdSource); }
-	if (!ExperienceId.IsValid()) { ExperienceId = GetExperienceFromCommandLine(ExperienceIdSource); }
-	if (!ExperienceId.IsValid()) { ExperienceId = GetExperienceFromWorldSettings(ExperienceIdSource); }
-	if (!ExperienceId.IsValid()) { ExperienceId = GetDefaultExperience(ExperienceIdSource); }
+	if (!ExperienceId.IsValid()) ExperienceId = GetExperienceFromEditor(ExperienceIdSource);
+	if (!ExperienceId.IsValid()) ExperienceId = GetExperienceFromCommandLine(ExperienceIdSource);
+	if (!ExperienceId.IsValid()) ExperienceId = GetExperienceFromWorldSettings(ExperienceIdSource);
+	if (!ExperienceId.IsValid()) ExperienceId = GetDefaultExperience(ExperienceIdSource);
 
 	check(ExperienceId.IsValid());
-	if (!ValidateExperienceAssetData(ExperienceId)) { ExperienceId = FPrimaryAssetId(); }
+	if (!ValidateExperienceAssetData(ExperienceId)) ExperienceId = FPrimaryAssetId();
 
 	OnMatchAssignmentGiven(ExperienceId, ExperienceIdSource);
 }
@@ -108,7 +108,7 @@ FPrimaryAssetId ABaseGameMode::GetDefaultExperience(FString& ExperienceIdSource)
 {
 	FPrimaryAssetId ExperienceId;
 	// This will start to host as a dedicated server
-	if (TryDedicatedServerLogin()) { return ExperienceId; }
+	if (TryDedicatedServerLogin()) return ExperienceId;
 
 	ExperienceId = FPrimaryAssetId(FPrimaryAssetType("ExperienceDefinition_DA"), FName("B_DefaultExperience"));
 	ExperienceIdSource = TEXT("Default");
@@ -133,13 +133,14 @@ void ABaseGameMode::HandleStartingNewPlayer_Implementation(APlayerController* Ne
 {
 	// Delay starting new players until the experience has been loaded
 	// (players who log in prior to that will be started by OnExperienceLoaded)
-	if (IsExperienceLoaded()) { Super::HandleStartingNewPlayer_Implementation(NewPlayer); }
+	if (IsExperienceLoaded()) Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 }
 
 AActor* ABaseGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
 	if (const auto PlayerSpawningComponent = GameState->FindComponentByClass<
-		UPlayerSpawningManagerComponent>()) { return PlayerSpawningComponent->ChoosePlayerStart(Player); }
+		UPlayerSpawningManagerComponent>())
+		return PlayerSpawningComponent->ChoosePlayerStart(Player);
 
 	return Super::ChoosePlayerStart_Implementation(Player);
 }
@@ -147,7 +148,8 @@ AActor* ABaseGameMode::ChoosePlayerStart_Implementation(AController* Player)
 void ABaseGameMode::FinishRestartPlayer(AController* NewPlayer, const FRotator& StartRotation)
 {
 	if (const auto PlayerSpawningComponent = GameState->FindComponentByClass<
-		UPlayerSpawningManagerComponent>()) { PlayerSpawningComponent->FinishRestartPlayer(NewPlayer, StartRotation); }
+		UPlayerSpawningManagerComponent>())
+		PlayerSpawningComponent->FinishRestartPlayer(NewPlayer, StartRotation);
 
 	Super::FinishRestartPlayer(NewPlayer, StartRotation);
 }
@@ -157,12 +159,13 @@ bool ABaseGameMode::PlayerCanRestart_Implementation(APlayerController* Player) {
 bool ABaseGameMode::ControllerCanRestart(AController* Controller)
 {
 	// Bot version of Super::PlayerCanRestart_Implementation
-	if (!Controller || Controller->IsPendingKillPending()) { return false; }
+	if (!Controller || Controller->IsPendingKillPending()) return false;
 
 	APlayerController* PC = Cast<APlayerController>(Controller);
-	if (PC && !Super::PlayerCanRestart_Implementation(PC)) { return false; }
+	if (PC && !Super::PlayerCanRestart_Implementation(PC)) return false;
 	if (const auto PlayerSpawningComponent = GameState->FindComponentByClass<
-		UPlayerSpawningManagerComponent>()) { return PlayerSpawningComponent->ControllerCanRestart(Controller); }
+		UPlayerSpawningManagerComponent>())
+		return PlayerSpawningComponent->ControllerCanRestart(Controller);
 
 
 	return true;
@@ -186,7 +189,7 @@ void ABaseGameMode::OnExperienceLoaded(const UExperienceDefinition_DA* CurrentEx
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
 		APlayerController* PC = Cast<APlayerController>(*Iterator);
-		if (PC && !PC->GetPawn() && PlayerCanRestart(PC)) { RestartPlayer(PC); }
+		if (PC && !PC->GetPawn() && PlayerCanRestart(PC)) RestartPlayer(PC);
 	}
 }
 
@@ -199,8 +202,12 @@ bool ABaseGameMode::IsExperienceLoaded() const
 	return ExperienceComponent->IsExperienceLoaded();
 }
 
+void ABaseGameMode::GenericPlayerInitialization(AController* NewPlayer)
+{
+	Super::GenericPlayerInitialization(NewPlayer);
 
-void ABaseGameMode::RestartPlayer(AController* NewPlayer) { Super::RestartPlayer(NewPlayer); }
+	OnGameModePlayerInitialized.Broadcast(this, NewPlayer);
+}
 
 void ABaseGameMode::FailedToRestartPlayer(AController* NewPlayer)
 {
@@ -236,7 +243,7 @@ void ABaseGameMode::FailedToRestartPlayer(AController* NewPlayer)
 
 void ABaseGameMode::RequestPlayerRestartNextFrame(AController* Controller, const bool bForceReset)
 {
-	if (bForceReset && Controller) { Controller->Reset(); }
+	if (bForceReset && Controller) Controller->Reset();
 
 	if (APlayerController* PC = Cast<APlayerController>(Controller))
 	{
@@ -255,13 +262,7 @@ void ABaseGameMode::RequestPlayerRestartNextFrame(AController* Controller, const
 
 void ABaseGameMode::ServerRestartBot(AController* Controller) const
 {
-	if (Controller && Controller->Implements<UBotControllerInterface>())
-	{
-		if (const auto IBotController = Cast<IBotControllerInterface>(Controller))
-		{
-			IBotController->ServerRestartController();
-		}
-	}
+	if (Controller && Controller->Implements<UBotControllerInterface>()) if (const auto IBotController = Cast<IBotControllerInterface>(Controller)) IBotController->ServerRestartController();
 }
 
 void ABaseGameMode::OnMatchAssignmentGiven(const FPrimaryAssetId& ExperienceId, const FString& ExperienceIdSource) const
@@ -287,10 +288,7 @@ bool ABaseGameMode::TryDedicatedServerLogin()
 	FString DefaultMap = UGameMapsSettings::GetGameDefaultMap();
 	const UWorld* World = GetWorld();
 	const UGameInstance* GameInstance = GetGameInstance();
-	if (!GameInstance || !World || World->GetNetMode() != NM_DedicatedServer || World->URL.Map != DefaultMap)
-	{
-		return false;
-	}
+	if (!GameInstance || !World || World->GetNetMode() != NM_DedicatedServer || World->URL.Map != DefaultMap) return false;
 	// Only register if this is the default map on a dedicated server
 	UCommonUserSubsystem* UserSubsystem = GameInstance->GetSubsystem<UCommonUserSubsystem>();
 
@@ -317,7 +315,7 @@ void ABaseGameMode::OnUserInitializedForDedicatedServer(const UCommonUserInfo* U
                                                         ECommonUserOnlineContext OnlineContext)
 {
 	const UGameInstance* GameInstance = GetGameInstance();
-	if (!GameInstance) { return; }
+	if (!GameInstance) return;
 
 	// Unbind
 	UCommonUserSubsystem* UserSubsystem = GameInstance->GetSubsystem<UCommonUserSubsystem>();
@@ -339,10 +337,10 @@ void ABaseGameMode::HostDedicatedServerMatch(const ECommonSessionOnlineMode Onli
 {
 	// Load user experience and host the game
 	const UUserFacingExperienceDefinition_DA* UserExperience = LoadUserExperience();
-	if (!ensure(UserExperience)) { return; }
+	if (!ensure(UserExperience)) return;
 
 	UCommonSession_HostSessionRequest* HostRequest = CreateHostSessionRequest(UserExperience, OnlineMode);
-	if (!ensure(HostRequest)) { return; }
+	if (!ensure(HostRequest)) return;
 
 	HostGameSession(HostRequest);
 }
@@ -355,7 +353,7 @@ UUserFacingExperienceDefinition_DA* ABaseGameMode::LoadUserExperience() const
 	UAssetManager& AssetManager = UAssetManager::Get();
 	check(AssetManager.IsInitialized());
 	const TSharedPtr<FStreamableHandle> Handle = AssetManager.LoadPrimaryAssetsWithType(UserExperienceType);
-	if (ensure(Handle.IsValid())) { Handle->WaitUntilComplete(); }
+	if (ensure(Handle.IsValid())) Handle->WaitUntilComplete();
 
 	return FindUserExperience(UserExperienceType, UserExperienceId);
 }
@@ -368,10 +366,7 @@ FPrimaryAssetId ABaseGameMode::GetUserExperienceIdFromCommandLine(const FPrimary
 		FParse::Value(FCommandLine::Get(), TEXT("Playlist="), UserExperienceFromCommandLine))
 	{
 		UserExperienceId = FPrimaryAssetId::ParseTypeAndName(UserExperienceFromCommandLine);
-		if (!UserExperienceId.PrimaryAssetType.IsValid())
-		{
-			UserExperienceId = FPrimaryAssetId(UserExperienceType, FName(*UserExperienceFromCommandLine));
-		}
+		if (!UserExperienceId.PrimaryAssetType.IsValid()) UserExperienceId = FPrimaryAssetId(UserExperienceType, FName(*UserExperienceFromCommandLine));
 	}
 	return UserExperienceId;
 }
@@ -388,7 +383,7 @@ UUserFacingExperienceDefinition_DA* ABaseGameMode::FindUserExperience(const FPri
 	for (UObject* Object : UserExperiences)
 	{
 		UUserFacingExperienceDefinition_DA* UserExperience = Cast<UUserFacingExperienceDefinition_DA>(Object);
-		if (!ensure(UserExperience)) { continue; }
+		if (!ensure(UserExperience)) continue;
 
 		if (UserExperience->GetPrimaryAssetId() == UserExperienceId)
 		{
@@ -396,7 +391,7 @@ UUserFacingExperienceDefinition_DA* ABaseGameMode::FindUserExperience(const FPri
 			break;
 		}
 
-		if (UserExperience->bIsDefaultExperience && !DefaultExperience) { DefaultExperience = UserExperience; }
+		if (UserExperience->bIsDefaultExperience && !DefaultExperience) DefaultExperience = UserExperience;
 	}
 
 	return FoundExperience ? FoundExperience : DefaultExperience;
@@ -417,7 +412,7 @@ UCommonSession_HostSessionRequest* ABaseGameMode::CreateHostSessionRequest(
 void ABaseGameMode::HostGameSession(UCommonSession_HostSessionRequest* HostRequest) const
 {
 	const UGameInstance* GameInstance = GetGameInstance();
-	if (!ensure(GameInstance)) { return; }
+	if (!ensure(GameInstance)) return;
 
 	UCommonSessionSubsystem* SessionSubsystem = GameInstance->GetSubsystem<UCommonSessionSubsystem>();
 	SessionSubsystem->HostSession(nullptr, HostRequest);

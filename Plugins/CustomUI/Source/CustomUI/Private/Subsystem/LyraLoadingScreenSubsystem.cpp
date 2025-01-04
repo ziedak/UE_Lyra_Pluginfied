@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "Foundation/LyraLoadingScreenSubsystem.h"
+#include "Subsystem/LyraLoadingScreenSubsystem.h"
 #include "Blueprint/UserWidget.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraLoadingScreenSubsystem)
 

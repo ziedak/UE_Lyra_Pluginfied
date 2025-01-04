@@ -4,6 +4,8 @@
 #include "AbilitySet/GrantedHandlesData.h"
 #include "AbilitySet/GameplayAbilityData.h"
 #include "AbilitySet/AttributeSetData.h"
+#include "AbilitySet/GameplayEffectData.h"
+
 #include "Log/Log.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseAbilitySet)
 
@@ -15,16 +17,15 @@ void UBaseAbilitySet::GiveToAbilitySystem(UBaseAbilitySystemComponent* BaseAsc, 
 	check(BaseAsc);
 	//must be authoritative to grant abilities, effects, and attributes
 	// to give or take ability sets
-	if (!BaseAsc->IsOwnerActorAuthoritative()) { return; }
+	if (!BaseAsc->IsOwnerActorAuthoritative()) return;
 
+	// Grant the attribute sets.
+	GrantAttributeSets(BaseAsc, OutGrantedHandles);
 	// Grant the gameplay abilities.
 	GrantGameplayAbilities(BaseAsc, OutGrantedHandles, SourceObject);
 
 	// Grant the gameplay effects.
 	GrantGameplayEffects(BaseAsc, OutGrantedHandles);
-
-	// Grant the attribute sets.
-	GrantAttributeSets(BaseAsc, OutGrantedHandles);
 }
 
 void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseASC,
@@ -49,7 +50,7 @@ void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAS
 
 		const FGameplayAbilitySpecHandle AbilitySpecHandle = BaseASC->GiveAbility(AbilitySpec);
 
-		if (OutGrantedHandles) { OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle); }
+		if (OutGrantedHandles) OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
 	}
 }
 
@@ -58,20 +59,20 @@ void UBaseAbilitySet::GrantGameplayEffects(UBaseAbilitySystemComponent* BaseAsc,
 {
 	for (int32 EffectIndex = 0; EffectIndex < GrantedGameplayEffects.Num(); ++EffectIndex)
 	{
-		const auto& [GameplayEffect, EffectLevel] = GrantedGameplayEffects[EffectIndex];
+		const auto& EffectToGrant = GrantedGameplayEffects[EffectIndex];
 
-		if (!IsValid(GameplayEffect))
+		if (!IsValid(EffectToGrant.GameplayEffect))
 		{
 			ULOG_ERROR(LogGAS, "GrantedGameplayEffects[%d] on ability set [%s] is not valid", EffectIndex,
 			           *GetNameSafe(this));
 			continue;
 		}
 
-		const UGameplayEffect* GE = GameplayEffect->GetDefaultObject<UGameplayEffect>();
+		const UGameplayEffect* GE = EffectToGrant.GameplayEffect->GetDefaultObject<UGameplayEffect>();
 		const FActiveGameplayEffectHandle GameplayEffectHandle = BaseAsc->ApplyGameplayEffectToSelf(
-			GE, EffectLevel, BaseAsc->MakeEffectContext());
+			GE, EffectToGrant.EffectLevel, BaseAsc->MakeEffectContext());
 
-		if (OutGrantedHandles) { OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle); }
+		if (OutGrantedHandles) OutGrantedHandles->AddGameplayEffectHandle(GameplayEffectHandle);
 	}
 }
 
@@ -92,6 +93,6 @@ void UBaseAbilitySet::GrantAttributeSets(UBaseAbilitySystemComponent* BaseASC,
 		UAttributeSet* NewSet = NewObject<UAttributeSet>(BaseASC->GetOwner(), AttributeSet);
 		BaseASC->AddAttributeSetSubobject(NewSet);
 
-		if (OutGrantedHandles) { OutGrantedHandles->AddAttributeSet(NewSet); }
+		if (OutGrantedHandles) OutGrantedHandles->AddAttributeSet(NewSet);
 	}
 }

@@ -1,5 +1,6 @@
 #include "Character/BaseCharacter.h"
 
+#include "LyraCameraComponent.h"
 #include "SignificanceManager.h"
 #include "Character/SharedRepMovement.h"
 
@@ -32,26 +33,27 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("HealthComponent");
 	HealthComponent->OnDeathStarted.AddDynamic(this, &ThisClass::OnDeathStarted);
 	HealthComponent->OnDeathFinished.AddDynamic(this, &ThisClass::OnDeathFinished);
+
+	CameraComponent = CreateDefaultSubobject<ULyraCameraComponent>("CameraComponent");
+	CameraComponent->SetRelativeLocation(FVector(-300.0f, 0.0f, 75.0f));
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = false;
+
+	BaseEyeHeight = 80.0f;
+	CrouchedEyeHeight = 50.0f;
 }
 
-ABasePlayerController* ABaseCharacter::GetBasePlayerController() const
-{
-	return CastChecked<ABasePlayerController>(Controller, ECastCheckedType::NullAllowed);
-}
+ABasePlayerController* ABaseCharacter::GetBasePlayerController() const { return CastChecked<ABasePlayerController>(Controller, ECastCheckedType::NullAllowed); }
 
-ABasePlayerState* ABaseCharacter::GetBasePlayerState() const
-{
-	return CastChecked<ABasePlayerState>(GetPlayerState(), ECastCheckedType::NullAllowed);
-}
+ABasePlayerState* ABaseCharacter::GetBasePlayerState() const { return CastChecked<ABasePlayerState>(GetPlayerState(), ECastCheckedType::NullAllowed); }
 
-UBaseAbilitySystemComponent* ABaseCharacter::GetBaseAbilitySystemComponent() const
-{
-	return Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
-}
+UBaseAbilitySystemComponent* ABaseCharacter::GetBaseAbilitySystemComponent() const { return Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); }
 
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
-	if (PawnExtComponent) { return PawnExtComponent->GetBaseAbilitySystemComponent(); }
+	if (PawnExtComponent) return PawnExtComponent->GetBaseAbilitySystemComponent();
 
 	return nullptr;
 }
@@ -82,13 +84,7 @@ void ABaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	const UWorld* World = GetWorld();
 
-	if (!IsNetMode(NM_DedicatedServer))
-	{
-		if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World))
-		{
-			SignificanceManager->UnregisterObject(this);
-		}
-	}
+	if (!IsNetMode(NM_DedicatedServer)) if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World)) SignificanceManager->UnregisterObject(this);
 }
 
 void ABaseCharacter::Reset()
@@ -98,10 +94,7 @@ void ABaseCharacter::Reset()
 	UninitAndDestroy();
 }
 
-void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-}
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); }
 
 void ABaseCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker) {}
 
@@ -112,30 +105,27 @@ void ABaseCharacter::NotifyControllerChanged() {}
 #pragma region IGameplayTagAssetInterface
 void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
-	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-	{
-		BaseAsc->GetOwnedGameplayTags(TagContainer);
-	}
+	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->GetOwnedGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc) { return false; }
+	if (!BaseAsc) return false;
 	return BaseAsc->HasMatchingGameplayTag(TagToCheck);
 }
 
 bool ABaseCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc) { return false; }
+	if (!BaseAsc) return false;
 	return BaseAsc->HasAllMatchingGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
 	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc) { return false; }
+	if (!BaseAsc) return false;
 	return BaseAsc->HasAnyMatchingGameplayTags(TagContainer);
 }
 
@@ -144,10 +134,10 @@ bool ABaseCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& Tag
 bool ABaseCharacter::UpdateSharedReplication()
 {
 	// We cannot fast-rep right now. Don't send anything.
-	if (GetLocalRole() != ROLE_Authority) { return false; }
+	if (GetLocalRole() != ROLE_Authority) return false;
 
 	FSharedRepMovement SharedMovement;
-	if (!SharedMovement.FillForCharacter(this)) { return false; }
+	if (!SharedMovement.FillForCharacter(this)) return false;
 
 	// Only call FastSharedReplication if data has changed since the last frame.
 	// Skipping this call will cause replication to reuse the same bunch that we previously
@@ -165,10 +155,10 @@ bool ABaseCharacter::UpdateSharedReplication()
 
 void ABaseCharacter::FastSharedReplication_Implementation(const FSharedRepMovement& SharedRepMovement)
 {
-	if (GetWorld()->IsPlayingReplay()) { return; }
+	if (GetWorld()->IsPlayingReplay()) return;
 
 	// Timestamp is checked to reject old moves.
-	if (GetLocalRole() != ROLE_SimulatedProxy) { return; }
+	if (GetLocalRole() != ROLE_SimulatedProxy) return;
 
 	// Timestamp
 	ReplicatedServerLastTransformUpdateTimeStamp = SharedRepMovement.RepTimeStamp;
@@ -252,36 +242,24 @@ void ABaseCharacter::InitializeGameplayTags() const
 	check(BaseAsc);
 
 	// Clear tags that may be lingering on the ability system from the previous pawn.
-	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap)
-	{
-		if (TagMapping.Value.IsValid()) { BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
-	}
+	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap) { if (TagMapping.Value.IsValid()) BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
 
-	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap)
-	{
-		if (TagMapping.Value.IsValid()) { BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
-	}
+	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap) { if (TagMapping.Value.IsValid()) BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
 
 	// Set the default movement mode tag.
 	UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
 	SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
 }
 
-void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType)
-{
-	HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/true);
-}
+void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType) { HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/true); }
 
 void ABaseCharacter::OnDeathStarted(AActor* OwningActor) { DisableMovementAndCollision(); }
 
-void ABaseCharacter::OnDeathFinished(AActor* OwningActor)
-{
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DestroyDueToDeath);
-}
+void ABaseCharacter::OnDeathFinished(AActor* OwningActor) { GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DestroyDueToDeath); }
 
 void ABaseCharacter::DisableMovementAndCollision() const
 {
-	if (Controller) { Controller->SetIgnoreMoveInput(true); }
+	if (Controller) Controller->SetIgnoreMoveInput(true);
 
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	check(CapsuleComp);
@@ -310,10 +288,7 @@ void ABaseCharacter::UninitAndDestroy()
 
 	// Uninitialize the ASC if we're still the avatar actor
 	// (otherwise another pawn already did it when they became the avatar actor)
-	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-	{
-		if (BaseAsc->GetAvatarActor() == this) { PawnExtComponent->UninitializeAbilitySystem(); }
-	}
+	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) if (BaseAsc->GetAvatarActor() == this) PawnExtComponent->UninitializeAbilitySystem();
 
 	SetActorHiddenInGame(true);
 }
@@ -330,37 +305,25 @@ void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode, const 
                                         const bool bTagEnabled) const
 {
 	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc) { return; }
+	if (!BaseAsc) return;
 
 	const FGameplayTag* MovementModeTag;
-	if (MovementMode == MOVE_Custom)
-	{
-		MovementModeTag = MovementTags::CustomMovementModeTagMap.Find(CustomMovementMode);
-	}
-	else { MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode); }
+	if (MovementMode == MOVE_Custom) MovementModeTag = MovementTags::CustomMovementModeTagMap.Find(CustomMovementMode);
+	else MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode);
 
-	if (MovementModeTag && MovementModeTag->IsValid())
-	{
-		BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, (bTagEnabled ? 1 : 0));
-	}
+	if (MovementModeTag && MovementModeTag->IsValid()) BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, (bTagEnabled ? 1 : 0));
 }
 
 void ABaseCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-	{
-		BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 1);
-	}
+	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 1);
 
 	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 }
 
 void ABaseCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-	{
-		BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 0);
-	}
+	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 0);
 
 	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 }

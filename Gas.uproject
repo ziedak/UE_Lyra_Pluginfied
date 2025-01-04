@@ -1,6 +1,6 @@
 {
   "FileVersion": 3,
-  "EngineAssociation": "5.4",
+  "EngineAssociation": "5.5",
   "Category": "",
   "Description": "",
   "Modules": [
@@ -21,6 +21,10 @@
       "TargetAllowList": [
         "Editor"
       ]
+    },
+    {
+      "Name": "ControlFlows",
+      "Enabled": true
     },
     {
       "Name": "EnhancedInput",
@@ -108,15 +112,6 @@
     {
       "Name": "LinuxDeviceProfileSelector",
       "Enabled": false
-    },
-    {
-      "Name": "Bridge",
-      "Enabled": false,
-      "SupportedTargetPlatforms": [
-        "Win64",
-        "Mac",
-        "Linux"
-      ]
     },
     {
       "Name": "GLTFExporter",

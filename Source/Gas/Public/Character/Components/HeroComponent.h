@@ -3,11 +3,13 @@
 #pragma once
 
 #include "EnhancedInputSubsystems.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "InputActionValue.h"
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "Components/PawnComponent.h"
 #include "HeroComponent.generated.h"
 
+class UCustomCameraMode;
 class ULyraInputConfig_DA;
 // class UBaseCameraMode;
 struct FInputMappingContextAndPriority;
@@ -29,16 +31,13 @@ public:
 
 	/** Returns the hero component if one exists on the specified actor. */
 	UFUNCTION(BlueprintPure, Category = "Lyra|Hero")
-	static UHeroComponent* FindHeroComponent(const AActor* Actor)
-	{
-		return (Actor ? Actor->FindComponentByClass<UHeroComponent>() : nullptr);
-	}
+	static UHeroComponent* FindHeroComponent(const AActor* Actor) { return (Actor ? Actor->FindComponentByClass<UHeroComponent>() : nullptr); }
 
 	/** Overrides the camera from an active gameplay ability */
-	//void SetAbilityCameraMode(TSubclassOf<UBaseCameraMode> CameraMode, const FGameplayAbilitySpecHandle& OwningSpecHandle);
+	void SetAbilityCameraMode(const TSubclassOf<UCustomCameraMode>& CameraMode, const FGameplayAbilitySpecHandle& OwningSpecHandle);
 
 	/** Clears the camera override if it is set */
-	//void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
+	void ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle);
 
 	/** Adds mode-specific input config */
 	void AddAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig);
@@ -90,17 +89,17 @@ protected:
 	void Input_Crouch(const FInputActionValue& InputActionValue);
 	void Input_AutoRun(const FInputActionValue& InputActionValue);
 
-	//TSubclassOf<UBaseCameraMode> DetermineCameraMode() const;
+	TSubclassOf<UCustomCameraMode> DetermineCameraMode() const;
 
 	UPROPERTY(EditAnywhere)
 	TArray<FInputMappingContextAndPriority> DefaultInputMappings;
 
 	/** Camera mode set by an ability. */
-	// UPROPERTY()
-	// TSubclassOf<UBaseCameraMode> AbilityCameraMode;
+	UPROPERTY()
+	TSubclassOf<UCustomCameraMode> AbilityCameraMode;
 
 	/** Spec handle for the last ability to set a camera mode. */
-	// FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
+	FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
 
 	/** True when player input bindings have been applied, will never be true for non - players */
 	bool bReadyToBindInputs;

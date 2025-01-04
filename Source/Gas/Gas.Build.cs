@@ -4,7 +4,7 @@ using UnrealBuildTool;
 
 public class Gas : ModuleRules
 {
-	public Gas(ReadOnlyTargetRules Target) : base(Target)
+	public Gas(ReadOnlyTargetRules target) : base(target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -42,7 +42,8 @@ public class Gas : ModuleRules
 			"UMG",
 			"UIExtension", // This module allows for extending the user interface.
 			"ControlFlows", "GameSettings",
-			"Logger"
+			"Logger",
+			"CustomCamera"
 		});
 
 		//custom plugin dependencies
@@ -53,9 +54,23 @@ public class Gas : ModuleRules
 		// Generate compile errors if using DrawDebug functions in test/shipping builds.
 		PublicDefinitions.Add("SHIPPING_DRAW_DEBUG_ERROR=1");
 
-		SetupGameplayDebuggerSupport(Target);
+		// Basic setup for External RPC Framework.
+		// Functionality within framework will be stripped in shipping to remove vulnerabilities.
+		PrivateDependencyModuleNames.Add("ExternalRpcRegistry");
+		PrivateDependencyModuleNames.Add("HTTPServer"); // Dependency for ExternalRpcRegistry
+		if (target.Configuration == UnrealTargetConfiguration.Shipping)
+		{
+			PublicDefinitions.Add("WITH_RPC_REGISTRY=0");
+			PublicDefinitions.Add("WITH_HTTPSERVER_LISTENERS=0");
+		}
+		else
+		{
+			PublicDefinitions.Add("WITH_RPC_REGISTRY=1");
+			PublicDefinitions.Add("WITH_HTTPSERVER_LISTENERS=1");
+		}
 
+		SetupGameplayDebuggerSupport(target);
 		// Enable Iris support.
-		SetupIrisSupport(Target);
+		SetupIrisSupport(target);
 	}
 }

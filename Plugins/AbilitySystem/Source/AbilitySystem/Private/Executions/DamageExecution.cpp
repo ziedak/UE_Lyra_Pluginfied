@@ -3,6 +3,8 @@
 #include "Global/BaseGameplayEffectContext.h"
 #include "Interface/AbilitySourceInterface.h"
 
+#include "Log/Log.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(DamageExecution)
 
 struct FDamageStatics
@@ -22,10 +24,7 @@ static const FDamageStatics& DamageStatics()
 	return DmgStatics;
 }
 
-UDamageExecution::UDamageExecution()
-{
-	RelevantAttributesToCapture.Add(DamageStatics().BaseDamageDef);
-}
+UDamageExecution::UDamageExecution() { RelevantAttributesToCapture.Add(DamageStatics().BaseDamageDef); }
 
 /*
 1.	The code is wrapped in an #if WITH_SERVER_CODE preprocessor directive, which means it will only be compiled if the WITH_SERVER_CODE flag is defined.
@@ -123,10 +122,7 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	if (!HitActor)
 	{
 		HitActor = TargetASC ? TargetASC->GetAvatarActor_Direct() : nullptr;
-		if (HitActor)
-		{
-			ImpactLocation = HitActor->GetActorLocation();
-		}
+		if (HitActor) ImpactLocation = HitActor->GetActorLocation();
 	}
 
 	// Apply rules for team damage/self damage/etc...
@@ -144,23 +140,14 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//Determinate the distance between the effect causer and the hit actor.
 	//This is important for determining the falloff of damage based on distance.
 	double Distance = WORLD_MAX;
-	if (TypedContext->HasOrigin())
-	{
-		Distance = FVector::Dist(TypedContext->GetOrigin(), ImpactLocation);
-	}
-	else if (EffectCauser)
-	{
-		Distance = FVector::Dist(EffectCauser->GetActorLocation(), ImpactLocation);
-	}
+	if (TypedContext->HasOrigin()) Distance = FVector::Dist(TypedContext->GetOrigin(), ImpactLocation);
+	else if (EffectCauser) Distance = FVector::Dist(EffectCauser->GetActorLocation(), ImpactLocation);
 	else
 	{
-		ensureMsgf(
-			false,
-			TEXT(
-				"Damage Calculation cannot deduce a source location for damage coming from %s; Falling back to WORLD_MAX dist!"
-			), *GetPathNameSafe(Spec.Def))
-			// If we don't have a source location, we default to WORLD_MAX distance.
-			;
+		UE_LOG(LogGAS, Error,
+		       TEXT(
+			       "Damage Calculation cannot deduce a source location for damage coming from %s; Falling back to WORLD_MAX dist!"
+		       ), *GetPathNameSafe(Spec.Def));
 	}
 
 	// Apply ability source modifiers

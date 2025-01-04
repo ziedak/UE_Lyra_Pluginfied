@@ -8,22 +8,6 @@ public class CustomUI : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicIncludePaths.AddRange(
-			new string[]
-			{
-				// ... add public include paths required here ...
-			}
-		);
-
-
-		PrivateIncludePaths.AddRange(
-			new string[]
-			{
-				// ... add other private include paths required here ...
-			}
-		);
-
-
 		PublicDependencyModuleNames.AddRange(
 			new[]
 			{
@@ -40,6 +24,7 @@ public class CustomUI : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
+				"ApplicationCore",
 				"Slate", "EnhancedInput", "CommonInput", "InputCore",
 				"SlateCore", "CommonGame", "AsyncMixin", "ControlFlows", "UMG", "GameplayTags"
 				// ... add private dependencies that you statically link with here ...	

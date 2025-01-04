@@ -22,10 +22,7 @@ UBaseAbilitySystemComponent::UBaseAbilitySystemComponent(const FObjectInitialize
 void UBaseAbilitySystemComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// Unregister with the global system when the component is destroyed.
-	if (UGlobalGasWorldSubsystem* GlobalGasWorldSubsystem = UWorld::GetSubsystem<UGlobalGasWorldSubsystem>(GetWorld()))
-	{
-		GlobalGasWorldSubsystem->UnregisterAsc(this);
-	}
+	if (UGlobalGasWorldSubsystem* GlobalGasWorldSubsystem = UWorld::GetSubsystem<UGlobalGasWorldSubsystem>(GetWorld())) GlobalGasWorldSubsystem->UnregisterAsc(this);
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -46,7 +43,7 @@ void UBaseAbilitySystemComponent::InitAbilityActorInfo(AActor* InOwnerActor, AAc
 
 	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
 
-	if (!bHasNewPawnAvatar) { return; }
+	if (!bHasNewPawnAvatar) return;
 
 	NotifyAbilitiesOfNewPawnAvatar();
 	RegisterWithGlobalSystem();
@@ -59,21 +56,17 @@ void UBaseAbilitySystemComponent::NotifyAbilitiesOfNewPawnAvatar()
 	// Notify all abilities that a new pawn avatar has been set
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
-		UBaseGameplayAbility* AbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability);
-		if (!AbilityCDO) { continue; }
+		PRAGMA_DISABLE_DEPRECATION_WARNINGS
+		ensureMsgf(AbilitySpec.Ability && AbilitySpec.Ability->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced,
+		           TEXT("InitAbilityActorInfo: All Abilities should be Instanced (NonInstanced is being deprecated due to usability issues)."));
+		PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
-		if (AbilityCDO->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
+		for (UGameplayAbility* AbilityInstance : AbilitySpec.GetAbilityInstances())
 		{
-			AbilityCDO->OnPawnAvatarSet();
-			continue;
-		}
-		TArray<UGameplayAbility*> Instances = AbilitySpec.GetAbilityInstances();
-		for (UGameplayAbility* AbilityInstance : Instances)
-		{
-			if (UBaseGameplayAbility* BaseAbilityInstance = Cast<UBaseGameplayAbility>(AbilityInstance))
+			if (const auto BaseGameplayAbility = Cast<UBaseGameplayAbility>(AbilityInstance))
 			{
 				// Ability instances may be missing for replays
-				BaseAbilityInstance->OnPawnAvatarSet();
+				BaseGameplayAbility->OnPawnAvatarSet();
 			}
 		}
 	}
@@ -84,7 +77,8 @@ void UBaseAbilitySystemComponent::RegisterWithGlobalSystem()
 	// Register with the global system once we actually have a pawn avatar.
 	// We wait until this time since some globally-applied effects may require an avatar.
 	if (UGlobalGasWorldSubsystem* GlobalGasWorldSubsystem = UWorld::GetSubsystem<
-		UGlobalGasWorldSubsystem>(GetWorld())) { GlobalGasWorldSubsystem->RegisterAsc(this); }
+		UGlobalGasWorldSubsystem>(GetWorld()))
+		GlobalGasWorldSubsystem->RegisterAsc(this);
 }
 
 //@TODO: Implement this
@@ -101,91 +95,43 @@ void UBaseAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
 	ABILITYLIST_SCOPE_LOCK();
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
-		if (const UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability))
-		{
-			BaseAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
-		}
+		if (const UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability)) BaseAbilityCDO->TryActivateAbilityOnSpawn(AbilityActorInfo.Get(), AbilitySpec);
 	}
 }
 
-void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbilityFunc& ShouldCancelFunc,
-                                                        const bool bReplicateCancelAbility)
+void UBaseAbilitySystemComponent::CancelAbilitiesByFunc(const TShouldCancelAbilityFunc& ShouldCancelFunc, const bool bReplicateCancelAbility)
 {
 	ABILITYLIST_SCOPE_LOCK();
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
-		if (!AbilitySpec.IsActive())
-		{
-			LOG_ERROR(LogGAS, "Ability is not active, skip it.", *AbilitySpec.Ability.GetName());
-			continue;
-		}
+		if (!AbilitySpec.IsActive()) continue;
 
-		UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability);
+		const UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec.Ability);
 		if (!BaseAbilityCDO)
 		{
-			LOG_ERROR(LogGAS, "CancelAbilitiesByFunc: Non - BaseGameplayAbility %s was Granted to ASC.Skipping.",
-			          *AbilitySpec.Ability.GetName());
+			UE_LOG(LogGAS, Error, TEXT("CancelAbilitiesByFunc: Non-BaseGameplayAbility %s was Granted to ASC. Skipping."), *AbilitySpec.Ability.GetName());
 			continue;
 		}
-		/*
-		In this specific part of the code, it checks if the ability being canceled is instanced or non-instanced.
-		============================================================
-		If the ability is instanced (BaseAbilityCDO->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced),
-			it means that there are multiple instances of the ability that can be canceled.
-			In this case, the code retrieves all the spawned instances of the ability using AbilitySpec.GetAbilityInstances() and
-			iterates over them using a for loop.
-			For each instance, it checks if the provided ShouldCancelFunc function returns true for that instance
-			(ShouldCancelFunc(BaseAbilityInstance, AbilitySpec.Handle)). If it does, it further checks if the ability
-			can be canceled (BaseAbilityInstance->CanBeCanceled()).
-			If both conditions are met, it calls the CancelAbility function on the instance, passing the ability handle,
-			the ability actor info, the current activation info, and a flag indicating whether the cancel should be replicated (bReplicateCancelAbility).
-		if the ability is non-instanced, it means that there is only one instance of the ability.
-			In this case, it directly checks if the provided ShouldCancelFunc function returns true for the ability itself
-			(ShouldCancelFunc(BaseAbilityCDO, AbilitySpec.Handle)). If it does, it checks if the ability can be canceled
-			(BaseAbilityCDO->CanBeCanceled()).
-			If both conditions are met, it calls the CancelAbility function on the ability, passing the ability handle,
-			the ability actor info, an empty FGameplayAbilityActivationInfo, and the flag indicating whether the cancel
-			should be replicated (bReplicateCancelAbility).
-		============================================================
-		This code ensures that the appropriate abilities are canceled based on the provided function and the instancing policy of
-		the abilities.
-		*/
-		if (BaseAbilityCDO->GetInstancingPolicy() == EGameplayAbilityInstancingPolicy::NonInstanced)
-		{
-			// Cancel the non-instanced ability CDO.
-			if (ShouldCancelFunc(BaseAbilityCDO, AbilitySpec.Handle))
-			{
-				// Non-instanced abilities can always be canceled.
-				check(BaseAbilityCDO->CanBeCanceled());
-				BaseAbilityCDO->CancelAbility(AbilitySpec.Handle, AbilityActorInfo.Get(),
-				                              FGameplayAbilityActivationInfo(), bReplicateCancelAbility);
-			}
-			return;
-		}
 
-		// Cancel all the spawned instances, not the CDO.
-		TArray<UGameplayAbility*> Instances = AbilitySpec.GetAbilityInstances();
-		for (UGameplayAbility* AbilityInstance : Instances)
+		PRAGMA_DISABLE_DEPRECATION_WARNINGS
+		ensureMsgf(AbilitySpec.Ability->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced,
+		           TEXT("CancelAbilitiesByFunc: All Abilities should be Instanced (NonInstanced is being deprecated due to usability issues)."));
+		PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+		// Cancel all the spawned instances.
+		for (UGameplayAbility* AbilityInstance : AbilitySpec.GetAbilityInstances())
 		{
 			UBaseGameplayAbility* BaseAbilityInstance = CastChecked<UBaseGameplayAbility>(AbilityInstance);
-			if (!ShouldCancelFunc(BaseAbilityInstance, AbilitySpec.Handle))
-			{
-				LOG_ERROR(LogGAS, "CancelAbilitiesByFunc: ShouldCancelFunc returned false for ability [%s].",
-				          *BaseAbilityInstance->GetName());
-				continue;
-			}
 
-			if (!BaseAbilityInstance->CanBeCanceled())
+			if (ShouldCancelFunc(BaseAbilityInstance, AbilitySpec.Handle))
 			{
-				LOG_ERROR(
-					LogGAS, "CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false.",
-					*BaseAbilityInstance->GetName());
-				continue;
+				if (BaseAbilityInstance->CanBeCanceled())
+				{
+					BaseAbilityInstance->CancelAbility(AbilitySpec.Handle, AbilityActorInfo.Get(), BaseAbilityInstance->GetCurrentActivationInfo(),
+					                                   bReplicateCancelAbility);
+				}
+				else { UE_LOG(LogGAS, Error, TEXT("CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false."), *BaseAbilityInstance->GetName()); }
 			}
-
-			BaseAbilityInstance->CancelAbility(AbilitySpec.Handle, AbilityActorInfo.Get(),
-			                                   BaseAbilityInstance->GetCurrentActivationInfo(),
-			                                   bReplicateCancelAbility);
 		}
 	}
 }
@@ -205,7 +151,7 @@ void UBaseAbilitySystemComponent::CancelInputActivatedAbilities(const bool bRepl
 // This function sets the ability input tag that was pressed.
 void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid()) { return; }
+	if (!InputTag.IsValid()) return;
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -220,7 +166,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& 
 // This function sets the ability input tag as released.
 void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag& InputTag)
 {
-	if (!InputTag.IsValid()) { return; }
+	if (!InputTag.IsValid()) return;
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
@@ -247,10 +193,7 @@ void UBaseAbilitySystemComponent::ProcessAbilityInput(float DeltaTime, bool bGam
 	AbilitiesToActivate.Append(ProcessPressedAbilities());
 
 	// Try to activate all the abilities that are from presses and holds.
-	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate)
-	{
-		TryActivateAbility(AbilitySpecHandle);
-	}
+	for (const FGameplayAbilitySpecHandle& AbilitySpecHandle : AbilitiesToActivate) { TryActivateAbility(AbilitySpecHandle); }
 
 	ProcessReleasedAbilities();
 	// Clear the cached ability handles.
@@ -276,10 +219,7 @@ TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessHeldAbiliti
 		if (!AbilitySpec->IsActive())
 		{
 			const UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec->Ability);
-			if (BaseAbilityCDO && BaseAbilityCDO->GetActivationPolicy() == EAbilityActivationPolicy::WhileInputActive)
-			{
-				AbilitiesToActivate.Add(AbilitySpec->Handle);
-			}
+			if (BaseAbilityCDO && BaseAbilityCDO->GetActivationPolicy() == EAbilityActivationPolicy::WhileInputActive) AbilitiesToActivate.Add(AbilitySpec->Handle);
 		}
 	}
 
@@ -303,16 +243,13 @@ TSet<FGameplayAbilitySpecHandle> UBaseAbilitySystemComponent::ProcessPressedAbil
 		}
 		AbilitySpec->InputPressed = true;
 
-		if (AbilitySpec->IsActive()) { AbilitySpecInputPressed(*AbilitySpec); }
+		if (AbilitySpec->IsActive()) AbilitySpecInputPressed(*AbilitySpec);
 		else
 		{
 			// If the ability is not active, check if it should be activated.
 			const UBaseGameplayAbility* BaseAbilityCDO = Cast<UBaseGameplayAbility>(AbilitySpec->Ability);
 
-			if (BaseAbilityCDO && BaseAbilityCDO->GetActivationPolicy() == EAbilityActivationPolicy::OnInputTriggered)
-			{
-				AbilitiesToActivate.Add(AbilitySpec->Handle);
-			}
+			if (BaseAbilityCDO && BaseAbilityCDO->GetActivationPolicy() == EAbilityActivationPolicy::OnInputTriggered) AbilitiesToActivate.Add(AbilitySpec->Handle);
 		}
 	}
 
@@ -326,11 +263,11 @@ void UBaseAbilitySystemComponent::ProcessReleasedAbilities()
 	for (const FGameplayAbilitySpecHandle& SpecHandle : InputReleasedSpecHandlesList)
 	{
 		FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromHandle(SpecHandle);
-		if (!AbilitySpec) { continue; }
+		if (!AbilitySpec) continue;
 
 		AbilitySpec->InputPressed = false;
 
-		if (AbilitySpec->IsActive()) { AbilitySpecInputReleased(*AbilitySpec); }
+		if (AbilitySpec->IsActive()) AbilitySpecInputReleased(*AbilitySpec);
 	}
 }
 
@@ -381,10 +318,7 @@ void UBaseAbilitySystemComponent::AddAbilityToActivationGroup(EAbilityActivation
 	const int32 ExclusiveCount = ActivationGroupCounts[static_cast<uint8>(
 			EAbilityActivationGroup::Exclusive_Replaceable)] +
 		ActivationGroupCounts[static_cast<uint8>(EAbilityActivationGroup::Exclusive_Blocking)];
-	if (ExclusiveCount > 1)
-	{
-		LOG_ERROR(LogGAS, "AddAbilityToActivationGroup: Multiple exclusive abilities are running.");
-	}
+	if (ExclusiveCount > 1) { LOG_ERROR(LogGAS, "AddAbilityToActivationGroup: Multiple exclusive abilities are running."); }
 }
 
 // This function removes the ability from the specified activation group.
@@ -474,10 +408,7 @@ void UBaseAbilitySystemComponent::GetAbilityTargetData(const FGameplayAbilitySpe
 	// Find the cached target data for this ability handle.
 	const auto Key = FGameplayAbilitySpecHandleAndPredictionKey(AbilityHandle,
 	                                                            ActivationInfo.GetActivationPredictionKey());
-	if (const TSharedPtr<FAbilityReplicatedDataCache> RepData = AbilityTargetDataMap.Find(Key); RepData.IsValid())
-	{
-		OutTargetDataHandle = RepData->TargetData;
-	}
+	if (const TSharedPtr<FAbilityReplicatedDataCache> RepData = AbilityTargetDataMap.Find(Key); RepData.IsValid()) OutTargetDataHandle = RepData->TargetData;
 }
 
 // This function is called when an ability's target data is set.
@@ -486,7 +417,7 @@ void UBaseAbilitySystemComponent::GetAdditionalActivationTagRequirements(const F
                                                                          FGameplayTagContainer& OutActivationBlocked)
 const
 {
-	if (!TagRelationshipMapping) { return; }
+	if (!TagRelationshipMapping) return;
 	// Get the required and blocked activation tags from the tag relationship mapping.
 	TagRelationshipMapping->GetRequiredAndBlockedActivationTags(AbilityTags, &OutActivationRequired,
 	                                                            &OutActivationBlocked);
@@ -506,9 +437,13 @@ void UBaseAbilitySystemComponent::AbilitySpecInputPressed(FGameplayAbilitySpec& 
 		return;
 	}
 	// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
-	InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed,
-	                      Spec.Handle,
-	                      Spec.ActivationInfo.GetActivationPredictionKey());
+	PRAGMA_DISABLE_DEPRECATION_WARNINGS
+	const UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+	const FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
+	PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+	// Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
+	InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputPressed, Spec.Handle, OriginalPredictionKey);
 }
 
 // This function is called when an ability's input is released.
@@ -526,9 +461,13 @@ void UBaseAbilitySystemComponent::AbilitySpecInputReleased(FGameplayAbilitySpec&
 	// Use replicated events instead so that the WaitInputRelease ability task works.
 
 	// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
-	InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased,
-	                      Spec.Handle,
-	                      Spec.ActivationInfo.GetActivationPredictionKey());
+	PRAGMA_DISABLE_DEPRECATION_WARNINGS
+	const UGameplayAbility* Instance = Spec.GetPrimaryInstance();
+	const FPredictionKey OriginalPredictionKey = Instance ? Instance->GetCurrentActivationInfo().GetActivationPredictionKey() : Spec.ActivationInfo.GetActivationPredictionKey();
+	PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+	// Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
+	InvokeReplicatedEvent(EAbilityGenericReplicatedEvent::InputReleased, Spec.Handle, OriginalPredictionKey);
 }
 
 // This function is called when an ability is activated.
@@ -537,10 +476,7 @@ void UBaseAbilitySystemComponent::NotifyAbilityActivated(const FGameplayAbilityS
 {
 	Super::NotifyAbilityActivated(Handle, Ability);
 
-	if (UBaseGameplayAbility* BaseAbility = Cast<UBaseGameplayAbility>(Ability))
-	{
-		AddAbilityToActivationGroup(BaseAbility->GetActivationGroup(), BaseAbility);
-	}
+	if (UBaseGameplayAbility* BaseAbility = Cast<UBaseGameplayAbility>(Ability)) AddAbilityToActivationGroup(BaseAbility->GetActivationGroup(), BaseAbility);
 }
 
 // This function is called when an ability fails to activate.
@@ -573,10 +509,7 @@ void UBaseAbilitySystemComponent::NotifyAbilityEnded(const FGameplayAbilitySpecH
                                                      const bool bWasCancelled)
 {
 	Super::NotifyAbilityEnded(Handle, Ability, bWasCancelled);
-	if (const UBaseGameplayAbility* BaseAbility = Cast<UBaseGameplayAbility>(Ability))
-	{
-		RemoveAbilityFromActivationGroup(BaseAbility->GetActivationGroup(), BaseAbility);
-	}
+	if (const UBaseGameplayAbility* BaseAbility = Cast<UBaseGameplayAbility>(Ability)) RemoveAbilityFromActivationGroup(BaseAbility->GetActivationGroup(), BaseAbility);
 }
 
 // This function is called when an ability is blocked or canceled.
@@ -590,10 +523,7 @@ void UBaseAbilitySystemComponent::ApplyAbilityBlockAndCancelTags(const FGameplay
 	FGameplayTagContainer ModifierBlockTags;
 	FGameplayTagContainer ModifierCancelTags;
 
-	if (TagRelationshipMapping)
-	{
-		TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifierBlockTags, &ModifierCancelTags);
-	}
+	if (TagRelationshipMapping) TagRelationshipMapping->GetAbilityTagsToBlockAndCancel(AbilityTags, &ModifierBlockTags, &ModifierCancelTags);
 
 	Super::ApplyAbilityBlockAndCancelTags(AbilityTags, RequestingAbility, bEnableBlockTags, BlockTags,
 	                                      bExecuteCancelTags, CancelTags);
@@ -616,10 +546,7 @@ void UBaseAbilitySystemComponent::HandleChangeAbilityCanBeCanceled(const FGamepl
  * @param FailureReason
  */
 void UBaseAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(
-	const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason)
-{
-	HandleAbilityFailed(Ability, FailureReason);
-}
+	const UGameplayAbility* Ability, const FGameplayTagContainer& FailureReason) { HandleAbilityFailed(Ability, FailureReason); }
 
 /**
  *  This function is called when an ability fails to activate.
@@ -629,8 +556,5 @@ void UBaseAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation(
 void UBaseAbilitySystemComponent::HandleAbilityFailed(const UGameplayAbility* Ability,
                                                       const FGameplayTagContainer& FailureReason) const
 {
-	if (const UBaseGameplayAbility* BaseAbility = Cast<const UBaseGameplayAbility>(Ability))
-	{
-		BaseAbility->OnAbilityFailedToActivate(FailureReason);
-	}
+	if (const UBaseGameplayAbility* BaseAbility = Cast<const UBaseGameplayAbility>(Ability)) BaseAbility->OnAbilityFailedToActivate(FailureReason);
 }

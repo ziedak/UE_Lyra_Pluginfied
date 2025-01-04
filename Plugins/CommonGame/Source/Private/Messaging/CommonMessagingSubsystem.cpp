@@ -11,36 +11,24 @@
 class FSubsystemCollectionBase;
 class UClass;
 
-void UCommonMessagingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
-{
-	Super::Initialize(Collection);
-}
+void UCommonMessagingSubsystem::Initialize(FSubsystemCollectionBase& Collection) { Super::Initialize(Collection); }
 
-void UCommonMessagingSubsystem::Deinitialize()
-{
-	Super::Deinitialize();
-}
+void UCommonMessagingSubsystem::Deinitialize() { Super::Deinitialize(); }
 
 bool UCommonMessagingSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
-	if (!CastChecked<ULocalPlayer>(Outer)->GetGameInstance()->IsDedicatedServerInstance())
-	{
-		TArray<UClass*> ChildClasses;
-		GetDerivedClasses(GetClass(), ChildClasses, false);
+	const auto GameInstance = CastChecked<ULocalPlayer>(Outer)->GetGameInstance();
+	if (!GameInstance || GameInstance->IsDedicatedServerInstance()) return false;
 
-		// Only create an instance if there is no override implementation defined elsewhere
-		return ChildClasses.Num() == 0;
-	}
+	TArray<UClass*> ChildClasses;
+	GetDerivedClasses(GetClass(), ChildClasses, false);
 
-	return false;
+	// Only create an instance if there is no override implementation defined elsewhere
+	return ChildClasses.Num() == 0;
 }
 
 void UCommonMessagingSubsystem::ShowConfirmation(UCommonGameDialogDescriptor* DialogDescriptor,
-                                                 FCommonMessagingResultDelegate ResultCallback)
-{
-}
+                                                 FCommonMessagingResultDelegate ResultCallback) {}
 
 void UCommonMessagingSubsystem::ShowError(UCommonGameDialogDescriptor* DialogDescriptor,
-                                          FCommonMessagingResultDelegate ResultCallback)
-{
-}
+                                          FCommonMessagingResultDelegate ResultCallback) {}

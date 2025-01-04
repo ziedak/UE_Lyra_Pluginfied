@@ -10,8 +10,13 @@ struct FAbilityMontageFailureMessage
 {
 	GENERATED_BODY()
 
+	// Player controller that failed to activate the ability, if the AbilitySystemComponent was player owned
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<APlayerController> PlayerController = nullptr;
+
+	// Avatar actor that failed to activate the ability
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<AActor> AvatarActor = nullptr;
 
 	// All the reasons why this ability has failed
 	UPROPERTY(BlueprintReadWrite)

@@ -15,9 +15,7 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonGameInstance)
 
 UCommonGameInstance::UCommonGameInstance(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
+	: Super(ObjectInitializer) {}
 
 void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Title, FText Message)
 {
@@ -25,10 +23,7 @@ void UCommonGameInstance::HandleSystemMessage(FGameplayTag MessageType, FText Ti
 	// Forward severe ones to the error dialog for the first player
 	if (FirstPlayer && MessageType.MatchesTag(FCommonUserTags::SystemMessage_Error))
 	{
-		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>())
-		{
-			Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
-		}
+		if (UCommonMessagingSubsystem* Messaging = FirstPlayer->GetSubsystem<UCommonMessagingSubsystem>()) Messaging->ShowError(UCommonGameDialogDescriptor::CreateConfirmationOk(Title, Message));
 	}
 }
 
@@ -38,7 +33,7 @@ void UCommonGameInstance::HandlePrivilegeChanged(const UCommonUserInfo* UserInfo
 {
 	// By default show errors and disconnect if play privilege for first player is lost
 	if (Privilege == ECommonUserPrivilege::CanPlay && OldAvailability == ECommonUserAvailability::NowAvailable &&
-	    NewAvailability != ECommonUserAvailability::NowAvailable)
+		NewAvailability != ECommonUserAvailability::NowAvailable)
 	{
 		UE_LOG(LogCommonGame, Error,
 		       TEXT("HandlePrivilegeChanged: Player %d no longer has permission to play the game!"),
@@ -66,10 +61,7 @@ int32 UCommonGameInstance::AddLocalPlayer(ULocalPlayer* NewPlayer, FPlatformUser
 			PrimaryPlayer = NewPlayer;
 		}
 
-		if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>())
-		{
-			UIManager->NotifyPlayerAdded(Cast<UCommonLocalPlayer>(NewPlayer));
-		}
+		if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>()) UIManager->NotifyPlayerAdded(Cast<UCommonLocalPlayer>(NewPlayer));
 	}
 
 	return ReturnVal;
@@ -85,10 +77,7 @@ bool UCommonGameInstance::RemoveLocalPlayer(ULocalPlayer* ExistingPlayer)
 		       *ExistingPlayer->GetName());
 	}
 
-	if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>())
-	{
-		UIManager->NotifyPlayerDestroyed(Cast<UCommonLocalPlayer>(ExistingPlayer));
-	}
+	if (UGameUIManagerSubsystem* UIManager = GetSubsystem<UGameUIManagerSubsystem>()) UIManager->NotifyPlayerDestroyed(Cast<UCommonLocalPlayer>(ExistingPlayer));
 
 	return Super::RemoveLocalPlayer(ExistingPlayer);
 }
@@ -113,22 +102,17 @@ void UCommonGameInstance::Init()
 	if (ensure(SessionSubsystem))
 	{
 		SessionSubsystem->OnUserRequestedSessionEvent.AddUObject(this, &UCommonGameInstance::OnUserRequestedSession);
+		SessionSubsystem->OnDestroySessionRequestedEvent.AddUObject(this, &UCommonGameInstance::OnDestroySessionRequested);
 	}
 }
 
 void UCommonGameInstance::ResetUserAndSessionState()
 {
 	UCommonUserSubsystem* UserSubsystem = GetSubsystem<UCommonUserSubsystem>();
-	if (ensure(UserSubsystem))
-	{
-		UserSubsystem->ResetUserState();
-	}
+	if (ensure(UserSubsystem)) UserSubsystem->ResetUserState();
 
 	UCommonSessionSubsystem* SessionSubsystem = GetSubsystem<UCommonSessionSubsystem>();
-	if (ensure(SessionSubsystem))
-	{
-		SessionSubsystem->CleanUpSessions();
-	}
+	if (ensure(SessionSubsystem)) SessionSubsystem->CleanUpSessions();
 }
 
 void UCommonGameInstance::ReturnToMainMenu()
@@ -143,10 +127,7 @@ void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& Platform
                                                  UCommonSession_SearchResult* InRequestedSession,
                                                  const FOnlineResultInformation& RequestedSessionResult)
 {
-	if (InRequestedSession)
-	{
-		SetRequestedSession(InRequestedSession);
-	}
+	if (InRequestedSession) SetRequestedSession(InRequestedSession);
 	else
 	{
 		HandleSystemMessage(FCommonUserTags::SystemMessage_Error,
@@ -155,19 +136,23 @@ void UCommonGameInstance::OnUserRequestedSession(const FPlatformUserId& Platform
 	}
 }
 
+
+void UCommonGameInstance::OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName)
+{
+	// When a session destroy is requested, please make sure that your project is in the right state to destroy the session and transition out of it
+
+	UE_LOG(LogCommonGame, Verbose, TEXT("[%hs] PlatformUserId:%d, SessionName: %s)"), __FUNCTION__, PlatformUserId.GetInternalId(), *SessionName.ToString());
+
+	ReturnToMainMenu();
+}
+
 void UCommonGameInstance::SetRequestedSession(UCommonSession_SearchResult* InRequestedSession)
 {
 	RequestedSession = InRequestedSession;
 	if (RequestedSession)
 	{
-		if (CanJoinRequestedSession())
-		{
-			JoinRequestedSession();
-		}
-		else
-		{
-			ResetGameAndJoinRequestedSession();
-		}
+		if (CanJoinRequestedSession()) JoinRequestedSession();
+		else ResetGameAndJoinRequestedSession();
 	}
 }
 

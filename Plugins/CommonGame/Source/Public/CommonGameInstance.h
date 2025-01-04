@@ -55,6 +55,8 @@ public:
 	virtual void OnUserRequestedSession(const FPlatformUserId& PlatformUserId,
 	                                    UCommonSession_SearchResult* InRequestedSession,
 	                                    const FOnlineResultInformation& RequestedSessionResult);
+	/** Handles OSS request that the session be destroyed */
+	virtual void OnDestroySessionRequested(const FPlatformUserId& PlatformUserId, const FName& SessionName);
 
 	/** Get the requested session */
 	UCommonSession_SearchResult* GetRequestedSession() const { return RequestedSession; }

@@ -2,11 +2,13 @@
 
 #pragma once
 
+#include "GameplayTagContainer.h"
+
 #include "Messaging/CommonMessagingSubsystem.h"
 #include "Templates/SubclassOf.h"
 #include "UObject/SoftObjectPtr.h"
 
-#include "LyraUIMessaging.generated.h"
+#include "LyraUIMessagingSubsystem.generated.h"
 
 class FSubsystemCollectionBase;
 class UCommonGameDialog;
@@ -17,12 +19,12 @@ class UObject;
  * 
  */
 UCLASS()
-class ULyraUIMessaging : public UCommonMessagingSubsystem
+class ULyraUIMessagingSubsystem : public UCommonMessagingSubsystem
 {
 	GENERATED_BODY()
 
 public:
-	ULyraUIMessaging() { }
+	ULyraUIMessagingSubsystem() {}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
@@ -30,6 +32,10 @@ public:
 	virtual void ShowError(UCommonGameDialogDescriptor* DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate()) override;
 
 private:
+	virtual void ShowDialog(const FGameplayTag DialogTag,
+	                        const TSubclassOf<UCommonGameDialog>& DialogClassPtr,
+	                        UCommonGameDialogDescriptor* DialogDescriptor,
+	                        FCommonMessagingResultDelegate ResultCallback);
 	UPROPERTY()
 	TSubclassOf<UCommonGameDialog> ConfirmationDialogClassPtr;
 

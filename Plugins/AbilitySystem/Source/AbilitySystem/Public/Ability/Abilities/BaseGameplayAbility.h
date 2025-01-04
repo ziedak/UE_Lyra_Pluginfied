@@ -54,9 +54,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Base|Ability")
 	ACharacter* GetCharacterFromActorInfo() const;
 
-	/*UFUNCTION(BlueprintCallable, Category = "Base|Ability")
-	UBaseHeroComponent* GetHeroComponentFromActorInfo() const;*/
-
 	FORCEINLINE EAbilityActivationPolicy GetActivationPolicy() const { return ActivationPolicy; }
 	FORCEINLINE EAbilityActivationGroup GetActivationGroup() const { return ActivationGroup; }
 
@@ -77,16 +74,6 @@ public:
 		NativeOnAbilityFailedToActivate(FailedReason);
 		ScriptOnAbilityFailedToActivate(FailedReason);
 	}
-
-	//#pragma region camera mode
-	//	// Sets the ability's camera mode.
-	//	UFUNCTION(BlueprintCallable, Category = "Base|Ability")
-	//	void SetCameraMode(TSubclassOf<UBaseCameraMode> CameraMode);
-	//
-	//	// Clears the ability's camera mode.  Automatically called if needed when the ability ends.
-	//	UFUNCTION(BlueprintCallable, Category = "Base|Ability")
-	//	void ClearCameraMode();
-	//#pragma endregion
 
 protected:
 	// Called when the ability fails to activate
@@ -205,7 +192,4 @@ protected:
 	// If true, extra information should be logged when this ability is canceled. This is temporary, used for tracking a bug.
 	UPROPERTY(EditDefaultsOnly, Category = "Advanced")
 	bool bLogCancelation;
-
-	// Current camera mode set by the ability.
-	TSubclassOf<UBaseCameraMode> ActiveCameraMode;
 };

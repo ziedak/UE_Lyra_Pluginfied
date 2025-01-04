@@ -6,6 +6,7 @@
 #include "Engine/DataAsset.h"
 #include "GasPawnData.generated.h"
 
+class UCustomCameraMode;
 class APawn;
 class UBaseAbilitySet;
 class UBaseAbilityTagRelationshipMapping;
@@ -23,7 +24,10 @@ class GAS_API UGasPawnData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UGasPawnData(const FObjectInitializer& ObjectInitializer);
+	UGasPawnData(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer),
+	                                                            PawnClass(nullptr),
+	                                                            InputConfig(nullptr),
+	                                                            DefaultCameraMode(nullptr) {};;
 
 	// Class to instantiate for this pawn (should usually derive from AGasPawn or AGasCharacter).
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Pawn")
@@ -42,6 +46,6 @@ public:
 	const ULyraInputConfig_DA* InputConfig;
 
 	//// Default camera mode used by player controlled pawns.
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Camera")
-	//TSubclassOf<UGasCameraMode> DefaultCameraMode;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Gas|Camera")
+	TSubclassOf<UCustomCameraMode> DefaultCameraMode;
 };

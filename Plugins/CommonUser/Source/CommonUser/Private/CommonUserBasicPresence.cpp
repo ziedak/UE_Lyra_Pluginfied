@@ -15,11 +15,11 @@
 #endif
 
 DECLARE_LOG_CATEGORY_EXTERN(LogUserBasicPresence, Log, All);
-
 DEFINE_LOG_CATEGORY(LogUserBasicPresence);
 
 UCommonUserBasicPresence::UCommonUserBasicPresence()
 {
+
 }
 
 void UCommonUserBasicPresence::Initialize(FSubsystemCollectionBase& Collection)
@@ -27,13 +27,13 @@ void UCommonUserBasicPresence::Initialize(FSubsystemCollectionBase& Collection)
 	UCommonSessionSubsystem* CommonSession = Collection.InitializeDependency<UCommonSessionSubsystem>();
 	if (ensure(CommonSession))
 	{
-		CommonSession->OnSessionInformationChangedEvent.AddUObject(
-			this, &UCommonUserBasicPresence::OnNotifySessionInformationChanged);
+		CommonSession->OnSessionInformationChangedEvent.AddUObject(this, &UCommonUserBasicPresence::OnNotifySessionInformationChanged);
 	}
 }
 
 void UCommonUserBasicPresence::Deinitialize()
 {
+
 }
 
 FString UCommonUserBasicPresence::SessionStateToBackendKey(ECommonSessionInformationState SessionStatus)
@@ -50,16 +50,14 @@ FString UCommonUserBasicPresence::SessionStateToBackendKey(ECommonSessionInforma
 		return PresenceStatusInGame;
 		break;
 	default:
-		UE_LOG(LogUserBasicPresence, Error,
-		       TEXT("UCommonUserBasicPresence::SessionStateToBackendKey: Found unknown enum value %d"),
-		       (uint8)SessionStatus);
+		UE_LOG(LogUserBasicPresence, Error, TEXT("UCommonUserBasicPresence::SessionStateToBackendKey: Found unknown enum value %d"), (uint8)SessionStatus);
 		return TEXT("Unknown");
 		break;
+
 	}
 }
 
-void UCommonUserBasicPresence::OnNotifySessionInformationChanged(ECommonSessionInformationState SessionStatus,
-                                                                 const FString& GameMode, const FString& MapName)
+void UCommonUserBasicPresence::OnNotifySessionInformationChanged(ECommonSessionInformationState SessionStatus, const FString& GameMode, const FString& MapName)
 {
 	if (bEnableSessionsBasedPresence && !GetGameInstance()->IsDedicatedServerInstance())
 	{
@@ -80,6 +78,7 @@ void UCommonUserBasicPresence::OnNotifySessionInformationChanged(ECommonSessionI
 			if (Presence)
 			{
 				FOnlineUserPresenceStatus UpdatedPresence;
+				UpdatedPresence.State = EOnlinePresenceState::Online; // We'll only send the presence update if the user has a valid UniqueNetId, so we can assume they are Online
 				UpdatedPresence.StatusStr = *SessionStateToBackendKey(SessionStatus);
 				UpdatedPresence.Properties.Emplace(PresenceKeyGameMode, GameMode);
 				UpdatedPresence.Properties.Emplace(PresenceKeyMapName, MapNameTruncated);
@@ -88,8 +87,7 @@ void UCommonUserBasicPresence::OnNotifySessionInformationChanged(ECommonSessionI
 				{
 					if (LocalPlayer && LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId() != nullptr)
 					{
-						Presence->SetPresence(*LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId(),
-						                      UpdatedPresence);
+						Presence->SetPresence(*LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId(), UpdatedPresence);
 					}
 				}
 			}
@@ -100,7 +98,7 @@ void UCommonUserBasicPresence::OnNotifySessionInformationChanged(ECommonSessionI
 		UE::Online::IOnlineServicesPtr OnlineServices = UE::Online::GetServices(GetWorld());
 		check(OnlineServices);
 		UE::Online::IPresencePtr Presence = OnlineServices->GetPresenceInterface();
-		if(Presence)
+		if (Presence)
 		{
 			for (const ULocalPlayer* LocalPlayer : GetGameInstance()->GetLocalPlayers())
 			{

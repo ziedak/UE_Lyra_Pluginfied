@@ -52,11 +52,8 @@ public:
 	virtual void InitGameState() override;
 	// Do nothing, we'll wait until PostLogin when we try to spawn the player for real.
 	// Doing anything right now is no good, systems like team assignment haven't even occurred yet.
-	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override
-	{
-		return false;
-	};
-	virtual void RestartPlayer(AController* NewPlayer) override;
+	virtual bool UpdatePlayerStartSpot(AController* Player, const FString& Portal, FString& OutErrorMessage) override { return false; };
+	virtual void GenericPlayerInitialization(AController* NewPlayer) override;
 	virtual void FailedToRestartPlayer(AController* NewPlayer) override;
 #pragma  endregion
 

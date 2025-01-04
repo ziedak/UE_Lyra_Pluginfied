@@ -8,6 +8,7 @@
 
 #include "BaseCharacter.generated.h"
 
+class ULyraCameraComponent;
 class ABasePlayerController;
 class ABasePlayerState;
 class UPawnExtensionComponent;
@@ -119,10 +120,11 @@ private:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPawnExtensionComponent> PawnExtComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<ULyraCameraComponent> CameraComponent;
 
 	/*	
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
-		TObjectPtr<UBaseCameraComponent> CameraComponent;
+		
 	
 		UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
 		FBaseReplicatedAcceleration ReplicatedAcceleration;*/
@@ -130,5 +132,4 @@ private:
 
 	UFUNCTION()
 	void OnRep_ReplicatedAcceleration() const;
-
 };

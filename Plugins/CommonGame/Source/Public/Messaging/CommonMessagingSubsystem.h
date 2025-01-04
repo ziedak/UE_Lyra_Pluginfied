@@ -36,9 +36,7 @@ class COMMONGAME_API UCommonMessagingSubsystem : public ULocalPlayerSubsystem
 	GENERATED_BODY()
 
 public:
-	UCommonMessagingSubsystem()
-	{
-	}
+	UCommonMessagingSubsystem() {}
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;

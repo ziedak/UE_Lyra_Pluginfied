@@ -70,10 +70,7 @@ public:
 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle) const;
 
 	///** Sets the current tag relationship mapping, if null it will clear it out */
-	FORCEINLINE void SetTagRelationshipMapping(UBaseAbilityTagRelationshipMapping* NewMapping)
-	{
-		TagRelationshipMapping = NewMapping;
-	};
+	FORCEINLINE void SetTagRelationshipMapping(UBaseAbilityTagRelationshipMapping* NewMapping) { TagRelationshipMapping = NewMapping; };
 
 	/** Looks at ability tags and gathers additional required and blocking tags */
 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,

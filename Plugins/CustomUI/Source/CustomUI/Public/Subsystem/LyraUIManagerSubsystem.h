@@ -16,15 +16,13 @@ class ULyraUIManagerSubsystem : public UGameUIManagerSubsystem
 	GENERATED_BODY()
 
 public:
-
-	ULyraUIManagerSubsystem();
-
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 private:
-	bool Tick(float DeltaTime);
-	void SyncRootLayoutVisibilityToShowHUD();
-	
+	bool Tick(float DeltaTime) const;
+	bool ShouldShowUI(const ULocalPlayer* LocalPlayer) const;
+	void SyncRootLayoutVisibilityToShowHUD() const;
+
 	FTSTicker::FDelegateHandle TickHandle;
 };

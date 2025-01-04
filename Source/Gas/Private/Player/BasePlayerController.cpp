@@ -10,6 +10,10 @@
 #include "Player/BasePlayerState.h"
 #include "Settings/LyraSettingsShared.h"
 #include "UI/Hud/BaseHUD.h"
+#if WITH_RPC_REGISTRY
+// #include "Tests/LyraGameplayRpcRegistrationComponent.h"
+#include "HttpServerModule.h"
+#endif
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerController)
 
@@ -29,6 +33,19 @@ ABasePlayerController::ABasePlayerController(const FObjectInitializer& ObjectIni
 void ABasePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	// #if WITH_RPC_REGISTRY
+	// 	FHttpServerModule::Get().StartAllListeners();
+	// 	int32 RpcPort = 0;
+	// 	if (FParse::Value(FCommandLine::Get(), TEXT("rpcport="), RpcPort))
+	// 	{
+	// 		ULyraGameplayRpcRegistrationComponent* ObjectInstance = ULyraGameplayRpcRegistrationComponent::GetInstance();
+	// 		if (ObjectInstance && ObjectInstance->IsValidLowLevel())
+	// 		{
+	// 			ObjectInstance->RegisterAlwaysOnHttpCallbacks();
+	// 			ObjectInstance->RegisterInMatchHttpCallbacks();
+	// 		}
+	// 	}
+	// #endif
 	SetActorHiddenInGame(false);
 }
 
@@ -44,15 +61,9 @@ void ABasePlayerController::SetPlayer(UPlayer* InPlayer)
 	}
 }
 
-void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings)
-{
-	bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled();
-}
+void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings) { bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled(); }
 
-ABasePlayerState* ABasePlayerController::GetBasePlayerState() const
-{
-	return CastChecked<ABasePlayerState>(PlayerState, ECastCheckedType::NullAllowed);
-}
+ABasePlayerState* ABasePlayerController::GetBasePlayerState() const { return CastChecked<ABasePlayerState>(PlayerState, ECastCheckedType::NullAllowed); }
 
 UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponent() const
 {
@@ -60,17 +71,11 @@ UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponen
 	return BasePS ? BasePS->GetBaseAbilitySystemComponent() : nullptr;
 }
 
-ABaseHud* ABasePlayerController::GetBaseHUD() const
-{
-	return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed);
-}
+ABaseHud* ABasePlayerController::GetBaseHUD() const { return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed); }
 
 void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-	{
-		BaseAsc->ProcessAbilityInput(DeltaTime, bGamePaused);
-	}
+	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->ProcessAbilityInput(DeltaTime, bGamePaused);
 
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
@@ -80,13 +85,8 @@ void ABasePlayerController::OnPossess(APawn* InPawn) { Super::OnPossess(InPawn);
 void ABasePlayerController::OnUnPossess()
 {
 	// Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
-	if (const APawn* PawnBeingUnpossessed = GetPawn())
-	{
-		if (UAbilitySystemComponent* Asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(PlayerState))
-		{
-			if (Asc->GetAvatarActor() == PawnBeingUnpossessed) { Asc->SetAvatarActor(nullptr); }
-		}
-	}
+	if (const APawn* PawnBeingUnpossessed = GetPawn()) if (UAbilitySystemComponent* Asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(PlayerState)) if (Asc->GetAvatarActor() ==
+		PawnBeingUnpossessed) Asc->SetAvatarActor(nullptr);
 
 	Super::OnUnPossess();
 }

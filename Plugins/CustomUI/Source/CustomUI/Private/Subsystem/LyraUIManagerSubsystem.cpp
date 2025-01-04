@@ -12,8 +12,6 @@
 
 class FSubsystemCollectionBase;
 
-ULyraUIManagerSubsystem::ULyraUIManagerSubsystem() {}
-
 void ULyraUIManagerSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -29,34 +27,39 @@ void ULyraUIManagerSubsystem::Deinitialize()
 	FTSTicker::GetCoreTicker().RemoveTicker(TickHandle);
 }
 
-bool ULyraUIManagerSubsystem::Tick(float DeltaTime)
+bool ULyraUIManagerSubsystem::Tick(float DeltaTime) const
 {
 	SyncRootLayoutVisibilityToShowHUD();
-
 	return true;
 }
 
-void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
+bool ULyraUIManagerSubsystem::ShouldShowUI(const ULocalPlayer* LocalPlayer) const
+{
+	if (!LocalPlayer) return false;
+	const APlayerController* PC = LocalPlayer->GetPlayerController(GetWorld());
+	if (!PC) return false;
+
+	const auto HUD = PC->GetHUD();
+	return HUD && !HUD->bShowHUD;
+}
+
+void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD() const
 {
 	const UGameUIPolicy* Policy = GetCurrentUIPolicy();
-	if (!Policy) { return; }
+	if (!Policy) return;
 
-	for (const ULocalPlayer* LocalPlayer : GetGameInstance()->GetLocalPlayers())
+	for (const auto LocalPlayer : GetGameInstance()->GetLocalPlayers())
 	{
-		bool bShouldShowUI = true;
+		if (!LocalPlayer) return;
 
-		if (const APlayerController* PC = LocalPlayer->GetPlayerController(GetWorld()))
-		{
-			const AHUD* HUD = PC->GetHUD();
-			if (HUD && !HUD->bShowHUD) { bShouldShowUI = false; }
-		}
+		const auto RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer));
+		if (!RootLayout) continue;
 
-		if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
-		{
-			const ESlateVisibility DesiredVisibility = bShouldShowUI
-				                                           ? ESlateVisibility::SelfHitTestInvisible
-				                                           : ESlateVisibility::Collapsed;
-			if (DesiredVisibility != RootLayout->GetVisibility()) { RootLayout->SetVisibility(DesiredVisibility); }
-		}
+		const ESlateVisibility DesiredVisibility = ShouldShowUI(LocalPlayer)
+			                                           ? ESlateVisibility::SelfHitTestInvisible
+			                                           : ESlateVisibility::Collapsed;
+		if (DesiredVisibility == RootLayout->GetVisibility()) continue;
+
+		RootLayout->SetVisibility(DesiredVisibility);
 	}
 }

@@ -16,6 +16,4 @@ class GAS_API UBaseHUDLayout : public ULyraHUDLayout
 
 public:
 	UBaseHUDLayout(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer) {}
-	virtual void NativeOnInitialized() override;
-	virtual void HandleEscapeAction() const override;
 };
