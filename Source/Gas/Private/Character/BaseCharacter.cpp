@@ -22,7 +22,7 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	// Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated.
-	NetCullDistanceSquared = 900000000.0f; // 3000 * 3000
+	SetNetCullDistanceSquared(900000000.0f); // 3000 * 3000
 
 	PawnExtComponent = CreateDefaultSubobject<UPawnExtensionComponent>("PawnExtensionComponent");
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(

@@ -13,10 +13,7 @@ void UBaseLocalPlayer::PostInitProperties()
 {
 	Super::PostInitProperties();
 
-	if (ULyraSettingsLocal* LocalSettings = GetLocalSettings())
-	{
-		LocalSettings->OnAudioOutputDeviceChanged.AddUObject(this, &ThisClass::OnAudioOutputDeviceChanged);
-	}
+	if (ULyraSettingsLocal* LocalSettings = GetLocalSettings()) LocalSettings->OnAudioOutputDeviceChanged.AddUObject(this, &ThisClass::OnAudioOutputDeviceChanged);
 }
 
 void UBaseLocalPlayer::SwitchController(APlayerController* PC)
@@ -43,12 +40,12 @@ ULyraSettingsLocal* UBaseLocalPlayer::GetLocalSettings() const { return ULyraSet
 
 ULyraSettingsShared* UBaseLocalPlayer::GetSharedSettings() const
 {
-	if (SharedSettings) { return SharedSettings; }
+	if (SharedSettings) return SharedSettings;
 
 	// On PC, it's okay to use the sync load because it only checks the disk,
 	// This could use a platform tag to check for proper save support instead
 
-	if (bCanLoadBeforeLogin) { return ULyraSettingsShared::LoadOrCreateSettings(this); }
+	if (bCanLoadBeforeLogin) return ULyraSettingsShared::LoadOrCreateSettings(this);
 
 	// We need to wait for user login to get the real settings so return temp ones
 	return ULyraSettingsShared::CreateTemporarySettings(this);
@@ -80,18 +77,18 @@ void UBaseLocalPlayer::OnPlayerControllerChanged(APlayerController* NewControlle
 void UBaseLocalPlayer::LoadSharedSettingsFromDisk(const bool bForceLoad)
 {
 	// Already loaded once, don't reload
-	if (!bForceLoad && SharedSettings && GetCachedUniqueNetId() == NetIdForSharedSettings) { return; }
+	if (!bForceLoad && SharedSettings && GetCachedUniqueNetId() == NetIdForSharedSettings) return;
 
 	ensure(
 		ULyraSettingsShared::AsyncLoadOrCreateSettings(this,
 			ULyraSettingsShared::FOnSettingsLoadedEvent::CreateUObject(
-				this, &UBaseLocalPlayer::OnSharedSettingsLoaded)));
+				this, &ThisClass::OnSharedSettingsLoaded)));
 }
 
 void UBaseLocalPlayer::OnSharedSettingsLoaded(ULyraSettingsShared* LoadedOrCreatedSettings)
 {
 	// The settings are applied before it gets here
-	if (!(ensure(LoadedOrCreatedSettings))) { return; }
+	if (!(ensure(LoadedOrCreatedSettings))) return;
 
 	// This will replace the temporary or previously loaded object which will GC out normally
 	SharedSettings = LoadedOrCreatedSettings;

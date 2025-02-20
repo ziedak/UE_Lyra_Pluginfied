@@ -15,19 +15,14 @@ class FViewport;
 struct FSceneViewProjectionData;
 
 UCommonLocalPlayer::UCommonLocalPlayer()
-	: Super(FObjectInitializer::Get())
-{
-}
+	: Super(FObjectInitializer::Get()) {}
 
 FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerControllerSet(
 	FPlayerControllerSetDelegate::FDelegate Delegate)
 {
 	APlayerController* PC = GetPlayerController(GetWorld());
 
-	if (PC)
-	{
-		Delegate.Execute(this, PC);
-	}
+	if (PC) Delegate.Execute(this, PC);
 
 	return OnPlayerControllerSet.Add(Delegate);
 }
@@ -37,10 +32,7 @@ FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerStateSet(FPlayerStat
 	APlayerController* PC = GetPlayerController(GetWorld());
 	APlayerState* PlayerState = PC ? PC->PlayerState : nullptr;
 
-	if (PlayerState)
-	{
-		Delegate.Execute(this, PlayerState);
-	}
+	if (PlayerState) Delegate.Execute(this, PlayerState);
 
 	return OnPlayerStateSet.Add(Delegate);
 }
@@ -50,10 +42,7 @@ FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerPawnSet(FPlayerPawnS
 	APlayerController* PC = GetPlayerController(GetWorld());
 	APawn* Pawn = PC ? PC->GetPawn() : nullptr;
 
-	if (Pawn)
-	{
-		Delegate.Execute(this, Pawn);
-	}
+	if (Pawn) Delegate.Execute(this, Pawn);
 
 	return OnPlayerPawnSet.Add(Delegate);
 }
@@ -61,10 +50,7 @@ FDelegateHandle UCommonLocalPlayer::CallAndRegister_OnPlayerPawnSet(FPlayerPawnS
 bool UCommonLocalPlayer::GetProjectionData(FViewport* Viewport, FSceneViewProjectionData& ProjectionData,
                                            int32 StereoViewIndex) const
 {
-	if (!bIsPlayerViewEnabled)
-	{
-		return false;
-	}
+	if (!bIsPlayerViewEnabled) return false;
 
 	return Super::GetProjectionData(Viewport, ProjectionData, StereoViewIndex);
 }
@@ -73,10 +59,7 @@ UPrimaryGameLayout* UCommonLocalPlayer::GetRootUILayout() const
 {
 	if (UGameUIManagerSubsystem* UIManager = GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
-		{
-			return Policy->GetRootLayout(this);
-		}
+		if (const auto Policy = UIManager->GetCurrentUIPolicy()) return Policy->GetRootLayout(this);
 	}
 
 	return nullptr;

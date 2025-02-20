@@ -15,7 +15,7 @@ class UObject;
 /**
  * This manager is intended to be replaced by whatever your game needs to
  * actually create, so this class is abstract to prevent it from being created.
- * 
+ *
  * If you just need the basic functionality you will start by sublcassing this
  * subsystem in your own game.
  */
@@ -31,8 +31,8 @@ public:
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
-	// const UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
-	UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
+	const UGameUIPolicy* GetCurrentUIPolicy() const { return CurrentPolicy; }
+	//UGameUIPolicy* GetCurrentUIPolicy() { return CurrentPolicy; }
 
 	virtual void NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer);
 	virtual void NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer);

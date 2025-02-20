@@ -908,8 +908,12 @@ void ULyraSettingsLocal::SetVolume(FName VolumeType, const float InVolume)
 	if (!bSoundControlBusMixLoaded) LoadUserControlBusMix();
 
 	// Ensure it's been loaded before continuing
-	ensureMsgf(bSoundControlBusMixLoaded, TEXT("UserControlBusMix Settings Failed to Load."));
-
+	//ensureMsgf(bSoundControlBusMixLoaded, TEXT("UserControlBusMix Settings Failed to Load."));
+	if (!bSoundControlBusMixLoaded)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UserControlBusMix  Settings for %s Failed to Load."), *VolumeType.ToString());
+		return;
+	}
 	// Locate the locally cached bus and set the volume on it
 	if (ControlBusMap.Num() == 0) return;
 	const TObjectPtr<USoundControlBus>* ControlBusDblPtr = ControlBusMap.Find(VolumeType);

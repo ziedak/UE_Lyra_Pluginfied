@@ -384,7 +384,7 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 	const FGameplayTag& MissingTag = AbilitySystemGlobals.ActivateFailTagsMissingTag;
 
 	// Check if any of this ability's tags are currently blocked
-	if (AbilitySystemComponent.AreAbilityTagsBlocked(AbilityTags)) bBlocked = true;
+	if (AbilitySystemComponent.AreAbilityTagsBlocked(GetAssetTags())) bBlocked = true;
 
 	const UBaseAbilitySystemComponent* Asc = Cast<UBaseAbilitySystemComponent>(&AbilitySystemComponent);
 
@@ -395,7 +395,7 @@ bool UBaseGameplayAbility::DoesAbilitySatisfyTagRequirements(const UAbilitySyste
 	AllBlockedTags = ActivationBlockedTags;
 
 	// Expand our ability tags to add additional required/blocked tags
-	if (Asc) Asc->GetAdditionalActivationTagRequirements(AbilityTags, AllRequiredTags, AllBlockedTags);
+	if (Asc) Asc->GetAdditionalActivationTagRequirements(GetAssetTags(), AllRequiredTags, AllBlockedTags);
 
 	// Check to see the required/blocked tags for this ability
 	if (AllBlockedTags.Num() || AllRequiredTags.Num())

@@ -28,7 +28,7 @@ void UBaseAbilitySet::GiveToAbilitySystem(UBaseAbilitySystemComponent* BaseAsc, 
 	GrantGameplayEffects(BaseAsc, OutGrantedHandles);
 }
 
-void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseASC,
+void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAsc,
                                              FGrantedHandlesData* OutGrantedHandles, UObject* SourceObject) const
 {
 	for (int32 AbilityIndex = 0; AbilityIndex < GrantedGameplayAbilities.Num(); ++AbilityIndex)
@@ -46,9 +46,9 @@ void UBaseAbilitySet::GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAS
 
 		FGameplayAbilitySpec AbilitySpec(AbilityCDO, AbilityToGrant.AbilityLevel);
 		AbilitySpec.SourceObject = SourceObject;
-		AbilitySpec.DynamicAbilityTags.AddTag(AbilityToGrant.InputTag);
+		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AbilityToGrant.InputTag);
 
-		const FGameplayAbilitySpecHandle AbilitySpecHandle = BaseASC->GiveAbility(AbilitySpec);
+		const FGameplayAbilitySpecHandle AbilitySpecHandle = BaseAsc->GiveAbility(AbilitySpec);
 
 		if (OutGrantedHandles) OutGrantedHandles->AddAbilitySpecHandle(AbilitySpecHandle);
 	}

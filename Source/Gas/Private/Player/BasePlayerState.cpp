@@ -22,7 +22,7 @@
 const FName ABasePlayerState::NAME_BaseAbilityReady("BaseAbilitiesReady");
 
 ABasePlayerState::ABasePlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
-	, MyPlayerConnectionType(EPlayerConnectionType::Player)
+                                                                                  , MyPlayerConnectionType(EPlayerConnectionType::Player)
 {
 	AbilitySystemComponent = ObjectInitializer.CreateDefaultSubobject<UBaseAbilitySystemComponent>(
 		this, "AbilitySystemComponent");
@@ -34,7 +34,7 @@ ABasePlayerState::ABasePlayerState(const FObjectInitializer& ObjectInitializer) 
 	CombatSet = CreateDefaultSubobject<UCombatSet>("CombatSet");
 
 	// AbilitySystemComponent needs to be updated at a high frequency.
-	NetUpdateFrequency = 100.0f;
+	SetNetUpdateFrequency(100.0f);
 }
 
 
@@ -58,7 +58,7 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 {
 	check(InPawnData);
 
-	if (GetLocalRole() != ROLE_Authority) { return; }
+	if (GetLocalRole() != ROLE_Authority) return;
 
 	if (PawnData)
 	{
@@ -77,10 +77,7 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
 	PawnData = InPawnData;
 
-	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets)
-	{
-		if (AbilitySet) { AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr); }
-	}
+	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets) { if (AbilitySet) AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr); }
 
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_BaseAbilityReady);
 
@@ -100,7 +97,7 @@ void ABasePlayerState::PostInitializeComponents()
 
 	//==> The OnExperienceLoaded function is called when the experience is loaded.
 	const UWorld* World = GetWorld();
-	if (!World || !World->IsGameWorld() || World->GetNetMode() == NM_Client) { return; }
+	if (!World || !World->IsGameWorld() || World->GetNetMode() == NM_Client) return;
 
 	const AGameStateBase* GameState = GetWorld()->GetGameState();
 	check(GameState);
@@ -140,10 +137,7 @@ void ABasePlayerState::ClientInitialize(AController* C)
 {
 	Super::ClientInitialize(C);
 
-	if (UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(GetPawn()))
-	{
-		PawnExtComp->CheckDefaultInitialization();
-	}
+	if (UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(GetPawn())) PawnExtComp->CheckDefaultInitialization();
 }
 
 void ABasePlayerState::CopyProperties(APlayerState* PlayerState)
@@ -170,29 +164,25 @@ void ABasePlayerState::OnDeactivated()
 		// (e.g., for long running servers where they might build up if lots of players cycle through)
 		bDestroyDeactivatedPlayerState = true;
 		break;
-	default:
-		bDestroyDeactivatedPlayerState = true;
+	default: bDestroyDeactivatedPlayerState = true;
 		break;
 	}
 
 	SetPlayerConnectionType(EPlayerConnectionType::InactivePlayer);
 
-	if (bDestroyDeactivatedPlayerState) { Destroy(); }
+	if (bDestroyDeactivatedPlayerState) Destroy();
 }
 
 void ABasePlayerState::OnReactivated()
 {
 	Super::OnReactivated();
-	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer)
-	{
-		SetPlayerConnectionType(EPlayerConnectionType::Player);
-	}
+	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer) SetPlayerConnectionType(EPlayerConnectionType::Player);
 }
 #pragma endregion
 
 void ABasePlayerState::SetPlayerConnectionType(const EPlayerConnectionType NewType)
 {
-	if (MyPlayerConnectionType == NewType) { return; }
+	if (MyPlayerConnectionType == NewType) return;
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, MyPlayerConnectionType, this);
 	MyPlayerConnectionType = NewType;
 }
@@ -202,13 +192,13 @@ void ABasePlayerState::OnRep_PawnData() {}
 void ABasePlayerState::ClientBroadcastMessage_Implementation(const FVerbMessage Message)
 {
 	// This check is needed to prevent running the action when in standalone mode
-	if (GetNetMode() == NM_Client) { UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message); }
+	if (GetNetMode() == NM_Client) UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message);
 }
 
 
 void ABasePlayerState::SetReplicatedViewRotation(const FRotator& NewRot)
 {
-	if (ReplicatedViewRotation == NewRot) { return; }
+	if (ReplicatedViewRotation == NewRot) return;
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ReplicatedViewRotation, this);
 	ReplicatedViewRotation = NewRot;
 }

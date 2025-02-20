@@ -155,7 +155,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagPressed(const FGameplayTag& 
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
-		if (AbilitySpec.Ability && (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)))
+		if (AbilitySpec.Ability && (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag)))
 		{
 			InputPressedSpecHandlesList.AddUnique(AbilitySpec.Handle);
 			InputHeldSpecHandlesList.AddUnique(AbilitySpec.Handle);
@@ -170,7 +170,7 @@ void UBaseAbilitySystemComponent::SetAbilityInputTagReleased(const FGameplayTag&
 
 	for (const FGameplayAbilitySpec& AbilitySpec : ActivatableAbilities.Items)
 	{
-		if (AbilitySpec.Ability && (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag)))
+		if (AbilitySpec.Ability && (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag)))
 		{
 			InputReleasedSpecHandlesList.AddUnique(AbilitySpec.Handle);
 			InputHeldSpecHandlesList.Remove(AbilitySpec.Handle);

@@ -12,7 +12,7 @@ class ULocalPlayer;
 class UPrimaryGameLayout;
 
 /**
- * 
+ *
  */
 UENUM()
 enum class ELocalMultiplayerInteractionMode : uint8
@@ -40,16 +40,12 @@ struct FRootViewportLayoutInfo
 	UPROPERTY(Transient)
 	bool bAddedToViewport = false;
 
-	FRootViewportLayoutInfo()
-	{
-	}
+	FRootViewportLayoutInfo() {}
 
 	FRootViewportLayoutInfo(ULocalPlayer* InLocalPlayer, UPrimaryGameLayout* InRootLayout, bool bIsInViewport)
 		: LocalPlayer(InLocalPlayer)
 		  , RootLayout(InRootLayout)
-		  , bAddedToViewport(bIsInViewport)
-	{
-	}
+		  , bAddedToViewport(bIsInViewport) {}
 
 	bool operator==(const ULocalPlayer* OtherLocalPlayer) const { return LocalPlayer == OtherLocalPlayer; }
 };
@@ -61,21 +57,16 @@ class COMMONGAME_API UGameUIPolicy : public UObject
 
 public:
 	template <typename GameUIPolicyClass = UGameUIPolicy>
-	static GameUIPolicyClass* GetGameUIPolicyAs(const UObject* WorldContextObject)
-	{
-		return Cast<GameUIPolicyClass>(GetGameUIPolicy(WorldContextObject));
-	}
+	static GameUIPolicyClass* GetGameUIPolicyAs(const UObject* WorldContextObject) { return Cast<GameUIPolicyClass>(GetGameUIPolicy(WorldContextObject)); }
 
-	static UGameUIPolicy* GetGameUIPolicy(const UObject* WorldContextObject);
+	static const UGameUIPolicy* GetGameUIPolicy(const UObject* WorldContextObject);
 
 	virtual UWorld* GetWorld() const override;
 	UGameUIManagerSubsystem* GetOwningUIManager() const;
 	UPrimaryGameLayout* GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const;
+	UPrimaryGameLayout* GetRootLayout2(const ULocalPlayer* LocalPlayer) const;
 
-	ELocalMultiplayerInteractionMode GetLocalMultiplayerInteractionMode() const
-	{
-		return LocalMultiplayerInteractionMode;
-	}
+	ELocalMultiplayerInteractionMode GetLocalMultiplayerInteractionMode() const { return LocalMultiplayerInteractionMode; }
 
 	void RequestPrimaryControl(UPrimaryGameLayout* Layout);
 
@@ -88,7 +79,7 @@ protected:
 	virtual void OnRootLayoutReleased(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout);
 
 	void CreateLayoutWidget(UCommonLocalPlayer* LocalPlayer);
-	TSubclassOf<UPrimaryGameLayout> GetLayoutWidgetClass(UCommonLocalPlayer* LocalPlayer);
+	TSubclassOf<UPrimaryGameLayout> GetLayoutWidgetClass(UCommonLocalPlayer* LocalPlayer) const;
 
 private:
 	ELocalMultiplayerInteractionMode LocalMultiplayerInteractionMode = ELocalMultiplayerInteractionMode::PrimaryOnly;

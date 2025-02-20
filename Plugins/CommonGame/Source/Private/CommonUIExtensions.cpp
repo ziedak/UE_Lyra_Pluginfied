@@ -56,7 +56,7 @@ UCommonActivatableWidget* UCommonUIExtensions::PushContentToLayer_ForPlayer(
 	UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>();
 	if (!UIManager) return nullptr;
 
-	UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy();
+	const auto Policy = UIManager->GetCurrentUIPolicy();
 	if (!Policy) return nullptr;
 
 	UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer));
@@ -72,7 +72,7 @@ void UCommonUIExtensions::PushStreamedContentToLayer_ForPlayer(const ULocalPlaye
 
 	if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<UGameUIManagerSubsystem>())
 	{
-		if (UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())
+		if (const auto Policy = UIManager->GetCurrentUIPolicy())
 		{
 			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
 			{
@@ -93,7 +93,7 @@ void UCommonUIExtensions::PopContentFromLayer(UCommonActivatableWidget* Activata
 
 	if (const ULocalPlayer* LocalPlayer = ActivatableWidget->GetOwningLocalPlayer())
 	{
-		if (const UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<
+		if (UGameUIManagerSubsystem* UIManager = LocalPlayer->GetGameInstance()->GetSubsystem<
 			UGameUIManagerSubsystem>())
 		{
 			if (const UGameUIPolicy* Policy = UIManager->GetCurrentUIPolicy())

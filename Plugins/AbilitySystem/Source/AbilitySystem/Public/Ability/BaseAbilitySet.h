@@ -30,7 +30,7 @@ public:
 
 private:
 	// Grants the gameplay abilities in this ability set to the specified ability system component.
-	void GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseASC, FGrantedHandlesData* OutGrantedHandles,
+	void GrantGameplayAbilities(UBaseAbilitySystemComponent* BaseAsc, FGrantedHandlesData* OutGrantedHandles,
 	                            UObject* SourceObject) const;
 
 	// Grants the gameplay effects in this ability set to the specified ability system component.

@@ -182,12 +182,11 @@ void UExperienceManagerComponent::PreloadAssets(const TArray<FName>& BundlesToLo
 
 	const TSet<FPrimaryAssetId> PreloadAssetList;
 	//@TODO: Determine assets to preload (but not blocking-ly)
-	if (PreloadAssetList.Num() > 0)
-	{
-		AssetManager.ChangeBundleStateForPrimaryAssets(PreloadAssetList.Array(),
-		                                               BundlesToLoad,
-		                                               {});
-	}
+	if (PreloadAssetList.Num() <= 0) return;
+
+	AssetManager.ChangeBundleStateForPrimaryAssets(PreloadAssetList.Array(),
+	                                               BundlesToLoad,
+	                                               {});
 }
 
 
@@ -213,7 +212,7 @@ void UExperienceManagerComponent::OnExperienceLoadComplete()
 		GameFeaturePluginURLs.Append(CollectGameFeaturePluginURLs(ActionSet, ActionSet->GameFeaturesToEnableList));
 	}
 
-	// Load and activate the features	
+	// Load and activate the features
 	NumGameFeaturePluginsLoading = GameFeaturePluginURLs.Num();
 	if (NumGameFeaturePluginsLoading <= 0)
 	{

@@ -40,13 +40,13 @@ const FName UHeroComponent::NAME_ACTOR_FEATURE_NAME("Hero");
 
 UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
-	  //  AbilityCameraMode(nullptr),
+	  AbilityCameraMode(nullptr),
 	  bReadyToBindInputs(false) {}
 
 void UHeroComponent::SetAbilityCameraMode(const TSubclassOf<UCustomCameraMode>& CameraMode,
                                           const FGameplayAbilitySpecHandle& OwningSpecHandle)
 {
-	if (!CameraMode) return;
+	if (!CameraMode || AbilityCameraMode == CameraMode) return;
 
 	AbilityCameraMode = CameraMode;
 	AbilityCameraModeOwningSpecHandle = OwningSpecHandle;

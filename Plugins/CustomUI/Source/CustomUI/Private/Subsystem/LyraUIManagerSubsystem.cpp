@@ -40,7 +40,7 @@ bool ULyraUIManagerSubsystem::ShouldShowUI(const ULocalPlayer* LocalPlayer) cons
 	if (!PC) return false;
 
 	const auto HUD = PC->GetHUD();
-	return HUD && !HUD->bShowHUD;
+	return HUD && HUD->bShowHUD;
 }
 
 void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD() const
@@ -50,7 +50,7 @@ void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD() const
 
 	for (const auto LocalPlayer : GetGameInstance()->GetLocalPlayers())
 	{
-		if (!LocalPlayer) return;
+		if (!LocalPlayer) continue;
 
 		const auto RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer));
 		if (!RootLayout) continue;
@@ -63,3 +63,33 @@ void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD() const
 		RootLayout->SetVisibility(DesiredVisibility);
 	}
 }
+
+// void ULyraUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
+// {
+// 	if (const UGameUIPolicy* Policy = GetCurrentUIPolicy())
+// 	{
+// 		for (const ULocalPlayer* LocalPlayer : GetGameInstance()->GetLocalPlayers())
+// 		{
+// 			bool bShouldShowUI = true;
+//
+// 			if (const APlayerController* PC = LocalPlayer->GetPlayerController(GetWorld()))
+// 			{
+// 				const AHUD* HUD = PC->GetHUD();
+//
+// 				if (HUD && !HUD->bShowHUD)
+// 				{
+// 					bShouldShowUI = false;
+// 				}
+// 			}
+//
+// 			if (UPrimaryGameLayout* RootLayout = Policy->GetRootLayout(CastChecked<UCommonLocalPlayer>(LocalPlayer)))
+// 			{
+// 				const ESlateVisibility DesiredVisibility = bShouldShowUI ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
+// 				if (DesiredVisibility != RootLayout->GetVisibility())
+// 				{
+// 					RootLayout->SetVisibility(DesiredVisibility);
+// 				}
+// 			}
+// 		}
+// 	}
+// }

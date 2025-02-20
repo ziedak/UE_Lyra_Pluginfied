@@ -1,11 +1,31 @@
 ﻿<wpf:ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xml:space="preserve">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AUObjectBaseUtility_002Eh_002Fl_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E4_003FEngine_003FSource_003FRuntime_003FCoreUObject_003FPublic_003FUObject_003FUObjectBaseUtility_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E4_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003ACore_002Fd_003APublic_002Fd_003AUObject_002Ff_003ANameTypes_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003AEditor_002Fd_003AUnrealEd_002Fd_003APrivate_002Ff_003APlayLevel_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003ACore_002Fd_003APublic_002Fd_003AContainers_002Ff_003AArray_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003ACoreUObject_002Fd_003APublic_002Fd_003AUObject_002Ff_003AObjectHandle_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003ACoreUObject_002Fd_003APublic_002Fd_003AUObject_002Ff_003AObjectPtr_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003ACore_002Fd_003APublic_002Fd_003AContainers_002Ff_003AUnrealString_002Eh_002Einl/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003AD3D12RHI_002Fd_003APrivate_002Fd_003AWindows_002Ff_003AWindowsD3D12Device_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003AEngine_002Fd_003APrivate_002Ff_003AGameInstance_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003AEngine_002Fd_003APrivate_002Ff_003AGameViewportClient_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=BEF79378_002DE110_002D3691_002D8955_002D807A70CD8689_002Fdl_003ASource_003AD_0021_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E5_003FEngine_003FSource_002Fd_003ARuntime_002Fd_003AUMG_002Fd_003APrivate_002Ff_003AUserWidget_002Ecpp/@EntryIndexedValue">ForceIncluded</s:String>
     <s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
 
     <s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CppCodeStyle/BracesInIfStatement/@EntryValue">RequiredForMultiline</s:String>
     <s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">d:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe</s:String>
+    <s:String
+            x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">D:\Program Files\Epic Games\UE_5.5\Engine\Binaries\ThirdParty\DotNet\8.0.300\win-x64\dotnet.exe</s:String>
     <s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
     <s:String x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/CustomGlobalProperties/=MSBuildEnableWorkloadResolver/@EntryIndexedValue">True</s:String>
     <s:Int64 x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/ParallelProcessesCount2/@EntryValue">0</s:Int64>

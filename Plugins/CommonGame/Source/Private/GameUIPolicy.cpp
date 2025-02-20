@@ -12,43 +12,49 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameUIPolicy)
 
 // Static
-UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
+const UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
-		if (UGameInstance* GameInstance = World->GetGameInstance())
+		if (const UGameInstance* GameInstance = World->GetGameInstance())
 		{
-			if (UGameUIManagerSubsystem* UIManager = UGameInstance::GetSubsystem<UGameUIManagerSubsystem>(GameInstance))
-			{
-				return UIManager->GetCurrentUIPolicy();
-			}
+			if (UGameUIManagerSubsystem* UIManager = UGameInstance::GetSubsystem<UGameUIManagerSubsystem>(GameInstance)) return UIManager->GetCurrentUIPolicy();
 		}
 	}
 
 	return nullptr;
 }
 
-UGameUIManagerSubsystem* UGameUIPolicy::GetOwningUIManager() const
-{
-	return CastChecked<UGameUIManagerSubsystem>(GetOuter());
-}
+UGameUIManagerSubsystem* UGameUIPolicy::GetOwningUIManager() const { return CastChecked<UGameUIManagerSubsystem>(GetOuter()); }
 
-UWorld* UGameUIPolicy::GetWorld() const
-{
-	return GetOwningUIManager()->GetGameInstance()->GetWorld();
-}
+UWorld* UGameUIPolicy::GetWorld() const { return GetOwningUIManager()->GetGameInstance()->GetWorld(); }
 
 UPrimaryGameLayout* UGameUIPolicy::GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const
 {
 	const FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer);
-	return LayoutInfo ? LayoutInfo->RootLayout : nullptr;
+	if (!LayoutInfo)
+	{
+		return nullptr;
+		//return LayoutInfo ? LayoutInfo->RootLayout : nullptr;
+	}
+	return LayoutInfo->RootLayout;
+}
+
+UPrimaryGameLayout* UGameUIPolicy::GetRootLayout2(const ULocalPlayer* LocalPlayer) const
+{
+	const FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer);
+	if (!LayoutInfo)
+	{
+		return nullptr;
+		//return LayoutInfo ? LayoutInfo->RootLayout : nullptr;
+	}
+	return LayoutInfo->RootLayout;
 }
 
 void UGameUIPolicy::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
 {
 	LocalPlayer->OnPlayerControllerSet.AddWeakLambda(
-		this, [this](UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController)
-		{
+		this, [this](UCommonLocalPlayer* LocalPlayer, APlayerController* PlayerController){
 			NotifyPlayerRemoved(LocalPlayer);
 
 			if (FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer))
@@ -56,10 +62,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
 				AddLayoutToViewport(LocalPlayer, LayoutInfo->RootLayout);
 				LayoutInfo->bAddedToViewport = true;
 			}
-			else
-			{
-				CreateLayoutWidget(LocalPlayer);
-			}
+			else CreateLayoutWidget(LocalPlayer);
 		});
 
 	if (FRootViewportLayoutInfo* LayoutInfo = RootViewportLayouts.FindByKey(LocalPlayer))
@@ -67,10 +70,7 @@ void UGameUIPolicy::NotifyPlayerAdded(UCommonLocalPlayer* LocalPlayer)
 		AddLayoutToViewport(LocalPlayer, LayoutInfo->RootLayout);
 		LayoutInfo->bAddedToViewport = true;
 	}
-	else
-	{
-		CreateLayoutWidget(LocalPlayer);
-	}
+	else CreateLayoutWidget(LocalPlayer);
 }
 
 void UGameUIPolicy::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer)
@@ -81,7 +81,7 @@ void UGameUIPolicy::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer)
 		LayoutInfo->bAddedToViewport = false;
 
 		if (LocalMultiplayerInteractionMode == ELocalMultiplayerInteractionMode::SingleToggle && !LocalPlayer->
-		    IsPrimaryPlayer())
+			IsPrimaryPlayer())
 		{
 			UPrimaryGameLayout* RootLayout = LayoutInfo->RootLayout;
 			if (RootLayout && !RootLayout->IsDormant())
@@ -90,13 +90,7 @@ void UGameUIPolicy::NotifyPlayerRemoved(UCommonLocalPlayer* LocalPlayer)
 				RootLayout->SetIsDormant(true);
 				for (const FRootViewportLayoutInfo& RootLayoutInfo : RootViewportLayouts)
 				{
-					if (RootLayoutInfo.LocalPlayer->IsPrimaryPlayer())
-					{
-						if (UPrimaryGameLayout* PrimaryRootLayout = RootLayoutInfo.RootLayout)
-						{
-							PrimaryRootLayout->SetIsDormant(false);
-						}
-					}
+					if (RootLayoutInfo.LocalPlayer->IsPrimaryPlayer()) if (UPrimaryGameLayout* PrimaryRootLayout = RootLayoutInfo.RootLayout) PrimaryRootLayout->SetIsDormant(false);
 				}
 			}
 		}
@@ -162,13 +156,9 @@ void UGameUIPolicy::OnRootLayoutAddedToViewport(UCommonLocalPlayer* LocalPlayer,
 #endif
 }
 
-void UGameUIPolicy::OnRootLayoutRemovedFromViewport(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout)
-{
-}
+void UGameUIPolicy::OnRootLayoutRemovedFromViewport(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout) {}
 
-void UGameUIPolicy::OnRootLayoutReleased(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout)
-{
-}
+void UGameUIPolicy::OnRootLayoutReleased(UCommonLocalPlayer* LocalPlayer, UPrimaryGameLayout* Layout) {}
 
 void UGameUIPolicy::RequestPrimaryControl(UPrimaryGameLayout* Layout)
 {
@@ -189,20 +179,42 @@ void UGameUIPolicy::RequestPrimaryControl(UPrimaryGameLayout* Layout)
 
 void UGameUIPolicy::CreateLayoutWidget(UCommonLocalPlayer* LocalPlayer)
 {
-	if (APlayerController* PlayerController = LocalPlayer->GetPlayerController(GetWorld()))
+	// if (APlayerController* PlayerController = LocalPlayer->GetPlayerController(GetWorld()))
+	// {
+	// 	TSubclassOf<UPrimaryGameLayout> LayoutWidgetClass = GetLayoutWidgetClass(LocalPlayer);
+	// 	if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
+	// 	{
+	// 		UPrimaryGameLayout* NewLayoutObject = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass);
+	// 		RootViewportLayouts.Emplace(LocalPlayer, NewLayoutObject, true);
+	//
+	// 		AddLayoutToViewport(LocalPlayer, NewLayoutObject);
+	// 	}
+	// }
+	const auto World = GetWorld();
+	if (!World)
 	{
-		TSubclassOf<UPrimaryGameLayout> LayoutWidgetClass = GetLayoutWidgetClass(LocalPlayer);
-		if (ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract)))
-		{
-			UPrimaryGameLayout* NewLayoutObject = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass);
-			RootViewportLayouts.Emplace(LocalPlayer, NewLayoutObject, true);
-
-			AddLayoutToViewport(LocalPlayer, NewLayoutObject);
-		}
+		UE_LOG(LogCommonGame, Error, TEXT("World is null for player: %s"), *GetNameSafe(LocalPlayer));
+		return;
 	}
+	APlayerController* PlayerController = LocalPlayer->GetPlayerController(World);
+	if (!PlayerController)
+	{
+		UE_LOG(LogCommonGame, Error, TEXT("PlayerController is null for player: %s"), *GetNameSafe(LocalPlayer));
+		return;
+	}
+
+	UE_LOG(LogCommonGame, Log, TEXT("PlayerController is valid for player: %s"), *GetNameSafe(LocalPlayer));
+
+	TSubclassOf<UPrimaryGameLayout> LayoutWidgetClass = GetLayoutWidgetClass(LocalPlayer);
+	if (!(ensure(LayoutWidgetClass && !LayoutWidgetClass->HasAnyClassFlags(CLASS_Abstract))))
+	{
+		UE_LOG(LogCommonGame, Error, TEXT("LayoutWidgetClass is null or abstract for player: %s"), *GetNameSafe(LocalPlayer));
+		return;
+	}
+	UPrimaryGameLayout* NewLayoutObject = CreateWidget<UPrimaryGameLayout>(PlayerController, LayoutWidgetClass);
+	RootViewportLayouts.Emplace(LocalPlayer, NewLayoutObject, true);
+
+	AddLayoutToViewport(LocalPlayer, NewLayoutObject);
 }
 
-TSubclassOf<UPrimaryGameLayout> UGameUIPolicy::GetLayoutWidgetClass(UCommonLocalPlayer* LocalPlayer)
-{
-	return LayoutClass.LoadSynchronous();
-}
+TSubclassOf<UPrimaryGameLayout> UGameUIPolicy::GetLayoutWidgetClass(UCommonLocalPlayer* LocalPlayer) const { return LayoutClass.LoadSynchronous(); }

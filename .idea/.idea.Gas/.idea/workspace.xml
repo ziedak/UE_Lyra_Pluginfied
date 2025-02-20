@@ -17,73 +17,54 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a72dfda1-d059-4ab9-9775-fee050a70850" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Private/CameraModes/CameraModeStack.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Private/CameraModes/CameraModeView.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Public/CameraModes/CameraModeStack.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Public/CameraModes/CameraModeView.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Public/CustomCameraTypes/CameraModeBlendFunction.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Public/Global/CustomCamera.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Gas/Private/Abilities/GamePlayAbility_Base.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GamePlayAbility_Base.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Camera/ThirdPerson/B_ThirdPerson_CameraMode.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Camera/ThirdPerson/ThirdPerson_offsetCurve.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Components/B_W_CustomScrollBox.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Components/B_W_inputAction.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/CommonUI/UI/PerfStats/W_PerfStatContainer.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/CommonUI/UI/PerfStats/W_SingleTextStat.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/CommonUI/UI/W_FrontendHudLayout.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Core/Experiences/Frontend/B_Frontend_Experience.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Core/Experiences/Frontend/Maps/MainMenu.umap" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/Core/Experiences/Frontend/T_UI_BackdropPlacehilder.uasset" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Content/player/Hero/BP_Hero_Default1.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vsconfig" beforeDir="false" afterPath="$PROJECT_DIR$/.vsconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Jump.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Jump.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Move.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Move.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Test.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Test.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGameplayTags.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/B_FrontendStateCmp.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/B_FrontendStateCmp.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_ButtonBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_ButtonBase.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_Startup.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_Startup.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/UI_MainMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/UI_MainMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/W_OverallLAyout.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/W_OverallLAyout.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Core/BP_GameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Core/BP_GameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Data/DefaultPawnData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/DefaultPawnData.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/player/Hero/BP_Hero_Default.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/player/Hero/BP_Hero_Default.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gas.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/Gas.uproject" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Gas.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Gas.sln.DotSettings.user" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Ability/Abilities/BaseGameplayAbility.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Ability/Abilities/BaseGameplayAbility.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Ability/BaseAbilitySet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Ability/BaseAbilitySet.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Component/BaseAbilitySystemComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Component/BaseAbilitySystemComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Executions/DamageExecution.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Executions/DamageExecution.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/Abilities/BaseGameplayAbility.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/Abilities/BaseGameplayAbility.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/AbilityMontageFailureMessage.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/AbilityMontageFailureMessage.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Component/BaseAbilitySystemComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Component/BaseAbilitySystemComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/Messaging/CommonMessagingSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/Messaging/CommonMessagingSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/CommonGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/CommonGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/Messaging/CommonMessagingSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/Messaging/CommonMessagingSubsystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonLoadingScreen/Source/CommonLoadingScreen/Private/LoadingScreenManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonLoadingScreen/Source/CommonLoadingScreen/Private/LoadingScreenManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/CommonUser.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/CommonUser.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonSessionSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonSessionSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonUserBasicPresence.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonUserBasicPresence.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonUserSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Private/CommonUserSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Public/CommonSessionSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Public/CommonSessionSubsystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Public/CommonUserSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonUser/Source/CommonUser/Public/CommonUserSubsystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/DataAsset/UserFacingExperienceDefinition_DA.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/DataAsset/UserFacingExperienceDefinition_DA.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/GameMode/BaseGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/GameMode/BaseGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Development/CoreDeveloperSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Development/CoreDeveloperSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/GameMode/BaseGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/GameMode/BaseGameMode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/CustomUI.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/CustomUI.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Foundation/LyraControllerDisconnectedScreen.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Foundation/LyraControllerDisconnectedScreen.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Foundation/LyraLoadingScreenSubsystem.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Hud/LyraHUDLayout.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Hud/LyraHUDLayout.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/BaseAbilitySet.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Ability/BaseAbilitySet.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonLocalPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonLocalPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonUIExtensions.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonUIExtensions.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/GameUIManagerSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/GameUIManagerSubsystem.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/GameUIPolicy.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/GameUIPolicy.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Subsystem/LyraUIManagerSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Subsystem/LyraUIManagerSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Subsystem/LyraUIMessaging.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Foundation/LyraControllerDisconnectedScreen.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Foundation/LyraControllerDisconnectedScreen.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Foundation/LyraLoadingScreenSubsystem.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Hud/LyraHUDLayout.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Hud/LyraHUDLayout.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Subsystem/LyraUIManagerSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Subsystem/LyraUIManagerSubsystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Subsystem/LyraUIMessaging.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsLocal.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsLocal.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsLocal.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsLocal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/UIExtension/Source/Private/UIExtensionSystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/UIExtension/Source/Private/UIExtensionSystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas.Target.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas.Target.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Gas.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Gas.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsShared.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsShared.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsShared.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsShared.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Data/GasPawnData.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Data/GasPawnData.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/UI/Hud/BaseHUDLayout.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/UI/Hud/BaseHUDLayout.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Death.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Death.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Jump.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Jump.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Reset.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Reset.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/BaseCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Player/BaseLocalPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Player/BaseLocalPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerState.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerState.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/UI/Frontend/LyraFrontendStateComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/UI/Frontend/LyraFrontendStateComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/UI/Subsystem/UIManagerSubsystem.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/HeroComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/HeroComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Data/GasPawnData.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Data/GasPawnData.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/GameFeatures/GameFeatureAction_AddInputContextMapping.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/UI/Hud/BaseHUDLayout.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/UI/Hud/BaseHUDLayout.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/UI/Frontend/LyraFrontendStateComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/UI/Frontend/LyraFrontendStateComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/UI/Subsystem/UIManagerSubsystem.h" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,99 +91,291 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/EnhancedInputSubsystemInterface.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/EnhancedInputSubsystems.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/UserSettings/EnhancedInputUserSettings.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Private/Input/UIActionRouterTypes.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/Runtime/ModularGameplay/Source/ModularGameplay/Private/Components/GameFrameworkComponentManager.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Plugins/Runtime/ModularGameplay/Source/ModularGameplay/Private/Components/GameFrameworkInitStateInterface.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/PropertyEditor/Private/UserInterface/PropertyEditor/SPropertyEditorClass.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/SparseVolumeTexture/Private/SparseVolumeTextureOpenVDBUtility.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/UnrealEd/Private/EditorEngine.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/UnrealEd/Private/PlayLevel.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/UnrealEd/Private/SourceCodeNavigation.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/UnrealEd/Private/UnrealEdEngine.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Editor/UnrealEd/Private/UnrealEdGlobals.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Programs/AutomationTool/AutomationUtils/CommandletUtils.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Programs/AutomationTool/Gauntlet/SelfTest/TestData/LogParser/Win64FatalError.txt" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Programs/AutomationTool/Scripts/RunProjectCommand.Automation.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/ApplicationCore/Private/Windows/WindowsPlatformApplicationMisc.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/ApplicationCore/Public/GenericPlatform/GenericPlatformFramePacer.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/Containers/Ticker.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/HAL/FileManagerGeneric.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/Logging/StructuredLog.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/Misc/FileHelper.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/UObject/UnrealNames.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Private/Windows/WindowsErrorOutputDevice.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/ContainerAllocationPolicies.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/Map.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/Set.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Containers/UnrealString.h.inl" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Delegates/DelegateBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Delegates/DelegateInstancesImpl.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Delegates/MulticastDelegateBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/GenericPlatform/GenericPlatformMemory.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/HAL/FMemory.inl" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/HAL/Platform.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Internationalization/Internationalization.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Misc/App.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Misc/AssertionMacros.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Misc/TextFilterExpressionEvaluator.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Templates/SharedPointerInternals.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/Templates/UniquePtr.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Core/Public/UObject/NameTypes.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Private/UObject/LinkerLoad.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Private/UObject/ScriptCore.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectGlobals.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/Templates/Casts.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/Field.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectHandle.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/SoftObjectPtr.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectBaseUtility.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/CoreUObject/Public/UObject/UObjectGlobals.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/D3D12RHI/Private/D3D12Util.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/D3D12RHI/Private/Windows/WindowsD3D12Device.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Camera/PlayerCameraManager.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Engine/GameInstance.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/Engine/World.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Classes/GameFramework/HUD.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Actor.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Components/ActorComponent.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/DeviceProfiles/DeviceProfileManager.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/GameEngine.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/GameInstance.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/GameModeBase.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/GameUserSettings.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/GameViewportClient.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/HUD.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/LevelActor.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/LevelTick.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/LocalPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Pawn.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/PlayerController.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/StreamableManager.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Subsystems/SubsystemCollection.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/Tickable.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Private/TimerManager.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Public/Subsystems/Subsystem.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Engine/Public/TimerManager.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/GameplayTags/Public/NativeGameplayTags.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Launch/Private/Launch.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Launch/Private/LaunchEngineLoop.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Launch/Private/Windows/LaunchWindows.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/MoviePlayer/Private/MoviePlayer.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/RHI/Private/Windows/WindowsDynamicRHI.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/RHI/Public/DynamicRHI.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/Slate/Public/Framework/Application/IInputProcessor.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/SlateCore/Public/Widgets/SLeafWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://D:/Program Files/Epic Games/UE_5.4/Engine/Source/Runtime/UMG/Private/Components/Widget.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://5" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Cameras/GameplayCameras/Source/GameplayCameras/Private/GameFramework/ActivateCameraRigFunctions.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Developer/Concert/ConcertApp/MultiUserServer/Source/MultiUserServer/Private/Widgets/Util/Filter/ConcertFrontendFilter_TextSearch.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/Avalanche/Source/AvalancheInteractiveTools/Private/Builders/AvaInteractiveToolsStaticMeshActorToolBuilder.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/Avalanche/Source/AvalancheInteractiveTools/Private/Tools/AvaInteractiveToolsActorToolBase.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/ControlFlows/Source/ControlFlows/Private/ControlFlow.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/ControlFlows/Source/ControlFlows/Private/ControlFlowNode.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Marketplace/Developer/RiderLink/Source/RD/thirdparty/clsocket/src/ActiveSocket.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Marketplace/Developer/RiderLink/Source/RD/thirdparty/spdlog/include/spdlog/fmt/bundled/locale.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Media/ElectraCDM/Source/ElectraCDM/Private/3rdParty/tiny-AES-c/aes.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Private/Widgets/CommonActivatableWidgetContainer.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/Metasound/Source/MetasoundFrontend/Public/MetasoundFrontendTransform.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/ResonanceAudio/Source/ResonanceAudio/Private/ResonanceAudioLibrary/resonance_audio/dsp/gain.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/ResonanceAudio/Source/ResonanceAudio/Private/ResonanceAudioLibrary/resonance_audio/graph/foa_rotator_node.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Developer/AutomationWindow/Private/SAutomationTestItem.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Private/EditorEngine.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Private/PlayLevel.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Editor/UnrealEd/Private/UnrealEdEngine.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Programs/AutomationTool/BuildGraph/BgNodeExecutor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Programs/AutomationTool/Gauntlet/SelfTest/TestData/LogParser/Win64FatalError.txt" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Programs/UnrealBuildTool/System/Action.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Private/Containers/Ticker.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/Array.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Containers/UnrealString.h.inl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Delegates/DelegateInstancesImpl.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Delegates/DelegateSignatureImpl.inl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Misc/MTAccessDetector.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Templates/Function.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Templates/SharedPointer.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/Templates/SharedPointerInternals.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Core/Public/UObject/ScriptDelegates.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Private/UObject/ScriptCore.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/Casts.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/Class.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectHandle.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectPtr.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/SoftObjectPath.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/D3D12RHI/Private/D3D12Resources.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/D3D12RHI/Private/D3D12Util.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/D3D12RHI/Private/Windows/WindowsD3D12Device.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Engine/LocalPlayer.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Engine/Player.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Controller.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/HUD.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/PlayerController.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Actor.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameFramework/SaveGame.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameInstance.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameMode.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameModeBase.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameViewportClient.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/LevelTick.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/LocalPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Subsystems/GameInstanceSubsystem.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Subsystems/Subsystem.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Subsystems/SubsystemCollection.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/TimerManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Subsystems/GameInstanceSubsystem.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Subsystems/Subsystem.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Experimental/IoStore/HttpClient/Private/Activity.inl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Launch/Private/Launch.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Launch/Private/LaunchEngineLoop.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/UserWidget.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Private/WidgetBlueprintGeneratedClass.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidget.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/UMG/Public/Blueprint/UserWidgetPool.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Intermediate/Build/Win64/UnrealEditor/Inc/Gas/UHT/LyraFrontendStateComponent.gen.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/CommonUser/Intermediate/Build/Win64/UnrealEditor/Inc/CommonUser/UHT/CommonUserSubsystem.gen.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Private/LyraCameraComponent.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Private/UICameraManagerComponent.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Public/UICameraManagerComponent.h" root0="FORCE_HIGHLIGHTING" />
@@ -249,7 +422,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;rider.code.cleanup.on.save&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;SolutionBuilderGeneralOptionsPage&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;inlay.hints&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -408,7 +581,17 @@
       <workItem from="1735911560892" duration="28488000" />
       <workItem from="1736009279529" duration="4152000" />
       <workItem from="1736029226726" duration="1360000" />
-      <workItem from="1736034061765" duration="667000" />
+      <workItem from="1736034061765" duration="3540000" />
+      <workItem from="1736368600718" duration="403000" />
+      <workItem from="1736369070299" duration="2956000" />
+      <workItem from="1736873713532" duration="1811000" />
+      <workItem from="1738252652373" duration="451000" />
+      <workItem from="1738254003557" duration="22157000" />
+      <workItem from="1738358761090" duration="294000" />
+      <workItem from="1738429207816" duration="8244000" />
+      <workItem from="1738509003845" duration="14897000" />
+      <workItem from="1740015886072" duration="3822000" />
+      <workItem from="1740082180331" duration="5482000" />
     </task>
     <task id="LOCAL-00001" summary="setup GameLocalSettings plugin">
       <option name="closed" value="true" />
@@ -450,7 +633,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735831702453</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Migration to UE 5.5">
+      <option name="closed" value="true" />
+      <created>1736035066481</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1736035066481</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -459,15 +650,29 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnrealLogPanelSettings">
     <option name="clearOnStart" value="true" />
+    <option name="showMessages" value="false" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="setup GameLocalSettings plugin" />
     <MESSAGE value="GameLocalSettings" />
     <MESSAGE value="optimise custom config settings" />
     <MESSAGE value="setup common input" />
     <MESSAGE value="ui policy fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="ui policy fix" />
+    <MESSAGE value="Migration to UE 5.5" />
+    <option name="LAST_COMMIT_MESSAGE" value="Migration to UE 5.5" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -569,33 +774,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp</url>
-          <line>355</line>
+          <line>354</line>
           <option name="timeStamp" value="107" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp</url>
-          <line>280</line>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp</url>
-          <line>308</line>
-          <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Source/Gas/Private/GameFeatures/GameFeatureAction_WorldActionBase.cpp</url>
           <line>32</line>
           <option name="timeStamp" value="115" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Subsystem/UIManagerSubsystem.cpp</url>
-          <line>46</line>
-          <option name="timeStamp" value="124" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp</url>
-          <line>250</line>
-          <option name="timeStamp" value="136" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Source/Gas/Private/GameFeatures/GameFeatureAction_AddInputContextMapping.cpp</url>
@@ -624,7 +809,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp</url>
-          <line>328</line>
+          <line>327</line>
           <option name="timeStamp" value="146" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -638,19 +823,64 @@
           <option name="timeStamp" value="149" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Experience/ExperienceManagerComponent.cpp</url>
-          <line>316</line>
-          <option name="timeStamp" value="150" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp</url>
-          <line>269</line>
-          <option name="timeStamp" value="151" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp</url>
           <line>347</line>
           <option name="timeStamp" value="153" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Frontend/LyraFrontendStateComponent.cpp</url>
+          <line>217</line>
+          <option name="timeStamp" value="154" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Frontend/LyraFrontendStateComponent.cpp</url>
+          <line>219</line>
+          <option name="timeStamp" value="156" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/Actions/AsyncAction_PushContentToLayerForPlayer.cpp</url>
+          <line>59</line>
+          <option name="timeStamp" value="157" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Frontend/LyraFrontendStateComponent.cpp</url>
+          <line>223</line>
+          <option name="timeStamp" value="158" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp</url>
+          <line>164</line>
+          <option name="timeStamp" value="181" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/CommonLocalPlayer.cpp</url>
+          <line>59</line>
+          <option name="timeStamp" value="182" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIManagerSubsystem.cpp</url>
+          <line>62</line>
+          <option name="timeStamp" value="188" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Subsystem/UIManagerSubsystem.cpp</url>
+          <line>53</line>
+          <option name="timeStamp" value="197" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp</url>
+          <line>214</line>
+          <option name="timeStamp" value="199" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/UI/Subsystem/UIManagerSubsystem.cpp</url>
+          <line>36</line>
+          <option name="timeStamp" value="203" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp</url>
+          <line>117</line>
+          <option name="timeStamp" value="205" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -665,14 +895,6 @@
         <breakpoint enabled="true" type="CidrExceptionBreakpoint" />
       </default-breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="CppProject">
-        <watch expression="&lt;begin&gt;$L0" />
-      </configuration>
-      <inline-watch fileUrl="file://$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIManagerSubsystem.cpp" line="36">
-        <watch expression="PolicyClass" language="C++" />
-      </inline-watch>
-    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

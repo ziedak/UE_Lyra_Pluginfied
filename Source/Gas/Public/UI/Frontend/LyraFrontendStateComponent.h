@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "CommonUserSubsystem.h"
+
 #include "Components/GameStateComponent.h"
 #include "ControlFlowNode.h"
 #include "LoadingProcessInterface.h"
@@ -30,12 +32,9 @@ public:
 
 	//~UActorComponent interface
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//~End of UActorComponent interface
 
 	//~ILoadingProcessInterface interface
 	virtual bool ShouldShowLoadingScreen(FString& OutReason) const override;
-	//~End of ILoadingProcessInterface
 
 private:
 	void OnExperienceLoaded(const UExperienceDefinition_DA* Experience);
@@ -46,6 +45,9 @@ private:
 
 	void FlowStep_WaitForUserInitialization(FControlFlowNodeRef SubFlow);
 	void FlowStep_TryShowPressStartScreen(FControlFlowNodeRef SubFlow);
+	bool IsFirstUserLoggedIn(const UCommonUserSubsystem* UserSubsystem) const;
+	void StartAutoLoginProcess(const FControlFlowNodeRef& SubFlow, UCommonUserSubsystem* UserSubsystem);
+	void ShowPressStartScreen(FControlFlowNodeRef Shared);
 	void FlowStep_TryJoinRequestedSession(FControlFlowNodeRef SubFlow);
 	void FlowStep_TryShowMainScreen(FControlFlowNodeRef SubFlow);
 

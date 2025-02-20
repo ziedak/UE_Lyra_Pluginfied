@@ -56,7 +56,7 @@ class ULocalPlayer;
 /**
  * ULyraSettingsShared - The "Shared" settings are stored as part of the USaveGame system, these settings are not machine
  * specific like the local settings, and are safe to store in the cloud - and 'share' them.  Using the save game system
- * we can also store settings per player, so things like controller keybind preferences should go here, because if those
+ * we can also store settings per player, so things like controller keybinding preferences should go here, because if those
  * are stored in the local settings all users would get them.
  *
  */
@@ -177,10 +177,7 @@ public:
 	bool GetTriggerPullUsesHapticThreshold() const { return bTriggerPullUsesHapticThreshold; }
 
 	UFUNCTION()
-	void SetTriggerPullUsesHapticThreshold(const bool NewValue)
-	{
-		ChangeValueAndDirty(bTriggerPullUsesHapticThreshold, NewValue);
-	}
+	void SetTriggerPullUsesHapticThreshold(const bool NewValue) { ChangeValueAndDirty(bTriggerPullUsesHapticThreshold, NewValue); }
 
 	UFUNCTION()
 	uint8 GetTriggerHapticStrength() const { return TriggerHapticStrength; }
@@ -192,10 +189,7 @@ public:
 	uint8 GetTriggerHapticStartPosition() const { return TriggerHapticStartPosition; }
 
 	UFUNCTION()
-	void SetTriggerHapticStartPosition(const uint8 NewValue)
-	{
-		ChangeValueAndDirty(TriggerHapticStartPosition, NewValue);
-	}
+	void SetTriggerHapticStartPosition(const uint8 NewValue) { ChangeValueAndDirty(TriggerHapticStartPosition, NewValue); }
 
 private:
 	/** Are trigger haptics enabled? */
@@ -447,7 +441,7 @@ private:
 	template <typename T>
 	bool ChangeValueAndDirty(T& CurrentValue, const T& NewValue)
 	{
-		if (CurrentValue == NewValue) { return false; }
+		if (CurrentValue == NewValue) return false;
 
 		CurrentValue = NewValue;
 		bIsDirty = true;
