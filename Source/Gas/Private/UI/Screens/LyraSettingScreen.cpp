@@ -30,14 +30,14 @@ UGameSettingRegistry* ULyraSettingScreen::CreateRegistry()
 {
 	ULyraGameSettingRegistry* NewRegistry = NewObject<ULyraGameSettingRegistry>();
 
-	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer()) { NewRegistry->Initialize(LocalPlayer); }
+	if (ULocalPlayer* LocalPlayer = GetOwningLocalPlayer()) NewRegistry->Initialize(LocalPlayer);
 
 	return NewRegistry;
 }
 
 void ULyraSettingScreen::HandleBackAction()
 {
-	if (AttemptToPopNavigation()) { return; }
+	if (AttemptToPopNavigation()) return;
 
 	ApplyChanges();
 	DeactivateWidget();
@@ -47,15 +47,15 @@ void ULyraSettingScreen::HandleApplyAction() { ApplyChanges(); }
 
 void ULyraSettingScreen::HandleCancelChangesAction() { CancelChanges(); }
 
-void ULyraSettingScreen::OnSettingsDirtyStateChanged_Implementation(bool bSettingsDirty)
+void ULyraSettingScreen::OnSettingsDirtyStateChanged_Implementation(const bool bSettingsDirty)
 {
 	if (bSettingsDirty)
 	{
-		if (!GetActionBindings().Contains(ApplyHandle)) { AddActionBinding(ApplyHandle); }
-		if (!GetActionBindings().Contains(CancelChangesHandle)) { AddActionBinding(CancelChangesHandle); }
+		if (!GetActionBindings().Contains(ApplyHandle)) AddActionBinding(ApplyHandle);
+		if (!GetActionBindings().Contains(CancelChangesHandle)) AddActionBinding(CancelChangesHandle);
 		return;
 	}
-	
+
 	RemoveActionBinding(ApplyHandle);
 	RemoveActionBinding(CancelChangesHandle);
 }

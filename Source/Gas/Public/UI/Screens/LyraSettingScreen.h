@@ -4,7 +4,7 @@
 
 #include "Engine/DataTable.h"
 
-#include "Widgets/GameSettingScreen.h"
+
 #include "Widgets/GameSettingScreen.h"
 
 #include "LyraSettingScreen.generated.h"

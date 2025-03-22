@@ -3,7 +3,7 @@
 #include "IndicatorSystem/IndicatorLayer.h"
 
 #include "IndicatorSystem/SActorCanvas.h"
-#include "Widgets/Layout/SBox.h"
+// #include "Screens/Layout/SBox.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(IndicatorLayer)
 

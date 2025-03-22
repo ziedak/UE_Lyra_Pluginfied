@@ -759,7 +759,6 @@ void ULyraSettingsLocal::RemapMobileResolutionQuality(const int32 FromFPS, const
 	SetResolutionScaleValueEx(ToResQuality);
 }
 
-
 void ULyraSettingsLocal::SetHeadphoneModeEnabled(const bool bEnabled)
 {
 	if (!CanModifyHeadphoneModeEnabled()) return;
@@ -901,7 +900,7 @@ void ULyraSettingsLocal::SetAudioOutputDeviceId(const FString& InAudioOutputDevi
 
 void ULyraSettingsLocal::ApplySafeZoneScale() const { SSafeZone::SetGlobalSafeZoneScale(GetSafeZone()); }
 
-void ULyraSettingsLocal::SetVolume(FName VolumeType, const float InVolume)
+void ULyraSettingsLocal::SetVolume(const FName VolumeType, const float InVolume)
 {
 	// Check to see if references to the control buses and control bus mixes have been loaded yet
 	// Will likely need to be loaded if this function is the first time a setter has been called from the UI

@@ -8,8 +8,8 @@
 #include "IndicatorSystem/LyraIndicatorManagerComponent.h"
 #include "SceneView.h"
 #include "IndicatorSystem/IndicatorDescriptor.h"
-#include "Widgets/Layout/SBox.h"
-#include "Widgets/SLeafWidget.h"
+// #include "Screens/Layout/SBox.h"
+// #include "Screens/SLeafWidget.h"
 
 class FSlateRect;
 
@@ -192,7 +192,7 @@ EActiveTimerReturnType SActorCanvas::UpdateCanvas(double InCurrentTime, float In
 					IndicatorsChanged = true;
 
 					RemoveIndicatorForEntry(Indicator);
-					// Decrement the current index to account for the removal 
+					// Decrement the current index to account for the removal
 					--ChildIndex;
 					continue;
 				}

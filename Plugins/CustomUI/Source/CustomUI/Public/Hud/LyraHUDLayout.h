@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Widgets/LyraActivatableWidget.h"
+#include "Foundation/LyraActivatableWidget.h"
 #include "Containers/Ticker.h"
 #include "GameplayTagContainer.h"
 
@@ -31,10 +31,10 @@ public:
 protected:
 	void HandleEscapeAction() const;
 
-	/** 
-	* Callback for when controllers are disconnected. This will check if the player now has 
+	/**
+	* Callback for when controllers are disconnected. This will check if the player now has
 	* no mapped input devices to them, which would mean that they can't play the game.
-	* 
+	*
 	* If this is the case, then call DisplayControllerDisconnectedMenu.
 	*/
 	void HandleInputDeviceConnectionChanged(EInputDeviceConnectionState NewConnectionState, FPlatformUserId PlatformUserId, FInputDeviceId InputDeviceId);
@@ -46,7 +46,7 @@ protected:
 	void HandleInputDevicePairingChanged(FInputDeviceId InputDeviceId, FPlatformUserId NewUserPlatformId, FPlatformUserId OldUserPlatformId);
 
 	/**
-	* Notify this widget that the state of controllers for the player have changed. Queue a timer for next tick to 
+	* Notify this widget that the state of controllers for the player have changed. Queue a timer for next tick to
 	* process them and see if we need to show/hide the "controller disconnected" widget.
 	*/
 	void NotifyControllerStateChangeForDisconnectScreen();
@@ -59,7 +59,7 @@ protected:
 	virtual void ProcessControllerDevicesHavingChangedForDisconnectScreen();
 
 	/**
-     * Returns true if this platform supports a "controller disconnected" screen. 
+     * Returns true if this platform supports a "controller disconnected" screen.
      */
 	virtual bool ShouldPlatformDisplayControllerDisconnectScreen() const;
 
@@ -76,12 +76,12 @@ protected:
 	void HideControllerDisconnectedMenu();
 
 	/**
-	 * The menu to be displayed when the user presses the "Pause" or "Escape" button 
+	 * The menu to be displayed when the user presses the "Pause" or "Escape" button
 	 */
 	UPROPERTY(EditDefaultsOnly)
 	TSoftClassPtr<UCommonActivatableWidget> EscapeMenuClass;
 
-	/** 
+	/**
 	* The widget which should be presented to the user if all of their controllers are disconnected.
 	*/
 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
@@ -91,7 +91,7 @@ protected:
 	 * The platform tags that are required in order to show the "Controller Disconnected" screen.
 	 *
 	 * If these tags are not set in the INI file for this platform, then the controller disconnect screen
-	 * will not ever be displayed. 
+	 * will not ever be displayed.
 	 */
 	UPROPERTY(EditDefaultsOnly, Category="Controller Disconnect Menu")
 	FGameplayTagContainer PlatformRequiresControllerDisconnectScreen;

@@ -29,9 +29,9 @@ class COMMONGAME_API UAsyncAction_PushContentToLayerForPlayer : public UCancella
 	UFUNCTION(BlueprintCallable, BlueprintCosmetic,
 		meta=(WorldContext = "WorldContextObject", BlueprintInternalUseOnly="true"))
 	static UAsyncAction_PushContentToLayerForPlayer* PushContentToLayerForPlayer(
-		APlayerController* OwningPlayer,
-		UPARAM(meta = (AllowAbstract=false)) TSoftClassPtr<UCommonActivatableWidget> WidgetClass,
-		UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag LayerName, bool bSuspendInputUntilComplete = true);
+		APlayerController* InOwningPlayer,
+		UPARAM(meta = (AllowAbstract=false)) TSoftClassPtr<UCommonActivatableWidget> InWidgetClass,
+		UPARAM(meta = (Categories = "UI.Layer")) FGameplayTag InLayerName, bool bSuspendInputUntilComplete = true);
 
 	virtual void Activate() override;
 

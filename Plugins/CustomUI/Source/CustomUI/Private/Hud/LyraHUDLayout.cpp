@@ -11,7 +11,7 @@
 #include "Input/CommonUIInputTypes.h"
 #include "ICommonUIModule.h"
 #include "NativeGameplayTags.h"
-#include "Foundation/LyraControllerDisconnectedScreen.h"
+#include "Screens/LyraControllerDisconnectedScreen.h"
 
 
 #if WITH_EDITOR
@@ -29,7 +29,7 @@ ULyraHUDLayout::ULyraHUDLayout(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 	  , SpawnedControllerDisconnectScreen(nullptr)
 {
-	// By default, only primarily controller platforms require a disconnect screen. 
+	// By default, only primarily controller platforms require a disconnect screen.
 	PlatformRequiresControllerDisconnectScreen.AddTag(TAG_Platform_Trait_Input_PrimarlyController);
 }
 
@@ -135,7 +135,7 @@ void ULyraHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()
 	TArray<FInputDeviceId> MappedInputDevices;
 	const int32 NumDevicesMappedToUser = DeviceMapper.GetAllInputDevicesForUser(OwningLocalPlayerId, OUT MappedInputDevices);
 
-	// Check if there are any other connected GAMEPAD devices mapped to this platform user. 
+	// Check if there are any other connected GAMEPAD devices mapped to this platform user.
 	bool bHasConnectedController = false;
 
 	for (const FInputDeviceId MappedDevice : MappedInputDevices)

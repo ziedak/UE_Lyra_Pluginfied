@@ -4,7 +4,6 @@
 
 #include "AsyncMixin.h"
 #include "Blueprint/UserWidgetPool.h"
-#include "Widgets/SPanel.h"
 
 class FActiveTimerHandle;
 class FArrangedChildren;
@@ -151,8 +150,8 @@ public:
 		uint8 bHasValidScreenPosition : 1;
 		uint8 bDirty : 1;
 
-		/** 
-		 * Cached & frame-deferred value of whether the indicator was visually screen clamped last frame or not; 
+		/**
+		 * Cached & frame-deferred value of whether the indicator was visually screen clamped last frame or not;
 		 * Semi-hacky mutable implementation as it is cached during a const paint operation
 		 */
 		mutable uint8 bWasIndicatorClamped : 1;
