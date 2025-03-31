@@ -213,7 +213,7 @@ public:
 	bool GetSubtitlesEnabled() const { return bEnableSubtitles; }
 
 	UFUNCTION()
-	void SetSubtitlesEnabled(bool Value) { ChangeValueAndDirty(bEnableSubtitles, Value); }
+	void SetSubtitlesEnabled(const bool Value) { ChangeValueAndDirty(bEnableSubtitles, Value); }
 
 	UFUNCTION()
 	ESubtitleDisplayTextSize GetSubtitlesTextSize() const { return SubtitleTextSize; }

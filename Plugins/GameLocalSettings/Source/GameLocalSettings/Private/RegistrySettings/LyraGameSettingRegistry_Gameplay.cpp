@@ -7,8 +7,9 @@
 // #include "EditCondition/WhenPlatformHasTrait.h"
 #include "Settings/LyraSettingsLocal.h"
 #include "GameSettingValueDiscreteDynamic.h"
-#include "Interfaces/IPlayerSharedSettingsInterface.h"
+// #include "Interfaces/IPlayerSharedSettingsInterface.h"
 // #include "Replays/LyraReplaySubsystem.h"
+#include "Settings/MyClass.h"
 #define LOCTEXT_NAMESPACE "Lyra"
 
 
@@ -44,10 +45,12 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::SetLanguageSettings(ULocal
 	                                           "Configure the language of the game.");
 #if WITH_EDITOR
 	if (GIsEditor)
+	{
 		LanguageSetting_Description = LOCTEXT("LanguageSetting_WithEditor_Description",
 		                                      "The language of the game.\n\n<text color=\"#ffff00\">WARNING:"
 		                                      " Language changes will not affect PIE, you'll need to run with -game to test this,"
 		                                      " or change your PIE language options in the editor preferences.</>");
+	}
 #endif
 
 	return UGameSettingCollectionPage::CreateSettings(

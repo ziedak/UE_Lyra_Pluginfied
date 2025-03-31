@@ -2,7 +2,7 @@
 
 #include "GameSettingValueDiscreteDynamic.h"
 #include "DataSource/GameSettingDataSource.h"
-#include "UObject/WeakObjectPtr.h"
+// #include "UObject/WeakObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingValueDiscreteDynamic)
 
@@ -14,11 +14,15 @@
 
 void UGameSettingValueDiscreteDynamic::AddDynamicOption(const FString& InOptionValue, const FText& InOptionText)
 {
-#if !UE_BUILD_SHIPPING
-	ensureAlwaysMsgf(!OptionValues.Contains(InOptionValue),
-	                 TEXT("You already added this option InOptionValue: %s InOptionText %s."), *InOptionValue,
-	                 *InOptionText.ToString());
-#endif
+	//TODO activate this
+	// #if !UE_BUILD_SHIPPING
+	// 	ensureAlwaysMsgf(OptionValues.Contains(InOptionValue),
+	// 	                 TEXT("You already added this option InOptionValue: %s InOptionText: %s."), *InOptionValue,
+	// 	                 *InOptionText.ToString());
+	// 	// ensureAlwaysMsgf(!OptionValues.Contains(InOptionValue),
+	// 	// 			 TEXT("You already added this option InOptionValue: %s InOptionText: %s."), *InOptionValue,
+	// 	// 			 *InOptionText.ToString());
+	// #endif
 
 	OptionValues.Add(InOptionValue);
 	OptionDisplayTexts.Add(InOptionText);
@@ -33,17 +37,11 @@ void UGameSettingValueDiscreteDynamic::RemoveDynamicOption(const FString& InOpti
 	OptionDisplayTexts.RemoveAt(Index);
 }
 
-FString UGameSettingValueDiscreteDynamic::GetValueAsString() const
-{
-	return Getter->GetValueAsString(LocalPlayer);
-}
+FString UGameSettingValueDiscreteDynamic::GetValueAsString() const { return Getter->GetValueAsString(LocalPlayer); }
 
-void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue)
-{
-	SetValueFromString(InStringValue, EGameSettingChangeReason::Change);
-}
+void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue) { SetValueFromString(InStringValue, EGameSettingChangeReason::Change); }
 
-void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue, EGameSettingChangeReason Reason)
+void UGameSettingValueDiscreteDynamic::SetValueFromString(const FString& InStringValue, const EGameSettingChangeReason Reason)
 {
 	check(Setter);
 	Setter->SetValue(LocalPlayer, InStringValue);
@@ -76,50 +74,23 @@ void UGameSettingValueDiscreteDynamic::Startup()
 	Getter->Startup(LocalPlayer, FSimpleDelegate::CreateUObject(this, &ThisClass::OnDataSourcesReady));
 }
 
-void UGameSettingValueDiscreteDynamic::OnDataSourcesReady()
-{
-	StartupComplete();
-}
+void UGameSettingValueDiscreteDynamic::OnDataSourcesReady() { StartupComplete(); }
 
-void UGameSettingValueDiscreteDynamic::StoreInitial()
-{
-	InitialValue = GetValueAsString();
-}
+void UGameSettingValueDiscreteDynamic::StoreInitial() { InitialValue = GetValueAsString(); }
 
-void UGameSettingValueDiscreteDynamic::ResetToDefault()
-{
-	if (DefaultValue.IsSet())
-	{
-		SetValueFromString(DefaultValue.GetValue(), EGameSettingChangeReason::ResetToDefault);
-	}
-}
+void UGameSettingValueDiscreteDynamic::ResetToDefault() { if (DefaultValue.IsSet()) SetValueFromString(DefaultValue.GetValue(), EGameSettingChangeReason::ResetToDefault); }
 
-void UGameSettingValueDiscreteDynamic::RestoreToInitial()
-{
-	SetValueFromString(InitialValue, EGameSettingChangeReason::RestoreToInitial);
-}
+void UGameSettingValueDiscreteDynamic::RestoreToInitial() { SetValueFromString(InitialValue, EGameSettingChangeReason::RestoreToInitial); }
 
-void UGameSettingValueDiscreteDynamic::SetDiscreteOptionByIndex(int32 Index)
-{
-	if (ensure(OptionValues.IsValidIndex(Index)))
-	{
-		SetValueFromString(OptionValues[Index]);
-	}
-}
+void UGameSettingValueDiscreteDynamic::SetDiscreteOptionByIndex(const int32 Index) { if (ensure(OptionValues.IsValidIndex(Index))) SetValueFromString(OptionValues[Index]); }
 
 int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionIndex() const
 {
 	const FString CurrentValue = GetValueAsString();
-	const int32 Index = OptionValues.IndexOfByPredicate([this, CurrentValue](const FString& InOption)
-	{
-		return AreOptionsEqual(CurrentValue, InOption);
-	});
+	const int32 Index = OptionValues.IndexOfByPredicate([this, CurrentValue](const FString& InOption){ return AreOptionsEqual(CurrentValue, InOption); });
 
 	// If we can't find the correct index, send the default index.
-	if (Index == INDEX_NONE)
-	{
-		return GetDiscreteOptionDefaultIndex();
-	}
+	if (Index == INDEX_NONE) return GetDiscreteOptionDefaultIndex();
 
 	return Index;
 }
@@ -127,10 +98,7 @@ int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionIndex() const
 int32 UGameSettingValueDiscreteDynamic::GetDiscreteOptionDefaultIndex() const
 {
 	return DefaultValue.IsSet()
-		       ? OptionValues.IndexOfByPredicate([this](const FString& InOption)
-		       {
-			       return AreOptionsEqual(DefaultValue.GetValue(), InOption);
-		       })
+		       ? OptionValues.IndexOfByPredicate([this](const FString& InOption){ return AreOptionsEqual(DefaultValue.GetValue(), InOption); })
 		       : INDEX_NONE;
 }
 
@@ -138,17 +106,10 @@ TArray<FText> UGameSettingValueDiscreteDynamic::GetDiscreteOptions() const
 {
 	const TArray<FString>& DisabledOptions = GetEditState().GetDisabledOptions();
 
-	if (DisabledOptions.Num() <= 0)
-		return OptionDisplayTexts;
+	if (DisabledOptions.Num() <= 0) return OptionDisplayTexts;
 
 	TArray<FText> AllowedOptions;
-	for (int32 OptionIndex = 0; OptionIndex < OptionValues.Num(); ++OptionIndex)
-	{
-		if (!DisabledOptions.Contains(OptionValues[OptionIndex]))
-		{
-			AllowedOptions.Add(OptionDisplayTexts[OptionIndex]);
-		}
-	}
+	for (int32 OptionIndex = 0; OptionIndex < OptionValues.Num(); ++OptionIndex) { if (!DisabledOptions.Contains(OptionValues[OptionIndex])) AllowedOptions.Add(OptionDisplayTexts[OptionIndex]); }
 
 	return AllowedOptions;
 }
@@ -158,8 +119,8 @@ TArray<FText> UGameSettingValueDiscreteDynamic::GetDiscreteOptions() const
 //////////////////////////////////////////////////////////////////////////
 
 UGameSettingValueDiscreteDynamic_Bool* UGameSettingValueDiscreteDynamic_Bool::CreateSettings(const FName& DevName,
-	const FText& DisplayName, const FText& Description, const TSharedRef<FGameSettingDataSource>& Getter,
-	const TSharedRef<FGameSettingDataSource>& Setter, const bool DefaultValue)
+                                                                                             const FText& DisplayName, const FText& Description, const TSharedRef<FGameSettingDataSource>& Getter,
+                                                                                             const TSharedRef<FGameSettingDataSource>& Setter, const bool DefaultValue)
 
 {
 	const auto Setting = NewObject<UGameSettingValueDiscreteDynamic_Bool>();
@@ -194,10 +155,7 @@ void UGameSettingValueDiscreteDynamic_Bool::SetFalseText(const FText& InText)
 	AddDynamicOption(TEXT("false"), InText);
 }
 
-void UGameSettingValueDiscreteDynamic_Bool::SetDefaultValue(bool Value)
-{
-	DefaultValue = LexToString(Value);
-}
+void UGameSettingValueDiscreteDynamic_Bool::SetDefaultValue(const bool Value) { DefaultValue = LexToString(Value); }
 
 //////////////////////////////////////////////////////////////////////////
 // UGameSettingValueDiscreteDynamic_Number

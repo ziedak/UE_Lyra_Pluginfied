@@ -6,6 +6,11 @@
 #include "GameSettingRegistry.h"
 #include "GameSettingValueDiscreteDynamic.h"
 #include "GameSettingValueScalarDynamic.h"
+
+#include "CustomSettings/LyraSettingAction_SafeZoneEditor.h"
+#include "CustomSettings/LyraSettingValueDiscrete_PerfStat.h"
+#include "CustomSettings/LyraSettingValueDiscrete_Resolution.h"
+
 #include "Settings/LyraSettingsLocal.h" // IWYU pragma: keep
 
 #include "LyraGameSettingRegistry.generated.h"
@@ -36,20 +41,31 @@ DECLARE_LOG_CATEGORY_EXTERN(LogLyraGameSettingRegistry, Log, Log);
 // 		GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
 // 	}))
 //@TODO not sure verify this is the right way to do this
+// #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
+// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
+// GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetSharedSettings),				\
+// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
+// }))
+//
+// #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
+// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
+// GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetLocalSettings),				\
+// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
+// }))
 
 #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetSharedSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetSharedSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
 }))
 
 #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetLocalSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetLocalSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
 }))
 /**
- * 
+ *
  */
 UCLASS()
 class GAMELOCALSETTINGS_API ULyraGameSettingRegistry : public UGameSettingRegistry
@@ -64,10 +80,23 @@ public:
 protected:
 	virtual void OnInitialize(ULocalPlayer* InLocalPlayer) override;
 	virtual bool IsFinishedInitializing() const override;
+	bool IsOwningLocalPlayerValid() const;
+	bool AreSharedSettingsAvailable() const;
 
 	UGameSettingCollection* InitializeVideoSettings(ULocalPlayer* InLocalPlayer);
+	void AddDisplaySettings(UGameSettingCollection* Screen);
+	UGameSettingValueDiscreteDynamic_Enum* CreateWindowModeSetting();
+	ULyraSettingValueDiscrete_Resolution* CreateResolutionSetting(UGameSettingValueDiscreteDynamic_Enum* EditDependency);
+	void AddGraphicsSettings(UGameSettingCollection* Screen);
+	UGameSettingValueDiscreteDynamic_Enum* AddColorBlindModeSetting();
+	UGameSettingValueScalarDynamic* AddBrightnessSetting();
+	ULyraSettingAction_SafeZoneEditor* AddSafeZoneSetting();
 	void InitializeVideoSettings_FrameRates(UGameSettingCollection* Screen, ULocalPlayer* InLocalPlayer);
-	void AddPerformanceStatPage(UGameSettingCollection* Screen, ULocalPlayer* InLocalPlayer) const;
+	void AddPerformanceStatPage(UGameSettingCollection* PerfStatsOuterCategory) const;
+	UGameSettingCollectionPage* CreatePerformanceStatsPage() const;
+	void AddPerformanceStats(UGameSettingCollectionPage* StatsPage) const;
+	void AddNetworkStats(UGameSettingCollectionPage* StatsPage) const;
+	ULyraSettingValueDiscrete_PerfStat* AddPerformanceStat(ELyraDisplayablePerformanceStat Stat, const FText& DisplayName, const FText& Description) const;
 
 	UGameSettingCollection* InitializeAudioSettings(ULocalPlayer* InLocalPlayer);
 

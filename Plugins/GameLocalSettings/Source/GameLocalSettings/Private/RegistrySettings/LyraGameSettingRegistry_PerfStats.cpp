@@ -12,176 +12,126 @@ class ULyraLocalPlayer;
 
 //////////////////////////////////////////////////////////////////////
 
-void ULyraGameSettingRegistry::AddPerformanceStatPage(UGameSettingCollection* PerfStatsOuterCategory,
-                                                      ULocalPlayer* InLocalPlayer) const
+void ULyraGameSettingRegistry::AddPerformanceStatPage(UGameSettingCollection* PerfStatsOuterCategory) const
 {
-	//----------------------------------------------------------------------------------
-	{
-		static_assert(static_cast<int32>(ELyraDisplayablePerformanceStat::Count) == 15,
-		              "Consider updating this function to deal with new performance stats");
+	static_assert(static_cast<int32>(ELyraDisplayablePerformanceStat::Count) == 15,
+	              "Consider updating this function to deal with new performance stats");
 
-		const auto StatsPage = UGameSettingCollectionPage::CreateSettings(
-			"PerfStatsPage",
-			LOCTEXT("PerfStatsPage_Name", "Performance Stats"),
-			LOCTEXT("PerfStatsPage_Description", "Configure the display of performance statistics."),
-			LOCTEXT("PerfStatsPage_Navigation", "Edit"),
-			FWhenPlayingAsPrimaryPlayer::Get());
+	const auto StatsPage = CreatePerformanceStatsPage();
+	PerfStatsOuterCategory->AddSetting(StatsPage);
 
-		PerfStatsOuterCategory->AddSetting(StatsPage);
+	AddPerformanceStats(StatsPage);
+	AddNetworkStats(StatsPage);
+}
 
-		// Performance stats
-		{
-			const auto StatCategory_Performance = UGameSettingCollection::CreateCollection(
-				"StatCategory_Performance", LOCTEXT("StatCategory_Performance_Name", "Performance"));
-			StatsPage->AddSetting(StatCategory_Performance);
+UGameSettingCollectionPage* ULyraGameSettingRegistry::CreatePerformanceStatsPage() const
+{
+	return UGameSettingCollectionPage::CreateSettings(
+		"PerfStatsPage",
+		LOCTEXT("PerfStatsPage_Name", "Performance Stats"),
+		LOCTEXT("PerfStatsPage_Description", "Configure the display of performance statistics."),
+		LOCTEXT("PerfStatsPage_Navigation", "Edit"),
+		FWhenPlayingAsPrimaryPlayer::Get());
+}
 
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::ClientFPS);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_ClientFPS", "Client FPS"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_ClientFPS",
-				                                        "Client frame rate (higher is better)"));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::ServerFPS);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_ServerFPS", "Server FPS"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_ServerFPS", "Server frame rate"));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::FrameTime);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_FrameTime", "Frame Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_FrameTime", "The total frame time."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::IdleTime);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_IdleTime", "Idle Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_IdleTime",
-				                                        "The amount of time spent waiting idle for frame pacing."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::FrameTime_GameThread);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_FrameTime_GameThread", "CPU Game Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_FrameTime_GameThread",
-				                                        "The amount of time spent on the main game thread."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::FrameTime_RenderThread);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_FrameTime_RenderThread", "CPU Render Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_FrameTime_RenderThread",
-				                                        "The amount of time spent on the rendering thread."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::FrameTime_RHIThread);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_FrameTime_RHIThread", "CPU RHI Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_FrameTime_RHIThread",
-				                                        "The amount of time spent on the Render Hardware Interface thread."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::FrameTime_GPU);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_FrameTime_GPU", "GPU Render Time"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_FrameTime_GPU",
-				                                        "The amount of time spent on the GPU."));
-				StatCategory_Performance->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-		}
+void ULyraGameSettingRegistry::AddPerformanceStats(UGameSettingCollectionPage* StatsPage) const
+{
+	const auto StatCategory_Performance = UGameSettingCollection::CreateCollection(
+		"StatCategory_Performance", LOCTEXT("StatCategory_Performance_Name", "Performance"));
+	StatsPage->AddSetting(StatCategory_Performance);
 
-		// Network stats
-		////////////////////////////////////////////////////////////////////////////////////
-		{
-			UGameSettingCollection* StatCategory_Network = NewObject<UGameSettingCollection>();
-			StatCategory_Network->SetDevName(TEXT("StatCategory_Network"));
-			StatCategory_Network->SetDisplayName(LOCTEXT("StatCategory_Network_Name", "Network"));
-			StatsPage->AddSetting(StatCategory_Network);
+	const auto ClientFPS = AddPerformanceStat(ELyraDisplayablePerformanceStat::ClientFPS,
+	                                          LOCTEXT("PerfStat_ClientFPS", "Client FPS"),
+	                                          LOCTEXT("PerfStatDescription_ClientFPS", "Client frame rate (higher is better)"));
+	StatCategory_Performance->AddSetting(ClientFPS);
 
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::Ping);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_Ping", "Ping"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_Ping",
-				                                        "The roundtrip latency of your connection to the server."));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketLoss_Incoming);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketLoss_Incoming", "Incoming Packet Loss"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketLoss_Incoming",
-				                                        "The percentage of incoming packets lost."));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketLoss_Outgoing);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketLoss_Outgoing", "Outgoing Packet Loss"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketLoss_Outgoing",
-				                                        "The percentage of outgoing packets lost."));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketRate_Incoming);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketRate_Incoming", "Incoming Packet Rate"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketRate_Incoming",
-				                                        "Rate of incoming packets (per second)"));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketRate_Outgoing);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketRate_Outgoing", "Outgoing Packet Rate"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketRate_Outgoing",
-				                                        "Rate of outgoing packets (per second)"));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketSize_Incoming);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketSize_Incoming", "Incoming Packet Size"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketSize_Incoming",
-				                                        "The average size (in bytes) of packets recieved in the last second."));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-			{
-				ULyraSettingValueDiscrete_PerfStat* Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
-				Setting->SetStat(ELyraDisplayablePerformanceStat::PacketSize_Outgoing);
-				Setting->SetDisplayName(LOCTEXT("PerfStat_PacketSize_Outgoing", "Outgoing Packet Size"));
-				Setting->SetDescriptionRichText(LOCTEXT("PerfStatDescription_PacketSize_Outgoing",
-				                                        "The average size (in bytes) of packets sent in the last second."));
-				StatCategory_Network->AddSetting(Setting);
-			}
-			//----------------------------------------------------------------------------------
-		}
-	}
+	const auto ServerFPS = AddPerformanceStat(ELyraDisplayablePerformanceStat::ServerFPS,
+	                                          LOCTEXT("PerfStat_ServerFPS", "Server FPS"),
+	                                          LOCTEXT("PerfStatDescription_ServerFPS", "Server frame rate"));
+	StatCategory_Performance->AddSetting(ServerFPS);
+
+	const auto FrameTime = AddPerformanceStat(ELyraDisplayablePerformanceStat::FrameTime,
+	                                          LOCTEXT("PerfStat_FrameTime", "Frame Time"),
+	                                          LOCTEXT("PerfStatDescription_FrameTime", "The total frame time."));
+	StatCategory_Performance->AddSetting(FrameTime);
+
+	const auto IdleTime = AddPerformanceStat(ELyraDisplayablePerformanceStat::IdleTime,
+	                                         LOCTEXT("PerfStat_IdleTime", "Idle Time"),
+	                                         LOCTEXT("PerfStatDescription_IdleTime", "The amount of time spent waiting idle for frame pacing."));
+	StatCategory_Performance->AddSetting(IdleTime);
+	const auto GameThread = AddPerformanceStat(ELyraDisplayablePerformanceStat::FrameTime_GameThread,
+	                                           LOCTEXT("PerfStat_FrameTime_GameThread", "CPU Game Time"),
+	                                           LOCTEXT("PerfStatDescription_FrameTime_GameThread", "The amount of time spent on the main game thread."));
+	StatCategory_Performance->AddSetting(GameThread);
+
+	const auto FrameTime_RenderThread = AddPerformanceStat(ELyraDisplayablePerformanceStat::FrameTime_RenderThread,
+	                                                       LOCTEXT("PerfStat_FrameTime_RenderThread", "CPU Render Time"),
+	                                                       LOCTEXT("PerfStatDescription_FrameTime_RenderThread", "The amount of time spent on the rendering thread."));
+	StatCategory_Performance->AddSetting(FrameTime_RenderThread);
+
+	const auto FrameTime_RHIThread = AddPerformanceStat(ELyraDisplayablePerformanceStat::FrameTime_RHIThread,
+	                                                    LOCTEXT("PerfStat_FrameTime_RHIThread", "CPU RHI Time"),
+	                                                    LOCTEXT("PerfStatDescription_FrameTime_RHIThread", "The amount of time spent on the Render Hardware Interface thread."));
+	StatCategory_Performance->AddSetting(FrameTime_RHIThread);
+
+	const auto FrameTime_GPU = AddPerformanceStat(ELyraDisplayablePerformanceStat::FrameTime_GPU,
+	                                              LOCTEXT("PerfStat_FrameTime_GPU", "GPU Render Time"),
+	                                              LOCTEXT("PerfStatDescription_FrameTime_GPU", "The amount of time spent on the GPU."));
+	StatCategory_Performance->AddSetting(FrameTime_GPU);
+}
+
+void ULyraGameSettingRegistry::AddNetworkStats(UGameSettingCollectionPage* StatsPage) const
+{
+	UGameSettingCollection* StatCategory_Network = NewObject<UGameSettingCollection>();
+	StatCategory_Network->SetDevName(TEXT("StatCategory_Network"));
+	StatCategory_Network->SetDisplayName(LOCTEXT("StatCategory_Network_Name", "Network"));
+	StatsPage->AddSetting(StatCategory_Network);
+
+	const auto Ping = AddPerformanceStat(ELyraDisplayablePerformanceStat::Ping,
+	                                     LOCTEXT("PerfStat_Ping", "Ping"),
+	                                     LOCTEXT("PerfStatDescription_Ping", "The roundtrip latency of your connection to the server."));
+	StatCategory_Network->AddSetting(Ping);
+
+	const auto PacketLoss_Incoming = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketLoss_Incoming,
+	                                                    LOCTEXT("PerfStat_PacketLoss_Incoming", "Incoming Packet Loss"),
+	                                                    LOCTEXT("PerfStatDescription_PacketLoss_Incoming", "The percentage of incoming packets lost."));
+	StatCategory_Network->AddSetting(PacketLoss_Incoming);
+
+	const auto PacketLoss_Outgoing = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketLoss_Outgoing,
+	                                                    LOCTEXT("PerfStat_PacketLoss_Outgoing", "Outgoing Packet Loss"),
+	                                                    LOCTEXT("PerfStatDescription_PacketLoss_Outgoing", "The percentage of outgoing packets lost."));
+	StatCategory_Network->AddSetting(PacketLoss_Outgoing);
+
+	const auto PacketRate_Incoming = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketRate_Incoming,
+	                                                    LOCTEXT("PerfStat_PacketRate_Incoming", "Incoming Packet Rate"),
+	                                                    LOCTEXT("PerfStatDescription_PacketRate_Incoming", "Rate of incoming packets (per second)"));
+	StatCategory_Network->AddSetting(PacketRate_Incoming);
+
+	const auto PacketRate_Outgoing = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketRate_Outgoing,
+	                                                    LOCTEXT("PerfStat_PacketRate_Outgoing", "Outgoing Packet Rate"),
+	                                                    LOCTEXT("PerfStatDescription_PacketRate_Outgoing", "Rate of outgoing packets (per second)"));
+	StatCategory_Network->AddSetting(PacketRate_Outgoing);
+
+	const auto PacketSize_Incoming = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketSize_Incoming,
+	                                                    LOCTEXT("PerfStat_PacketSize_Incoming", "Incoming Packet Size"),
+	                                                    LOCTEXT("PerfStatDescription_PacketSize_Incoming", "The average size (in bytes) of packets received in the last second."));
+	StatCategory_Network->AddSetting(PacketSize_Incoming);
+
+	const auto PacketSize_Outgoing = AddPerformanceStat(ELyraDisplayablePerformanceStat::PacketSize_Outgoing,
+	                                                    LOCTEXT("PerfStat_PacketSize_Outgoing", "Outgoing Packet Size"),
+	                                                    LOCTEXT("PerfStatDescription_PacketSize_Outgoing", "The average size (in bytes) of packets sent in the last second."));
+	StatCategory_Network->AddSetting(PacketSize_Outgoing);
+}
+
+ULyraSettingValueDiscrete_PerfStat* ULyraGameSettingRegistry::AddPerformanceStat(const ELyraDisplayablePerformanceStat Stat,
+                                                                                 const FText& DisplayName,
+                                                                                 const FText& Description) const
+{
+	const auto Setting = NewObject<ULyraSettingValueDiscrete_PerfStat>();
+	Setting->SetStat(Stat);
+	Setting->SetDisplayName(DisplayName);
+	Setting->SetDescriptionRichText(Description);
+	return Setting;
 }
 
 #undef LOCTEXT_NAMESPACE

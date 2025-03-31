@@ -100,7 +100,7 @@ void ULyraSettingValueDiscrete_Resolution::InitializeWindowedResolutions(const F
 	TArray<FIntPoint> WindowedResolutions;
 	const FIntPoint MinResolution(1280, 720);
 	// Use the primary display resolution minus 1 to exclude the primary display resolution from the list.
-	// This is so you don't make a window so large that part of the game is off screen and you are unable to change resolutions back.
+	// This is so you don't make a window so large that part of the game is off-screen and you are unable to change resolutions back.
 	const FIntPoint MaxResolution(InitialDisplayMetrics.PrimaryDisplayWidth - 1,
 	                              InitialDisplayMetrics.PrimaryDisplayHeight - 1);
 

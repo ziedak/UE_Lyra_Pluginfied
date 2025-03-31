@@ -10,15 +10,10 @@
 #include "UObject/EnumProperty.h"
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraGameSettingRegistry)
 
-namespace {}
 
 DEFINE_LOG_CATEGORY(LogLyraGameSettingRegistry);
 
 #define LOCTEXT_NAMESPACE "Lyra"
-
-//--------------------------------------
-// ULyraGameSettingRegistry
-//--------------------------------------
 
 ULyraGameSettingRegistry* ULyraGameSettingRegistry::Get(ULocalPlayer* InLocalPlayer)
 {
@@ -30,32 +25,44 @@ ULyraGameSettingRegistry* ULyraGameSettingRegistry::Get(ULocalPlayer* InLocalPla
 		Registry = NewObject<ULyraGameSettingRegistry>(InLocalPlayer, TEXT("LyraGameSettingRegistry"));
 		Registry->Initialize(InLocalPlayer);
 	}
-
 	return Registry;
 }
 
 bool ULyraGameSettingRegistry::IsFinishedInitializing() const
 {
-	if (!Super::IsFinishedInitializing()) { return false; }
+	// Check if the base class initialization is complete
+	if (!Super::IsFinishedInitializing()) return false;
 
+	// Validate that the owning local player implements the required interface
+	if (!IsOwningLocalPlayerValid()) return false;
+
+	// Check if shared settings are available
+	if (!AreSharedSettingsAvailable()) return false;
+
+	// All checks passed, initialization is complete
+	return true;
+}
+
+bool ULyraGameSettingRegistry::IsOwningLocalPlayerValid() const
+{
 	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettingsInterface>())
 	{
 		UE_LOG(LogLyraGameSettingRegistry, Error, TEXT("OwningLocalPlayer does not Implement IPlayerSharedSettings"));
-		return true;
+		return false;
 	}
-
-	if (const auto ISharedSettings = Cast<IPlayerSharedSettingsInterface>(OwningLocalPlayer))
-	{
-		return ISharedSettings->GetSharedSettings() == nullptr;
-	}
-
-
-	// ULyraLocalPlayer* LocalPlayer = Cast<ULyraLocalPlayer>(OwningLocalPlayer);
-	// if (LocalPlayer && !LocalPlayer->GetSharedSettings())
-	// 	return false;
-
 	return true;
 }
+
+bool ULyraGameSettingRegistry::AreSharedSettingsAvailable() const
+{
+	if (const auto ISharedSettings = Cast<IPlayerSharedSettingsInterface>(OwningLocalPlayer))
+	{
+		return ISharedSettings->GetSharedSettings() != nullptr;
+	}
+	return false;
+}
+
+
 
 void ULyraGameSettingRegistry::OnInitialize(ULocalPlayer* InLocalPlayer)
 {
@@ -80,12 +87,12 @@ void ULyraGameSettingRegistry::SaveChanges()
 {
 	Super::SaveChanges();
 
-	if (!OwningLocalPlayer || !OwningLocalPlayer->Implements<UPlayerSharedSettingsInterface>())
+	if (!IsOwningLocalPlayerValid())
 	{
-		UE_LOG(LogLyraGameSettingRegistry, Error, TEXT("OwningLocalPlayer does not Implement IPlayerSharedSettings"));
 		return;
 	}
 
+	// verify this is the right way to do this
 	if (const auto ISharedSettings = Cast<IPlayerSharedSettingsInterface>(OwningLocalPlayer))
 	{
 		ISharedSettings->GetLocalSettings()->ApplySettings(false);

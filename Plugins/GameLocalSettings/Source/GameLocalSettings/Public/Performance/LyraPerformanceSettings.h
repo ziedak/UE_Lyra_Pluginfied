@@ -40,7 +40,7 @@ struct FLyraPerformanceStatGroup
 {
 	GENERATED_BODY()
 
-	// A query on platform traits to determine whether or not it will be possible
+	// A query on platform traits to determine whether it will be possible
 	// to show a set of stats
 	UPROPERTY(EditAnywhere, meta=(Categories = "Input,Platform.Trait"))
 	FGameplayTagQuery VisibilityQuery;
@@ -54,7 +54,7 @@ struct FLyraPerformanceStatGroup
 UENUM()
 enum class ELyraFramePacingMode : uint8
 {
-	// Manual frame rate limits, user is allowed to choose whether or not to lock to vsync
+	// Manual frame rate limits, user is allowed to choose whether to lock to vsync
 	DesktopStyle,
 
 	// Limits handled by choosing present intervals driven by device profiles
