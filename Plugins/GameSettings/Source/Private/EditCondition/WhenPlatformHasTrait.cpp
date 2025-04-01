@@ -62,13 +62,20 @@ TSharedRef<FWhenPlatformHasTrait> FWhenPlatformHasTrait::DisableIfPresent(
 	return Result;
 }
 
-void FWhenPlatformHasTrait::GatherEditState(const ULocalPlayer* InLocalPlayer,
-                                            FGameSettingEditableState& InOutEditState) const
+// void FWhenPlatformHasTrait::GatherEditState(const ULocalPlayer* InLocalPlayer,
+//                                             FGameSettingEditableState& InOutEditState) const
+// {
+// 	const auto bHasDesiredTag = UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->HasVisibilityTag(VisibilityTag)
+// 		== bTagDesired;
+// 	if (!bHasDesiredTag) return;
+// 	KillReason.IsEmpty() ? InOutEditState.Disable(DisableReason) : InOutEditState.Kill(KillReason);
+// }
+void FWhenPlatformHasTrait::GatherEditState(const ULocalPlayer* InLocalPlayer, FGameSettingEditableState& InOutEditState) const
 {
-	const auto bHasDesiredTag = UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->HasVisibilityTag(VisibilityTag)
-		== bTagDesired;
-	if (!bHasDesiredTag) return;
-	KillReason.IsEmpty() ? InOutEditState.Disable(DisableReason) : InOutEditState.Kill(KillReason);
+	if (UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->HasVisibilityTag(VisibilityTag) != bTagDesired)
+	{
+		if (KillReason.IsEmpty()) InOutEditState.Disable(DisableReason);
+		else InOutEditState.Kill(KillReason);
+	}
 }
-
 #undef LOCTEXT_NAMESPACE

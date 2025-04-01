@@ -125,25 +125,16 @@ public:
 		Setting->SetDynamicGetter(Getter);
 		Setting->SetDynamicSetter(Setter);
 		Setting->SetDefaultValue(DefaultValue);
-		for (int32 Index = 0; Index <= NbOptions; Index++)
-		{
-			Setting->AddOption(Index, FText::AsNumber(Index));
-		}
+		for (int32 Index = 0; Index <= NbOptions; Index++) { Setting->AddOption(Index, FText::AsNumber(Index)); }
 
 		return Setting;
 	}
 
 	template <typename NumberType>
-	void SetDefaultValue(NumberType InValue)
-	{
-		SetDefaultValueFromString(LexToString(InValue));
-	}
+	void SetDefaultValue(NumberType InValue) { SetDefaultValueFromString(LexToString(InValue)); }
 
 	template <typename NumberType>
-	void AddOption(NumberType InValue, const FText& InOptionText)
-	{
-		AddDynamicOption(LexToString(InValue), InOptionText);
-	}
+	void AddOption(NumberType InValue, const FText& InOptionText) { AddDynamicOption(LexToString(InValue), InOptionText); }
 
 	template <typename NumberType>
 	NumberType GetValue() const
@@ -157,10 +148,7 @@ public:
 	}
 
 	template <typename NumberType>
-	void SetValue(NumberType InValue)
-	{
-		SetValueFromString(LexToString(InValue));
-	}
+	void SetValue(NumberType InValue) { SetValueFromString(LexToString(InValue)); }
 
 protected:
 	/** UGameSettingValue */
@@ -184,7 +172,7 @@ public:
 	// }
 
 
-//@TODO verify this is the right way to do this
+	//@TODO verify this is the right way to do this
 	template <typename EnumType>
 	static TMap<EnumType, FText> EnumToMap(const FString& NameSpace)
 	{
@@ -216,10 +204,8 @@ public:
 		Setting->SetDynamicGetter(Getter);
 		Setting->SetDynamicSetter(Setter);
 		Setting->SetDefaultValue(DefaultValue);
-		for (auto Element : Collection)
-		{
-			Setting->AddEnumOption(Element.Key, Element.Value);
-		}
+
+		for (auto Element : Collection) { Setting->AddEnumOption(Element.Key, Element.Value); }
 		return Setting;
 	}
 
@@ -267,10 +253,7 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Color : public UGameSett
 	GENERATED_BODY()
 
 public:
-	void SetDefaultValue(FLinearColor InColor)
-	{
-		SetDefaultValueFromString(InColor.ToString());
-	}
+	void SetDefaultValue(FLinearColor InColor) { SetDefaultValueFromString(InColor.ToString()); }
 
 	void AddColorOption(FLinearColor InColor)
 	{
@@ -291,10 +274,7 @@ public:
 		return ColorValue;
 	}
 
-	void SetValue(FLinearColor InColor)
-	{
-		SetValueFromString(InColor.ToString());
-	}
+	void SetValue(FLinearColor InColor) { SetValueFromString(InColor.ToString()); }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -307,10 +287,7 @@ class GAMESETTINGS_API UGameSettingValueDiscreteDynamic_Vector2D : public UGameS
 	GENERATED_BODY()
 
 public:
-	void SetDefaultValue(const FVector2D& InValue)
-	{
-		SetDefaultValueFromString(InValue.ToString());
-	}
+	void SetDefaultValue(const FVector2D& InValue) { SetDefaultValueFromString(InValue.ToString()); }
 
 	FVector2D GetValue() const
 	{
@@ -319,8 +296,5 @@ public:
 		return ValueVector;
 	}
 
-	void SetValue(const FVector2D& InValue)
-	{
-		SetValueFromString(InValue.ToString());
-	}
+	void SetValue(const FVector2D& InValue) { SetValueFromString(InValue.ToString()); }
 };

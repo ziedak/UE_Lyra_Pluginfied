@@ -133,30 +133,50 @@ void ULyraGameSettingRegistry::AddDisplaySettings(UGameSettingCollection* Screen
 	AddPerformanceStatPage(Display);
 }
 
+// UGameSettingValueDiscreteDynamic_Enum* ULyraGameSettingRegistry::CreateWindowModeSetting()
+// {
+// 	UGameSettingValueDiscreteDynamic_Enum* Setting = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
+// 		"WindowMode",
+// 		LOCTEXT("WindowMode_Name", "Window Mode"),
+// 		LOCTEXT("WindowMode_Description",
+// 		        "In Windowed mode you can interact with other windows more easily, "
+// 		        "and drag the edges of the window to set the size. In Windowed Fullscreen "
+// 		        "mode you can easily switch between applications. In Fullscreen mode"
+// 		        " you cannot interact with other windows as easily, but the game will run slightly faster."),
+//
+// 		GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFullscreenMode),
+// 		GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFullscreenMode),
+// 		// EWindowMode::Windowed,
+// 		NULL,
+// 		{
+// 			{EWindowMode::Fullscreen, LOCTEXT("WindowModeFullscreen", "Fullscreen")},
+// 			{EWindowMode::WindowedFullscreen, LOCTEXT("WindowModeWindowedFullscreen", "Windowed Fullscreen")},
+// 			{EWindowMode::Windowed, LOCTEXT("WindowModeWindowed", "Windowed")}
+// 		}
+// 	);
+//
+// 	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(
+// 			TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode"))
+// 	);
+//
+//
+// 	return Setting;
+// }
 UGameSettingValueDiscreteDynamic_Enum* ULyraGameSettingRegistry::CreateWindowModeSetting()
 {
-	UGameSettingValueDiscreteDynamic_Enum* Setting = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
-		"WindowMode",
-		LOCTEXT("WindowMode_Name", "Window Mode"),
-		LOCTEXT("WindowMode_Description",
-		        "In Windowed mode you can interact with other windows more easily, "
-		        "and drag the edges of the window to set the size. In Windowed Fullscreen "
-		        "mode you can easily switch between applications. In Fullscreen mode"
-		        " you cannot interact with other windows as easily, but the game will run slightly faster."),
+	UGameSettingValueDiscreteDynamic_Enum* Setting = NewObject<UGameSettingValueDiscreteDynamic_Enum>();
+	Setting->SetDevName(TEXT("WindowMode"));
+	Setting->SetDisplayName(LOCTEXT("WindowMode_Name", "Window Mode"));
+	Setting->SetDescriptionRichText(LOCTEXT("WindowMode_Description",
+	                                        "In Windowed mode you can interact with other windows more easily, and drag the edges of the window to set the size. In Windowed Fullscreen mode you can easily switch between applications. In Fullscreen mode you cannot interact with other windows as easily, but the game will run slightly faster."));
 
-		GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFullscreenMode),
-		GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFullscreenMode),
-		EWindowMode::Windowed,
-		{
-			{EWindowMode::Fullscreen, LOCTEXT("WindowModeFullscreen", "Fullscreen")},
-			{EWindowMode::WindowedFullscreen, LOCTEXT("WindowModeWindowedFullscreen", "Windowed Fullscreen")},
-			{EWindowMode::Windowed, LOCTEXT("WindowModeWindowed", "Windowed")}
-		}
-	);
+	Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetFullscreenMode));
+	Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetFullscreenMode));
+	Setting->AddEnumOption(EWindowMode::Fullscreen, LOCTEXT("WindowModeFullscreen", "Fullscreen"));
+	Setting->AddEnumOption(EWindowMode::WindowedFullscreen, LOCTEXT("WindowModeWindowedFullscreen", "Windowed Fullscreen"));
+	Setting->AddEnumOption(EWindowMode::Windowed, LOCTEXT("WindowModeWindowed", "Windowed"));
 
-	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(
-			TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode"))
-	);
+	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(TAG_Platform_Trait_SupportsWindowedMode, TEXT("Platform does not support window mode")));
 
 
 	return Setting;
