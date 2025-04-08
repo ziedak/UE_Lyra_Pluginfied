@@ -7,15 +7,10 @@
 #include "RegistrySettings/LyraGameSettingRegistry.h"
 #include "Settings/LyraSettingsLocal.h"
 #include "Settings/LyraSettingsShared.h"
-#include "NativeGameplayTags.h"
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"
-// #include "Interfaces/IPlayerSharedSettingsInterface.h"
-#include "Settings/MyClass.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 #define LOCTEXT_NAMESPACE "Lyra"
 
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Platform_Trait_Input_SupportsGamepad, "Platform.Trait.Input.SupportsGamepad");
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Platform_Trait_Input_SupportsTriggerHaptics,
-                              "Platform.Trait.Input.SupportsTriggerHaptics");
 
 UGameSettingCollection* ULyraGameSettingRegistry::InitializeGamepadSettings(ULocalPlayer* InLocalPlayer)
 {
@@ -52,33 +47,32 @@ UGameSettingValueDiscreteDynamic* ULyraGameSettingRegistry::CreateControllerHard
 	Setting->SetDescriptionRichText(LOCTEXT("ControllerHardware_Description", "The type of controller you're using."));
 	Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetControllerPlatform));
 	Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetControllerPlatform));
+	const auto PlatformInputSettings = UPlatformSettingsManager::Get().GetSettingsForPlatform<
+		UCommonInputPlatformSettings>();
+	if (!PlatformInputSettings) return Setting;
 
-	if (UCommonInputPlatformSettings* PlatformInputSettings = UPlatformSettingsManager::Get().GetSettingsForPlatform<
-		UCommonInputPlatformSettings>())
+	const TArray<TSoftClassPtr<UCommonInputBaseControllerData>>& ControllerDatas = PlatformInputSettings->
+		GetControllerData();
+	for (TSoftClassPtr<UCommonInputBaseControllerData> ControllerDataPtr : ControllerDatas)
 	{
-		const TArray<TSoftClassPtr<UCommonInputBaseControllerData>>& ControllerDatas = PlatformInputSettings->
-			GetControllerData();
-		for (TSoftClassPtr<UCommonInputBaseControllerData> ControllerDataPtr : ControllerDatas)
+		if (TSubclassOf<UCommonInputBaseControllerData> ControllerDataClass = ControllerDataPtr.LoadSynchronous())
 		{
-			if (TSubclassOf<UCommonInputBaseControllerData> ControllerDataClass = ControllerDataPtr.LoadSynchronous())
-			{
-				const UCommonInputBaseControllerData* ControllerData = ControllerDataClass.GetDefaultObject();
-				if (ControllerData->InputType == ECommonInputType::Gamepad)
-				{
-					Setting->AddDynamicOption(ControllerData->GamepadName.ToString(),
-					                          ControllerData->GamepadDisplayName);
-				}
-			}
-		}
-		// The setting if we can select more than one game controller type on this platform
-		// we are allowed to change it
-		if (Setting->GetDynamicOptions().Num() > 1 && PlatformInputSettings->CanChangeGamepadType())
-		{
-			const FName CurrentControllerPlatform = GetDefault<ULyraSettingsLocal>()->GetControllerPlatform();
-			if (CurrentControllerPlatform == NAME_None) Setting->SetDiscreteOptionByIndex(0);
-			else Setting->SetDefaultValueFromString(CurrentControllerPlatform.ToString());
+			const UCommonInputBaseControllerData* ControllerData = ControllerDataClass.GetDefaultObject();
+			if (ControllerData->InputType != ECommonInputType::Gamepad) continue;
+
+			Setting->AddDynamicOption(ControllerData->GamepadName.ToString(),
+			                          ControllerData->GamepadDisplayName);
 		}
 	}
+	// The setting if we can select more than one game controller type on this platform
+	// we are allowed to change it
+	if (Setting->GetDynamicOptions().Num() > 0 && PlatformInputSettings->CanChangeGamepadType())
+	{
+		const FName CurrentControllerPlatform = GetDefault<ULyraSettingsLocal>()->GetControllerPlatform();
+		if (CurrentControllerPlatform == NAME_None) Setting->SetDiscreteOptionByIndex(0);
+		else Setting->SetDefaultValueFromString(CurrentControllerPlatform.ToString());
+	}
+
 
 	return Setting;
 }

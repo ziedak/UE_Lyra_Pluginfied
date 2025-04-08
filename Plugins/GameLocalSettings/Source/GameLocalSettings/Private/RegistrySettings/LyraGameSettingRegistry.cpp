@@ -67,7 +67,7 @@ bool ULyraGameSettingRegistry::AreSharedSettingsAvailable() const
 void ULyraGameSettingRegistry::OnInitialize(ULocalPlayer* InLocalPlayer)
 {
 	VideoSettings = InitializeVideoSettings(InLocalPlayer);
-	InitializeVideoSettings_FrameRates(VideoSettings, InLocalPlayer);
+	InitializeVideoSettings_FrameRates(VideoSettings);
 	RegisterSetting(VideoSettings);
 
 	AudioSettings = InitializeAudioSettings(InLocalPlayer);

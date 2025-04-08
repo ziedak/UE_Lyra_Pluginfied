@@ -38,10 +38,7 @@ namespace GameSettingsConsoleVars
 void UGameSetting::Initialize(ULocalPlayer* InLocalPlayer)
 {
 	// If we've already gotten this local player we're already initialized.
-	if (LocalPlayer == InLocalPlayer)
-	{
-		return;
-	}
+	if (LocalPlayer == InLocalPlayer) return;
 
 	LocalPlayer = InLocalPlayer;
 
@@ -53,24 +50,15 @@ void UGameSetting::Initialize(ULocalPlayer* InLocalPlayer)
 	ensureAlwaysMsgf(!DisplayName.IsEmpty(), TEXT("You must provide a DisplayName for settings."));
 #endif
 
-	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions)
-	{
-		EditCondition->Initialize(LocalPlayer);
-	}
+	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions) { EditCondition->Initialize(LocalPlayer); }
 
 	// If there are any child settings go ahead and initialize them as well.
-	for (UGameSetting* Setting : GetChildSettings())
-	{
-		Setting->Initialize(LocalPlayer);
-	}
+	for (UGameSetting* Setting : GetChildSettings()) { Setting->Initialize(LocalPlayer); }
 
 	Startup();
 }
 
-void UGameSetting::Startup()
-{
-	StartupComplete();
-}
+void UGameSetting::Startup() { StartupComplete(); }
 
 void UGameSetting::StartupComplete()
 {
@@ -88,10 +76,7 @@ void UGameSetting::Apply()
 	OnApply();
 
 	// Run through any edit conditions and let them know things changed.
-	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions)
-	{
-		EditCondition->SettingApplied(LocalPlayer, this);
-	}
+	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions) { EditCondition->SettingApplied(LocalPlayer, this); }
 
 	OnSettingAppliedEvent.Broadcast(this);
 }
@@ -107,15 +92,9 @@ void UGameSetting::OnApply()
 	// No-Op by default.
 }
 
-UWorld* UGameSetting::GetWorld() const
-{
-	return LocalPlayer ? LocalPlayer->GetWorld() : nullptr;
-}
+UWorld* UGameSetting::GetWorld() const { return LocalPlayer ? LocalPlayer->GetWorld() : nullptr; }
 
-void UGameSetting::SetSettingParent(UGameSetting* InSettingParent)
-{
-	SettingParent = InSettingParent;
-}
+void UGameSetting::SetSettingParent(UGameSetting* InSettingParent) { SettingParent = InSettingParent; }
 
 FGameSettingEditableState UGameSetting::ComputeEditableState() const
 {
@@ -125,18 +104,12 @@ FGameSettingEditableState UGameSetting::ComputeEditableState() const
 	OnGatherEditState(EditState);
 
 	// Run through any edit conditions
-	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions)
-	{
-		EditCondition->GatherEditState(LocalPlayer, EditState);
-	}
+	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions) { EditCondition->GatherEditState(LocalPlayer, EditState); }
 
 	return EditState;
 }
 
-void UGameSetting::OnGatherEditState(FGameSettingEditableState& InOutEditState) const
-{
-
-}
+void UGameSetting::OnGatherEditState(FGameSettingEditableState& InOutEditState) const {}
 
 const FString& UGameSetting::GetDescriptionPlainText() const
 {
@@ -178,15 +151,12 @@ void UGameSetting::RefreshPlainText() const
 	}
 }
 
-void UGameSetting::NotifySettingChanged(EGameSettingChangeReason Reason)
+void UGameSetting::NotifySettingChanged(const EGameSettingChangeReason Reason)
 {
 	OnSettingChanged(Reason);
 
 	// Run through any edit conditions and let them know things changed.
-	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions)
-	{
-		EditCondition->SettingChanged(LocalPlayer, this, Reason);
-	}
+	for (const TSharedRef<FGameSettingEditCondition>& EditCondition : EditConditions) { EditCondition->SettingChanged(LocalPlayer, this, Reason); }
 
 	if (!bOnSettingChangedEventGuard)
 	{
@@ -216,14 +186,11 @@ void UGameSetting::AddEditDependency(UGameSetting* DependencySetting)
 	}
 }
 
-void UGameSetting::RefreshEditableState(bool bNotifyEditConditionsChanged)
+void UGameSetting::RefreshEditableState(const bool bNotifyEditConditionsChanged)
 {
 	// The LocalPlayer may be destroyed out from under us, if that happens,
 	// we need to ignore attempts to refresh the editable state.
-	if (!LocalPlayer)
-	{
-		return;
-	}
+	if (!LocalPlayer) return;
 
 	//TODO: GameSettings
 	//// We should wait until the player is fully logged in before trying to refresh settings.
@@ -232,17 +199,12 @@ void UGameSetting::RefreshEditableState(bool bNotifyEditConditionsChanged)
 	//	return;
 	//}
 
-	if (!bOnEditConditionsChangedEventGuard)
-	{
-		TGuardValue<bool> Guard(bOnEditConditionsChangedEventGuard, true);
+	if (bOnEditConditionsChangedEventGuard) return;
+	TGuardValue<bool> Guard(bOnEditConditionsChangedEventGuard, true);
 
-		EditableStateCache = ComputeEditableState();
+	EditableStateCache = ComputeEditableState();
 
-		if (bNotifyEditConditionsChanged)
-		{
-			NotifyEditConditionsChanged();
-		}
-	}
+	if (bNotifyEditConditionsChanged) NotifyEditConditionsChanged();
 }
 
 void UGameSetting::NotifyEditConditionsChanged()
@@ -252,10 +214,7 @@ void UGameSetting::NotifyEditConditionsChanged()
 	OnSettingEditConditionChangedEvent.Broadcast(this);
 }
 
-void UGameSetting::OnEditConditionsChanged()
-{
-
-}
+void UGameSetting::OnEditConditionsChanged() {}
 
 void UGameSetting::HandleEditDependencyChanged(UGameSetting* DependencySetting)
 {
@@ -263,34 +222,25 @@ void UGameSetting::HandleEditDependencyChanged(UGameSetting* DependencySetting)
 	RefreshEditableState();
 }
 
-void UGameSetting::HandleEditDependencyChanged(UGameSetting* DependencySetting, EGameSettingChangeReason Reason)
+void UGameSetting::HandleEditDependencyChanged(UGameSetting* DependencySetting, const EGameSettingChangeReason Reason)
 {
 	OnDependencyChanged();
 	RefreshEditableState();
 
-	if (Reason != EGameSettingChangeReason::DependencyChanged)
-	{
-		NotifySettingChanged(EGameSettingChangeReason::DependencyChanged);
-	}
+	if (Reason != EGameSettingChangeReason::DependencyChanged) NotifySettingChanged(EGameSettingChangeReason::DependencyChanged);
 }
 
-void UGameSetting::OnDependencyChanged()
-{
-
-}
+void UGameSetting::OnDependencyChanged() {}
 
 FText UGameSetting::GetDynamicDetails() const
 {
-	if (!LocalPlayer)
-	{
-		return FText::GetEmpty();
-	}
+	if (!LocalPlayer) return FText::GetEmpty();
 
 	FText DynamicDetailsText = DynamicDetails.IsBound() ? DynamicDetails.Execute(*LocalPlayer) : FText::GetEmpty();
 
 #if UE_CAN_SHOW_SETTINGS_DEBUG_INFO
-	if ((GameSettingsConsoleVars::ShowDebugInfoMode == 1) || (
-		    (GameSettingsConsoleVars::ShowDebugInfoMode == -1) && GIsEditor))
+	if (GameSettingsConsoleVars::ShowDebugInfoMode == 1 ||
+		(GameSettingsConsoleVars::ShowDebugInfoMode == -1 && GIsEditor))
 	{
 		const FString DevSettingDetails = FString::Printf(TEXT("%s<debug>DevName: %s</>\n<debug>Class: %s</>"),
 		                                                  DynamicDetailsText.IsEmpty() ? TEXT("") : TEXT("\n"),
@@ -306,19 +256,13 @@ FText UGameSetting::GetDynamicDetails() const
 	return DynamicDetailsText;
 }
 
-FText UGameSetting::GetDynamicDetailsInternal() const
-{
-	return FText::GetEmpty();
-}
+FText UGameSetting::GetDynamicDetailsInternal() const { return FText::GetEmpty(); }
 
-UGameSetting::FStringCultureCache::FStringCultureCache(TFunction<FString()> InStringGetter)
+UGameSetting::FStringCultureCache::FStringCultureCache(const TFunction<FString()>& InStringGetter)
 	: Culture(FInternationalization::Get().GetCurrentCulture())
-	  , StringGetter(InStringGetter)
-{
-	StringCache = StringGetter();
-}
+	  , StringGetter(InStringGetter) { StringCache = StringGetter(); }
 
-void UGameSetting::FStringCultureCache::Invalidate()
+void UGameSetting::FStringCultureCache::Invalidate() const
 {
 	StringCache = StringGetter();
 	Culture = FInternationalization::Get().GetCurrentCulture();
@@ -326,10 +270,7 @@ void UGameSetting::FStringCultureCache::Invalidate()
 
 FString UGameSetting::FStringCultureCache::Get() const
 {
-	if (Culture == FInternationalization::Get().GetCurrentCulture())
-	{
-		return StringCache;
-	}
+	if (Culture == FInternationalization::Get().GetCurrentCulture()) return StringCache;
 
 	StringCache = StringGetter();
 	Culture = FInternationalization::Get().GetCurrentCulture();

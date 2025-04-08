@@ -18,7 +18,7 @@ class UGameSettingRegistry;
 DECLARE_DELEGATE_RetVal_OneParam(FText, FGetGameSettingsDetails, ULocalPlayer& /*InLocalPlayer*/);
 
 /**
- * 
+ *
  */
 UCLASS(Abstract, BlueprintType)
 class GAMESETTINGS_API UGameSetting : public UObject
@@ -38,7 +38,7 @@ public:
 	FOnSettingEditConditionChanged OnSettingEditConditionChangedEvent;
 
 	/**
-	 * Gets the non-localized developer name for this setting.  This should remain constant, and represent a 
+	 * Gets the non-localized developer name for this setting.  This should remain constant, and represent a
 	 * unique identifier for this setting inside this settings registry.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -57,7 +57,7 @@ public:
 	void SetDisplayName(const FString& Value) { SetDisplayName(FText::FromString(Value)); }
 #endif
 	UFUNCTION(BlueprintCallable)
-	ESlateVisibility GetDisplayNameVisibility() { return DisplayNameVisibility; }
+	ESlateVisibility GetDisplayNameVisibility() const { return DisplayNameVisibility; }
 
 	void SetNameDisplayVisibility(const ESlateVisibility InVisibility) { DisplayNameVisibility = InVisibility; }
 
@@ -94,7 +94,7 @@ public:
 	void SetDynamicDetails(const FGetGameSettingsDetails& InDynamicDetails) { DynamicDetails = InDynamicDetails; }
 
 	/**
-	 * Gets the dynamic details about this setting.  This may be information like, how many refunds are remaining 
+	 * Gets the dynamic details about this setting.  This may be information like, how many refunds are remaining
 	 * on their account, or the account number.
 	 */
 	UFUNCTION(BlueprintCallable)
@@ -131,7 +131,7 @@ public:
 
 	/** Should this setting be reported to analytics. */
 	bool GetIsReportedToAnalytics() const { return bReportAnalytics; }
-	void SetIsReportedToAnalytics(bool bReport) { bReportAnalytics = bReport; }
+	void SetIsReportedToAnalytics(const bool bReport) { bReportAnalytics = bReport; }
 
 	/** Gets the analytics value for this setting. */
 	virtual FString GetAnalyticsValue() const { return TEXT(""); }
@@ -223,9 +223,9 @@ protected:
 
 	class FStringCultureCache
 	{
-		FStringCultureCache(TFunction<FString()> InStringGetter);
+		FStringCultureCache(const TFunction<FString()>& InStringGetter);
 
-		void Invalidate();
+		void Invalidate() const;
 
 		FString Get() const;
 

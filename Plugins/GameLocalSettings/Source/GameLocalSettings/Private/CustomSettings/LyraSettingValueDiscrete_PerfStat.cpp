@@ -3,6 +3,9 @@
 #include "CustomSettings/LyraSettingValueDiscrete_PerfStat.h"
 
 #include "CommonUIVisibilitySubsystem.h"
+
+#include "CustomSettings/EditConditions/WhenPerfStatAllowed.h"
+
 #include "Performance/LyraPerformanceSettings.h"
 #include "Performance/LyraPerformanceStatTypes.h"
 #include "Settings/LyraSettingsLocal.h"
@@ -13,71 +16,16 @@ class ULocalPlayer;
 
 #define LOCTEXT_NAMESPACE "LyraSettings"
 
-//////////////////////////////////////////////////////////////////////
+ULyraSettingValueDiscrete_PerfStat::ULyraSettingValueDiscrete_PerfStat(): StatToDisplay(), InitialMode() {}
 
-class FGameSettingEditCondition_PerfStatAllowed : public FGameSettingEditCondition
-{
-public:
-	static TSharedRef<FGameSettingEditCondition_PerfStatAllowed> Get(ELyraDisplayablePerformanceStat Stat)
-	{
-		return MakeShared<FGameSettingEditCondition_PerfStatAllowed>(Stat);
-	}
-
-	FGameSettingEditCondition_PerfStatAllowed(ELyraDisplayablePerformanceStat Stat)
-		: AssociatedStat(Stat)
-	{
-	}
-
-	//~FGameSettingEditCondition interface
-	virtual void GatherEditState(const ULocalPlayer* InLocalPlayer,
-	                             FGameSettingEditableState& InOutEditState) const override
-	{
-		const FGameplayTagContainer& VisibilityTags = UCommonUIVisibilitySubsystem::GetChecked(InLocalPlayer)->
-			GetVisibilityTags();
-
-		bool bCanShowStat = false;
-		for (const FLyraPerformanceStatGroup& Group : GetDefault<ULyraPerformanceSettings>()->
-		     UserFacingPerformanceStats) //@TODO: Move this stuff to per-platform instead of doing vis queries too?
-		{
-			if (Group.AllowedStats.Contains(AssociatedStat))
-			{
-				const bool bShowGroup = (Group.VisibilityQuery.IsEmpty() || Group.VisibilityQuery.Matches(
-					                         VisibilityTags));
-				if (bShowGroup)
-				{
-					bCanShowStat = true;
-					break;
-				}
-			}
-		}
-
-		if (!bCanShowStat)
-		{
-			InOutEditState.Hide(
-				TEXT("Stat is not listed in ULyraPerformanceSettings or is suppressed by current platform traits"));
-		}
-	}
-
-	//~End of FGameSettingEditCondition interface
-
-private:
-	ELyraDisplayablePerformanceStat AssociatedStat;
-};
-
-//////////////////////////////////////////////////////////////////////
-
-ULyraSettingValueDiscrete_PerfStat::ULyraSettingValueDiscrete_PerfStat(): StatToDisplay(), InitialMode()
-{
-}
-
-void ULyraSettingValueDiscrete_PerfStat::SetStat(const ELyraDisplayablePerformanceStat InStat)
+void ULyraSettingValueDiscrete_PerfStat::SetStat(const EDisplayablePerformanceStat InStat)
 {
 	StatToDisplay = InStat;
 	SetDevName(FName(*FString::Printf(TEXT("PerfStat_%d"), static_cast<int32>(StatToDisplay))));
-	AddEditCondition(FGameSettingEditCondition_PerfStatAllowed::Get(StatToDisplay));
+	AddEditCondition(FWhenPerfStatAllowed::KillIfNot(StatToDisplay));
 }
 
-void ULyraSettingValueDiscrete_PerfStat::AddMode(FText&& Label, const ELyraStatDisplayMode Mode)
+void ULyraSettingValueDiscrete_PerfStat::AddMode(FText&& Label, const EStatDisplayMode Mode)
 {
 	Options.Emplace(MoveTemp(Label));
 	DisplayModes.Add(Mode);
@@ -87,10 +35,10 @@ void ULyraSettingValueDiscrete_PerfStat::OnInitialized()
 {
 	Super::OnInitialized();
 
-	AddMode(LOCTEXT("PerfStatDisplayMode_None", "None"), ELyraStatDisplayMode::Hidden);
-	AddMode(LOCTEXT("PerfStatDisplayMode_TextOnly", "Text Only"), ELyraStatDisplayMode::TextOnly);
-	AddMode(LOCTEXT("PerfStatDisplayMode_GraphOnly", "Graph Only"), ELyraStatDisplayMode::GraphOnly);
-	AddMode(LOCTEXT("PerfStatDisplayMode_TextAndGraph", "Text and Graph"), ELyraStatDisplayMode::TextAndGraph);
+	AddMode(LOCTEXT("PerfStatDisplayMode_None", "None"), EStatDisplayMode::Hidden);
+	AddMode(LOCTEXT("PerfStatDisplayMode_TextOnly", "Text Only"), EStatDisplayMode::TextOnly);
+	AddMode(LOCTEXT("PerfStatDisplayMode_GraphOnly", "Graph Only"), EStatDisplayMode::GraphOnly);
+	AddMode(LOCTEXT("PerfStatDisplayMode_TextAndGraph", "Text and Graph"), EStatDisplayMode::TextAndGraph);
 }
 
 void ULyraSettingValueDiscrete_PerfStat::StoreInitial()
@@ -102,7 +50,7 @@ void ULyraSettingValueDiscrete_PerfStat::StoreInitial()
 void ULyraSettingValueDiscrete_PerfStat::ResetToDefault()
 {
 	ULyraSettingsLocal* Settings = ULyraSettingsLocal::Get();
-	Settings->SetPerfStatDisplayState(StatToDisplay, ELyraStatDisplayMode::Hidden);
+	Settings->SetPerfStatDisplayState(StatToDisplay, EStatDisplayMode::Hidden);
 	NotifySettingChanged(EGameSettingChangeReason::ResetToDefault);
 }
 
@@ -117,7 +65,7 @@ void ULyraSettingValueDiscrete_PerfStat::SetDiscreteOptionByIndex(const int32 In
 {
 	if (DisplayModes.IsValidIndex(Index))
 	{
-		const ELyraStatDisplayMode DisplayMode = DisplayModes[Index];
+		const EStatDisplayMode DisplayMode = DisplayModes[Index];
 
 		ULyraSettingsLocal* Settings = ULyraSettingsLocal::Get();
 		Settings->SetPerfStatDisplayState(StatToDisplay, DisplayMode);
@@ -130,7 +78,6 @@ int32 ULyraSettingValueDiscrete_PerfStat::GetDiscreteOptionIndex() const
 	const ULyraSettingsLocal* Settings = ULyraSettingsLocal::Get();
 	return DisplayModes.Find(Settings->GetPerfStatDisplayState(StatToDisplay));
 }
-
 
 
 #undef LOCTEXT_NAMESPACE

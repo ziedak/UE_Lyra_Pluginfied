@@ -11,8 +11,8 @@
 #include "LyraSettingsLocal.generated.h"
 
 enum class ECommonInputType : uint8;
-enum class ELyraDisplayablePerformanceStat : uint8;
-enum class ELyraStatDisplayMode : uint8;
+enum class EDisplayablePerformanceStat : uint8;
+enum class EStatDisplayMode : uint8;
 
 class ULocalPlayer;
 class UObject;
@@ -78,10 +78,10 @@ private:
 	// Performance stats
 public:
 	/** Returns the display mode for the specified performance stat */
-	ELyraStatDisplayMode GetPerfStatDisplayState(ELyraDisplayablePerformanceStat Stat) const;
+	EStatDisplayMode GetPerfStatDisplayState(EDisplayablePerformanceStat Stat) const;
 
 	/** Sets the display mode for the specified performance stat */
-	void SetPerfStatDisplayState(ELyraDisplayablePerformanceStat Stat, ELyraStatDisplayMode DisplayMode);
+	void SetPerfStatDisplayState(EDisplayablePerformanceStat Stat, EStatDisplayMode DisplayMode);
 
 	/** Fired when the display state for a performance stat has changed, or the settings are applied */
 	DECLARE_EVENT(ULyraSettingsLocal, FPerfStatSettingsChanged);
@@ -91,7 +91,7 @@ public:
 private:
 	// List of stats to display in the HUD
 	UPROPERTY(Config)
-	TMap<ELyraDisplayablePerformanceStat, ELyraStatDisplayMode> DisplayStatList;
+	TMap<EDisplayablePerformanceStat, EStatDisplayMode> DisplayStatList;
 
 	// Event for display stat widget containers to bind to
 	FPerfStatSettingsChanged PerfStatSettingsChangedEvent;
@@ -222,7 +222,7 @@ protected:
 	void ApplyDeviceProfileIfNeeded(UDeviceProfileManager& Manager, const FString& ActualProfileToApply);
 	void RestoreDefaultDeviceProfile(UDeviceProfileManager& Manager);
 	void ApplyNewDeviceProfile(UDeviceProfileManager& Manager, const FString& ActualProfileToApply);
-	void UpdateFramePacing(ELyraFramePacingMode FramePacingMode);
+	void UpdateFramePacing(EFramePacingMode FramePacingMode);
 	void UpdateConsoleFramePacing() const;
 	void UpdateDesktopFramePacing();
 	void UpdateMobileFramePacing();

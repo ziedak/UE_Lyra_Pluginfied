@@ -6,7 +6,7 @@
 
 #include "LyraPerfStatWidgetBase.generated.h"
 
-enum class ELyraDisplayablePerformanceStat : uint8;
+enum class EDisplayablePerformanceStat : uint8;
 
 class ULyraPerformanceStatSubsystem;
 class UObject;
@@ -17,7 +17,7 @@ struct FFrame;
  *
  * Base class for a widget that displays a single stat, e.g., FPS, ping, etc...
  */
- UCLASS(Abstract)
+UCLASS(Abstract)
 class ULyraPerfStatWidgetBase : public UCommonUserWidget
 {
 public:
@@ -25,13 +25,9 @@ public:
 
 	GENERATED_BODY()
 
-public:
 	// Returns the stat this widget is supposed to display
 	UFUNCTION(BlueprintPure)
-	ELyraDisplayablePerformanceStat GetStatToDisplay() const
-	{
-		return StatToDisplay;
-	}
+	EDisplayablePerformanceStat GetStatToDisplay() const { return StatToDisplay; }
 
 	// Polls for the value of this stat (unscaled)
 	UFUNCTION(BlueprintPure)
@@ -44,5 +40,5 @@ protected:
 
 	// The stat to display
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Display)
-	ELyraDisplayablePerformanceStat StatToDisplay;
- };
+	EDisplayablePerformanceStat StatToDisplay;
+};

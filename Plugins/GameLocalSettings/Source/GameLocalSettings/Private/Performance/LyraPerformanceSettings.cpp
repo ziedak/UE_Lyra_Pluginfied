@@ -10,10 +10,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-ULyraPlatformSpecificRenderingSettings::ULyraPlatformSpecificRenderingSettings()
-{
-	MobileFrameRateLimits.Append({20, 30, 45, 60, 90, 120});
-}
+ULyraPlatformSpecificRenderingSettings::ULyraPlatformSpecificRenderingSettings() { MobileFrameRateLimits.Append({20, 30, 45, 60, 90, 120}); }
 
 const ULyraPlatformSpecificRenderingSettings* ULyraPlatformSpecificRenderingSettings::Get()
 {
@@ -35,8 +32,5 @@ ULyraPerformanceSettings::ULyraPerformanceSettings()
 
 	// Default to all stats are allowed
 	FLyraPerformanceStatGroup& StatGroup = UserFacingPerformanceStats.AddDefaulted_GetRef();
-	for (ELyraDisplayablePerformanceStat PerfStat : TEnumRange<ELyraDisplayablePerformanceStat>())
-	{
-		StatGroup.AllowedStats.Add(PerfStat);
-	}
+	for (EDisplayablePerformanceStat PerfStat : TEnumRange<EDisplayablePerformanceStat>()) { StatGroup.AllowedStats.Add(PerfStat); }
 }

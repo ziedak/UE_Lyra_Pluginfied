@@ -30,34 +30,28 @@ void ULyraPerfStatContainerBase::NativeDestruct()
 
 void ULyraPerfStatContainerBase::UpdateVisibilityOfChildren()
 {
-	ULyraSettingsLocal* UserSettings = ULyraSettingsLocal::Get();
+	const ULyraSettingsLocal* UserSettings = ULyraSettingsLocal::Get();
 
-	const bool bShowTextWidgets = (StatDisplayModeFilter == ELyraStatDisplayMode::TextOnly) || (StatDisplayModeFilter ==
-		ELyraStatDisplayMode::TextAndGraph);
-	const bool bShowGraphWidgets = (StatDisplayModeFilter == ELyraStatDisplayMode::GraphOnly) || (StatDisplayModeFilter
-		== ELyraStatDisplayMode::TextAndGraph);
+	const bool bShowTextWidgets = StatDisplayModeFilter == EStatDisplayMode::TextOnly || StatDisplayModeFilter == EStatDisplayMode::TextAndGraph;
+	const bool bShowGraphWidgets = StatDisplayModeFilter == EStatDisplayMode::GraphOnly || StatDisplayModeFilter == EStatDisplayMode::TextAndGraph;
 
 	check(WidgetTree);
 	WidgetTree->ForEachWidget([&](UWidget* Widget){
 		if (ULyraPerfStatWidgetBase* TypedWidget = Cast<ULyraPerfStatWidgetBase>(Widget))
 		{
-			const ELyraStatDisplayMode SettingMode = UserSettings->GetPerfStatDisplayState(
+			const EStatDisplayMode SettingMode = UserSettings->GetPerfStatDisplayState(
 				TypedWidget->GetStatToDisplay());
 
 			bool bShowWidget = false;
 			switch (SettingMode)
 			{
-			case ELyraStatDisplayMode::Hidden:
-				bShowWidget = false;
+			case EStatDisplayMode::Hidden: bShowWidget = false;
 				break;
-			case ELyraStatDisplayMode::TextOnly:
-				bShowWidget = bShowTextWidgets;
+			case EStatDisplayMode::TextOnly: bShowWidget = bShowTextWidgets;
 				break;
-			case ELyraStatDisplayMode::GraphOnly:
-				bShowWidget = bShowGraphWidgets;
+			case EStatDisplayMode::GraphOnly: bShowWidget = bShowGraphWidgets;
 				break;
-			case ELyraStatDisplayMode::TextAndGraph:
-				bShowWidget = bShowTextWidgets || bShowGraphWidgets;
+			case EStatDisplayMode::TextAndGraph: bShowWidget = bShowTextWidgets || bShowGraphWidgets;
 				break;
 			}
 

@@ -7,9 +7,11 @@
 // #include "EditCondition/WhenPlatformHasTrait.h"
 #include "Settings/LyraSettingsLocal.h"
 #include "GameSettingValueDiscreteDynamic.h"
-// #include "Interfaces/IPlayerSharedSettingsInterface.h"
+
+#include "CustomSettings/LyraSettingValueDiscrete_Language.h"
+
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
 // #include "Replays/LyraReplaySubsystem.h"
-#include "Settings/MyClass.h"
 #define LOCTEXT_NAMESPACE "Lyra"
 
 
@@ -22,24 +24,19 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeGameplaySettings(ULo
 	const auto LanguageSubsection = UGameSettingCollection::CreateCollection(
 		"LanguageCollection", LOCTEXT("LanguageCollection_Name", "Language"));
 	Screen->AddSetting(LanguageSubsection);
-
-	const auto Language = SetLanguageSettings(InLocalPlayer);
-	LanguageSubsection->AddSetting(Language);
+	LanguageSubsection->AddSetting(SetLanguageSettings());
 
 	const auto ReplaySubsection = UGameSettingCollection::CreateCollection(
 		"ReplayCollection", LOCTEXT("ReplayCollection_Name", "Replays"));
 	Screen->AddSetting(ReplaySubsection);
-
-	const auto Replay = SetReplaySettings(InLocalPlayer);
-	ReplaySubsection->AddSetting(Replay);
-	const auto ReplayLimit = SetReplayLimitSettings(InLocalPlayer);
-	ReplaySubsection->AddSetting(ReplayLimit);
+	ReplaySubsection->AddSetting(SetReplaySettings());
+	ReplaySubsection->AddSetting(SetReplayLimitSettings());
 
 	return Screen;
 }
 
 
-UGameSettingCollectionPage* ULyraGameSettingRegistry::SetLanguageSettings(ULocalPlayer* InLocalPlayer)
+ULyraSettingValueDiscrete_Language* ULyraGameSettingRegistry::SetLanguageSettings()
 {
 	auto LanguageSetting_Description = LOCTEXT("LanguageSetting_Description",
 	                                           "Configure the language of the game.");
@@ -52,16 +49,15 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::SetLanguageSettings(ULocal
 		                                      " or change your PIE language options in the editor preferences.</>");
 	}
 #endif
-
-	return UGameSettingCollectionPage::CreateSettings(
-		"Language",
-		LOCTEXT("LanguageSetting_Name", "Language"),
-		LanguageSetting_Description,
-		LOCTEXT("LanguageSetting", "Options"),
-		FWhenPlayingAsPrimaryPlayer::Get());
+	ULyraSettingValueDiscrete_Language* Setting = NewObject<ULyraSettingValueDiscrete_Language>();
+	Setting->SetDevName(TEXT("Language"));
+	Setting->SetDisplayName(LOCTEXT("LanguageSetting_Name", "Language"));
+	Setting->SetDescriptionRichText(LanguageSetting_Description);
+	Setting->AddEditCondition(FWhenPlayingAsPrimaryPlayer::Get());
+	return Setting;
 }
 
-UGameSettingValueDiscreteDynamic_Bool* ULyraGameSettingRegistry::SetReplaySettings(ULocalPlayer* InLocalPlayer)
+UGameSettingValueDiscreteDynamic_Bool* ULyraGameSettingRegistry::SetReplaySettings()
 {
 	const auto RecordReplaySetting = UGameSettingValueDiscreteDynamic_Bool::CreateSettings(
 		"RecordReplay",
@@ -82,7 +78,7 @@ UGameSettingValueDiscreteDynamic_Bool* ULyraGameSettingRegistry::SetReplaySettin
 }
 
 UGameSettingValueDiscreteDynamic_Number* ULyraGameSettingRegistry::SetReplayLimitSettings(
-	ULocalPlayer* InLocalPlayer)
+)
 {
 	const auto KeepReplayLimit = UGameSettingValueDiscreteDynamic_Number::Create(
 		"KeepReplayLimit",

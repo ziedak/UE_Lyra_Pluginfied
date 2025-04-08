@@ -191,17 +191,9 @@ void UGameUIPolicy::CreateLayoutWidget(UCommonLocalPlayer* LocalPlayer)
 	// 	}
 	// }
 	const auto World = GetWorld();
-	if (!World)
-	{
-		UE_LOG(LogCommonGame, Error, TEXT("World is null for player: %s"), *GetNameSafe(LocalPlayer));
-		return;
-	}
+	if (!World) return;
 	APlayerController* PlayerController = LocalPlayer->GetPlayerController(World);
-	if (!PlayerController)
-	{
-		UE_LOG(LogCommonGame, Error, TEXT("PlayerController is null for player: %s"), *GetNameSafe(LocalPlayer));
-		return;
-	}
+	if (!PlayerController) return;
 
 	UE_LOG(LogCommonGame, Log, TEXT("PlayerController is valid for player: %s"), *GetNameSafe(LocalPlayer));
 

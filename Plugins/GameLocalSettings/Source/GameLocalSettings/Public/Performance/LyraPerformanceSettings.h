@@ -6,9 +6,11 @@
 #include "Engine/PlatformSettings.h"
 #include "GameplayTagContainer.h"
 
+#include "CustomSettings/EditConditions/WhenFramePacingModeMatch.h"
+
 #include "LyraPerformanceSettings.generated.h"
 
-enum class ELyraDisplayablePerformanceStat : uint8;
+enum class EDisplayablePerformanceStat : uint8;
 
 class UObject;
 
@@ -47,22 +49,9 @@ struct FLyraPerformanceStatGroup
 
 	// The set of stats to allow if the query passes
 	UPROPERTY(EditAnywhere)
-	TSet<ELyraDisplayablePerformanceStat> AllowedStats;
+	TSet<EDisplayablePerformanceStat> AllowedStats;
 };
 
-// How hare frame pacing and overall graphics settings controlled/exposed for the platform?
-UENUM()
-enum class ELyraFramePacingMode : uint8
-{
-	// Manual frame rate limits, user is allowed to choose whether to lock to vsync
-	DesktopStyle,
-
-	// Limits handled by choosing present intervals driven by device profiles
-	ConsoleStyle,
-
-	// Limits handled by a user-facing choice of frame rate from among ones allowed by device profiles for the specific device
-	MobileStyle
-};
 
 UCLASS(config=Game, defaultconfig)
 class ULyraPlatformSpecificRenderingSettings : public UPlatformSettings
@@ -102,7 +91,7 @@ public:
 
 	// How is frame pacing controlled
 	UPROPERTY(EditAnywhere, Config, Category=VideoSettings)
-	ELyraFramePacingMode FramePacingMode = ELyraFramePacingMode::DesktopStyle;
+	EFramePacingMode FramePacingMode = EFramePacingMode::DesktopStyle;
 
 	// Potential frame rates to display for mobile
 	// Note: This is further limited by Lyra.DeviceProfile.Mobile.MaxFrameRate from the

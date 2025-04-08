@@ -26,8 +26,8 @@ public class CustomUI : ModuleRules
 				"Engine",
 				"ApplicationCore",
 				"Slate", "EnhancedInput", "CommonInput", "InputCore",
-				"SlateCore", "CommonGame", "AsyncMixin", "ControlFlows", "UMG", "GameplayTags"
-				// ... add private dependencies that you statically link with here ...	
+				"SlateCore", "CommonGame", "AsyncMixin", "ControlFlows", "UMG", "GameplayTags", "DeveloperSettings"
+				// ... add private dependencies that you statically link with here ...
 			}
 		);
 

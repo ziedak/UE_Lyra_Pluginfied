@@ -7,6 +7,8 @@
 #include "CommonLocalPlayer.h"
 #include "PrimaryGameLayout.h"
 
+#include "Developer/UIModalSettings.h"
+
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(LyraUIMessagingSubsystem)
 
@@ -17,6 +19,10 @@ UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_UI_LAYER_MODAL, "UI.Layer.Modal");
 void ULyraUIMessagingSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
+	const UUIModalSettings* Settings = GetDefault<UUIModalSettings>();
+	if (!Settings) return;
+	ConfirmationDialogClass = Settings->ConfirmationDialogClass.TryLoadClass<UUserWidget>();
+	ErrorDialogClass = Settings->ErrorDialogClass.TryLoadClass<UUserWidget>();
 
 	ConfirmationDialogClassPtr = ConfirmationDialogClass.LoadSynchronous();
 	ErrorDialogClassPtr = ErrorDialogClass.LoadSynchronous();

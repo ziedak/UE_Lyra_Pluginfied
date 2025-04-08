@@ -7,7 +7,7 @@
 
 #include "LyraPerformanceStatSubsystem.generated.h"
 
-enum class ELyraDisplayablePerformanceStat : uint8;
+enum class EDisplayablePerformanceStat : uint8;
 
 class FSubsystemCollectionBase;
 class ULyraPerformanceStatSubsystem;
@@ -28,7 +28,7 @@ struct FLyraPerformanceStatCache : IPerformanceDataConsumer
 	virtual void StopCharting() override;
 	//~End of IPerformanceDataConsumer interface
 
-	double GetCachedStat(ELyraDisplayablePerformanceStat Stat) const;
+	double GetCachedStat(EDisplayablePerformanceStat Stat) const;
 
 protected:
 	FFrameData CachedData;
@@ -54,7 +54,7 @@ class GAMELOCALSETTINGS_API ULyraPerformanceStatSubsystem : public UGameInstance
 
 public:
 	UFUNCTION(BlueprintCallable)
-	double GetCachedStat(ELyraDisplayablePerformanceStat Stat) const;
+	double GetCachedStat(EDisplayablePerformanceStat Stat) const;
 
 	//~USubsystem interface
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

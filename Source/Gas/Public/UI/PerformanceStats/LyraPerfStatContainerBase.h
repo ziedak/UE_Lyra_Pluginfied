@@ -16,7 +16,7 @@ struct FFrame;
  * Panel that contains a set of ULyraPerfStatWidgetBase widgets and manages
  * their visibility based on user settings.
  */
- UCLASS(Abstract)
+UCLASS(Abstract)
 class ULyraPerfStatContainerBase : public UCommonUserWidget
 {
 public:
@@ -35,5 +35,5 @@ public:
 protected:
 	// Are we showing text or graph stats?
 	UPROPERTY(EditAnywhere, Category=Display)
-	ELyraStatDisplayMode StatDisplayModeFilter = ELyraStatDisplayMode::TextAndGraph;
+	EStatDisplayMode StatDisplayModeFilter = EStatDisplayMode::TextAndGraph;
 };

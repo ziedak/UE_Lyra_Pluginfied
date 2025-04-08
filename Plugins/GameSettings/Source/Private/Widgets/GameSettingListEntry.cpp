@@ -32,19 +32,13 @@ void UGameSettingListEntryBase::SetSetting(UGameSetting* InSetting)
 	HandleEditConditionChanged(Setting);
 }
 
-void UGameSettingListEntryBase::SetDisplayNameOverride(const FText& OverrideName)
-{
-	DisplayNameOverride = OverrideName;
-}
+void UGameSettingListEntryBase::SetDisplayNameOverride(const FText& OverrideName) { DisplayNameOverride = OverrideName; }
 
 void UGameSettingListEntryBase::NativeOnEntryReleased()
 {
 	StopAllAnimations();
 
-	if (Background)
-	{
-		Background->StopAllAnimations();
-	}
+	if (Background) Background->StopAllAnimations();
 
 	if (ensure(Setting))
 	{
@@ -55,13 +49,7 @@ void UGameSettingListEntryBase::NativeOnEntryReleased()
 	Setting = nullptr;
 }
 
-void UGameSettingListEntryBase::HandleSettingChanged(UGameSetting* InSetting, EGameSettingChangeReason Reason)
-{
-	if (!bSuspendChangeUpdates)
-	{
-		OnSettingChanged();
-	}
-}
+void UGameSettingListEntryBase::HandleSettingChanged(UGameSetting* InSetting, EGameSettingChangeReason Reason) { if (!bSuspendChangeUpdates) OnSettingChanged(); }
 
 void UGameSettingListEntryBase::OnSettingChanged()
 {
@@ -87,10 +75,7 @@ FReply UGameSettingListEntryBase::NativeOnFocusReceived(const FGeometry& InGeome
 		if (UWidget* PrimaryFocus = GetPrimaryGamepadFocusWidget())
 		{
 			TSharedPtr<SWidget> WidgetToFocus = PrimaryFocus->GetCachedWidget();
-			if (WidgetToFocus.IsValid())
-			{
-				return FReply::Handled().SetUserFocus(WidgetToFocus.ToSharedRef(), InFocusEvent.GetCause());
-			}
+			if (WidgetToFocus.IsValid()) return FReply::Handled().SetUserFocus(WidgetToFocus.ToSharedRef(), InFocusEvent.GetCause());
 		}
 	}
 
@@ -122,7 +107,7 @@ void UGameSettingListEntrySetting_Discrete::SetSetting(UGameSetting* InSetting)
 	Refresh();
 }
 
-void UGameSettingListEntrySetting_Discrete::Refresh()
+void UGameSettingListEntrySetting_Discrete::Refresh() const
 {
 	if (ensure(DiscreteSetting))
 	{
@@ -176,18 +161,9 @@ void UGameSettingListEntrySetting_Discrete::HandleOptionIncrease()
 	DiscreteSetting->SetDiscreteOptionByIndex(Rotator_SettingValue->GetSelectedIndex());
 }
 
-void UGameSettingListEntrySetting_Discrete::HandleRotatorChangedValue(int32 Value, bool bUserInitiated)
-{
-	if (bUserInitiated)
-	{
-		DiscreteSetting->SetDiscreteOptionByIndex(Value);
-	}
-}
+void UGameSettingListEntrySetting_Discrete::HandleRotatorChangedValue(int32 Value, bool bUserInitiated) { if (bUserInitiated) DiscreteSetting->SetDiscreteOptionByIndex(Value); }
 
-void UGameSettingListEntrySetting_Discrete::OnSettingChanged()
-{
-	Refresh();
-}
+void UGameSettingListEntrySetting_Discrete::OnSettingChanged() { Refresh(); }
 
 void UGameSettingListEntrySetting_Discrete::HandleEditConditionChanged(UGameSetting* InSetting)
 {
@@ -227,10 +203,7 @@ void UGameSettingListEntrySetting_Scalar::Refresh()
 	}
 }
 
-void UGameSettingListEntrySetting_Scalar::OnSettingChanged()
-{
-	Refresh();
-}
+void UGameSettingListEntrySetting_Scalar::OnSettingChanged() { Refresh(); }
 
 void UGameSettingListEntrySetting_Scalar::NativeOnInitialized()
 {
@@ -290,10 +263,7 @@ void UGameSettingListEntrySetting_Action::SetSetting(UGameSetting* InSetting)
 	Super::SetSetting(InSetting);
 
 	ActionSetting = Cast<UGameSettingAction>(InSetting);
-	if (ensure(ActionSetting))
-	{
-		OnSettingAssigned(ActionSetting->GetActionText());
-	}
+	if (ensure(ActionSetting)) OnSettingAssigned(ActionSetting->GetActionText());
 }
 
 void UGameSettingListEntrySetting_Action::NativeOnInitialized()
@@ -318,10 +288,7 @@ void UGameSettingListEntrySetting_Action::RefreshEditableState(const FGameSettin
 	Button_Action->SetIsEnabled(bLocalIsEnabled);
 }
 
-void UGameSettingListEntrySetting_Action::HandleActionButtonClicked()
-{
-	ActionSetting->ExecuteAction();
-}
+void UGameSettingListEntrySetting_Action::HandleActionButtonClicked() { ActionSetting->ExecuteAction(); }
 
 //////////////////////////////////////////////////////////////////////////
 // UGameSettingListEntrySetting_Navigation
@@ -333,10 +300,7 @@ void UGameSettingListEntrySetting_Navigation::SetSetting(UGameSetting* InSetting
 
 	Super::SetSetting(InSetting);
 
-	if (ensure(CollectionSetting))
-	{
-		OnSettingAssigned(CollectionSetting->GetNavigationText());
-	}
+	if (ensure(CollectionSetting)) OnSettingAssigned(CollectionSetting->GetNavigationText());
 }
 
 void UGameSettingListEntrySetting_Navigation::NativeOnInitialized()
@@ -361,9 +325,6 @@ void UGameSettingListEntrySetting_Navigation::RefreshEditableState(const FGameSe
 	Button_Navigate->SetIsEnabled(bLocalIsEnabled);
 }
 
-void UGameSettingListEntrySetting_Navigation::HandleNavigationButtonClicked()
-{
-	CollectionSetting->ExecuteNavigation();
-}
+void UGameSettingListEntrySetting_Navigation::HandleNavigationButtonClicked() { CollectionSetting->ExecuteNavigation(); }
 
 #undef LOCTEXT_NAMESPACE

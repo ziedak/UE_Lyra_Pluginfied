@@ -362,7 +362,7 @@ void ULyraSettingsLocal::LoadSettings(bool bForceReload)
 
 	// Console platforms use rhi.SyncInterval to limit framerate
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) FrameRateLimit = 0.0f;
+	if (PlatformSettings->FramePacingMode == EFramePacingMode::ConsoleStyle) FrameRateLimit = 0.0f;
 
 	// Enable HRTF if needed
 	bDesiredHeadphoneMode = bUseHeadphoneMode;
@@ -420,13 +420,13 @@ float ULyraSettingsLocal::GetEffectiveFrameRateLimit()
 	if (GIsEditor && !CVarApplyFrameRateSettingsInPIE.GetValueOnGameThread()) return Super::GetEffectiveFrameRateLimit();
 #endif
 
-	if (PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle) return 0.0f;
+	if (PlatformSettings->FramePacingMode == EFramePacingMode::ConsoleStyle) return 0.0f;
 
 	float EffectiveFrameRateLimit = Super::GetEffectiveFrameRateLimit();
 
 	if (ShouldUseFrontendPerformanceSettings()) EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_InMenu);
 
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::DesktopStyle) return EffectiveFrameRateLimit;
+	if (PlatformSettings->FramePacingMode != EFramePacingMode::DesktopStyle) return EffectiveFrameRateLimit;
 
 	if (FPlatformMisc::IsRunningOnBattery()) EffectiveFrameRateLimit = CombineFrameRateLimits(EffectiveFrameRateLimit, FrameRateLimit_OnBattery);
 
@@ -544,17 +544,17 @@ bool ULyraSettingsLocal::ShouldUseFrontendPerformanceSettings() const
 	return bInFrontEndForPerformancePurposes;
 }
 
-ELyraStatDisplayMode ULyraSettingsLocal::GetPerfStatDisplayState(const ELyraDisplayablePerformanceStat Stat) const
+EStatDisplayMode ULyraSettingsLocal::GetPerfStatDisplayState(const EDisplayablePerformanceStat Stat) const
 {
-	if (const ELyraStatDisplayMode* DisplayMode = DisplayStatList.Find(Stat)) return *DisplayMode;
+	if (const EStatDisplayMode* DisplayMode = DisplayStatList.Find(Stat)) return *DisplayMode;
 
-	return ELyraStatDisplayMode::Hidden;
+	return EStatDisplayMode::Hidden;
 }
 
-void ULyraSettingsLocal::SetPerfStatDisplayState(const ELyraDisplayablePerformanceStat Stat,
-                                                 const ELyraStatDisplayMode DisplayMode)
+void ULyraSettingsLocal::SetPerfStatDisplayState(const EDisplayablePerformanceStat Stat,
+                                                 const EStatDisplayMode DisplayMode)
 {
-	if (DisplayMode == ELyraStatDisplayMode::Hidden) DisplayStatList.Remove(Stat);
+	if (DisplayMode == EStatDisplayMode::Hidden) DisplayStatList.Remove(Stat);
 	else DisplayStatList.FindOrAdd(Stat) = DisplayMode;
 
 	PerfStatSettingsChangedEvent.Broadcast();
@@ -637,7 +637,7 @@ void ULyraSettingsLocal::ResetToMobileDeviceDefaults()
 int32 ULyraSettingsLocal::GetMaxSupportedOverallQualityLevel() const
 {
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	return PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle
+	return PlatformSettings->FramePacingMode == EFramePacingMode::MobileStyle
 	       && DeviceDefaultScalabilitySettings.bHasOverrides
 		       ? LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel(DeviceDefaultScalabilitySettings.Qualities)
 		       : 3;
@@ -646,7 +646,7 @@ int32 ULyraSettingsLocal::GetMaxSupportedOverallQualityLevel() const
 void ULyraSettingsLocal::SetMobileFPSMode(const int32 NewLimitFPS)
 {
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
+	if (PlatformSettings->FramePacingMode != EFramePacingMode::MobileStyle) return;
 
 	if (MobileFrameRateLimit != NewLimitFPS)
 	{
@@ -670,7 +670,7 @@ void ULyraSettingsLocal::SetDesiredMobileFrameRateLimit(const int32 NewLimitFPS)
 void ULyraSettingsLocal::ClampMobileFPSQualityLevels(const bool bWriteBack)
 {
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
+	if (PlatformSettings->FramePacingMode != EFramePacingMode::MobileStyle) return;
 	const int32 QualityLimit = LyraSettingsHelpers::GetApplicableOverallQualityLimit(DesiredMobileFrameRateLimit);
 	const int32 CurrentQualityLevel = GetHighestLevelOfAnyScalabilityChannel();
 
@@ -686,7 +686,7 @@ void ULyraSettingsLocal::ClampMobileFPSQualityLevels(const bool bWriteBack)
 void ULyraSettingsLocal::ClampMobileQuality()
 {
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
+	if (PlatformSettings->FramePacingMode != EFramePacingMode::MobileStyle) return;
 
 	// Clamp the resultant settings to the device default, it's known viable maximum.
 	// This is a clamp rather than override to preserve allowed user settings
@@ -954,7 +954,7 @@ int32 ULyraSettingsLocal::GetOverallScalabilityLevel() const
 {
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
 
-	return PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle
+	return PlatformSettings->FramePacingMode == EFramePacingMode::MobileStyle
 		       ? GetHighestLevelOfAnyScalabilityChannel()
 		       : Super::GetOverallScalabilityLevel();
 }
@@ -970,7 +970,7 @@ void ULyraSettingsLocal::SetOverallScalabilityLevel(int32 Value)
 	Super::SetOverallScalabilityLevel(Value);
 
 	const auto PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-	if (PlatformSettings->FramePacingMode != ELyraFramePacingMode::MobileStyle) return;
+	if (PlatformSettings->FramePacingMode != EFramePacingMode::MobileStyle) return;
 
 	// Restore the resolution quality, mobile decouples this from overall quality
 	ScalabilityQuality.ResolutionQuality = CurrentMobileResolutionQuality;
@@ -1245,15 +1245,15 @@ void ULyraSettingsLocal::ApplyNewDeviceProfile(UDeviceProfileManager& Manager, c
 	}
 }
 
-void ULyraSettingsLocal::UpdateFramePacing(const ELyraFramePacingMode FramePacingMode)
+void ULyraSettingsLocal::UpdateFramePacing(const EFramePacingMode FramePacingMode)
 {
 	switch (FramePacingMode)
 	{
-	case ELyraFramePacingMode::MobileStyle: UpdateMobileFramePacing();
+	case EFramePacingMode::MobileStyle: UpdateMobileFramePacing();
 		break;
-	case ELyraFramePacingMode::ConsoleStyle: UpdateConsoleFramePacing();
+	case EFramePacingMode::ConsoleStyle: UpdateConsoleFramePacing();
 		break;
-	case ELyraFramePacingMode::DesktopStyle: UpdateDesktopFramePacing();
+	case EFramePacingMode::DesktopStyle: UpdateDesktopFramePacing();
 		break;
 	}
 }

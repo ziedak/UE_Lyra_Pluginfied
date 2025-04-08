@@ -11,7 +11,7 @@
 
 // Way to display the stat
 UENUM(BlueprintType)
-enum class ELyraStatDisplayMode : uint8
+enum class EStatDisplayMode : uint8
 {
 	// Don't show this stat
 	Hidden,
@@ -30,7 +30,7 @@ enum class ELyraStatDisplayMode : uint8
 
 // Different kinds of stats that can be displayed on-screen
 UENUM(BlueprintType)
-enum class ELyraDisplayablePerformanceStat : uint8
+enum class EDisplayablePerformanceStat : uint8
 {
 	// stat fps (in Hz)
 	ClientFPS,
@@ -81,6 +81,30 @@ enum class ELyraDisplayablePerformanceStat : uint8
 	Count UMETA(Hidden)
 };
 
-ENUM_RANGE_BY_COUNT(ELyraDisplayablePerformanceStat, ELyraDisplayablePerformanceStat::Count);
+ENUM_RANGE_BY_COUNT(EDisplayablePerformanceStat, EDisplayablePerformanceStat::Count);
+
+
+UENUM()
+enum class EFramePacingEditCondition
+{
+	EnableIf,
+	DisableIf,
+};
+
+
+// How hare frame pacing and overall graphics settings controlled/exposed for the platform?
+UENUM()
+enum class EFramePacingMode : uint8
+{
+	// Manual frame rate limits, user is allowed to choose whether to lock to vsync
+	DesktopStyle,
+
+	// Limits handled by choosing present intervals driven by device profiles
+	ConsoleStyle,
+
+	// Limits handled by a user-facing choice of frame rate from among ones allowed by device profiles for the specific device
+	MobileStyle
+};
+
 
 //////////////////////////////////////////////////////////////////////

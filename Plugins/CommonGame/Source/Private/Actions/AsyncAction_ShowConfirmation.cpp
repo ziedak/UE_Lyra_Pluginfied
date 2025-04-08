@@ -9,12 +9,10 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_ShowConfirmation)
 
 UAsyncAction_ShowConfirmation::UAsyncAction_ShowConfirmation(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
-{
-}
+	: Super(ObjectInitializer) {}
 
 UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationYesNo(
-	UObject* InWorldContextObject, FText Title, FText Message)
+	UObject* InWorldContextObject, const FText Title, const FText Message)
 {
 	UAsyncAction_ShowConfirmation* Action = NewObject<UAsyncAction_ShowConfirmation>();
 	Action->WorldContextObject = InWorldContextObject;
@@ -25,7 +23,7 @@ UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationYe
 }
 
 UAsyncAction_ShowConfirmation* UAsyncAction_ShowConfirmation::ShowConfirmationOkCancel(
-	UObject* InWorldContextObject, FText Title, FText Message)
+	UObject* InWorldContextObject, const FText Title, const FText Message)
 {
 	UAsyncAction_ShowConfirmation* Action = NewObject<UAsyncAction_ShowConfirmation>();
 	Action->WorldContextObject = InWorldContextObject;
@@ -50,20 +48,11 @@ void UAsyncAction_ShowConfirmation::Activate()
 {
 	if (WorldContextObject && !TargetLocalPlayer)
 	{
-		if (UUserWidget* UserWidget = Cast<UUserWidget>(WorldContextObject))
-		{
-			TargetLocalPlayer = UserWidget->GetOwningLocalPlayer<ULocalPlayer>();
-		}
-		else if (APlayerController* PC = Cast<APlayerController>(WorldContextObject))
-		{
-			TargetLocalPlayer = PC->GetLocalPlayer();
-		}
+		if (UUserWidget* UserWidget = Cast<UUserWidget>(WorldContextObject)) TargetLocalPlayer = UserWidget->GetOwningLocalPlayer<ULocalPlayer>();
+		else if (APlayerController* PC = Cast<APlayerController>(WorldContextObject)) TargetLocalPlayer = PC->GetLocalPlayer();
 		else if (UWorld* World = WorldContextObject->GetWorld())
 		{
-			if (UGameInstance* GameInstance = World->GetGameInstance<UGameInstance>())
-			{
-				TargetLocalPlayer = GameInstance->GetPrimaryPlayerController(false)->GetLocalPlayer();
-			}
+			if (UGameInstance* GameInstance = World->GetGameInstance<UGameInstance>()) TargetLocalPlayer = GameInstance->GetPrimaryPlayerController(false)->GetLocalPlayer();
 		}
 	}
 
@@ -82,7 +71,7 @@ void UAsyncAction_ShowConfirmation::Activate()
 	HandleConfirmationResult(ECommonMessagingResult::Unknown);
 }
 
-void UAsyncAction_ShowConfirmation::HandleConfirmationResult(ECommonMessagingResult ConfirmationResult)
+void UAsyncAction_ShowConfirmation::HandleConfirmationResult(const ECommonMessagingResult ConfirmationResult)
 {
 	OnResult.Broadcast(ConfirmationResult);
 

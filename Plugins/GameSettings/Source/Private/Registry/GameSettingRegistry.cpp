@@ -14,9 +14,7 @@
 // UGameSettingRegistry
 //--------------------------------------
 
-UGameSettingRegistry::UGameSettingRegistry()
-{
-}
+UGameSettingRegistry::UGameSettingRegistry() {}
 
 void UGameSettingRegistry::Initialize(ULocalPlayer* InLocalPlayer)
 {
@@ -28,10 +26,7 @@ void UGameSettingRegistry::Initialize(ULocalPlayer* InLocalPlayer)
 
 void UGameSettingRegistry::Regenerate()
 {
-	for (UGameSetting* Setting : RegisteredSettings)
-	{
-		Setting->MarkAsGarbage();
-	}
+	for (UGameSetting* Setting : RegisteredSettings) { Setting->MarkAsGarbage(); }
 	RegisteredSettings.Reset();
 	TopLevelSettings.Reset();
 
@@ -52,22 +47,14 @@ bool UGameSettingRegistry::IsFinishedInitializing() const
 	return bReady;
 }
 
-void UGameSettingRegistry::SaveChanges()
-{
-}
+void UGameSettingRegistry::SaveChanges() {}
 
 void UGameSettingRegistry::GetSettingsForFilter(const FGameSettingFilterState& FilterState,
                                                 TArray<UGameSetting*>& InOutSettings) const
 {
 	TArray<UGameSetting*> RootSettings;
-	if (FilterState.GetSettingRootList().Num() > 0)
-	{
-		RootSettings.Append(FilterState.GetSettingRootList());
-	}
-	else
-	{
-		RootSettings.Append(TopLevelSettings);
-	}
+	if (FilterState.GetSettingRootList().Num() > 0) RootSettings.Append(FilterState.GetSettingRootList());
+	else RootSettings.Append(TopLevelSettings);
 
 	for (UGameSetting* TopLevelSetting : RootSettings)
 	{
@@ -85,11 +72,7 @@ void UGameSettingRegistry::GetSettingsForFilter(const FGameSettingFilterState& F
 
 UGameSetting* UGameSettingRegistry::FindSettingByDevName(const FName& SettingDevName)
 {
-	for (UGameSetting* Setting : RegisteredSettings)
-	{
-		if (Setting->GetDevName() == SettingDevName)
-			return Setting;
-	}
+	for (UGameSetting* Setting : RegisteredSettings) { if (Setting->GetDevName() == SettingDevName) return Setting; }
 	return nullptr;
 }
 
@@ -109,55 +92,35 @@ void UGameSettingRegistry::RegisterInnerSettings(UGameSetting* InSetting)
 	InSetting->OnSettingEditConditionChangedEvent.AddUObject(this, &ThisClass::HandleSettingEditConditionsChanged);
 
 	// Not a fan of this, but it makes sense to aggregate action events for simplicity.
-	if (UGameSettingAction* ActionSetting = Cast<UGameSettingAction>(InSetting))
-	{
-		ActionSetting->OnExecuteNamedActionEvent.AddUObject(this, &ThisClass::HandleSettingNamedAction);
-	}
-	// Not a fan of this, but it makes sense to aggregate navigation events for simplicity.
+	if (UGameSettingAction* ActionSetting = Cast<UGameSettingAction>(InSetting)) ActionSetting->OnExecuteNamedActionEvent.AddUObject(this, &ThisClass::HandleSettingNamedAction);
+		// Not a fan of this, but it makes sense to aggregate navigation events for simplicity.
 	else if (UGameSettingCollectionPage* NewPageCollection = Cast<UGameSettingCollectionPage>(InSetting))
 	{
-		NewPageCollection->OnExecuteNavigationEvent.AddUObject(this, &ThisClass::HandleSettingNavigation);
+		NewPageCollection->OnExecuteNavigationEvent.AddUObject(
+			this, &ThisClass::HandleSettingNavigation);
 	}
 
 #if !UE_BUILD_SHIPPING
 	ensureAlwaysMsgf(!RegisteredSettings.Contains(InSetting), TEXT("This setting has already been registered!"));
 	ensureAlwaysMsgf(
-		nullptr == RegisteredSettings.FindByPredicate([&InSetting](UGameSetting* ExistingSetting) { return InSetting->
+		nullptr == RegisteredSettings.FindByPredicate([&InSetting](const UGameSetting* ExistingSetting) { return InSetting->
 			GetDevName() == ExistingSetting->GetDevName(); }),
-		TEXT("A setting with this DevName has already been registered!  DevNames must be unique within a registry."));
+		TEXT("A setting with this DevName [ %s ] has already been registered!  DevNames must be unique within a registry."), *InSetting->GetDevName().ToString());
 #endif
 
 	RegisteredSettings.Add(InSetting);
 
-	for (UGameSetting* ChildSetting : InSetting->GetChildSettings())
-	{
-		RegisterInnerSettings(ChildSetting);
-	}
+	for (UGameSetting* ChildSetting : InSetting->GetChildSettings()) { RegisterInnerSettings(ChildSetting); }
 }
 
-void UGameSettingRegistry::HandleSettingApplied(UGameSetting* Setting)
-{
-	OnSettingApplied(Setting);
-}
+void UGameSettingRegistry::HandleSettingApplied(UGameSetting* Setting) { OnSettingApplied(Setting); }
 
-void UGameSettingRegistry::HandleSettingChanged(UGameSetting* Setting, EGameSettingChangeReason Reason) const
-{
-	OnSettingChangedEvent.Broadcast(Setting, Reason);
-}
+void UGameSettingRegistry::HandleSettingChanged(UGameSetting* Setting, const EGameSettingChangeReason Reason) const { OnSettingChangedEvent.Broadcast(Setting, Reason); }
 
-void UGameSettingRegistry::HandleSettingEditConditionsChanged(UGameSetting* Setting) const
-{
-	OnSettingEditConditionChangedEvent.Broadcast(Setting);
-}
+void UGameSettingRegistry::HandleSettingEditConditionsChanged(UGameSetting* Setting) const { OnSettingEditConditionChangedEvent.Broadcast(Setting); }
 
-void UGameSettingRegistry::HandleSettingNamedAction(UGameSetting* Setting, FGameplayTag GameSettings_Action_Tag) const
-{
-	OnSettingNamedActionEvent.Broadcast(Setting, GameSettings_Action_Tag);
-}
+void UGameSettingRegistry::HandleSettingNamedAction(UGameSetting* Setting, const FGameplayTag GameSettings_Action_Tag) const { OnSettingNamedActionEvent.Broadcast(Setting, GameSettings_Action_Tag); }
 
-void UGameSettingRegistry::HandleSettingNavigation(UGameSetting* Setting) const
-{
-	OnExecuteNavigationEvent.Broadcast(Setting);
-}
+void UGameSettingRegistry::HandleSettingNavigation(UGameSetting* Setting) const { OnExecuteNavigationEvent.Broadcast(Setting); }
 
 #undef LOCTEXT_NAMESPACE

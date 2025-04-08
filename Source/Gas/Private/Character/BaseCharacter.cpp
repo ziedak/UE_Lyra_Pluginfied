@@ -82,6 +82,7 @@ void ABaseCharacter::BeginPlay()
 
 void ABaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	Super::EndPlay(EndPlayReason);
 	const UWorld* World = GetWorld();
 
 	if (!IsNetMode(NM_DedicatedServer)) if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World)) SignificanceManager->UnregisterObject(this);

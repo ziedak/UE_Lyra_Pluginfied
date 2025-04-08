@@ -8,6 +8,8 @@
 #include "GameSettingValueScalarDynamic.h"
 
 #include "CustomSettings/LyraSettingAction_SafeZoneEditor.h"
+#include "CustomSettings/LyraSettingValueDiscrete_MobileFPSType.h"
+#include "CustomSettings/LyraSettingValueDiscrete_OverallQuality.h"
 #include "CustomSettings/LyraSettingValueDiscrete_PerfStat.h"
 #include "CustomSettings/LyraSettingValueDiscrete_Resolution.h"
 
@@ -20,6 +22,7 @@
 // ULyraGameSettingRegistry
 //--------------------------------------
 
+class ULyraSettingValueDiscrete_Language;
 class ULyraSettingValueDiscreteDynamic_AudioOutputDevice;
 class UGameSettingCollectionPage;
 class ULyraSettingsShared;
@@ -41,29 +44,29 @@ DECLARE_LOG_CATEGORY_EXTERN(LogLyraGameSettingRegistry, Log, Log);
 // 		GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
 // 	}))
 //@TODO not sure verify this is the right way to do this
-// #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
-// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-// GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetSharedSettings),				\
-// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
-// }))
-//
-// #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
-// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-// GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetLocalSettings),				\
-// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
-// }))
-
 #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetSharedSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetSharedSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
 }))
 
 #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
 MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
-GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetLocalSettings),				\
+GET_FUNCTION_NAME_STRING_CHECKED(IPlayerSharedSettingsInterface, GetLocalSettings),				\
 GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
 }))
+
+// #define GET_SHARED_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
+// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
+// GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetSharedSettings),				\
+// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsShared, FunctionOrPropertyName)		\
+// }))
+//
+// #define GET_LOCAL_SETTINGS_FUNCTION_PATH(FunctionOrPropertyName)							\
+// MakeShared<FGameSettingDataSourceDynamic>(TArray<FString>({								\
+// GET_FUNCTION_NAME_STRING_CHECKED(UMyClass, GetLocalSettings),				\
+// GET_FUNCTION_NAME_STRING_CHECKED(ULyraSettingsLocal, FunctionOrPropertyName)		\
+// }))
 /**
  *
  */
@@ -84,20 +87,40 @@ protected:
 	bool AreSharedSettingsAvailable() const;
 
 	UGameSettingCollection* InitializeVideoSettings(ULocalPlayer* InLocalPlayer);
+
+private:
 	void AddDisplaySettings(UGameSettingCollection* Screen);
 	UGameSettingValueDiscreteDynamic_Enum* CreateWindowModeSetting();
 	ULyraSettingValueDiscrete_Resolution* CreateResolutionSetting(UGameSettingValueDiscreteDynamic_Enum* EditDependency);
 	void AddGraphicsSettings(UGameSettingCollection* Screen);
 	UGameSettingValueDiscreteDynamic_Enum* AddColorBlindModeSetting();
+	UGameSettingValueDiscreteDynamic_Number* AddColorBlindStrength();
 	UGameSettingValueScalarDynamic* AddBrightnessSetting();
 	ULyraSettingAction_SafeZoneEditor* AddSafeZoneSetting();
-	void InitializeVideoSettings_FrameRates(UGameSettingCollection* Screen, ULocalPlayer* InLocalPlayer);
+	void AddGraphicsQualitySettings(UGameSettingCollection* Screen);
+	UGameSettingValueDiscreteDynamic* CreateDeviceProfileSuffixSetting();
+	ULyraSettingValueDiscrete_MobileFPSType* CreateMobileFPSTypeSetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingAction* CreateAutoSetQualitySetting();
+	ULyraSettingValueDiscrete_OverallQuality* CreateGraphicsQualityPresetsSetting();
+	UGameSettingValueScalarDynamic* CreateResolutionScaleSetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateGlobalIlluminationQualitySetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateShadowsSetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateAntiAliasingSetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateViewDistanceSetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateTextureQualitySetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateVisualEffectQualitySetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreateReflectionQualitySetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	UGameSettingValueDiscreteDynamic_Number* CreatePostProcessingQualitySetting(UGameSetting* AutoSetQuality, UGameSetting* GraphicsQualityPresets);
+	void AddAdvancedGraphicsSettings(UGameSettingCollection* Screen);
+	UGameSettingValueDiscreteDynamic_Bool* CreateVerticalSyncSettings(UGameSettingValueDiscreteDynamic_Enum* EditSetting);
+	void InitializeVideoSettings_FrameRates(UGameSettingCollection* Screen);
 	void AddPerformanceStatPage(UGameSettingCollection* PerfStatsOuterCategory) const;
 	UGameSettingCollectionPage* CreatePerformanceStatsPage() const;
 	void AddPerformanceStats(UGameSettingCollectionPage* StatsPage) const;
 	void AddNetworkStats(UGameSettingCollectionPage* StatsPage) const;
-	ULyraSettingValueDiscrete_PerfStat* AddPerformanceStat(ELyraDisplayablePerformanceStat Stat, const FText& DisplayName, const FText& Description) const;
+	ULyraSettingValueDiscrete_PerfStat* AddPerformanceStat(EDisplayablePerformanceStat Stat, const FText& DisplayName, const FText& Description) const;
 
+protected:
 	UGameSettingCollection* InitializeAudioSettings(ULocalPlayer* InLocalPlayer);
 
 private:
@@ -149,9 +172,9 @@ protected:
 	UGameSettingCollection* InitializeGameplaySettings(ULocalPlayer* InLocalPlayer);
 
 private:
-	UGameSettingCollectionPage* SetLanguageSettings(ULocalPlayer* InLocalPlayer);
-	UGameSettingValueDiscreteDynamic_Bool* SetReplaySettings(ULocalPlayer* InLocalPlayer);
-	UGameSettingValueDiscreteDynamic_Number* SetReplayLimitSettings(ULocalPlayer* InLocalPlayer);
+	ULyraSettingValueDiscrete_Language* SetLanguageSettings();
+	UGameSettingValueDiscreteDynamic_Bool* SetReplaySettings();
+	UGameSettingValueDiscreteDynamic_Number* SetReplayLimitSettings();
 
 protected:
 	UPROPERTY()

@@ -10,17 +10,13 @@
 #include "GameSettingValueScalarDynamic.h"
 #include "Settings/LyraSettingsLocal.h"
 #include "Settings/LyraSettingsShared.h"
-#include "NativeGameplayTags.h"
-// #include "Interfaces/IPlayerSharedSettingsInterface.h"
-#include "Settings/MyClass.h"
+#include "Settings/SettingsTags.h"
+#include "Interfaces/IPlayerSharedSettingsInterface.h"
+// #include "Settings/MyClass.h"
 
 class ULocalPlayer;
 
 #define LOCTEXT_NAMESPACE "Lyra"
-
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Platform_Trait_SupportsChangingAudioOutputDevice,
-                              "Platform.Trait.SupportsChangingAudioOutputDevice");
-UE_DEFINE_GAMEPLAY_TAG_STATIC(TAG_Platform_Trait_SupportsBackgroundAudio, "Platform.Trait.SupportsBackgroundAudio");
 
 
 UGameSettingCollection* ULyraGameSettingRegistry::InitializeAudioSettings(ULocalPlayer* InLocalPlayer)
@@ -220,7 +216,7 @@ ULyraSettingValueDiscreteDynamic_AudioOutputDevice* ULyraGameSettingRegistry::Ad
 	Setting->SetDynamicGetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(GetAudioOutputDeviceId));
 	Setting->SetDynamicSetter(GET_LOCAL_SETTINGS_FUNCTION_PATH(SetAudioOutputDeviceId));
 	Setting->AddEditCondition(FWhenPlayingAsPrimaryPlayer::Get());
-	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(TAG_Platform_Trait_SupportsChangingAudioOutputDevice,
+	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(PlatformTags::TRAIT_SUPPORTS_CHANGING_AUDIO_OUTPUT_DEVICE,
 	                                                               TEXT(
 		                                                               "Platform does not support changing audio output device")));
 	return Setting;
@@ -239,7 +235,7 @@ UGameSettingValueDiscreteDynamic_Enum* ULyraGameSettingRegistry::AddBackgroundAu
 			{EBackgroundAudioSetting::AllSounds, LOCTEXT("EBackgroundAudioSetting_AllSounds", "All Sounds")}
 		});
 	Setting->AddEditCondition(FWhenPlayingAsPrimaryPlayer::Get());
-	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(TAG_Platform_Trait_SupportsBackgroundAudio,
+	Setting->AddEditCondition(FWhenPlatformHasTrait::KillIfMissing(PlatformTags::TRAIT_SUPPORTS_BACKGROUND_AUDIO,
 	                                                               TEXT("Platform does not support background audio")));
 	return Setting;
 }

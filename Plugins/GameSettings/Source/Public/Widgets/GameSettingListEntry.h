@@ -105,7 +105,7 @@ protected:
 	void HandleOptionIncrease();
 	void HandleRotatorChangedValue(int32 Value, bool bUserInitiated);
 
-	void Refresh();
+	void Refresh() const;
 	virtual void OnSettingChanged() override;
 	virtual void HandleEditConditionChanged(UGameSetting* InSetting) override;
 	virtual void RefreshEditableState(const FGameSettingEditableState& InEditableState) override;

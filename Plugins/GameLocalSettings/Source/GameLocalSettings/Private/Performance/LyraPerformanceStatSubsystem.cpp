@@ -34,16 +34,10 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 	CachedPacketSizeOutgoing = 0.0f;
 
 	UWorld* World = MySubsystem->GetGameInstance()->GetWorld();
-	if (!World) { return; }
+	if (!World) return;
 
 	const auto GameState = World->GetGameState();
-	if (GameState && GameState->Implements<UGameStateFpsInterface>())
-	{
-		if (const auto IGameState = CastChecked<IGameStateFpsInterface>(GameState))
-		{
-			CachedServerFPS = IGameState->GetServerFPS();
-		}
-	}
+	if (GameState && GameState->Implements<UGameStateFpsInterface>()) if (const auto IGameState = CastChecked<IGameStateFpsInterface>(GameState)) CachedServerFPS = IGameState->GetServerFPS();
 	//
 	// if (const ALyraGameState* GameState = World->GetGameState<ALyraGameState>())
 	// {
@@ -52,15 +46,12 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 
 	const APlayerController* LocalPC = GEngine->GetFirstLocalPlayerController(World);
-	if (!LocalPC) { return; }
+	if (!LocalPC) return;
 
-	if (const APlayerState* PS = LocalPC->GetPlayerState<APlayerState>())
-	{
-		CachedPingMS = PS->GetPingInMilliseconds();
-	}
+	if (const APlayerState* PS = LocalPC->GetPlayerState<APlayerState>()) CachedPingMS = PS->GetPingInMilliseconds();
 
 	const UNetConnection* NetConnection = LocalPC->GetNetConnection();
-	if (!NetConnection) { return; }
+	if (!NetConnection) return;
 
 	const UNetConnection::FNetConnectionPacketLoss& InLoss = NetConnection->GetInLossPercentage();
 	CachedPacketLossIncomingPercent = InLoss.GetAvgLossPercentage();
@@ -82,46 +73,29 @@ void FLyraPerformanceStatCache::ProcessFrame(const FFrameData& FrameData)
 
 void FLyraPerformanceStatCache::StopCharting() {}
 
-double FLyraPerformanceStatCache::GetCachedStat(ELyraDisplayablePerformanceStat Stat) const
+double FLyraPerformanceStatCache::GetCachedStat(EDisplayablePerformanceStat Stat) const
 {
-	static_assert(static_cast<int32>(ELyraDisplayablePerformanceStat::Count) == 15,
+	static_assert(static_cast<int32>(EDisplayablePerformanceStat::Count) == 15,
 	              "Need to update this function to deal with new performance stats");
 	switch (Stat)
 	{
-	case ELyraDisplayablePerformanceStat::ClientFPS:
-		return (CachedData.TrueDeltaSeconds != 0.0) ? (1.0 / CachedData.TrueDeltaSeconds) : 0.0;
-	case ELyraDisplayablePerformanceStat::ServerFPS:
-		return CachedServerFPS;
-	case ELyraDisplayablePerformanceStat::IdleTime:
-		return CachedData.IdleSeconds;
-	case ELyraDisplayablePerformanceStat::FrameTime:
-		return CachedData.TrueDeltaSeconds;
-	case ELyraDisplayablePerformanceStat::FrameTime_GameThread:
-		return CachedData.GameThreadTimeSeconds;
-	case ELyraDisplayablePerformanceStat::FrameTime_RenderThread:
-		return CachedData.RenderThreadTimeSeconds;
-	case ELyraDisplayablePerformanceStat::FrameTime_RHIThread:
-		return CachedData.RHIThreadTimeSeconds;
-	case ELyraDisplayablePerformanceStat::FrameTime_GPU:
-		return CachedData.GPUTimeSeconds;
-	case ELyraDisplayablePerformanceStat::Ping:
-		return CachedPingMS;
-	case ELyraDisplayablePerformanceStat::PacketLoss_Incoming:
-		return CachedPacketLossIncomingPercent;
-	case ELyraDisplayablePerformanceStat::PacketLoss_Outgoing:
-		return CachedPacketLossOutgoingPercent;
-	case ELyraDisplayablePerformanceStat::PacketRate_Incoming:
-		return CachedPacketRateIncoming;
-	case ELyraDisplayablePerformanceStat::PacketRate_Outgoing:
-		return CachedPacketRateOutgoing;
-	case ELyraDisplayablePerformanceStat::PacketSize_Incoming:
-		return CachedPacketSizeIncoming;
-	case ELyraDisplayablePerformanceStat::PacketSize_Outgoing:
-		return CachedPacketSizeOutgoing;
-	case ELyraDisplayablePerformanceStat::Count:
-		break;
-	default:
-		return 0.0f;
+	case EDisplayablePerformanceStat::ClientFPS: return (CachedData.TrueDeltaSeconds != 0.0) ? (1.0 / CachedData.TrueDeltaSeconds) : 0.0;
+	case EDisplayablePerformanceStat::ServerFPS: return CachedServerFPS;
+	case EDisplayablePerformanceStat::IdleTime: return CachedData.IdleSeconds;
+	case EDisplayablePerformanceStat::FrameTime: return CachedData.TrueDeltaSeconds;
+	case EDisplayablePerformanceStat::FrameTime_GameThread: return CachedData.GameThreadTimeSeconds;
+	case EDisplayablePerformanceStat::FrameTime_RenderThread: return CachedData.RenderThreadTimeSeconds;
+	case EDisplayablePerformanceStat::FrameTime_RHIThread: return CachedData.RHIThreadTimeSeconds;
+	case EDisplayablePerformanceStat::FrameTime_GPU: return CachedData.GPUTimeSeconds;
+	case EDisplayablePerformanceStat::Ping: return CachedPingMS;
+	case EDisplayablePerformanceStat::PacketLoss_Incoming: return CachedPacketLossIncomingPercent;
+	case EDisplayablePerformanceStat::PacketLoss_Outgoing: return CachedPacketLossOutgoingPercent;
+	case EDisplayablePerformanceStat::PacketRate_Incoming: return CachedPacketRateIncoming;
+	case EDisplayablePerformanceStat::PacketRate_Outgoing: return CachedPacketRateOutgoing;
+	case EDisplayablePerformanceStat::PacketSize_Incoming: return CachedPacketSizeIncoming;
+	case EDisplayablePerformanceStat::PacketSize_Outgoing: return CachedPacketSizeOutgoing;
+	case EDisplayablePerformanceStat::Count: break;
+	default: return 0.0f;
 	}
 
 
@@ -143,7 +117,4 @@ void ULyraPerformanceStatSubsystem::Deinitialize()
 	Tracker.Reset();
 }
 
-double ULyraPerformanceStatSubsystem::GetCachedStat(ELyraDisplayablePerformanceStat Stat) const
-{
-	return Tracker->GetCachedStat(Stat);
-}
+double ULyraPerformanceStatSubsystem::GetCachedStat(EDisplayablePerformanceStat Stat) const { return Tracker->GetCachedStat(Stat); }

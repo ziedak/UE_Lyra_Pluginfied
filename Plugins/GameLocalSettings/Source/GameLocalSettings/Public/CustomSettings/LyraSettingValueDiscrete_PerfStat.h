@@ -6,8 +6,8 @@
 
 #include "LyraSettingValueDiscrete_PerfStat.generated.h"
 
-enum class ELyraDisplayablePerformanceStat : uint8;
-enum class ELyraStatDisplayMode : uint8;
+enum class EDisplayablePerformanceStat : uint8;
+enum class EStatDisplayMode : uint8;
 
 class UObject;
 
@@ -19,7 +19,7 @@ class ULyraSettingValueDiscrete_PerfStat : public UGameSettingValueDiscrete
 public:
 	ULyraSettingValueDiscrete_PerfStat();
 
-	void SetStat(ELyraDisplayablePerformanceStat InStat);
+	void SetStat(EDisplayablePerformanceStat InStat);
 
 	/** UGameSettingValue */
 	virtual void StoreInitial() override;
@@ -29,17 +29,17 @@ public:
 	/** UGameSettingValueDiscrete */
 	virtual void SetDiscreteOptionByIndex(int32 Index) override;
 	virtual int32 GetDiscreteOptionIndex() const override;
-	virtual TArray<FText> GetDiscreteOptions() const override{ return Options; };
+	virtual TArray<FText> GetDiscreteOptions() const override { return Options; };
 
 protected:
 	/** UGameSettingValue */
 	virtual void OnInitialized() override;
 
-	void AddMode(FText&& Label, ELyraStatDisplayMode Mode);
+	void AddMode(FText&& Label, EStatDisplayMode Mode);
 
 	TArray<FText> Options;
-	TArray<ELyraStatDisplayMode> DisplayModes;
+	TArray<EStatDisplayMode> DisplayModes;
 
-	ELyraDisplayablePerformanceStat StatToDisplay;
-	ELyraStatDisplayMode InitialMode;
+	EDisplayablePerformanceStat StatToDisplay;
+	EStatDisplayMode InitialMode;
 };

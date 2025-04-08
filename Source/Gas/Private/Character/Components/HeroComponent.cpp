@@ -374,7 +374,7 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 	                                 &ThisClass::Input_AutoRun, bLogIfNotFound);
 }
 
-void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)
+void UHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
 	if (!Pawn) return;
@@ -385,7 +385,7 @@ void UHeroComponent::Input_AbilityInputTagPressed(const FGameplayTag InputTag)
 	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent()) Asc->SetAbilityInputTagPressed(InputTag);
 }
 
-void UHeroComponent::Input_AbilityInputTagReleased(const FGameplayTag InputTag)
+void UHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
 	if (!Pawn) return;
