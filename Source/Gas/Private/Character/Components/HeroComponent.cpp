@@ -295,9 +295,9 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
 	Subsystem->ClearAllMappings();
-	for (const auto [InputMapping, Priority, bRegisterWithSettings] : DefaultInputMappings)
+	for (const FInputMappingContextAndPriority& Mapping : DefaultInputMappings)
 	{
-		const UInputMappingContext* Imc = InputMapping.Get();
+		const UInputMappingContext* Imc = Mapping.InputMapping.Get();
 		if (!Imc)
 		{
 			LOG_ERROR(LogGAS, "Imc not found ");
@@ -306,7 +306,7 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 
 		LOG_INFO(LogGAS, "%s found ", *Imc->GetName());
 
-		if (!bRegisterWithSettings)
+		if (!Mapping.bRegisterWithSettings)
 		{
 			LOG_INFO(LogGAS, "%s found but will not be registered because bRegisterWithSettings is false",
 			         *Imc->GetName());
@@ -325,7 +325,7 @@ void UHeroComponent::RegisterInputMappings(UEnhancedInputLocalPlayerSubsystem* S
 		FModifyContextOptions Options = {};
 		Options.bIgnoreAllPressedKeysUntilRelease = false;
 		// Actually add the config to the local player
-		Subsystem->AddMappingContext(Imc, Priority, Options);
+		Subsystem->AddMappingContext(Imc, Mapping.Priority, Options);
 	}
 }
 

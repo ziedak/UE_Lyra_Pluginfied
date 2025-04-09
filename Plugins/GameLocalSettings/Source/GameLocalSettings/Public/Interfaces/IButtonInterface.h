@@ -16,7 +16,7 @@ class GAMELOCALSETTINGS_API IButtonInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Button Interface")
-	void SetButtonText(const FText& InText);
-	virtual void SetButtonText_Implementation(const FText& InText) {};
+	UFUNCTION()
+	virtual void SetButtonText(const FText& InText) =0;
+	//virtual void SetButtonText_Implementation(const FText& InText) {};
 };

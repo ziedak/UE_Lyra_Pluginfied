@@ -1,6 +1,7 @@
 # Visual Studio 2015 user specific files
 .vs/
 .vscode/
+.idea/
 # Compiled Object files
 *.slo
 *.lo
@@ -40,7 +41,7 @@
 *.sdf
 *.VC.db
 *.VC.opendb
-
+workspace.xml
 # Precompiled Assets
 SourceArt/**/*.png
 SourceArt/**/*.tga
@@ -73,4 +74,3 @@ Plugins/*/Saved/*
 Plugins/vc-ue-extensions/*
 # Cache files for the editor to use
 DerivedDataCache/*
-

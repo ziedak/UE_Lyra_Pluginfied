@@ -14,7 +14,7 @@ public class CustomUI : ModuleRules
 				"Core",
 				"CommonUI",
 				"CommonUser", "GameSettings", "CommonLoadingScreen",
-				"ModularGameplay" // This module supports modular gameplay features.
+				"ModularGameplay", "GameLocalSettings", "GameLocalSettings" // This module supports modular gameplay features.
 			}
 		);
 

@@ -16,75 +16,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a72dfda1-d059-4ab9-9775-fee050a70850" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/Core/Experiences/B_DefaultExperience.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Developer/UIModalSettings.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Developer/UIModalSettings.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/CustomSettings/EditConditions/WhenFramePacingModeMatch.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/CustomSettings/EditConditions/WhenPerfStatAllowed.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/CustomSettings/EditConditions/WhenSupportsGranularVideoQuality.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/CustomSettings/EditConditions/WhenFramePacingModeMatch.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/CustomSettings/EditConditions/WhenPerfStatAllowed.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/CustomSettings/EditConditions/WhenSupportsGranularVideoQuality.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/SettingsTags.h" afterDir="false" />
+    <list default="true" id="a72dfda1-d059-4ab9-9775-fee050a70850" name="Changes" comment="fix setting system, Modal and fixing bugs">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/Android/AndroidGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/Android/AndroidGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Camera/ThirdPerson/B_ThirdPerson_CameraMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Camera/ThirdPerson/B_ThirdPerson_CameraMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Camera/ThirdPerson/ThirdPerson_offsetCurve.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Camera/ThirdPerson/ThirdPerson_offsetCurve.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/CommonUI/Input/ICD_Pc_Gamepad.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/Input/ICD_Pc_Gamepad.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Core/B_DedaultExperience.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Core/B_DedaultExperience.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Core/B_DefaultExperience2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Core/B_DefaultExperience2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/DefaultGame_Label.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/DefaultGame_Label.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Core/Experiences/B_DefaultExperience.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Core/Experiences/B_DefaultExperience.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Data/DA_inputConfig.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/DA_inputConfig.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Data/DefaultPawnData.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Data/DefaultPawnData.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Jump.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Jump.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Move.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Move.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Input/Actions/IA_Test.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/Actions/IA_Test.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Input/IMC_Default.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/IMC_Default.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Maps/ThirdPersonMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Maps/ThirdPersonMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/Foundation/Dialogs/W_ControllerDisconnected.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Foundation/Dialogs/W_ControllerDisconnected.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/Menu/W_LyraFrontEnd.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Menu/W_LyraFrontEnd.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/Menu/W_LyraStartup.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Menu/W_LyraStartup.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/FrontEnd/W_FrontEndHUDLayout.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/FrontEnd/W_FrontEndHUDLayout.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/Hud/W_DefaultHUDLayout.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Hud/W_DefaultHUDLayout.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/Settings/Editors/W_SettingsListEntry_KBMBinding.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Settings/Editors/W_SettingsListEntry_KBMBinding.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/player/Hero/BP_Hero_Default.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/player/Hero/BP_Hero_Default.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gas.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/Gas.sln.DotSettings.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/BlueprintRetarget" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/BlueprintRetarget" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/BlueprintRetarget/Source/BlueprintRetarget/Private/ContentBrowserExtensions.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/BlueprintRetarget/Source/BlueprintRetarget/Private/ContentBrowserExtensions.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/Actions/AsyncAction_ShowConfirmation.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/Actions/AsyncAction_ShowConfirmation.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Private/GameUIPolicy.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/PrimaryGameLayout.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CommonGame/Source/Public/PrimaryGameLayout.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/CustomUI.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/CustomUI.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Subsystem/LyraUIMessagingSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Private/Subsystem/LyraUIMessagingSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/CustomSettings/LyraSettingValueDiscrete_PerfStat.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/CustomSettings/LyraSettingValueDiscrete_PerfStat.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Performance/LyraPerformanceSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Performance/LyraPerformanceSettings.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Performance/LyraPerformanceStatSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Performance/LyraPerformanceStatSubsystem.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Audio.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Audio.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Gamepad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Gamepad.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Gameplay.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Gameplay.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_MouseAndKeyboard.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_MouseAndKeyboard.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_PerfStats.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_PerfStats.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Video.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/RegistrySettings/LyraGameSettingRegistry_Video.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsLocal.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/LyraSettingsLocal.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/MyClass.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Settings/SettingsTags.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/CustomSettings/LyraSettingValueDiscrete_PerfStat.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/CustomSettings/LyraSettingValueDiscrete_PerfStat.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceSettings.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceStatSubsystem.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceStatSubsystem.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceStatTypes.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Performance/LyraPerformanceStatTypes.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/RegistrySettings/LyraGameSettingRegistry.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/RegistrySettings/LyraGameSettingRegistry.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsLocal.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/LyraSettingsLocal.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Settings/MyClass.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/GameSetting.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/GameSetting.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/Registry/GameSettingRegistry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/Registry/GameSettingRegistry.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/Widgets/GameSettingListEntry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Private/Widgets/GameSettingListEntry.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/GameSetting.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/GameSetting.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/GameSettingCollection.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/GameSettingCollection.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/Widgets/GameSettingListEntry.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameSettings/Source/Public/Widgets/GameSettingListEntry.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Foundation/LyraButtonBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Foundation/LyraButtonBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Widgets/LyraSettingsListEntrySetting_KeyboardInput.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Private/Widgets/LyraSettingsListEntrySetting_KeyboardInput.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Interfaces/IButtonInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/GameLocalSettings/Source/GameLocalSettings/Public/Interfaces/IButtonInterface.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/SharedRepMovement.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/SharedRepMovement.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/UI/PerformanceStats/LyraPerfStatContainerBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/UI/PerformanceStats/LyraPerfStatContainerBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/HeroComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/HeroComponent.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/UI/PerformanceStats/LyraPerfStatContainerBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/UI/PerformanceStats/LyraPerfStatContainerBase.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/UI/PerformanceStats/LyraPerfStatWidgetBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/UI/PerformanceStats/LyraPerfStatWidgetBase.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -104,6 +56,31 @@
     &quot;assignee&quot;: &quot;ziedak&quot;
   }
 }</component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1744118566" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="master" />
+                    <option name="lastUsedInstant" value="1744118565" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$/Plugins/BlueprintRetarget" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/ziedak/Gas.git&quot;,
@@ -460,150 +437,14 @@
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///dummy.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="cidr-memory-view://6" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Cameras/GameplayCameras/Source/GameplayCameras/Private/GameFramework/ActivateCameraRigFunctions.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Developer/Concert/ConcertApp/MultiUserServer/Source/MultiUserServer/Private/Widgets/Util/Filter/ConcertFrontendFilter_TextSearch.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Editor/DataValidation/Source/DataValidation/Private/EditorValidatorSubsystem.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/EnhancedActionKeyMapping.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/EnhancedInputSubsystems.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/InputMappingContext.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/PlayerMappableKeySettings.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/Avalanche/Source/AvalancheInteractiveTools/Private/Builders/AvaInteractiveToolsStaticMeshActorToolBuilder.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/Avalanche/Source/AvalancheInteractiveTools/Private/Tools/AvaInteractiveToolsActorToolBase.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Experimental/ControlFlows/Source/ControlFlows/Private/ControlFlow.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -717,7 +558,7 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="2ptNFhnPF30scGU6ySSvam841Jk" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -725,25 +566,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;C/C++ Project.Gas.executor&quot;: &quot;Debug&quot;,
-    &quot;Rider.SolutionAnalysis.ShowPreview&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;rider.code.cleanup.on.save&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;RiderNuGetOptionsPageId&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "C/C++ Project.Gas.executor": "Debug",
+    "Rider.SolutionAnalysis.ShowPreview": "false",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "rider.code.cleanup.on.save": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="C/C++ Project.Gas">
     <configuration name="Gas" type="CppProject" factoryName="C++ Project">
       <configuration_1 setup="1">
@@ -923,6 +764,7 @@
       <workItem from="1743859686368" duration="14871000" />
       <workItem from="1743955577532" duration="16123000" />
       <workItem from="1744030540286" duration="20505000" />
+      <workItem from="1744118105918" duration="13131000" />
     </task>
     <task id="LOCAL-00001" summary="setup GameLocalSettings plugin">
       <option name="closed" value="true" />
@@ -1004,7 +846,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743477854840</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fix setting system, Modal and fixing bugs">
+      <option name="closed" value="true" />
+      <created>1744118468093</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1744118468093</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1025,8 +875,16 @@
       </map>
     </option>
   </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myShow1" value="true" />
+    <option name="myLimit" value="1728000000" />
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="SHOW_DIRTY_RECURSIVELY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/Plugins/BlueprintRetarget" />
+    </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="setup GameLocalSettings plugin" />
     <MESSAGE value="GameLocalSettings" />
@@ -1038,7 +896,8 @@
     <MESSAGE value="fix lyra menu" />
     <MESSAGE value="fix settings conditions" />
     <MESSAGE value="include lyra audio assets" />
-    <option name="LAST_COMMIT_MESSAGE" value="include lyra audio assets" />
+    <MESSAGE value="fix setting system, Modal and fixing bugs" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix setting system, Modal and fixing bugs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1228,6 +1087,21 @@
           <line>142</line>
           <option name="timeStamp" value="277" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp</url>
+          <line>296</line>
+          <option name="timeStamp" value="280" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Private/PlayerMappableKeySettings.cpp</url>
+          <line>15</line>
+          <option name="timeStamp" value="284" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp</url>
+          <line>334</line>
+          <option name="timeStamp" value="285" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog>
@@ -1244,6 +1118,7 @@
     <watches-manager>
       <configuration name="CppProject">
         <watch expression="InRegistry" />
+        <watch expression="Context.Issues" />
       </configuration>
     </watches-manager>
   </component>

@@ -133,47 +133,38 @@ void ULyraSettingsListEntrySetting_KeyboardInput::HandleClearClicked() const
 	KeyboardInputSetting->ChangeBinding(1, EKeys::Invalid);
 }
 
-void ULyraSettingsListEntrySetting_KeyboardInput::HandleResetToDefaultClicked() const
-{
-	KeyboardInputSetting->ResetToDefault();
-}
+void ULyraSettingsListEntrySetting_KeyboardInput::HandleResetToDefaultClicked() const { KeyboardInputSetting->ResetToDefault(); }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::OnSettingChanged() { Refresh(); }
 
 void ULyraSettingsListEntrySetting_KeyboardInput::Refresh() const
 {
-	if (!(ensure(KeyboardInputSetting))) { return; }
+	if (!(ensure(KeyboardInputSetting))) return;
 
-	if (Button_PrimaryKey && Button_PrimaryKey->Implements<UButtonInterface>())
-	{
-		IButtonInterface::Execute_SetButtonText(Button_PrimaryKey,
-		                                        KeyboardInputSetting->GetKeyTextFromSlot(
-			                                        EPlayerMappableKeySlot::First));
-		// if (const auto IButton_PrimaryKey = Cast<IButtonInterface>(Button_PrimaryKey))
-		// {
-		// 	//IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
-		// }
-	}
+	// if (Button_PrimaryKey && Button_PrimaryKey->Implements<UButtonInterface>())
+	// {
+	// 	IButtonInterface::Execute_SetButtonText(Button_PrimaryKey,
+	// 	                                        KeyboardInputSetting->GetKeyTextFromSlot(
+	// 		                                        EPlayerMappableKeySlot::First));
+	// 	// if (const auto IButton_PrimaryKey = Cast<IButtonInterface>(Button_PrimaryKey))
+	// 	// {
+	// 	// 	//IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
+	// 	// }
+	// }
+	if (const auto IButton_PrimaryKey = CastChecked<IButtonInterface>(Button_PrimaryKey)) IButton_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
 	else { UE_LOG(LogTemp, Error, TEXT("Button_PrimaryKey does not Implement IButtonInterface")); }
 
-	if (Button_SecondaryKey && Button_SecondaryKey->Implements<UButtonInterface>())
+	if (const auto IButton_SecondaryKey = CastChecked<IButtonInterface>(Button_SecondaryKey))
 	{
-		IButtonInterface::Execute_SetButtonText(Button_SecondaryKey,
-		                                        KeyboardInputSetting->GetKeyTextFromSlot(
-			                                        EPlayerMappableKeySlot::Second));
-
-		// if (const auto IButton_SecondaryKey = Cast<IButtonInterface>(Button_SecondaryKey))
-		// {
-		// 	IButton_SecondaryKey->
-		// 		SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::First));
-		// }
+		IButton_SecondaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(
+			EPlayerMappableKeySlot::Second));
 	}
 	else { UE_LOG(LogTemp, Error, TEXT("Button_SecondaryKey does not Implement IButtonInterface")); }
 	// Button_PrimaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 	// Button_SecondaryKey->SetButtonText(KeyboardInputSetting->GetKeyTextFromSlot(EPlayerMappableKeySlot::Second));
 
 	// Only display the reset to default button if a mapping is customized
-	if (!(ensure(Button_ResetToDefault))) { return; }
+	if (!(ensure(Button_ResetToDefault))) return;
 
 	if (KeyboardInputSetting->IsMappingCustomized())
 	{
