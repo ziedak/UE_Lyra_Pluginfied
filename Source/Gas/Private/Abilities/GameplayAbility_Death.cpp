@@ -76,7 +76,6 @@ void UGameplayAbility_Death::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-//TODO : Implement UBaseHealthComponent
 void UGameplayAbility_Death::StartDeath() const
 {
 	UHealthComponent* HealthComponent = UHealthComponent::FindHealthComponent(GetAvatarActorFromActorInfo());
@@ -97,7 +96,6 @@ void UGameplayAbility_Death::StartDeath() const
 }
 
 
-//TODO : Implement UBaseHealthComponent
 void UGameplayAbility_Death::FinishDeath() const
 {
 	UHealthComponent* HealthComponent = UHealthComponent::FindHealthComponent(GetAvatarActorFromActorInfo());

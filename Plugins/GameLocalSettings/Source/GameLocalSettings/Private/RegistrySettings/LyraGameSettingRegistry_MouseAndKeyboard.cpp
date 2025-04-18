@@ -73,8 +73,7 @@ UGameSettingValueScalarDynamic* ULyraGameSettingRegistry::AddMouseSensitivityPit
 		TEXT("MouseSensitivityPitch"),
 		LOCTEXT("MouseSensitivityPitch_Name", "Y-Axis Sensitivity"),
 		LOCTEXT("MouseSensitivityPitch_Description",
-		        "Sets the sensitivity of the mouse's vertical (y) axis. With higher settings the camera will "
-		        "move faster when looking up and down with the mouse."),
+		        "Sets the sensitivity of the mouse's vertical (y) axis. With higher settings the camera will move faster when looking up and down with the mouse."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetMouseSensitivityY),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(SetMouseSensitivityY),
 		GetDefault<ULyraSettingsShared>()->GetMouseSensitivityY(),
@@ -93,8 +92,7 @@ UGameSettingValueScalarDynamic* ULyraGameSettingRegistry::AddMouseTargetingMulti
 		"MouseTargetingMultiplier",
 		LOCTEXT("MouseTargetingMultiplier_Name", "Targeting Sensitivity"),
 		LOCTEXT("MouseTargetingMultiplier_Description",
-		        "Sets the modifier for reducing mouse sensitivity when targeting. 100% will have no slow down "
-		        "when targeting. Lower settings will have more slow down when targeting."),
+		        "Sets the modifier for reducing mouse sensitivity when targeting. 100% will have no slow down when targeting. Lower settings will have more slow down when targeting."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetTargetingMultiplier),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(SetTargetingMultiplier),
 		GetDefault<ULyraSettingsShared>()->GetTargetingMultiplier(),

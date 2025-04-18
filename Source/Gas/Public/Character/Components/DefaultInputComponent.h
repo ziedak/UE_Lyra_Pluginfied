@@ -3,27 +3,27 @@
 #pragma once
 
 #include "EnhancedInputComponent.h"
-#include "LyraInputConfig_DA.h"
+ #include "InputConfig/LyraInputConfig_DA.h"
 
-#include "LyraInputComponent.generated.h"
+#include "DefaultInputComponent.generated.h"
 
 class UEnhancedInputLocalPlayerSubsystem;
 class UInputAction;
 class UObject;
-
-
+//class ULyraInputConfig_DA;
+struct FGameplayTag;
 /**
  * ULyraInputComponent
  *
  *	Component used to manage input mappings and bindings using an input config data asset.
  */
 UCLASS(Config = Input)
-class GAMELOCALSETTINGS_API ULyraInputComponent : public UEnhancedInputComponent
+class GAS_API UDefaultInputComponent : public UEnhancedInputComponent
 {
 	GENERATED_BODY()
 
 public:
-	ULyraInputComponent(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer) {}
+	UDefaultInputComponent(const FObjectInitializer& ObjectInitializer): Super(ObjectInitializer) {}
 
 	void AddInputMappings(const ULyraInputConfig_DA* InputConfig,
 	                      const UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const;
@@ -47,7 +47,7 @@ public:
 };
 
 template <class UserClass, typename FuncType>
-void ULyraInputComponent::BindNativeAction(const ULyraInputConfig_DA* InputConfig, const FGameplayTag& InputTag,
+void UDefaultInputComponent::BindNativeAction(const ULyraInputConfig_DA* InputConfig, const FGameplayTag& InputTag,
                                            ETriggerEvent TriggerEvent, UserClass* Object, FuncType Func,
                                            const bool bLogIfNotFound)
 {
@@ -59,13 +59,13 @@ void ULyraInputComponent::BindNativeAction(const ULyraInputConfig_DA* InputConfi
 }
 
 template <class UserClass, typename PressedFuncType, typename ReleasedFuncType>
-void ULyraInputComponent::BindAbilityActionList(const ULyraInputConfig_DA* InputConfig, UserClass* Object,
+void UDefaultInputComponent::BindAbilityActionList(const ULyraInputConfig_DA* InputConfig, UserClass* Object,
                                                 PressedFuncType PressedFunc, ReleasedFuncType ReleasedFunc,
                                                 TArray<uint32>& BindHandles)
 {
 	check(InputConfig);
 
-	for (const auto Action : InputConfig->AbilityInputActions)
+	for (const auto& Action : InputConfig->AbilityInputActions)
 	{
 		if (!Action.InputAction || !Action.InputTag.IsValid()) { continue; }
 

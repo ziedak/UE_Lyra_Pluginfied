@@ -61,11 +61,17 @@ bool UPawnExtensionComponent::CanChangeInitState(UGameFrameworkComponentManager*
 
 		return true;
 	}
+
 	if (CurrentState == InitStateTags::DATA_AVAILABLE && DesiredState == InitStateTags::DATA_INITIALIZED)
 	{
 		// Transition to initialize if all features have their data available
 		return Manager->HaveAllFeaturesReachedInitState(Pawn, InitStateTags::DATA_AVAILABLE);
 	}
+	//if (CurrentState == InitStateTags::DATA_INITIALIZED && DesiredState == InitStateTags::GAMEPLAY_READY)
+	//{
+	//	// Transition to gameplay ready if all features have their data initialized
+	//	return Manager->HaveAllFeaturesReachedInitState(Pawn, InitStateTags::DATA_INITIALIZED);
+	//}
 	if (CurrentState == InitStateTags::DATA_INITIALIZED && DesiredState == InitStateTags::GAMEPLAY_READY)
 	{
 		return true;

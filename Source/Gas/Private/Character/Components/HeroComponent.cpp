@@ -2,15 +2,17 @@
 
 
 #include "Character/Components/HeroComponent.h"
-
-#include "InputConfig/LyraInputComponent.h"
-
+#include "Character/Components/DefaultInputComponent.h"
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Character/Components/PawnExtensionComponent.h"
 #include "Player/BasePlayerState.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Data/GasPawnData.h"
 #include "Log/Log.h"
+#include "LyraCameraComponent.h"
+#include "CameraModes/CustomCameraMode.h"
+#include "Player/BasePlayerController.h"
+#include "Tags/CoreTags.h"
 
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
@@ -23,15 +25,6 @@
 #include "Misc/UObjectToken.h"
 #endif	// WITH_EDITOR
 
-
-#include "LyraCameraComponent.h"
-
-#include "CameraModes/CustomCameraMode.h"
-
-#include "Character/Components/MyInputComponent.h"
-
-#include "Player/BasePlayerController.h"
-#include "Tags/CoreTags.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HeroComponent)
 
@@ -46,18 +39,26 @@ UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 void UHeroComponent::SetAbilityCameraMode(const TSubclassOf<UCustomCameraMode>& CameraMode,
                                           const FGameplayAbilitySpecHandle& OwningSpecHandle)
 {
-	if (!CameraMode || AbilityCameraMode == CameraMode) return;
+	if (!CameraMode || AbilityCameraMode == CameraMode)
+		return;
 
 	AbilityCameraMode = CameraMode;
 	AbilityCameraModeOwningSpecHandle = OwningSpecHandle;
 }
 
-void UHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle) {}
+void UHeroComponent::ClearAbilityCameraMode(const FGameplayAbilitySpecHandle& OwningSpecHandle)
+{
+	if (AbilityCameraModeOwningSpecHandle != OwningSpecHandle)
+		return;
+	AbilityCameraMode = nullptr;
+	AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
+}
 
 void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig_DA* InputConfig)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+		return;
 
 	// do we need those checks?
 	const APlayerController* PC = GetController<APlayerController>();
@@ -70,9 +71,10 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig_DA* InputCo
 	check(Subsystem);
 
 	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp) return;
+	if (!PawnExtComp)
+		return;
 
-	const auto InputComponent = Pawn->FindComponentByClass<ULyraInputComponent>();
+	const auto InputComponent = Pawn->FindComponentByClass<UDefaultInputComponent>();
 	if (!(ensureMsgf(InputComponent,
 	                 TEXT(
 		                 "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs."
@@ -103,13 +105,17 @@ bool UHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
 	check(Manager);
 	APawn* Pawn = GetPawn<APawn>();
 
-	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED) return CanTransitionToSpawned(Pawn);
+	if (!CurrentState.IsValid() && DesiredState == InitStateTags::SPAWNED)
+		return CanTransitionToSpawned(Pawn);
 
-	if (CurrentState == InitStateTags::SPAWNED && DesiredState == InitStateTags::DATA_AVAILABLE) return CanTransitionToDataAvailable(Pawn);
+	if (CurrentState == InitStateTags::SPAWNED && DesiredState == InitStateTags::DATA_AVAILABLE)
+		return CanTransitionToDataAvailable(Pawn);
 
-	if (CurrentState == InitStateTags::DATA_AVAILABLE && DesiredState == InitStateTags::DATA_INITIALIZED) return CanTransitionToDataInitialized(Manager, Pawn);
+	if (CurrentState == InitStateTags::DATA_AVAILABLE && DesiredState == InitStateTags::DATA_INITIALIZED)
+		return CanTransitionToDataInitialized(Manager, Pawn);
 
-	if (CurrentState == InitStateTags::DATA_INITIALIZED && DesiredState == InitStateTags::GAMEPLAY_READY) return CanTransitionToGameplayReady();
+	if (CurrentState == InitStateTags::DATA_INITIALIZED && DesiredState == InitStateTags::GAMEPLAY_READY)
+		return CanTransitionToGameplayReady();
 
 	return false;
 }
@@ -117,7 +123,8 @@ bool UHeroComponent::CanChangeInitState(UGameFrameworkComponentManager* Manager,
 
 bool UHeroComponent::CanTransitionToDataAvailable(const APawn* Pawn) const
 {
-	if (!GetPlayerState<ABasePlayerState>()) return false;
+	if (!GetPlayerState<ABasePlayerState>())
+		return false;
 
 	if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 	{
@@ -125,10 +132,12 @@ bool UHeroComponent::CanTransitionToDataAvailable(const APawn* Pawn) const
 		const bool bHasControllerPairedWithPlayerState = Controller && Controller->PlayerState && Controller->
 		                                                                                          PlayerState->GetOwner() == Controller;
 
-		if (!bHasControllerPairedWithPlayerState) return false;
+		if (!bHasControllerPairedWithPlayerState)
+			return false;
 	}
 
-	if (!Pawn->IsLocallyControlled() || Pawn->IsBotControlled()) return true;
+	if (!Pawn->IsLocallyControlled() || Pawn->IsBotControlled())
+		return true;
 
 	const ABasePlayerController* PC = GetController<ABasePlayerController>();
 	return Pawn->InputComponent && PC && PC->GetLocalPlayer();
@@ -150,17 +159,20 @@ bool UHeroComponent::CanTransitionToDataInitialized(const UGameFrameworkComponen
 bool UHeroComponent::CanTransitionToGameplayReady() const
 {
 	// TODO add ability initialization checks?
+
 	return true;
 }
 
 void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
                                            FGameplayTag DesiredState)
 {
-	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED) return;
+	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED)
+		return;
 
 	const APawn* Pawn = GetPawn<APawn>();
 	ABasePlayerState* BasePS = GetPlayerState<ABasePlayerState>();
-	if (!ensure(Pawn && BasePS)) return;
+	if (!ensure(Pawn && BasePS))
+		return;
 
 	const UGasPawnData* PawnData = nullptr;
 
@@ -173,25 +185,33 @@ void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manag
 		PawnExtComp->InitializeAbilitySystem(BasePS->GetBaseAbilitySystemComponent(), BasePS);
 	}
 
-	if (Pawn->InputComponent) InitializePlayerInput(Pawn->InputComponent);
+	if (Pawn->InputComponent)
+		InitializePlayerInput(Pawn->InputComponent);
 
 	// Hook up the delegate for all pawns, in case we spectate later
-	if (!PawnData->DefaultCameraMode) return;
+	if (!PawnData->DefaultCameraMode)
+		return;
 
-	if (ULyraCameraComponent* CameraComponent = ULyraCameraComponent::FindCameraComponent(Pawn)) CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
+	if (ULyraCameraComponent* CameraComponent = ULyraCameraComponent::FindCameraComponent(Pawn))
+		CameraComponent->DetermineCameraModeDelegate.BindUObject(this, &ThisClass::DetermineCameraMode);
 }
 
 
 TSubclassOf<UCustomCameraMode> UHeroComponent::DetermineCameraMode() const
 {
-	if (AbilityCameraMode) return AbilityCameraMode;
+	if (AbilityCameraMode)
+		return AbilityCameraMode;
 
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return nullptr;
+	if (!Pawn)
+		return nullptr;
 
-	if (const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn)) if (const auto PawnData = PawnExtComp->GetPawnData<UGasPawnData>()) return PawnData->DefaultCameraMode;
-
-	return nullptr;
+	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
+	if (!PawnExtComp)
+		return nullptr;
+	// If we have a camera mode set by an ability, use that
+	const auto PawnData = PawnExtComp->GetPawnData<UGasPawnData>();
+	return PawnData ? PawnData->DefaultCameraMode : nullptr;
 }
 
 void UHeroComponent::OnActorInitStateChanged(const FActorInitStateChangedParams& Params)
@@ -270,7 +290,8 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 	check(PlayerInputComponent);
 
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+		return;
 
 	const APlayerController* PC = GetController<APlayerController>();
 	check(PC);
@@ -284,7 +305,8 @@ void UHeroComponent::InitializePlayerInput(UInputComponent* PlayerInputComponent
 	RegisterInputMappings(Subsystem);
 	BindInputActions(PlayerInputComponent, Subsystem);
 
-	if (ensure(!bReadyToBindInputs)) bReadyToBindInputs = true;
+	if (ensure(!bReadyToBindInputs))
+		bReadyToBindInputs = true;
 
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(
 		const_cast<APlayerController*>(PC), NAME_BIND_INPUTS_NOW);
@@ -333,18 +355,22 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
                                       const UEnhancedInputLocalPlayerSubsystem* Subsystem)
 {
 	const auto Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+		return;
 
 	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp) return;
+	if (!PawnExtComp)
+		return;
 
 	const auto PawnData = PawnExtComp->GetPawnData<UGasPawnData>();
-	if (!PawnData) return;
+	if (!PawnData)
+		return;
 
 	const auto InputConfig = PawnData->InputConfig;
-	if (!InputConfig) return;
+	if (!InputConfig)
+		return;
 
-	const auto InputComponent = Cast<UMyInputComponent>(PlayerInputComponent);
+	const auto InputComponent = Cast<UDefaultInputComponent>(PlayerInputComponent);
 	if (!InputComponent)
 	{
 		LOG_ERROR(LogGAS, "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. "
@@ -377,23 +403,29 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 void UHeroComponent::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+		return;
 
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp) return;
+	if (!PawnExtComp)
+		return;
 
-	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent()) Asc->SetAbilityInputTagPressed(InputTag);
+	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
+		Asc->SetAbilityInputTagPressed(InputTag);
 }
 
 void UHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
 	const APawn* Pawn = GetPawn<APawn>();
-	if (!Pawn) return;
+	if (!Pawn)
+		return;
 
 	const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
-	if (!PawnExtComp) return;
+	if (!PawnExtComp)
+		return;
 
-	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent()) Asc->SetAbilityInputTagReleased(InputTag);
+	if (UBaseAbilitySystemComponent* Asc = PawnExtComp->GetBaseAbilitySystemComponent())
+		Asc->SetAbilityInputTagReleased(InputTag);
 }
 
 void UHeroComponent::Input_Move(const FInputActionValue& InputActionValue)

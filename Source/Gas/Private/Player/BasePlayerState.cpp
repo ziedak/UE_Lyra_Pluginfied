@@ -19,6 +19,7 @@
 #include "Log/Log.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerState)
+
 const FName ABasePlayerState::NAME_BaseAbilityReady("BaseAbilitiesReady");
 
 ABasePlayerState::ABasePlayerState(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -77,7 +78,10 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
 	PawnData = InPawnData;
 
-	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets) { if (AbilitySet) AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr); }
+	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets) {
+		if (AbilitySet)
+			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
+	}
 
 	UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent(this, NAME_BaseAbilityReady);
 
@@ -137,7 +141,8 @@ void ABasePlayerState::ClientInitialize(AController* C)
 {
 	Super::ClientInitialize(C);
 
-	if (UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(GetPawn())) PawnExtComp->CheckDefaultInitialization();
+	if (UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(GetPawn()))
+		PawnExtComp->CheckDefaultInitialization();
 }
 
 void ABasePlayerState::CopyProperties(APlayerState* PlayerState)
@@ -176,7 +181,8 @@ void ABasePlayerState::OnDeactivated()
 void ABasePlayerState::OnReactivated()
 {
 	Super::OnReactivated();
-	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer) SetPlayerConnectionType(EPlayerConnectionType::Player);
+	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer) 
+		SetPlayerConnectionType(EPlayerConnectionType::Player);
 }
 #pragma endregion
 

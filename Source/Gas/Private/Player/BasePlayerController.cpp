@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Player/BasePlayerController.h"
 
 #include "AbilitySystemGlobals.h"
@@ -21,14 +20,15 @@ namespace Lyra::Input
 {
 	static int32 ShouldAlwaysPlayForceFeedback = 0;
 	static FAutoConsoleVariableRef CVarShouldAlwaysPlayForceFeedback(TEXT("LyraPC.ShouldAlwaysPlayForceFeedback"),
-	                                                                 ShouldAlwaysPlayForceFeedback,
-	                                                                 TEXT(
-		                                                                 "Should force feedback effects be played, even if the last input device was not a gamepad?"));
+		ShouldAlwaysPlayForceFeedback,
+		TEXT(
+			"Should force feedback effects be played, even if the last input device was not a gamepad?"));
 }
 
 // Sets default values
 ABasePlayerController::ABasePlayerController(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer) {}
+	: Super(ObjectInitializer) {
+}
 
 void ABasePlayerController::BeginPlay()
 {
@@ -52,13 +52,15 @@ void ABasePlayerController::BeginPlay()
 void ABasePlayerController::SetPlayer(UPlayer* InPlayer)
 {
 	Super::SetPlayer(InPlayer);
-	if (const UBaseLocalPlayer* BaseLocalPlayer = Cast<UBaseLocalPlayer>(InPlayer))
-	{
-		ULyraSettingsShared* UserSettings = BaseLocalPlayer->GetSharedSettings();
-		UserSettings->OnSettingChanged.AddUObject(this, &ThisClass::OnSettingsChanged);
+	const UBaseLocalPlayer* BaseLocalPlayer = Cast<UBaseLocalPlayer>(InPlayer);
+	if (!BaseLocalPlayer)
+		return;
 
-		OnSettingsChanged(UserSettings);
-	}
+	// Register for settings changes
+	ULyraSettingsShared* UserSettings = BaseLocalPlayer->GetSharedSettings();
+	UserSettings->OnSettingChanged.AddUObject(this, &ThisClass::OnSettingsChanged);
+
+	OnSettingsChanged(UserSettings);
 }
 
 void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings) { bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled(); }
@@ -67,15 +69,16 @@ ABasePlayerState* ABasePlayerController::GetBasePlayerState() const { return Cas
 
 UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponent() const
 {
-	const ABasePlayerState* BasePS = GetBasePlayerState();
-	return BasePS ? BasePS->GetBaseAbilitySystemComponent() : nullptr;
+	const ABasePlayerState* BasePs = GetBasePlayerState();
+	return BasePs ? BasePs->GetBaseAbilitySystemComponent() : nullptr;
 }
 
 ABaseHud* ABasePlayerController::GetBaseHUD() const { return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed); }
 
 void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->ProcessAbilityInput(DeltaTime, bGamePaused);
+	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
+		BaseAsc->ProcessAbilityInput(DeltaTime, bGamePaused);
 
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
@@ -85,8 +88,16 @@ void ABasePlayerController::OnPossess(APawn* InPawn) { Super::OnPossess(InPawn);
 void ABasePlayerController::OnUnPossess()
 {
 	// Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
-	if (const APawn* PawnBeingUnpossessed = GetPawn()) if (UAbilitySystemComponent* Asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(PlayerState)) if (Asc->GetAvatarActor() ==
-		PawnBeingUnpossessed) Asc->SetAvatarActor(nullptr);
+	// This can happen if the player controller is destroyed before the pawn
+	const APawn* PawnBeingUnpossessed = GetPawn();
+	if (!PawnBeingUnpossessed)
+		return;
+	UAbilitySystemComponent* Asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(PlayerState);
+	if (!Asc)
+		return;
+	// If the ASC is still using the pawn as its avatar actor, clear it
+	if (Asc->GetAvatarActor() == PawnBeingUnpossessed)
+		Asc->SetAvatarActor(nullptr);
 
 	Super::OnUnPossess();
 }

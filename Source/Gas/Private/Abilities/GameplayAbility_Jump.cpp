@@ -2,6 +2,7 @@
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Log/Log.h"
+#include <Character/BaseCharacter.h>
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameplayAbility_Jump)
 
@@ -13,18 +14,18 @@ UGameplayAbility_Jump::UGameplayAbility_Jump(const FObjectInitializer& ObjectIni
 }
 
 bool UGameplayAbility_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                               const FGameplayAbilityActorInfo* ActorInfo,
-                                               const FGameplayTagContainer* SourceTags,
-                                               const FGameplayTagContainer* TargetTags,
-                                               FGameplayTagContainer* OptionalRelevantTags) const
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayTagContainer* SourceTags,
+	const FGameplayTagContainer* TargetTags,
+	FGameplayTagContainer* OptionalRelevantTags) const
 {
 	if (!ActorInfo || !ActorInfo->AvatarActor.IsValid()) { return false; }
-	//TODO: implement this
-	//const ALyraCharacter* LyraCharacter = Cast<ALyraCharacter>(ActorInfo->AvatarActor.Get());
-	//if (!LyraCharacter || !LyraCharacter->CanJump())
-	//{
-	//	return false;
-	//}
+
+	const ABaseCharacter* Character = Cast<ABaseCharacter>(ActorInfo->AvatarActor.Get());
+	if (!Character || !Character->CanJump())
+	{
+		return false;
+	}
 
 	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags)) { return false; }
 
@@ -32,9 +33,9 @@ bool UGameplayAbility_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle 
 }
 
 void UGameplayAbility_Jump::EndAbility(const FGameplayAbilitySpecHandle Handle,
-                                       const FGameplayAbilityActorInfo* ActorInfo,
-                                       const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
-                                       bool bWasCancelled)
+	const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+	bool bWasCancelled)
 {
 	// Stop jumping in case the ability blueprint doesn't call it.
 	StopJump();
@@ -45,26 +46,21 @@ void UGameplayAbility_Jump::EndAbility(const FGameplayAbilitySpecHandle Handle,
 // TODO: implement this
 void UGameplayAbility_Jump::StartJump()
 {
-	/*ALyraCharacter* LyraCharacter = GetLyraCharacterFromActorInfo();
-		if (LyraCharacter)
-		{
-			if (LyraCharacter->IsLocallyControlled() && !LyraCharacter->bPressedJump)
-			{
-				LyraCharacter->UnCrouch();
-				LyraCharacter->Jump();
-			}
-		}*/
+	ABaseCharacter* Character = Cast<ABaseCharacter>(GetCharacterFromActorInfo());
+	if (Character && Character->IsLocallyControlled() && !Character->bPressedJump)
+	{
+		Character->UnCrouch();
+		Character->Jump();
+	}
 }
 
 // TODO: implement this
 void UGameplayAbility_Jump::StopJump()
 {
-	/*ALyraCharacter* LyraCharacter = GetLyraCharacterFromActorInfo();
-	if ( LyraCharacter )
+	ABaseCharacter* Character = Cast<ABaseCharacter>(GetCharacterFromActorInfo());
+
+	if (Character && Character->IsLocallyControlled() && Character->bPressedJump)
 	{
-		if (LyraCharacter->IsLocallyControlled() && LyraCharacter->bPressedJump)
-		{
-			LyraCharacter->StopJumping();
-		}
-	}*/
+		Character->StopJumping();
+	}
 }

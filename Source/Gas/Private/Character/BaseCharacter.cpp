@@ -85,7 +85,11 @@ void ABaseCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 	const UWorld* World = GetWorld();
 
-	if (!IsNetMode(NM_DedicatedServer)) if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World)) SignificanceManager->UnregisterObject(this);
+	if (IsNetMode(NM_DedicatedServer))
+		return;
+
+	if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World))
+		SignificanceManager->UnregisterObject(this);
 }
 
 void ABaseCharacter::Reset()
@@ -106,7 +110,8 @@ void ABaseCharacter::NotifyControllerChanged() {}
 #pragma region IGameplayTagAssetInterface
 void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
-	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) BaseAsc->GetOwnedGameplayTags(TagContainer);
+	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
+		BaseAsc->GetOwnedGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
@@ -243,16 +248,23 @@ void ABaseCharacter::InitializeGameplayTags() const
 	check(BaseAsc);
 
 	// Clear tags that may be lingering on the ability system from the previous pawn.
-	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap) { if (TagMapping.Value.IsValid()) BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
+	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap)
+	{
+		if (TagMapping.Value.IsValid())
+			BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
+	}
 
-	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap) { if (TagMapping.Value.IsValid()) BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0); }
+	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap)
+	{
+		if (TagMapping.Value.IsValid()) BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
+	}
 
 	// Set the default movement mode tag.
 	UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
 	SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
 }
 
-void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType) { HealthComponent->DamageSelfDestruct(/*bFellOutOfWorld=*/true); }
+void ABaseCharacter::FellOutOfWorld(const UDamageType& dmgType) { HealthComponent->DamageSelfDestruct(true); }
 
 void ABaseCharacter::OnDeathStarted(AActor* OwningActor) { DisableMovementAndCollision(); }
 
@@ -289,7 +301,9 @@ void ABaseCharacter::UninitAndDestroy()
 
 	// Uninitialize the ASC if we're still the avatar actor
 	// (otherwise another pawn already did it when they became the avatar actor)
-	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent()) if (BaseAsc->GetAvatarActor() == this) PawnExtComponent->UninitializeAbilitySystem();
+	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
+	if (BaseAsc && BaseAsc->GetAvatarActor() == this)
+		PawnExtComponent->UninitializeAbilitySystem();
 
 	SetActorHiddenInGame(true);
 }
@@ -303,16 +317,19 @@ void ABaseCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 }
 
 void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode, const uint8 CustomMovementMode,
-                                        const bool bTagEnabled) const
+	const bool bTagEnabled) const
 {
 	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
 	if (!BaseAsc) return;
 
 	const FGameplayTag* MovementModeTag;
-	if (MovementMode == MOVE_Custom) MovementModeTag = MovementTags::CustomMovementModeTagMap.Find(CustomMovementMode);
-	else MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode);
+	if (MovementMode == MOVE_Custom) 
+		MovementModeTag = MovementTags::CustomMovementModeTagMap.Find(CustomMovementMode);
+	else 
+		MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode);
 
-	if (MovementModeTag && MovementModeTag->IsValid()) BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, (bTagEnabled ? 1 : 0));
+	if (MovementModeTag && MovementModeTag->IsValid()) 
+		BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, (bTagEnabled ? 1 : 0));
 }
 
 void ABaseCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)

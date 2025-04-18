@@ -1,19 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "InputConfig/LyraInputComponent.h"
+#include "Character/Components/DefaultInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
 
-// #include "Player/LyraLocalPlayer.h"
-// #include "Settings/LyraSettingsLocal.h"
-
-
-#include UE_INLINE_GENERATED_CPP_BY_NAME(LyraInputComponent)
+#include UE_INLINE_GENERATED_CPP_BY_NAME(DefaultInputComponent)
 
 class ULyraInputConfig_DA;
 
-void ULyraInputComponent::AddInputMappings(const ULyraInputConfig_DA* InputConfig,
+void UDefaultInputComponent::AddInputMappings(const ULyraInputConfig_DA* InputConfig,
                                            const UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const
 {
 	check(InputConfig);
@@ -22,7 +18,7 @@ void ULyraInputComponent::AddInputMappings(const ULyraInputConfig_DA* InputConfi
 	// Here you can handle any custom logic to add something from your input config if required
 }
 
-void ULyraInputComponent::RemoveInputMappings(const ULyraInputConfig_DA* InputConfig,
+void UDefaultInputComponent::RemoveInputMappings(const ULyraInputConfig_DA* InputConfig,
                                               const UEnhancedInputLocalPlayerSubsystem* InputSubsystem) const
 {
 	check(InputConfig);
@@ -31,11 +27,8 @@ void ULyraInputComponent::RemoveInputMappings(const ULyraInputConfig_DA* InputCo
 	// Here you can handle any custom logic to remove input mappings that you may have added above
 }
 
-void ULyraInputComponent::RemoveBinds(TArray<uint32>& BindHandles)
+void UDefaultInputComponent::RemoveBinds(TArray<uint32>& BindHandles)
 {
-	for (const uint32 Handle : BindHandles)
-	{
-		RemoveBindingByHandle(Handle);
-	}
+	for (const uint32 Handle : BindHandles) { RemoveBindingByHandle(Handle); }
 	BindHandles.Reset();
 }

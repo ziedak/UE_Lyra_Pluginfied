@@ -21,7 +21,7 @@ class ULocalPlayer;
 
 UGameSettingCollection* ULyraGameSettingRegistry::InitializeAudioSettings(ULocalPlayer* InLocalPlayer)
 {
-	const auto Screen = UGameSettingCollection::CreateCollection("AudioCollection",
+	const auto Screen = UGameSettingCollection::CreateCollection(TEXT("AudioCollection"),
 	                                                             LOCTEXT("AudioCollection_Name", "Audio"));
 	Screen->Initialize(InLocalPlayer);
 	Screen->AddSetting(AddVolumeSettings());
@@ -32,31 +32,32 @@ UGameSettingCollection* ULyraGameSettingRegistry::InitializeAudioSettings(ULocal
 
 UGameSettingCollection* ULyraGameSettingRegistry::AddVolumeSettings()
 {
-	const auto Volume = UGameSettingCollection::CreateCollection("VolumeCollection",
+	const auto Volume = UGameSettingCollection::CreateCollection(TEXT("VolumeCollection"),
 	                                                             LOCTEXT("VolumeCollection_Name", "Volume"));
-	Volume->AddSetting(AddVolume("OverallVolume", LOCTEXT("OverallVolume_Name", "Overall"),
+
+	Volume->AddSetting(AddVolume(TEXT("OverallVolume"), LOCTEXT("OverallVolume_Name", "Overall"),
 	                             LOCTEXT("OverallVolume_Description", "Adjusts the volume of everything."),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(GetOverallVolume),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(SetOverallVolume),
 	                             GetDefault<ULyraSettingsLocal>()->GetOverallVolume()));
-	Volume->AddSetting(AddVolume("MusicVolume", LOCTEXT("MusicVolume_Name", "Music"),
+	Volume->AddSetting(AddVolume(TEXT("MusicVolume"), LOCTEXT("MusicVolume_Name", "Music"),
 	                             LOCTEXT("MusicVolume_Description", "Adjusts the volume of music."),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(GetMusicVolume),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(SetMusicVolume),
 	                             GetDefault<ULyraSettingsLocal>()->GetMusicVolume()));
-	Volume->AddSetting(AddVolume("SoundEffectsVolume", LOCTEXT("SoundEffectsVolume_Name", "Sound Effects"),
+	Volume->AddSetting(AddVolume(TEXT("SoundEffectsVolume"), LOCTEXT("SoundEffectsVolume_Name", "Sound Effects"),
 	                             LOCTEXT("SoundEffectsVolume_Description",
 	                                     "Adjusts the volume of sound effects."),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(GetSoundFXVolume),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(SetSoundFXVolume),
 	                             GetDefault<ULyraSettingsLocal>()->GetSoundFXVolume()));
-	Volume->AddSetting(AddVolume("DialogueVolume", LOCTEXT("DialogueVolume_Name", "Dialogue"),
+	Volume->AddSetting(AddVolume(TEXT("DialogueVolume"), LOCTEXT("DialogueVolume_Name", "Dialogue"),
 	                             LOCTEXT("DialogueVolume_Description",
 	                                     "Adjusts the volume of dialogue for game characters and voice overs."),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(GetDialogueVolume),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(SetDialogueVolume),
 	                             GetDefault<ULyraSettingsLocal>()->GetDialogueVolume()));
-	Volume->AddSetting(AddVolume("VoiceChatVolume", LOCTEXT("VoiceChatVolume_Name", "Voice Chat"),
+	Volume->AddSetting(AddVolume(TEXT("VoiceChatVolume"), LOCTEXT("VoiceChatVolume_Name", "Voice Chat"),
 	                             LOCTEXT("VoiceChatVolume_Description", "Adjusts the volume of voice chat."),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(GetVoiceChatVolume),
 	                             GET_LOCAL_SETTINGS_FUNCTION_PATH(SetVoiceChatVolume),
@@ -97,7 +98,7 @@ UGameSettingCollection* ULyraGameSettingRegistry::AddSoundSettings()
 UGameSettingCollectionPage* ULyraGameSettingRegistry::AddSubtitleSettings()
 {
 	const auto SubtitlePage = UGameSettingCollectionPage::CreateSettings(
-		"SubtitlePage",
+		TEXT("SubtitlePage"),
 		LOCTEXT("SubtitlePage_Name", "Subtitles"),
 		LOCTEXT("SubtitlePage_Description", "Configure the visual appearance of subtitles."),
 		LOCTEXT("SubtitlePage_Navigation", "Options"),
@@ -107,9 +108,10 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::AddSubtitleSettings()
 	const auto SubtitleCollection = UGameSettingCollection::CreateCollection(
 		"SubtitlesCollection", LOCTEXT("SubtitlesCollection_Name", "Subtitles"));
 	SubtitlePage->AddSetting(SubtitleCollection);
+	
 
 	const auto Subtitles = UGameSettingValueDiscreteDynamic_Bool::CreateSettings(
-		"Subtitles", LOCTEXT("Subtitles_Name", "Subtitles"),
+		TEXT("Subtitles"), LOCTEXT("Subtitles_Name", "Subtitles"),
 		LOCTEXT("Subtitles_Description", "Turns subtitles on/off."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetSubtitlesEnabled),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(SetSubtitlesEnabled),
@@ -138,7 +140,7 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::AddSubtitleSettings()
 	// SubtitleTextColor
 	const auto SubtitleTextColor = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
 
-		"SubtitleTextColor", LOCTEXT("SubtitleTextColor_Name", "Text Color"),
+		TEXT("SubtitleTextColor"), LOCTEXT("SubtitleTextColor_Name", "Text Color"),
 		LOCTEXT("SubtitleTextColor_Description", "Choose different colors for the subtitle text."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetSubtitlesTextColor),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(SetSubtitlesTextColor),
@@ -156,7 +158,7 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::AddSubtitleSettings()
 	// SubtitleTextBorder
 	const auto SubtitleTextBorder = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
 
-		"SubtitleTextBorder",
+		TEXT("SubtitleTextBorder"),
 		LOCTEXT("SubtitleBackgroundStyle_Name", "Text Border"),
 		LOCTEXT("SubtitleTextBorder_Description", "Choose different borders for the text."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetSubtitlesTextBorder),
@@ -172,7 +174,7 @@ UGameSettingCollectionPage* ULyraGameSettingRegistry::AddSubtitleSettings()
 	SubtitleCollection->AddSetting(SubtitleTextBorder);
 	// SubtitleBackgroundStyle
 	const auto SubtitleBackgroundOpacity = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
-		"SubtitleBackgroundOpacity",
+		TEXT("SubtitleBackgroundOpacity"),
 		LOCTEXT("SubtitleBackground_Name", "Background Opacity"),
 		LOCTEXT("SubtitleBackgroundOpacity_Description",
 		        "Choose a different background or letterboxing for the subtitles."),
@@ -225,7 +227,7 @@ ULyraSettingValueDiscreteDynamic_AudioOutputDevice* ULyraGameSettingRegistry::Ad
 UGameSettingValueDiscreteDynamic_Enum* ULyraGameSettingRegistry::AddBackgroundAudioSetting()
 {
 	const auto Setting = UGameSettingValueDiscreteDynamic_Enum::CreateEnumSettings(
-		"BackgroundAudio", LOCTEXT("BackgroundAudio_Name", "Background Audio"),
+		TEXT("BackgroundAudio"), LOCTEXT("BackgroundAudio_Name", "Background Audio"),
 		LOCTEXT("BackgroundAudio_Description",
 		        "Turns game audio on/off when the game is in the background. When on, the game audio will continue to play when the game is minimized, or another window is focused."),
 		GET_SHARED_SETTINGS_FUNCTION_PATH(GetAllowAudioInBackgroundSetting),

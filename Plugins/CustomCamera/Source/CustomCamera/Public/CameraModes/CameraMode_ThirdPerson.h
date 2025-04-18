@@ -10,7 +10,7 @@
 #include "CameraMode_ThirdPerson.generated.h"
 
 class UCurveVector;
-
+class ICameraAssistInterface;
 /**
  * UCameraMode_ThirdPerson
  *
@@ -30,21 +30,22 @@ protected:
 	void UpdateForTarget(float DeltaTime);
 	void UpdatePreventPenetration(float DeltaTime);
 	void PreventCameraPenetration(const class AActor& ViewTarget,
-	                              const FVector& SafeLoc,
-	                              FVector& CameraLoc,
-	                              const float& DeltaTime,
-	                              float& DistBlockedPct,
-	                              bool bSingleRayOnly);
+		const FVector& SafeLoc,
+		FVector& CameraLoc,
+		const float& DeltaTime,
+		float& DistBlockedPct,
+		bool bSingleRayOnly);
 
 private:
 	FVector CalculateRayTarget(const FVector& SafeLoc, const FVector& BaseRay, const FPenetrationAvoidanceFeeler& Feeler, const FVector& BaseRayLocalUp, const FVector& BaseRayLocalRight) const;
 	void PerformSweep(const UWorld* World, const FVector& SafeLoc, const FVector& RayTarget, FCollisionShape& SphereShape, FCollisionQueryParams& SphereParams, FPenetrationAvoidanceFeeler& Feeler,
-	                  const AActor& ViewTarget, float& DistBlockedPctThisFrame);
+		const AActor& ViewTarget, float& DistBlockedPctThisFrame);
 	void IgnoreHit(const FHitResult& Hit, FCollisionQueryParams& SphereParams, const AActor& ViewTarget) const;
 	bool ShouldIgnoreCameraBlockingVolume(const FHitResult& Hit, const AActor& ViewTarget) const;
 	float UpdateDistBlockedPctThisFrame(const FHitResult& Hit, const float DistBlockedPctThisFrame, const FVector& RayTarget, const FVector& SafeLoc);
 	float UpdateDistBlockedPct(float DistBlockedPct, float DistBlockedPctThisFrame, float HardBlockedPct, float SoftBlockedPct, float DeltaTime) const;
-
+	FVector CalculateSafeLocation(const AActor* PPActor, const UPrimitiveComponent* PPActorRootComponent) const;
+	void NotifyAssistInterfacesIfPenetrating(ICameraAssistInterface* AssistArray[]) const;
 protected:
 	virtual void DrawDebug(UCanvas* Canvas) const override;
 
@@ -72,18 +73,18 @@ protected:
 
 	// Penetration prevention
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	float PenetrationBlendInTime = 0.1f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	float PenetrationBlendOutTime = 0.15f;
 
 	/** If true, does collision checks to keep the camera out of the world. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	bool bPreventPenetration = true;
 
 	/** If true, try to detect nearby walls and move the camera in anticipation.  Helps prevent popping. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Collision")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")
 	bool bDoPredictiveAvoidance = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collision")

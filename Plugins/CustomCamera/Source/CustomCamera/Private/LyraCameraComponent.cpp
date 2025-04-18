@@ -40,7 +40,9 @@ void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desi
 	CameraModeStack->EvaluateStack(DeltaTime, CameraModeView);
 
 	// Keep player controller in sync with the latest view.
-	if (const auto TargetPawn = Cast<APawn>(GetTargetActor())) if (const auto PC = TargetPawn->GetController<APlayerController>()) PC->SetControlRotation(CameraModeView.ControlRotation);
+	if (const auto TargetPawn = Cast<APawn>(GetTargetActor())) 
+		if (const auto PC = TargetPawn->GetController<APlayerController>()) 
+			PC->SetControlRotation(CameraModeView.ControlRotation);
 
 	// Apply any offset that was added to the field of view.
 	CameraModeView.FieldOfView += FieldOfViewOffset;

@@ -33,6 +33,7 @@ UBaseGameplayAbility::UBaseGameplayAbility(const FObjectInitializer& ObjectIniti
 	ActivationGroup = EAbilityActivationGroup::Independent;
 
 	bLogCancelation = false;
+	
 }
 
 UBaseAbilitySystemComponent* UBaseGameplayAbility::GetBaseAbilitySystemComponentFromActorInfo() const
@@ -72,7 +73,9 @@ ACharacter* UBaseGameplayAbility::GetCharacterFromActorInfo() const { return (Cu
 void UBaseGameplayAbility::TryActivateAbilityOnSpawn(const FGameplayAbilityActorInfo* ActorInfo,
                                                      const FGameplayAbilitySpec& Spec) const
 {
-	const bool bIsPredicting = (Spec.ActivationInfo.ActivationMode == EGameplayAbilityActivationMode::Predicting);
+    const bool bIsPredicting = (Spec.Ability->GetCurrentActivationInfo().ActivationMode == EGameplayAbilityActivationMode::Predicting);
+	//const bool bIsPredicting = (Spec.ActivationInfo.ActivationMode == EGameplayAbilityActivationMode::Predicting);
+
 
 	// Try to activate if activation policy is on spawn.
 	if (!ActorInfo || Spec.IsActive() || bIsPredicting || ActivationPolicy != EAbilityActivationPolicy::OnSpawn) return;
@@ -138,7 +141,8 @@ bool UBaseGameplayAbility::ChangeActivationGroup(const EAbilityActivationGroup N
 
 void UBaseGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagContainer& FailedReason) const
 {
-	//TODO: refactor this
+	const auto World= GetWorld();
+	if (!World) return;
 
 	bool bSimpleFailureFound = false;
 	for (FGameplayTag Reason : FailedReason)
@@ -146,20 +150,23 @@ void UBaseGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagCon
 		// Try to find a simple failure message first before trying to play a montage
 		if (!bSimpleFailureFound)
 		{
-			if (const FText* PUserFacingMessage = FailureTagToUserFacingMessages.Find(Reason))
+			// if (Reason.IsValid() && FailureTagToUserFacingMessages.Contains(Reason))
+			// {
+				if (const FText* PUserFacingMessage = FailureTagToUserFacingMessages.Find(Reason))
 			{
 				FAbilitySimpleFailureMessage Message;
 				Message.PlayerController = GetActorInfo().PlayerController.Get();
 				Message.FailureTags = FailedReason;
 				Message.UserFacingReason = *PUserFacingMessage;
 
-				UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+				UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(World);
 				MessageSystem.BroadcastMessage(AbilityTags::SIMPLE_FAILURE_MESSAGE, Message);
 				bSimpleFailureFound = true;
 			}
 		}
 
-		// Try to find a montage to play
+		// if (Reason.IsValid() && FailureTagToAnimMontage.Contains(Reason))
+		// {
 
 		if (UAnimMontage* PMontage = FailureTagToAnimMontage.FindRef(Reason))
 		{
@@ -169,7 +176,7 @@ void UBaseGameplayAbility::NativeOnAbilityFailedToActivate(const FGameplayTagCon
 			Message.FailureTags = FailedReason;
 			Message.FailureMontage = PMontage;
 
-			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(GetWorld());
+			UGameplayMessageSubsystem& MessageSystem = UGameplayMessageSubsystem::Get(World);
 			MessageSystem.BroadcastMessage(AbilityTags::PLAY_MONTAGE_FAILURE_MESSAGE, Message);
 		}
 	}
