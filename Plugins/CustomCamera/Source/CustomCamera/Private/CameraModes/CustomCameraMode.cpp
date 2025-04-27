@@ -30,41 +30,76 @@ UCustomCameraMode::UCustomCameraMode()
 	bResetInterpolation = false;
 }
 
-ULyraCameraComponent* UCustomCameraMode::GetCameraComponent() const { return CastChecked<ULyraCameraComponent>(GetOuter()); }
+ULyraCameraComponent* UCustomCameraMode::GetCameraComponent() const
+{
+	return CastChecked<ULyraCameraComponent>(GetOuter());
+}
 
-UWorld* UCustomCameraMode::GetWorld() const { return HasAnyFlags(RF_ClassDefaultObject) ? nullptr : GetOuter()->GetWorld(); }
+UWorld* UCustomCameraMode::GetWorld() const
+{
+	return !HasAnyFlags(RF_ClassDefaultObject) ? GetOuter()->GetWorld() : nullptr;
+}
 
 AActor* UCustomCameraMode::GetTargetActor() const
 {
 	const auto CameraComponent = GetCameraComponent();
-
+	if (!CameraComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CameraComponent is null"));
+		return nullptr;
+	}
 	return CameraComponent->GetTargetActor();
 }
 
+/** Get the pivot location for the camera mode.
+ *  This is the location that the camera will orbit around.
+ *  The default implementation uses the target actor's location.
+ *  Override this function to provide a custom pivot location.
+ */
 FVector UCustomCameraMode::GetPivotLocation() const
 {
+	// Get the target actor from the camera component.
 	const AActor* TargetActor = GetTargetActor();
 	check(TargetActor);
 
+	UE_LOG(LogTemp, Verbose, TEXT("TargetActor: %s"), *TargetActor->GetName());
+
 	const APawn* TargetPawn = Cast<APawn>(TargetActor);
-	if (!TargetPawn) return TargetActor->GetActorLocation();
+	if (!TargetPawn)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("Target is not a pawn. Using actor location."));
+		return TargetActor->GetActorLocation();
+	}
 
 	const ACharacter* TargetCharacter = Cast<ACharacter>(TargetPawn);
-	// Height adjustments for characters to account for crouching.
-	if (!TargetCharacter) return TargetPawn->GetPawnViewLocation();
+	if (!TargetCharacter)
+	{
+		UE_LOG(LogTemp, Verbose, TEXT("Target is a pawn but not a character. Using pawn view location."));
+		return TargetPawn->GetPawnViewLocation();
+	}
 
 	const ACharacter* TargetCharacterCDO = TargetCharacter->GetClass()->GetDefaultObject<ACharacter>();
 	check(TargetCharacterCDO);
 
 	const UCapsuleComponent* CapsuleComp = TargetCharacter->GetCapsuleComponent();
-	check(CapsuleComp);
+	if (!CapsuleComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetCharacter has no capsule component. Using actor location."));
+		return TargetCharacter->GetActorLocation();
+	}
 
 	const UCapsuleComponent* CapsuleCompCDO = TargetCharacterCDO->GetCapsuleComponent();
-	check(CapsuleCompCDO);
+	if (!CapsuleCompCDO)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TargetCharacterCDO has no capsule component. Using actor location."));
+		return TargetCharacter->GetActorLocation();
+	}
 
 	const float DefaultHalfHeight = CapsuleCompCDO->GetUnscaledCapsuleHalfHeight();
 	const float ActualHalfHeight = CapsuleComp->GetUnscaledCapsuleHalfHeight();
 	const float HeightAdjustment = DefaultHalfHeight - ActualHalfHeight + TargetCharacterCDO->BaseEyeHeight;
+
+	UE_LOG(LogTemp, Verbose, TEXT("HeightAdjustment: %f"), HeightAdjustment);
 
 	return TargetCharacter->GetActorLocation() + FVector::UpVector * HeightAdjustment;
 }
@@ -74,9 +109,10 @@ FRotator UCustomCameraMode::GetPivotRotation() const
 	const AActor* TargetActor = GetTargetActor();
 	check(TargetActor);
 
-	if (const APawn* TargetPawn = Cast<APawn>(TargetActor)) return TargetPawn->GetViewRotation();
+	const APawn* TargetPawn = Cast<APawn>(TargetActor);
+	check(TargetPawn);
 
-	return TargetActor->GetActorRotation();
+	return TargetPawn ? TargetPawn->GetViewRotation() : TargetActor->GetActorRotation();
 }
 
 void UCustomCameraMode::UpdateCameraMode(const float DeltaTime)
@@ -101,52 +137,49 @@ void UCustomCameraMode::UpdateView(float DeltaTime)
 void UCustomCameraMode::SetBlendWeight(const float Weight)
 {
 	BlendWeight = FMath::Clamp(Weight, 0.0f, 1.0f);
-
-	// Since we're setting the blend weight directly, we need to calculate the blend alpha to account for the blend function.
 	const float InvExponent = BlendExponent > 0.0f ? 1.0f / BlendExponent : 1.0f;
 
-	switch (BlendFunction)
+	BlendAlpha = [this, InvExponent]()
 	{
-	case ECameraModeBlendFunction::Linear: BlendAlpha = BlendWeight;
-		break;
-	case ECameraModeBlendFunction::EaseIn: BlendAlpha = FMath::InterpEaseIn(0.0f, 1.0f, BlendWeight, InvExponent);
-		break;
-	case ECameraModeBlendFunction::EaseOut: BlendAlpha = FMath::InterpEaseOut(0.0f, 1.0f, BlendWeight, InvExponent);
-		break;
-	case ECameraModeBlendFunction::EaseInOut: BlendAlpha = FMath::InterpEaseInOut(0.0f, 1.0f, BlendWeight, InvExponent);
-		break;
-	default:
-		checkf(false, TEXT("SetBlendWeight: Invalid BlendFunction [%d]\n"), static_cast<uint8>(BlendFunction));
-		break;
-	}
+		switch (BlendFunction)
+		{
+		case ECameraModeBlendFunction::Linear:
+			return BlendWeight;
+		case ECameraModeBlendFunction::EaseIn:
+			return FMath::InterpEaseIn(0.0f, 1.0f, BlendWeight, InvExponent);
+		case ECameraModeBlendFunction::EaseOut:
+			return FMath::InterpEaseOut(0.0f, 1.0f, BlendWeight, InvExponent);
+		case ECameraModeBlendFunction::EaseInOut:
+			return FMath::InterpEaseInOut(0.0f, 1.0f, BlendWeight, InvExponent);
+		default: checkf(false, TEXT("Invalid BlendFunction [%d]"), static_cast<uint8>(BlendFunction));
+			return 0.0f;
+		}
+	}();
 }
 
 void UCustomCameraMode::UpdateBlending(const float DeltaTime)
 {
-	if (BlendTime > 0.0f)
-	{
-		BlendAlpha += DeltaTime / BlendTime;
-		BlendAlpha = FMath::Min(BlendAlpha, 1.0f);
-	}
-	else BlendAlpha = 1.0f;
-
+	BlendAlpha = BlendTime > 0.0f ? FMath::Min(BlendAlpha + (DeltaTime / BlendTime), 1.0f) : 1.0f;
 	const float Exponent = BlendExponent > 0.0f ? BlendExponent : 1.0f;
 
-	switch (BlendFunction)
+	BlendWeight = [this, Exponent]()
 	{
-	case ECameraModeBlendFunction::Linear: BlendWeight = BlendAlpha;
-		break;
-	case ECameraModeBlendFunction::EaseIn: BlendWeight = FMath::InterpEaseIn(0.0f, 1.0f, BlendAlpha, Exponent);
-		break;
-	case ECameraModeBlendFunction::EaseOut: BlendWeight = FMath::InterpEaseOut(0.0f, 1.0f, BlendAlpha, Exponent);
-		break;
-	case ECameraModeBlendFunction::EaseInOut: BlendWeight = FMath::InterpEaseInOut(0.0f, 1.0f, BlendAlpha, Exponent);
-		break;
-	default:
-		checkf(false, TEXT("UpdateBlending: Invalid BlendFunction [%d]\n"), static_cast<uint8>(BlendFunction));
-		break;
-	}
+		switch (BlendFunction)
+		{
+		case ECameraModeBlendFunction::Linear:
+			return BlendAlpha;
+		case ECameraModeBlendFunction::EaseIn:
+			return FMath::InterpEaseIn(0.0f, 1.0f, BlendAlpha, Exponent);
+		case ECameraModeBlendFunction::EaseOut:
+			return FMath::InterpEaseOut(0.0f, 1.0f, BlendAlpha, Exponent);
+		case ECameraModeBlendFunction::EaseInOut:
+			return FMath::InterpEaseInOut(0.0f, 1.0f, BlendAlpha, Exponent);
+		default: checkf(false, TEXT("Invalid BlendFunction [%d]"), static_cast<uint8>(BlendFunction));
+			return 0.0f;
+		}
+	}();
 }
+
 
 void UCustomCameraMode::DrawDebug(UCanvas* Canvas) const
 {

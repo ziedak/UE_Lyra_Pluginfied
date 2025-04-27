@@ -10,7 +10,8 @@ UCameraModeStack::UCameraModeStack() { bIsActive = true; }
 
 void UCameraModeStack::ActivateStack()
 {
-	if (bIsActive) return;
+	if (bIsActive)
+		return;
 
 	bIsActive = true;
 
@@ -24,7 +25,8 @@ void UCameraModeStack::ActivateStack()
 
 void UCameraModeStack::DeactivateStack()
 {
-	if (!bIsActive) return;
+	if (!bIsActive)
+		return;
 	bIsActive = false;
 
 	// Notify camera modes that they are being deactivated.
@@ -37,7 +39,8 @@ void UCameraModeStack::DeactivateStack()
 
 void UCameraModeStack::PushCameraMode(const TSubclassOf<UCustomCameraMode>& CameraModeClass)
 {
-	if (!CameraModeClass) return;
+	if (!CameraModeClass)
+		return;
 
 	UCustomCameraMode* CameraMode = GetCameraModeInstance(CameraModeClass);
 	check(CameraMode);
@@ -45,14 +48,15 @@ void UCameraModeStack::PushCameraMode(const TSubclassOf<UCustomCameraMode>& Came
 	int32 StackSize = CameraModeStack.Num();
 
 	// Already top of stack.
-	if (StackSize > 0 && CameraModeStack[0] == CameraMode) return;
+	if (StackSize > 0 && CameraModeStack[0] == CameraMode)
+		return;
 
 	// See if it's already in the stack and remove it.
 	// Figure out how much it was contributing to the stack.
 	int32 ExistingStackIndex = INDEX_NONE;
-	float ExistingStackContribution = 1.0f;
+	auto ExistingStackContribution = 1.0f;
 
-	for (int32 StackIndex = 0; StackIndex < StackSize; ++StackIndex)
+	for (auto StackIndex = 0; StackIndex < StackSize; ++StackIndex)
 	{
 		if (CameraModeStack[StackIndex] == CameraMode)
 		{
@@ -68,7 +72,8 @@ void UCameraModeStack::PushCameraMode(const TSubclassOf<UCustomCameraMode>& Came
 		CameraModeStack.RemoveAt(ExistingStackIndex);
 		StackSize--;
 	}
-	else ExistingStackContribution = 0.0f;
+	else
+		ExistingStackContribution = 0.0f;
 
 	// Decide what initial weight to start with.
 	const bool bShouldBlend = CameraMode->GetBlendTime() > 0.0f && StackSize > 0;
@@ -83,12 +88,14 @@ void UCameraModeStack::PushCameraMode(const TSubclassOf<UCustomCameraMode>& Came
 	CameraModeStack.Last()->SetBlendWeight(1.0f);
 
 	// Let the camera mode know if it's being added to the stack.
-	if (ExistingStackIndex == INDEX_NONE) CameraMode->OnActivation();
+	if (ExistingStackIndex == INDEX_NONE)
+		CameraMode->OnActivation();
 }
 
 bool UCameraModeStack::EvaluateStack(const float DeltaTime, FCameraModeView& OutCameraModeView)
 {
-	if (!bIsActive) return false;
+	if (!bIsActive)
+		return false;
 
 	UpdateStack(DeltaTime);
 	BlendStack(OutCameraModeView);
@@ -101,7 +108,11 @@ UCustomCameraMode* UCameraModeStack::GetCameraModeInstance(const TSubclassOf<UCu
 	check(CameraModeClass);
 
 	// First see if we already created one.
-	for (UCustomCameraMode* CameraMode : CameraModeInstances) { if (!CameraMode && CameraMode->GetClass() == CameraModeClass) return CameraMode; }
+	for (UCustomCameraMode* CameraMode : CameraModeInstances)
+	{
+		if (!CameraMode && CameraMode->GetClass() == CameraModeClass)
+			return CameraMode;
+	}
 
 	// Not found, so we need to create it.
 	UCustomCameraMode* NewCameraMode = NewObject<UCustomCameraMode>(GetOuter(), CameraModeClass, NAME_None, RF_NoFlags);
@@ -115,12 +126,13 @@ UCustomCameraMode* UCameraModeStack::GetCameraModeInstance(const TSubclassOf<UCu
 void UCameraModeStack::UpdateStack(const float DeltaTime)
 {
 	const int32 StackSize = CameraModeStack.Num();
-	if (StackSize <= 0) return;
+	if (StackSize <= 0)
+		return;
 
-	int32 RemoveCount = 0;
+	auto RemoveCount = 0;
 	int32 RemoveIndex = INDEX_NONE;
 
-	for (int32 StackIndex = 0; StackIndex < StackSize; ++StackIndex)
+	for (auto StackIndex = 0; StackIndex < StackSize; ++StackIndex)
 	{
 		UCustomCameraMode* CameraMode = CameraModeStack[StackIndex];
 		check(CameraMode);
@@ -136,14 +148,13 @@ void UCameraModeStack::UpdateStack(const float DeltaTime)
 		}
 	}
 
-	if (RemoveCount <= 0) return;
+	if (RemoveCount <= 0)
+		return;
 
 	// Let the camera modes know they being removed from the stack.
-	for (int32 StackIndex = RemoveIndex; StackIndex < StackSize; ++StackIndex)
+	for (UCustomCameraMode* CameraMode : CameraModeStack)
 	{
-		UCustomCameraMode* CameraMode = CameraModeStack[StackIndex];
 		check(CameraMode);
-
 		CameraMode->OnDeactivation();
 	}
 
@@ -153,7 +164,8 @@ void UCameraModeStack::UpdateStack(const float DeltaTime)
 void UCameraModeStack::BlendStack(FCameraModeView& OutCameraModeView) const
 {
 	const int32 StackSize = CameraModeStack.Num();
-	if (StackSize <= 0) return;
+	if (StackSize <= 0)
+		return;
 
 	// Start at the bottom and blend up the stack
 	const UCustomCameraMode* CameraMode = CameraModeStack[StackSize - 1];

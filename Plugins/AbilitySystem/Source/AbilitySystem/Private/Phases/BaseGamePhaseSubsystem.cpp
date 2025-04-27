@@ -37,8 +37,9 @@ UBaseAbilitySystemComponent* UBaseGamePhaseSubsystem::GetBaseAbilitySystemCompon
 void UBaseGamePhaseSubsystem::StartPhase(const TSubclassOf<UBaseGamePhaseAbility>& PhaseAbility,
                                          const FBaseGamePhaseDelegate& PhaseEndedCallback)
 {
-	auto ASC = GetBaseAbilitySystemComponent();
-	if (!ensure(ASC)) { return; }
+	const auto Asc = GetBaseAbilitySystemComponent();
+	if (!ensure(Asc))
+		return;
 	// Give the ability and activate it once to start the phase immediately (if it's not already active) and then end it when it's done.
 	// This is a simple way to handle phases that are meant to be short-lived.
 	// If you want a phase to be long-lived, you should give the ability to the player's ASC and activate it when you want to start the phase.
@@ -48,8 +49,8 @@ void UBaseGamePhaseSubsystem::StartPhase(const TSubclassOf<UBaseGamePhaseAbility
 	// it when you want to start the phase.
 
 	FGameplayAbilitySpec PhaseSpec(PhaseAbility, 1, 0, this);
-	const FGameplayAbilitySpecHandle PhaseSpecHandle = ASC->GiveAbilityAndActivateOnce(PhaseSpec);
-	const FGameplayAbilitySpec* PhaseFoundSpecPtr = ASC->FindAbilitySpecFromHandle(PhaseSpecHandle);
+	const FGameplayAbilitySpecHandle PhaseSpecHandle = Asc->GiveAbilityAndActivateOnce(PhaseSpec);
+	const FGameplayAbilitySpec* PhaseFoundSpecPtr = Asc->FindAbilitySpecFromHandle(PhaseSpecHandle);
 
 	if (!PhaseFoundSpecPtr || PhaseFoundSpecPtr->IsActive())
 	{

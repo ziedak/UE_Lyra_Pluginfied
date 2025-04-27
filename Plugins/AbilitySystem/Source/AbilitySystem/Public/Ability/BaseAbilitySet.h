@@ -37,7 +37,7 @@ private:
 	void GrantGameplayEffects(UBaseAbilitySystemComponent* BaseAsc, FGrantedHandlesData* OutGrantedHandles) const;
 
 	// Grants the attribute sets in this ability set to the specified ability system component.
-	void GrantAttributeSets(UBaseAbilitySystemComponent* BaseASC, FGrantedHandlesData* OutGrantedHandles) const;
+	void GrantAttributeSets(UBaseAbilitySystemComponent* BaseAsc, FGrantedHandlesData* OutGrantedHandles) const;
 
 protected:
 	// Gameplay abilities to grant when this ability set is granted.

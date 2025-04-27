@@ -13,21 +13,20 @@
 
 
 ULyraCameraComponent::ULyraCameraComponent(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+	: Super(ObjectInitializer),
+	  CameraModeStack(nullptr),
+	  FieldOfViewOffset(0.0f)
 {
-	CameraModeStack = nullptr;
-	FieldOfViewOffset = 0.0f;
 }
 
 void ULyraCameraComponent::OnRegister()
 {
 	Super::OnRegister();
 
-	if (!CameraModeStack)
-	{
-		CameraModeStack = NewObject<UCameraModeStack>(this);
-		check(CameraModeStack);
-	}
+	if (CameraModeStack)
+		return;
+	CameraModeStack = NewObject<UCameraModeStack>(this);
+	check(CameraModeStack);
 }
 
 void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& DesiredView)
@@ -40,9 +39,11 @@ void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desi
 	CameraModeStack->EvaluateStack(DeltaTime, CameraModeView);
 
 	// Keep player controller in sync with the latest view.
-	if (const auto TargetPawn = Cast<APawn>(GetTargetActor())) 
-		if (const auto PC = TargetPawn->GetController<APlayerController>()) 
+	if (const auto TargetPawn = Cast<APawn>(GetTargetActor()))
+	{
+		if (const auto PC = TargetPawn->GetController<APlayerController>())
 			PC->SetControlRotation(CameraModeView.ControlRotation);
+	}
 
 	// Apply any offset that was added to the field of view.
 	CameraModeView.FieldOfView += FieldOfViewOffset;
@@ -66,12 +67,13 @@ void ULyraCameraComponent::GetCameraView(float DeltaTime, FMinimalViewInfo& Desi
 
 	// See if the CameraActor wants to override the PostProcess settings used.
 	DesiredView.PostProcessBlendWeight = PostProcessBlendWeight;
-	if (PostProcessBlendWeight > 0.0f) DesiredView.PostProcessSettings = PostProcessSettings;
+	if (PostProcessBlendWeight > 0.0f)
+		DesiredView.PostProcessSettings = PostProcessSettings;
 
 
 	if (IsXRHeadTrackedCamera())
 	{
-		// In XR much of the camera behavior above is irrellevant, but the post process settings are not.
+		// In XR much of the camera behavior above is irrelevant, but the post process settings are not.
 		Super::GetCameraView(DeltaTime, DesiredView);
 	}
 }
@@ -80,9 +82,11 @@ void ULyraCameraComponent::UpdateCameraModes()
 {
 	check(CameraModeStack);
 
-	if (!CameraModeStack->IsStackActivate() || !DetermineCameraModeDelegate.IsBound()) return;
+	if (!CameraModeStack->IsStackActivate() || !DetermineCameraModeDelegate.IsBound())
+		return;
 
-	if (const auto CameraMode = DetermineCameraModeDelegate.Execute()) CameraModeStack->PushCameraMode(CameraMode);
+	if (const auto CameraMode = DetermineCameraModeDelegate.Execute())
+		CameraModeStack->PushCameraMode(CameraMode);
 }
 
 void ULyraCameraComponent::DrawDebug(UCanvas* Canvas) const

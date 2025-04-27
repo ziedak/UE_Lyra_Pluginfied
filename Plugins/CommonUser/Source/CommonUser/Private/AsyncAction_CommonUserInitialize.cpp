@@ -8,7 +8,10 @@
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_CommonUserInitialize)
 
 UAsyncAction_CommonUserInitialize* UAsyncAction_CommonUserInitialize::InitializeForLocalPlay(
-	UCommonUserSubsystem* Target, int32 LocalPlayerIndex, FInputDeviceId PrimaryInputDevice, bool bCanUseGuestLogin)
+	UCommonUserSubsystem* Target,
+	const int32 LocalPlayerIndex,
+	FInputDeviceId PrimaryInputDevice,
+	const bool bCanUseGuestLogin)
 {
 	if (!PrimaryInputDevice.IsValid())
 	{
@@ -39,7 +42,8 @@ UAsyncAction_CommonUserInitialize* UAsyncAction_CommonUserInitialize::Initialize
 }
 
 UAsyncAction_CommonUserInitialize* UAsyncAction_CommonUserInitialize::LoginForOnlinePlay(
-	UCommonUserSubsystem* Target, int32 LocalPlayerIndex)
+	UCommonUserSubsystem* Target,
+	int32 LocalPlayerIndex)
 {
 	UAsyncAction_CommonUserInitialize* Action = NewObject<UAsyncAction_CommonUserInitialize>();
 
@@ -73,10 +77,11 @@ void UAsyncAction_CommonUserInitialize::HandleFailure()
 	                             Params.RequestedPrivilege, Params.OnlineContext);
 }
 
-void UAsyncAction_CommonUserInitialize::HandleInitializationComplete(const UCommonUserInfo* UserInfo, bool bSuccess,
-                                                                     FText Error,
-                                                                     ECommonUserPrivilege RequestedPrivilege,
-                                                                     ECommonUserOnlineContext OnlineContext)
+void UAsyncAction_CommonUserInitialize::HandleInitializationComplete(const UCommonUserInfo* UserInfo,
+                                                                     const bool bSuccess,
+                                                                     const FText Error,
+                                                                     const ECommonUserPrivilege RequestedPrivilege,
+                                                                     const ECommonUserOnlineContext OnlineContext)
 {
 	if (ShouldBroadcastDelegates())
 	{
@@ -88,26 +93,22 @@ void UAsyncAction_CommonUserInitialize::HandleInitializationComplete(const UComm
 
 void UAsyncAction_CommonUserInitialize::Activate()
 {
-	if (Subsystem.IsValid())
-	{
-		Params.OnUserInitializeComplete.BindUFunction(
-			this, GET_FUNCTION_NAME_CHECKED(UAsyncAction_CommonUserInitialize, HandleInitializationComplete));
-		bool bSuccess = Subsystem->TryToInitializeUser(Params);
-
-		if (!bSuccess)
-		{
-			// Call failure next frame
-			FTimerManager* TimerManager = GetTimerManager();
-
-			if (TimerManager)
-			{
-				TimerManager->SetTimerForNextTick(
-					FTimerDelegate::CreateUObject(this, &UAsyncAction_CommonUserInitialize::HandleFailure));
-			}
-		}
-	}
-	else
+	if (!Subsystem.IsValid())
 	{
 		SetReadyToDestroy();
+		return;
+	}
+
+	Params.OnUserInitializeComplete.BindUFunction(
+		this, GET_FUNCTION_NAME_CHECKED(UAsyncAction_CommonUserInitialize, HandleInitializationComplete));
+
+	if (!Subsystem->TryToInitializeUser(Params))
+	{
+		// Call failure next frame
+		if (FTimerManager* TimerManager = GetTimerManager())
+		{
+			TimerManager->SetTimerForNextTick(
+				FTimerDelegate::CreateUObject(this, &UAsyncAction_CommonUserInitialize::HandleFailure));
+		}
 	}
 }

@@ -29,8 +29,10 @@ public:
 
 	virtual void OnCreated() override;
 	virtual bool ShouldAsyncLoadRuntimeObjectLibraries() const override;
-	virtual bool ShouldSyncLoadMissingGameplayCues() const override;
-	virtual bool ShouldAsyncLoadMissingGameplayCues() const override;
+	/** If true, this will synchronously load missing gameplay cues */
+	virtual bool ShouldSyncLoadMissingGameplayCues() const override { return false; }
+	/** If true, this will asynchronously load missing gameplay cues, and execute cue when the load finishes */
+	virtual bool ShouldAsyncLoadMissingGameplayCues() const override { return true; }
 #pragma endregion
 
 	static void DumpGameplayCues(const TArray<FString>& Args);

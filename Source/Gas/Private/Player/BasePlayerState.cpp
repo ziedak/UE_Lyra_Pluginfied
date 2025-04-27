@@ -59,7 +59,8 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 {
 	check(InPawnData);
 
-	if (GetLocalRole() != ROLE_Authority) return;
+	if (GetLocalRole() != ROLE_Authority)
+		return;
 
 	if (PawnData)
 	{
@@ -78,7 +79,8 @@ void ABasePlayerState::SetPawnData(const UGasPawnData* InPawnData)
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, PawnData, this);
 	PawnData = InPawnData;
 
-	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets) {
+	for (const UBaseAbilitySet* AbilitySet : PawnData->AbilitySets)
+	{
 		if (AbilitySet)
 			AbilitySet->GiveToAbilitySystem(AbilitySystemComponent, nullptr);
 	}
@@ -101,7 +103,8 @@ void ABasePlayerState::PostInitializeComponents()
 
 	//==> The OnExperienceLoaded function is called when the experience is loaded.
 	const UWorld* World = GetWorld();
-	if (!World || !World->IsGameWorld() || World->GetNetMode() == NM_Client) return;
+	if (!World || !World->IsGameWorld() || World->GetNetMode() == NM_Client)
+		return;
 
 	const AGameStateBase* GameState = GetWorld()->GetGameState();
 	check(GameState);
@@ -133,8 +136,8 @@ void ABasePlayerState::OnExperienceLoaded(const UExperienceDefinition_DA* Experi
 	SetPawnData(NewPawnData);
 }
 
-
 #pragma region APlayerState interface
+
 void ABasePlayerState::Reset() { Super::Reset(); }
 
 void ABasePlayerState::ClientInitialize(AController* C)
@@ -169,42 +172,48 @@ void ABasePlayerState::OnDeactivated()
 		// (e.g., for long running servers where they might build up if lots of players cycle through)
 		bDestroyDeactivatedPlayerState = true;
 		break;
-	default: bDestroyDeactivatedPlayerState = true;
+	default:
+		bDestroyDeactivatedPlayerState = true;
 		break;
 	}
 
 	SetPlayerConnectionType(EPlayerConnectionType::InactivePlayer);
 
-	if (bDestroyDeactivatedPlayerState) Destroy();
+	if (bDestroyDeactivatedPlayerState)
+		Destroy();
 }
 
 void ABasePlayerState::OnReactivated()
 {
 	Super::OnReactivated();
-	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer) 
+	if (GetPlayerConnectionType() == EPlayerConnectionType::InactivePlayer)
 		SetPlayerConnectionType(EPlayerConnectionType::Player);
 }
 #pragma endregion
 
 void ABasePlayerState::SetPlayerConnectionType(const EPlayerConnectionType NewType)
 {
-	if (MyPlayerConnectionType == NewType) return;
+	if (MyPlayerConnectionType == NewType)
+		return;
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, MyPlayerConnectionType, this);
 	MyPlayerConnectionType = NewType;
 }
 
-void ABasePlayerState::OnRep_PawnData() {}
+void ABasePlayerState::OnRep_PawnData()
+{
+}
 
 void ABasePlayerState::ClientBroadcastMessage_Implementation(const FVerbMessage Message)
 {
 	// This check is needed to prevent running the action when in standalone mode
-	if (GetNetMode() == NM_Client) UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message);
+	if (GetNetMode() == NM_Client)
+		UGameplayMessageSubsystem::Get(this).BroadcastMessage(Message.Verb, Message);
 }
-
 
 void ABasePlayerState::SetReplicatedViewRotation(const FRotator& NewRot)
 {
-	if (ReplicatedViewRotation == NewRot) return;
+	if (ReplicatedViewRotation == NewRot)
+		return;
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ReplicatedViewRotation, this);
 	ReplicatedViewRotation = NewRot;
 }

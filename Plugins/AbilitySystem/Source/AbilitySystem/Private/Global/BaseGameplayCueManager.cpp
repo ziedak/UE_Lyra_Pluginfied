@@ -73,37 +73,19 @@ void UBaseGameplayCueManager::OnCreated()
 // the current map.
 bool UBaseGameplayCueManager::ShouldAsyncLoadRuntimeObjectLibraries() const
 {
-	switch (GameplayCueManagerCvars::LoadMode)
+	if (GameplayCueManagerCvars::LoadMode == EEditorLoadMode::LoadUpfront)
 	{
-	case EEditorLoadMode::LoadUpfront:
 		return true;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly:
-#if WITH_EDITOR
-		if (GIsEditor)
-		{
-			return false;
-		}
-#endif
-		break;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced:
-		break;
 	}
 
+#if WITH_EDITOR
+	if (GameplayCueManagerCvars::LoadMode == EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly && GIsEditor)
+		return false;
+#endif
 	//todo: verify this
 	return !ShouldDelayLoadGameplayCues();
 }
 
-/** If true, this will synchronously load missing gameplay cues */
-bool UBaseGameplayCueManager::ShouldSyncLoadMissingGameplayCues() const
-{
-	return false;
-}
-
-/** If true, this will asynchronously load missing gameplay cues, and execute cue when the load finishes */
-bool UBaseGameplayCueManager::ShouldAsyncLoadMissingGameplayCues() const
-{
-	return true;
-}
 
 void UBaseGameplayCueManager::DumpGameplayCues(const TArray<FString>& Args)
 {
@@ -148,8 +130,8 @@ void UBaseGameplayCueManager::DumpGameplayCues(const TArray<FString>& Args)
 		for (const FGameplayCueNotifyData& CueData : Gcm->RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueData)
 		{
 			if (!CueData.LoadedGameplayCueClass
-			    || Gcm->AlwaysLoadedCues.Contains(CueData.LoadedGameplayCueClass)
-			    || Gcm->PreloadedCues.Contains(CueData.LoadedGameplayCueClass))
+				|| Gcm->AlwaysLoadedCues.Contains(CueData.LoadedGameplayCueClass)
+				|| Gcm->PreloadedCues.Contains(CueData.LoadedGameplayCueClass))
 			{
 				continue;
 			}
@@ -177,8 +159,10 @@ void UBaseGameplayCueManager::LoadAlwaysLoadedCues()
 	const UGameplayTagsManager& TagManager = UGameplayTagsManager::Get();
 
 	//@TODO: Try to collect these by filtering GameplayCue. tags out of native gameplay tags?
-	TArray<FName> AdditionalAlwaysLoadedCueTags;
 
+	TArray<FName> AdditionalAlwaysLoadedCueTags;
+	//Ai suggetionion 
+	// TArray<FName> AdditionalAlwaysLoadedCueTags = TagManager.FilterGameplayTagsByPrefix(TEXT("GameplayCue."));
 	for (const FName& CueTagName : AdditionalAlwaysLoadedCueTags)
 	{
 		FGameplayTag CueTag = TagManager.RequestGameplayTag(CueTagName, /*ErrorIfNotFound=*/ false);
@@ -196,7 +180,7 @@ void UBaseGameplayCueManager::LoadAlwaysLoadedCues()
 
 const FPrimaryAssetType UFortAssetManager_GameplayCueRefsType = TEXT("GameplayCueRefs");
 const FName UFortAssetManager_GameplayCueRefsName = TEXT("GameplayCueReferences");
-const FName UFortAssetManager_LoadStateClient = FName(TEXT("Client"));
+const auto UFortAssetManager_LoadStateClient = FName(TEXT("Client"));
 /*
 * This function is responsible for updating the primary asset for the gameplay cues.
 * It retrieves the paths of the gameplay cues from the runtime cue set and adds them to the asset bundle data.
@@ -219,8 +203,8 @@ void UBaseGameplayCueManager::RefreshGameplayCuePrimaryAsset()
 	FAssetBundleData BundleData;
 	BundleData.AddBundleAssetsTruncated(UFortAssetManager_LoadStateClient, CuePaths);
 
-	const FPrimaryAssetId PrimaryAssetId = FPrimaryAssetId(UFortAssetManager_GameplayCueRefsType,
-	                                                       UFortAssetManager_GameplayCueRefsName);
+	const auto PrimaryAssetId = FPrimaryAssetId(UFortAssetManager_GameplayCueRefsType,
+	                                            UFortAssetManager_GameplayCueRefsName);
 	UAssetManager::Get().AddDynamicAsset(PrimaryAssetId, FSoftObjectPath(), BundleData);
 }
 
@@ -265,20 +249,18 @@ void UBaseGameplayCueManager::OnGameplayTagLoaded(const FGameplayTag& Tag)
 
 	TGraphTask<FGameplayCueTagThreadSynchronizeGraphTask>::CreateTask().ConstructAndDispatchWhenReady([]()
 	{
-		if (GIsRunning)
+		if (!GIsRunning)
+			return;
+		if (UBaseGameplayCueManager* StrongThis = Get())
 		{
-			if (UBaseGameplayCueManager* StrongThis = Get())
+			// If we are garbage collecting we cannot call StaticFindObject (or a few other static uobject functions), so we'll just wait until the GC is over and process the tags then
+			if (IsGarbageCollecting())
 			{
-				// If we are garbage collecting we cannot call StaticFindObject (or a few other static uobject functions), so we'll just wait until the GC is over and process the tags then
-				if (IsGarbageCollecting())
-				{
-					StrongThis->bProcessLoadedTagsAfterGC = true;
-				}
-				else
-				{
-					StrongThis->ProcessLoadedTags();
-				}
+				StrongThis->bProcessLoadedTagsAfterGC = true;
+				return;
 			}
+
+			StrongThis->ProcessLoadedTags();
 		}
 	});
 }
@@ -320,8 +302,8 @@ void UBaseGameplayCueManager::ProcessLoadedTags()
 
 	for (const FLoadedGameplayTagToProcessData& LoadedTagData : TaskLoadedGameplayTagsToProcess)
 	{
-		if (!RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueDataMap.Contains(LoadedTagData.Tag) || LoadedTagData.
-		    WeakOwner.IsStale())
+		if (!RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueDataMap.Contains(LoadedTagData.Tag) ||
+			LoadedTagData.WeakOwner.IsStale())
 		{
 			continue;
 		}
@@ -330,67 +312,57 @@ void UBaseGameplayCueManager::ProcessLoadedTags()
 	}
 }
 
+
 void UBaseGameplayCueManager::ProcessTagToPreload(const FGameplayTag& Tag, UObject* OwningObject)
 {
-	switch (GameplayCueManagerCvars::LoadMode)
-	{
-	case EEditorLoadMode::LoadUpfront:
+	// Skip processing based on the current load mode
+	if (GameplayCueManagerCvars::LoadMode == EEditorLoadMode::LoadUpfront ||
+		(GameplayCueManagerCvars::LoadMode == EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly && GIsEditor))
 		return;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly:
-#if WITH_EDITOR
-		if (GIsEditor)
-		{
-			return;
-		}
-#endif
-		break;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced:
-		break;
-	}
 
+	// Ensure the runtime cue set is valid
 	check(RuntimeGameplayCueObjectLibrary.CueSet);
 
+	// Find the data index for the tag
 	const int32* DataIdx = RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueDataMap.Find(Tag);
 	if (!DataIdx || !RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueData.IsValidIndex(*DataIdx))
 	{
 		return;
 	}
 
+	// Retrieve the cue data
 	const FGameplayCueNotifyData& CueData = RuntimeGameplayCueObjectLibrary.CueSet->GameplayCueData[*DataIdx];
 
+	// Attempt to find the gameplay cue class
 	if (UClass* LoadedGameplayCueClass = FindObject<UClass>(nullptr, *CueData.GameplayCueNotifyObj.ToString()))
 	{
 		RegisterPreloadedCue(LoadedGameplayCueClass, OwningObject);
+		return;
 	}
-	else
-	{
-		bool bAlwaysLoadedCue = OwningObject == nullptr;
-		TWeakObjectPtr<UObject> WeakOwner = OwningObject;
 
-		StreamableManager.RequestAsyncLoad(
+	// Asynchronously load the gameplay cue class
+	StreamableManager.RequestAsyncLoad(
+		CueData.GameplayCueNotifyObj,
+		FStreamableDelegate::CreateUObject(
+			this,
+			&ThisClass::OnPreloadCueComplete,
 			CueData.GameplayCueNotifyObj,
-			FStreamableDelegate::CreateUObject(
-				this,
-				&ThisClass::OnPreloadCueComplete,
-				CueData.GameplayCueNotifyObj,
-				WeakOwner,
-				bAlwaysLoadedCue
-				),
-			FStreamableManager::DefaultAsyncLoadPriority,
-			false,
-			false,
-			TEXT("GameplayCueManager")
-			);
-	}
+			TWeakObjectPtr<UObject>(OwningObject),
+			OwningObject == nullptr
+		),
+		FStreamableManager::DefaultAsyncLoadPriority,
+		false,
+		false,
+		TEXT("GameplayCueManager")
+	);
 }
 
-void UBaseGameplayCueManager::OnPreloadCueComplete(FSoftObjectPath Path, TWeakObjectPtr<UObject> OwningObject,
+void UBaseGameplayCueManager::OnPreloadCueComplete(FSoftObjectPath Path,
+                                                   TWeakObjectPtr<UObject> OwningObject,
                                                    bool bAlwaysLoadedCue)
 {
 	if (!bAlwaysLoadedCue && !OwningObject.IsValid())
-	{
 		return;
-	}
 
 	if (UClass* LoadedGameplayCueClass = Cast<UClass>(Path.ResolveObject()))
 	{
@@ -415,16 +387,15 @@ void UBaseGameplayCueManager::RegisterPreloadedCue(UClass* LoadedGameplayCueClas
 {
 	check(LoadedGameplayCueClass);
 
-	const bool bAlwaysLoadedCue = OwningObject == nullptr;
-	if (bAlwaysLoadedCue)
+	if (!OwningObject) // Always loaded cue
 	{
 		AlwaysLoadedCues.Add(LoadedGameplayCueClass);
 		PreloadedCues.Remove(LoadedGameplayCueClass);
 		PreloadedCueReferencers.Remove(LoadedGameplayCueClass);
 	}
 	else if ((OwningObject != LoadedGameplayCueClass)
-	         && (OwningObject != LoadedGameplayCueClass->GetDefaultObject())
-	         && !AlwaysLoadedCues.Contains(LoadedGameplayCueClass)
+		&& (OwningObject != LoadedGameplayCueClass->GetDefaultObject())
+		&& !AlwaysLoadedCues.Contains(LoadedGameplayCueClass)
 	)
 	{
 		PreloadedCues.Add(LoadedGameplayCueClass);
@@ -433,7 +404,7 @@ void UBaseGameplayCueManager::RegisterPreloadedCue(UClass* LoadedGameplayCueClas
 	}
 }
 
-// 
+
 void UBaseGameplayCueManager::HandlePostLoadMap(UWorld* NewWorld)
 {
 	if (RuntimeGameplayCueObjectLibrary.CueSet)
@@ -483,21 +454,12 @@ void UBaseGameplayCueManager::UpdateDelayLoadDelegateListeners()
 	FCoreUObjectDelegates::GetPostGarbageCollect().RemoveAll(this);
 	FCoreUObjectDelegates::PostLoadMapWithWorld.RemoveAll(this);
 
-	switch (GameplayCueManagerCvars::LoadMode)
-	{
-	case EEditorLoadMode::LoadUpfront:
+	// Skip processing based on the current load mode
+	if (GameplayCueManagerCvars::LoadMode == EEditorLoadMode::LoadUpfront ||
+		GameplayCueManagerCvars::LoadMode == EEditorLoadMode::PreloadAsCuesAreReferenced ||
+		(GameplayCueManagerCvars::LoadMode == EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly && GIsEditor))
 		return;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced_GameOnly:
-#if WITH_EDITOR
-		if (GIsEditor)
-		{
-			return;
-		}
-#endif
-		break;
-	case EEditorLoadMode::PreloadAsCuesAreReferenced:
-		break;
-	}
+
 
 	// Add listeners based on the current mode
 	UGameplayTagsManager::Get().OnGameplayTagLoadedDelegate.AddUObject(this, &ThisClass::OnGameplayTagLoaded);

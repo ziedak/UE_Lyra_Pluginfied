@@ -34,7 +34,9 @@ const FName UHeroComponent::NAME_ACTOR_FEATURE_NAME("Hero");
 UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
 	  AbilityCameraMode(nullptr),
-	  bReadyToBindInputs(false) {}
+	  bReadyToBindInputs(false)
+{
+}
 
 void UHeroComponent::SetAbilityCameraMode(const TSubclassOf<UCustomCameraMode>& CameraMode,
                                           const FGameplayAbilitySpecHandle& OwningSpecHandle)
@@ -64,10 +66,10 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig_DA* InputCo
 	const APlayerController* PC = GetController<APlayerController>();
 	check(PC);
 
-	const ULocalPlayer* LP = PC->GetLocalPlayer();
-	check(LP);
+	const ULocalPlayer* Lp = PC->GetLocalPlayer();
+	check(Lp);
 
-	const auto Subsystem = LP->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+	const auto Subsystem = Lp->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 	check(Subsystem);
 
 	const auto PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(Pawn);
@@ -129,8 +131,8 @@ bool UHeroComponent::CanTransitionToDataAvailable(const APawn* Pawn) const
 	if (Pawn->GetLocalRole() != ROLE_SimulatedProxy)
 	{
 		const AController* Controller = GetController<AController>();
-		const bool bHasControllerPairedWithPlayerState = Controller && Controller->PlayerState && Controller->
-		                                                                                          PlayerState->GetOwner() == Controller;
+		const bool bHasControllerPairedWithPlayerState = Controller && Controller->PlayerState
+			&& Controller->PlayerState->GetOwner() == Controller;
 
 		if (!bHasControllerPairedWithPlayerState)
 			return false;
@@ -159,11 +161,13 @@ bool UHeroComponent::CanTransitionToDataInitialized(const UGameFrameworkComponen
 bool UHeroComponent::CanTransitionToGameplayReady() const
 {
 	// TODO add ability initialization checks?
+	
 
 	return true;
 }
 
-void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+void UHeroComponent::HandleChangeInitState(UGameFrameworkComponentManager* Manager,
+                                           FGameplayTag CurrentState,
                                            FGameplayTag DesiredState)
 {
 	if (CurrentState != InitStateTags::DATA_AVAILABLE || DesiredState != InitStateTags::DATA_INITIALIZED)
@@ -431,29 +435,29 @@ void UHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 void UHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 {
 	// todo implement this function later
-	LOG_INFO(LogGAS, "--------------- Input_Move ----------");
+	//LOG_INFO(LogGAS, "--------------- Input_Move ----------");
 }
 
 void UHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
 {
 	// todo implement this function later
-	LOG_INFO(LogGAS, "--------------- Input_LookMouse ----------");
+	//LOG_INFO(LogGAS, "--------------- Input_LookMouse ----------");
 }
 
 void UHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)
 {
 	// todo implement this function later
-	LOG_INFO(LogGAS, "--------------- Input_LookStick ----------");
+	//LOG_INFO(LogGAS, "--------------- Input_LookStick ----------");
 }
 
 void UHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 {
 	// todo implement this function later
-	LOG_INFO(LogGAS, "--------------- Input_Move ----------");
+	//LOG_INFO(LogGAS, "--------------- Input_Move ----------");
 }
 
 void UHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)
 {
 	// todo impl
-	LOG_INFO(LogGAS, "--------------- Input_AutoRun ----------");
+	//LOG_INFO(LogGAS, "--------------- Input_AutoRun ----------");
 }

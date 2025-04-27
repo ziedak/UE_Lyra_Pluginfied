@@ -75,17 +75,19 @@ public:
 	UFUNCTION(Client, Unreliable, BlueprintCallable, Category = "Lyra|PlayerState")
 	void ClientBroadcastMessage(const FVerbMessage Message);
 
+	// Could replace this with custom replication
+	UFUNCTION()
+	FRotator GetReplicatedViewRotation() const { return ReplicatedViewRotation; }
+
+
+	UFUNCTION()
+	void SetReplicatedViewRotation(const FRotator& NewRot);
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_PawnData)
 	TObjectPtr<const UGasPawnData> PawnData;
 
 	UFUNCTION()
 	void OnRep_PawnData();
-	void SetReplicatedViewRotation(const FRotator& NewRot);
-
-	// Could replace this with custom replication
-	UFUNCTION()
-	FRotator GetReplicatedViewRotation() const { return ReplicatedViewRotation; }
 
 private:
 	UFUNCTION()

@@ -19,7 +19,7 @@ void FGlobalAppliedEffectList::AddToAsc(const TSubclassOf<UGameplayEffect>& Effe
 
 void FGlobalAppliedEffectList::RemoveFromAsc(UBaseAbilitySystemComponent* Asc)
 {
-	if (FActiveGameplayEffectHandle* EffectHandle = Handles.Find(Asc))
+	if (const FActiveGameplayEffectHandle* EffectHandle = Handles.Find(Asc))
 	{
 		Asc->RemoveActiveGameplayEffect(*EffectHandle);
 		Handles.Remove(Asc);
@@ -30,8 +30,7 @@ void FGlobalAppliedEffectList::RemoveFromAll()
 {
 	for (auto& Pair : Handles)
 	{
-		UBaseAbilitySystemComponent* Asc = Pair.Key.Get();
-		if (Asc)
+		if (UBaseAbilitySystemComponent* Asc = Pair.Key.Get())
 		{
 			Asc->RemoveActiveGameplayEffect(Pair.Value);
 		}

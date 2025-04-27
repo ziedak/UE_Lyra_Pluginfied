@@ -7,7 +7,9 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GlobalGasWorldSubsystem)
 
-UGlobalGasWorldSubsystem::UGlobalGasWorldSubsystem() {}
+UGlobalGasWorldSubsystem::UGlobalGasWorldSubsystem()
+{
+}
 
 void UGlobalGasWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -16,45 +18,47 @@ void UGlobalGasWorldSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ULOG_INFO(LogTemp, "UGlobalGasWorldSubsystem::Initialize");
 };
 
-void UGlobalGasWorldSubsystem::ApplyAbilityToAll(TSubclassOf<UGameplayAbility> Ability)
+void UGlobalGasWorldSubsystem::ApplyAbilityToAll(const TSubclassOf<UGameplayAbility> Ability)
 {
-	if (Ability.Get() != nullptr && !AppliedAbilities.Contains(Ability))
+	if (!Ability.Get() || AppliedAbilities.Contains(Ability))
+		return;
+	FGlobalAppliedAbilityList& GlobalAppliedAbilities = AppliedAbilities.Add(Ability);
+	for (auto& Asc : RegisteredASCs)
 	{
-		FGlobalAppliedAbilityList& GlobalAppliedAbilities = AppliedAbilities.Add(Ability);
-		for (auto& ASC : RegisteredASCs) { GlobalAppliedAbilities.AddToAsc(Ability, ASC.Get()); }
+		GlobalAppliedAbilities.AddToAsc(Ability, Asc.Get());
 	}
 }
 
-void UGlobalGasWorldSubsystem::ApplyEffectToAll(TSubclassOf<UGameplayEffect> Effect)
+void UGlobalGasWorldSubsystem::ApplyEffectToAll(const TSubclassOf<UGameplayEffect> Effect)
 {
-	if (Effect.Get() != nullptr && !AppliedEffects.Contains(Effect))
+	if (!Effect.Get() || AppliedEffects.Contains(Effect))
+		return;
+	FGlobalAppliedEffectList& GlobalAppliedEffects = AppliedEffects.Add(Effect);
+	for (auto& Asc : RegisteredASCs)
 	{
-		FGlobalAppliedEffectList& GlobalAppliedEffects = AppliedEffects.Add(Effect);
-		for (auto& Asc : RegisteredASCs) { GlobalAppliedEffects.AddToAsc(Effect, Asc.Get()); }
+		GlobalAppliedEffects.AddToAsc(Effect, Asc.Get());
 	}
 }
 
 void UGlobalGasWorldSubsystem::RemoveAbilityFromAll(const TSubclassOf<UGameplayAbility> Ability)
 {
-	if (Ability.Get() != nullptr)
+	if (!Ability.Get())
+		return;
+	if (FGlobalAppliedAbilityList* GlobalAppliedAbilities = AppliedAbilities.Find(Ability))
 	{
-		if (FGlobalAppliedAbilityList* GlobalAppliedAblitities = AppliedAbilities.Find(Ability))
-		{
-			GlobalAppliedAblitities->RemoveFromAll();
-			AppliedAbilities.Remove(Ability);
-		}
+		GlobalAppliedAbilities->RemoveFromAll();
+		AppliedAbilities.Remove(Ability);
 	}
 }
 
 void UGlobalGasWorldSubsystem::RemoveEffectFromAll(const TSubclassOf<UGameplayEffect> Effect)
 {
-	if (Effect.Get() != nullptr)
+	if (!Effect.Get())
+		return;
+	if (FGlobalAppliedEffectList* GlobalAppliedEffects = AppliedEffects.Find(Effect))
 	{
-		if (FGlobalAppliedEffectList* GlobalAppliedEffects = AppliedEffects.Find(Effect))
-		{
-			GlobalAppliedEffects->RemoveFromAll();
-			AppliedEffects.Remove(Effect);
-		}
+		GlobalAppliedEffects->RemoveFromAll();
+		AppliedEffects.Remove(Effect);
 	}
 }
 

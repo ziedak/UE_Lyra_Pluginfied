@@ -89,7 +89,7 @@ protected:
 
 	void InitializeGameplayTags() const;
 
-	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
+	virtual void FellOutOfWorld(const class UDamageType& DmgType) override;
 
 	// Begins the death sequence for the character (disables collision, disables movement, etc...)
 	UFUNCTION()

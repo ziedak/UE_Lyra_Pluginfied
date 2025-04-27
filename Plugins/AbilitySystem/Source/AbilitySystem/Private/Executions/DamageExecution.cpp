@@ -89,7 +89,7 @@ void UDamageExecution::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	AActor* HitActor = nullptr;
 	FVector ImpactLocation = FVector::ZeroVector;
-	FVector ImpactNormal = FVector::ZeroVector;
+	FVector ImpactNormal;
 	FVector StartTrace = FVector::ZeroVector;
 	FVector EndTrace = FVector::ZeroVector;
 

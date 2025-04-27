@@ -27,25 +27,46 @@ public:
 protected:
 	virtual void UpdateView(float DeltaTime) override;
 
-	void UpdateForTarget(float DeltaTime);
+	void UpdateCrouchOffsetForTarget(float DeltaTime);
+	void UpdateViewTransform(const FVector& PivotLocation, FRotator& PivotRotation);
 	void UpdatePreventPenetration(float DeltaTime);
 	void PreventCameraPenetration(const class AActor& ViewTarget,
-		const FVector& SafeLoc,
-		FVector& CameraLoc,
-		const float& DeltaTime,
-		float& DistBlockedPct,
-		bool bSingleRayOnly);
+	                              const FVector& SafeLoc,
+	                              FVector& CameraLoc,
+	                              const float& DeltaTime,
+	                              float& DistBlockedPct,
+	                              bool bUseSingleRayForPenetrationCheck);
 
 private:
-	FVector CalculateRayTarget(const FVector& SafeLoc, const FVector& BaseRay, const FPenetrationAvoidanceFeeler& Feeler, const FVector& BaseRayLocalUp, const FVector& BaseRayLocalRight) const;
-	void PerformSweep(const UWorld* World, const FVector& SafeLoc, const FVector& RayTarget, FCollisionShape& SphereShape, FCollisionQueryParams& SphereParams, FPenetrationAvoidanceFeeler& Feeler,
-		const AActor& ViewTarget, float& DistBlockedPctThisFrame);
-	void IgnoreHit(const FHitResult& Hit, FCollisionQueryParams& SphereParams, const AActor& ViewTarget) const;
+	FVector CalculateRayTarget(const FVector& SafeLoc,
+	                           const FVector& BaseRay,
+	                           const FPenetrationAvoidanceFeeler& Feeler,
+	                           const FVector& BaseRayLocalUp,
+	                           const FVector& BaseRayLocalRight) const;
+	void PerformSweep(const UWorld* World,
+	                  const FVector& SafeLoc,
+	                  const FVector& RayTarget,
+	                  FCollisionShape& SphereShape,
+	                  FCollisionQueryParams& SphereParams,
+	                  FPenetrationAvoidanceFeeler& Feeler,
+	                  const AActor& ViewTarget,
+	                  float& DistBlockedPctThisFrame);
+	bool IgnoreHit(const FHitResult& Hit, FCollisionQueryParams& SphereParams, const AActor& ViewTarget) const;
 	bool ShouldIgnoreCameraBlockingVolume(const FHitResult& Hit, const AActor& ViewTarget) const;
-	float UpdateDistBlockedPctThisFrame(const FHitResult& Hit, const float DistBlockedPctThisFrame, const FVector& RayTarget, const FVector& SafeLoc);
-	float UpdateDistBlockedPct(float DistBlockedPct, float DistBlockedPctThisFrame, float HardBlockedPct, float SoftBlockedPct, float DeltaTime) const;
-	FVector CalculateSafeLocation(const AActor* PPActor, const UPrimitiveComponent* PPActorRootComponent) const;
-	void NotifyAssistInterfacesIfPenetrating(ICameraAssistInterface* AssistArray[]) const;
+	float UpdateDistBlockedPctThisFrame(const FHitResult& Hit,
+	                                    const float DistBlockedPctThisFrame,
+	                                    FPenetrationAvoidanceFeeler& Feeler,
+	                                    const FVector& RayTarget,
+	                                    const FVector& SafeLoc);
+	float UpdateDistBlockedPct(float DistBlockedPct,
+	                           float DistBlockedPctThisFrame,
+	                           float HardBlockedPct,
+	                           float SoftBlockedPct,
+	                           float DeltaTime) const;
+	FVector CalculateSafeLocation(const AActor* PPActor,
+	                              const UPrimitiveComponent* PPActorRootComponent) const;
+	void NotifyAssistInterfacesIfPenetrating(TArray<ICameraAssistInterface*> AssistArray) const;
+
 protected:
 	virtual void DrawDebug(UCanvas* Canvas) const override;
 
@@ -116,7 +137,7 @@ public:
 
 protected:
 	void SetTargetCrouchOffset(const FVector& NewTargetOffset);
-	void UpdateCrouchOffset(float DeltaTime);
+	void BlendCrouchOffset(float DeltaTime);
 
 	FVector InitialCrouchOffset = FVector::ZeroVector;
 	FVector TargetCrouchOffset = FVector::ZeroVector;

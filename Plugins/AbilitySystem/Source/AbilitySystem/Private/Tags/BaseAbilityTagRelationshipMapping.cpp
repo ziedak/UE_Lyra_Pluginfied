@@ -8,7 +8,7 @@ void UBaseAbilityTagRelationshipMapping::GetAbilityTagsToBlockAndCancel(
 	FGameplayTagContainer* OutTagsToCancel) const
 {
 	// Simple iteration for now
-	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
+	for (auto i = 0; i < AbilityTagRelationships.Num(); i++)
 	{
 		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
 		if (!AbilityTags.HasTag(Tags.AbilityTag))
@@ -33,9 +33,8 @@ void UBaseAbilityTagRelationshipMapping::GetRequiredAndBlockedActivationTags(
 	FGameplayTagContainer* OutActivationRequired,
 	FGameplayTagContainer* OutActivationBlocked) const
 {
-	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
+	for (const FAbilityTagRelationship& Tags : AbilityTagRelationships)
 	{
-		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
 		if (!AbilityTags.HasTag(Tags.AbilityTag))
 		{
 			continue;
@@ -57,10 +56,8 @@ bool UBaseAbilityTagRelationshipMapping::IsAbilityCancelledByTag(
 	const FGameplayTagContainer& AbilityTags,
 	const FGameplayTag& ActionTag) const
 {
-	for (int32 i = 0; i < AbilityTagRelationships.Num(); i++)
+	for (const FAbilityTagRelationship& Tags : AbilityTagRelationships)
 	{
-		const FAbilityTagRelationship& Tags = AbilityTagRelationships[i];
-
 		if (Tags.AbilityTag == ActionTag && Tags.AbilityTagsToCancel.HasAny(AbilityTags))
 		{
 			return true;

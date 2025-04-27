@@ -27,11 +27,11 @@ public:
 	UHeroComponent* GetHeroComponentFromActorInfo() const;
 
 	// Sets the ability's camera mode.
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Base|Ability")
 	void SetCameraMode(const TSubclassOf<UCustomCameraMode>& CameraMode);
 
 	// Clears the ability's camera mode.  Automatically called if needed when the ability ends.
-	UFUNCTION(BlueprintCallable, Category = "Lyra|Ability")
+	UFUNCTION(BlueprintCallable, Category = "Base|Ability")
 	void ClearCameraMode();
 
 protected:

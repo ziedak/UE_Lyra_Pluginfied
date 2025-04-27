@@ -13,7 +13,8 @@ class FDebugDisplayInfo;
 
 UUICameraManagerComponent* UUICameraManagerComponent::GetComponent(const APlayerController* PC)
 {
-	if (!PC) return nullptr;
+	if (!PC)
+		return nullptr;
 	const auto CameraManager = Cast<ALyraPlayerCameraManager>(PC->PlayerCameraManager);
 	return CameraManager ? CameraManager->GetUICameraComponent() : nullptr;
 }
@@ -22,11 +23,10 @@ UUICameraManagerComponent::UUICameraManagerComponent()
 {
 	bWantsInitializeComponent = true;
 
-	if (!HasAnyFlags(RF_ClassDefaultObject))
-	{
-		// Register "showdebug" hook.
-		if (!IsRunningDedicatedServer()) AHUD::OnShowDebugInfo.AddUObject(this, &ThisClass::OnShowDebugInfo);
-	}
+	if (HasAnyFlags(RF_ClassDefaultObject) || IsRunningDedicatedServer())
+		return;
+	// Register "show debug" hook.
+	AHUD::OnShowDebugInfo.AddUObject(this, &ThisClass::OnShowDebugInfo);
 }
 
 void UUICameraManagerComponent::InitializeComponent() { Super::InitializeComponent(); }
