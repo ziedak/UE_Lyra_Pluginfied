@@ -3,19 +3,23 @@
 #include "LyraCameraComponent.h"
 #include "SignificanceManager.h"
 #include "Character/SharedRepMovement.h"
+#include "Character/Components/BaseCharacterMovementComponent.h"
 
 #include "Character/Components/HealthComponent.h"
 #include "Component/BaseAbilitySystemComponent.h"
 #include "Character/Components/PawnExtensionComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Player/BasePlayerController.h"
 #include "Player/BasePlayerState.h"
 #include "Tags/BaseGameplayTags.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BaseCharacter)
+static FName NAME_CharacterCollisionProfile_Capsule(TEXT("PawnCapsule"));
+static FName NAME_CharacterCollisionProfile_Mesh(TEXT("PawnMesh"));
 
-ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UMovementComponent>(CharacterMovementComponentName))
 {
 	// Avoid ticking characters if possible.
 	PrimaryActorTick.bCanEverTick = false;
@@ -23,6 +27,32 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 
 	// Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated.
 	SetNetCullDistanceSquared(900000000.0f); // 3000 * 3000
+
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	check(CapsuleComp);
+	CapsuleComp->InitCapsuleSize(40.0f, 90.0f);
+	CapsuleComp->SetCollisionProfileName(NAME_CharacterCollisionProfile_Capsule);
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	check(MeshComp);
+	MeshComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f)); // Rotate mesh to be X forward since it is exported as Y forward.
+	MeshComp->SetCollisionProfileName(NAME_CharacterCollisionProfile_Mesh);
+
+	UCharacterMovementComponent* MoveComp = CastChecked<UCharacterMovementComponent>(GetCharacterMovement());
+	MoveComp->GravityScale = 1.0f;
+	MoveComp->MaxAcceleration = 2400.0f;
+	MoveComp->BrakingFrictionFactor = 1.0f;
+	MoveComp->BrakingFriction = 6.0f;
+	MoveComp->GroundFriction = 8.0f;
+	MoveComp->BrakingDecelerationWalking = 1400.0f;
+	MoveComp->bUseControllerDesiredRotation = false;
+	MoveComp->bOrientRotationToMovement = false;
+	MoveComp->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+	MoveComp->bAllowPhysicsRotationDuringAnimRootMotion = false;
+	MoveComp->GetNavAgentPropertiesRef().bCanCrouch = true;
+	MoveComp->bCanWalkOffLedgesWhenCrouching = true;
+	MoveComp->SetCrouchedHalfHeight(65.0f);
+
 
 	PawnExtComponent = CreateDefaultSubobject<UPawnExtensionComponent>("PawnExtensionComponent");
 	PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall(
@@ -100,10 +130,28 @@ void ABaseCharacter::Reset()
 	UninitAndDestroy();
 }
 
-void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const { Super::GetLifetimeReplicatedProps(OutLifetimeProps); }
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(ThisClass, ReplicatedAcceleration, COND_SimulatedOnly);
+}
 
 void ABaseCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyTracker)
 {
+	Super::PreReplication(ChangedPropertyTracker);
+
+	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
+	{
+		// Compress Acceleration: XY components as direction + magnitude, Z component as direct value
+		const double MaxAccel = MovementComponent->MaxAcceleration;
+		const FVector CurrentAccel = MovementComponent->GetCurrentAcceleration();
+		double AccelXYRadians, AccelXYMagnitude;
+		FMath::CartesianToPolar(CurrentAccel.X, CurrentAccel.Y, AccelXYMagnitude, AccelXYRadians);
+
+		ReplicatedAcceleration.AccelXYRadians = FMath::FloorToInt((AccelXYRadians / TWO_PI) * 255.0); // [0, 2PI] -> [0, 255]
+		ReplicatedAcceleration.AccelXYMagnitude = FMath::FloorToInt((AccelXYMagnitude / MaxAccel) * 255.0); // [0, MaxAccel] -> [0, 255]
+		ReplicatedAcceleration.AccelZ = FMath::FloorToInt((CurrentAccel.Z / MaxAccel) * 127.0); // [-MaxAccel, MaxAccel] -> [-127, 127]
+	}
 }
 
 void ABaseCharacter::NotifyControllerChanged()
@@ -348,6 +396,16 @@ void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode,
 		BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, bTagEnabled ? 1 : 0);
 }
 
+void ABaseCharacter::ToggleCrouch()
+{
+	const auto MoveComp = GetCharacterMovement();
+
+	if (bIsCrouched || MoveComp->bWantsToCrouch)
+		UnCrouch();
+	else if (MoveComp->IsMovingOnGround())
+		Crouch();
+}
+
 void ABaseCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
 	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
@@ -372,4 +430,17 @@ bool ABaseCharacter::CanJumpInternal_Implementation() const
 
 void ABaseCharacter::OnRep_ReplicatedAcceleration() const
 {
+	auto MovementComponent = Cast<UBaseCharacterMovementComponent>(GetCharacterMovement());
+	if (!MovementComponent)
+		return;
+	// Decompress Acceleration
+	const double MaxAccel = MovementComponent->MaxAcceleration;
+	const double AccelXYMagnitude = static_cast<double>(ReplicatedAcceleration.AccelXYMagnitude) * MaxAccel / 255.0; // [0, 255] -> [0, MaxAccel]
+	const double AccelXYRadians = static_cast<double>(ReplicatedAcceleration.AccelXYRadians) * TWO_PI / 255.0; // [0, 255] -> [0, 2PI]
+
+	FVector UnpackedAcceleration(FVector::ZeroVector);
+	FMath::PolarToCartesian(AccelXYMagnitude, AccelXYRadians, UnpackedAcceleration.X, UnpackedAcceleration.Y);
+	UnpackedAcceleration.Z = static_cast<double>(ReplicatedAcceleration.AccelZ) * MaxAccel / 127.0; // [-127, 127] -> [-MaxAccel, MaxAccel]
+
+	MovementComponent->SetReplicatedAcceleration(UnpackedAcceleration);
 }

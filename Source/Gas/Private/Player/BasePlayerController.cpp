@@ -9,12 +9,16 @@
 #include "Player/BasePlayerState.h"
 #include "Settings/LyraSettingsShared.h"
 #include "UI/Hud/BaseHUD.h"
+#include "LyraPlayerCameraManager.h"
+#include "Tags/BaseGameplayTags.h"
+
 #if WITH_RPC_REGISTRY
 // #include "Tests/LyraGameplayRpcRegistrationComponent.h"
 //#include "HttpServerModule.h"
 #endif
 
-#include "LyraPlayerCameraManager.h"
+
+#include "Net/UnrealNetwork.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerController)
 
@@ -52,6 +56,18 @@ void ABasePlayerController::BeginPlay()
 	SetActorHiddenInGame(false);
 }
 
+void ABasePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Disable replicating the PC target view as it doesn't work well for replays or client-side spectating.
+	// The engine TargetViewRotation is only set in APlayerController::TickActor if the server knows ahead of time that 
+	// a specific pawn is being spectated and it only replicates down for COND_OwnerOnly.
+	// In client-saved replays, COND_OwnerOnly is never true and the target pawn is not always known at the time of recording.
+	// To support client-saved replays, the replication of this was moved to ReplicatedViewRotation and updated in PlayerTick.
+	DISABLE_REPLICATED_PROPERTY(APlayerController, TargetViewRotation);
+}
+
 void ABasePlayerController::SetPlayer(UPlayer* InPlayer)
 {
 	Super::SetPlayer(InPlayer);
@@ -66,22 +82,25 @@ void ABasePlayerController::SetPlayer(UPlayer* InPlayer)
 	OnSettingsChanged(UserSettings);
 }
 
-void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings) { bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled(); }
+void ABasePlayerController::OnSettingsChanged(const ULyraSettingsShared* InSettings)
+{
+	bForceFeedbackEnabled = InSettings->GetForceFeedbackEnabled();
+}
 
 void ABasePlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
 	// If we are auto running then add some player input
-	// if (GetIsAutoRunning())
-	// {
-	// 	if (APawn* CurrentPawn = GetPawn())
-	// 	{
-	// 		const FRotator MovementRotation(0.0f, GetControlRotation().Yaw, 0.0f);
-	// 		const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-	// 		CurrentPawn->AddMovementInput(MovementDirection, 1.0f);	
-	// 	}
-	// }
+	if (GetIsAutoRunning())
+	{
+		if (APawn* CurrentPawn = GetPawn())
+		{
+			const FRotator MovementRotation(0.0f, GetControlRotation().Yaw, 0.0f);
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			CurrentPawn->AddMovementInput(MovementDirection, 1.0f);
+		}
+	}
 
 
 	if (!PlayerCameraManager)
@@ -108,6 +127,13 @@ void ABasePlayerController::PlayerTick(float DeltaTime)
 		return;
 	// Get it from the spectated pawn's player state, which may not be the same as the PC's player state
 	TargetViewRotation = Ps->GetReplicatedViewRotation();
+}
+
+void ABasePlayerController::SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds)
+{
+	// Default behavior is to interpolate to TargetViewRotation which is set from APlayerController::TickActor but it's not very smooth
+
+	Super::SmoothTargetViewRotation(TargetPawn, DeltaSeconds);
 }
 
 void ABasePlayerController::UpdateHiddenComponents(const FVector& ViewLocation, TSet<FPrimitiveComponentId>& OutHiddenComponents)
@@ -171,6 +197,40 @@ UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponen
 
 ABaseHud* ABasePlayerController::GetBaseHUD() const { return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed); }
 
+void ABasePlayerController::SetIsAutoRunning(const bool bEnabled)
+{
+	if (bEnabled == GetIsAutoRunning())
+		return;
+	!bEnabled ? OnEndAutoRun() : OnStartAutoRun();
+}
+
+
+bool ABasePlayerController::GetIsAutoRunning() const
+{
+	auto bIsAutoRunning = false;
+	if (const UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
+		bIsAutoRunning = LyraASC->GetTagCount(StatusTags::AUTORUNNING) > 0;
+	return bIsAutoRunning;
+}
+
+void ABasePlayerController::OnStartAutoRun()
+{
+	if (UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
+	{
+		LyraASC->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 1);
+		K2_OnStartAutoRun();
+	}
+}
+
+void ABasePlayerController::OnEndAutoRun()
+{
+	if (UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
+	{
+		LyraASC->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 0);
+		K2_OnEndAutoRun();
+	}
+}
+
 void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool bGamePaused)
 {
 	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
@@ -179,7 +239,25 @@ void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool b
 	Super::PostProcessInput(DeltaTime, bGamePaused);
 }
 
-void ABasePlayerController::OnPossess(APawn* InPawn) { Super::OnPossess(InPawn); }
+void ABasePlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	//TODO  implement this
+	// #if WITH_SERVER_CODE && WITH_EDITOR
+	// 	if (GIsEditor && (InPawn != nullptr) && (GetPawn() == InPawn))
+	// 	{
+	// 		for (const FLyraCheatToRun& CheatRow : GetDefault<ULyraDeveloperSettings>()->CheatsToRun)
+	// 		{
+	// 			if (CheatRow.Phase == ECheatExecutionTime::OnPlayerPawnPossession)
+	// 			{
+	// 				ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/ true);
+	// 			}
+	// 		}
+	// 	}
+	// #endif
+
+	SetIsAutoRunning(false);
+}
 
 void ABasePlayerController::OnUnPossess()
 {

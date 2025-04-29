@@ -4,6 +4,7 @@
 #include "GameplayCueInterface.h"
 #include "GameplayTagAssetInterface.h"
 #include "ModularCharacter.h"
+#include "ReplicatedAcceleration.h"
 #include "SharedRepMovement.h"
 
 #include "BaseCharacter.generated.h"
@@ -15,6 +16,7 @@ class UPawnExtensionComponent;
 class UBaseAbilitySystemComponent;
 class UHealthComponent;
 struct FSharedRepMovement;
+struct FReplicatedAcceleration;
 
 UCLASS(Config = Game, Meta = (ShortTooltip = "The base character pawn class used by this project."))
 class GAS_API ABaseCharacter : public AModularCharacter,
@@ -39,6 +41,7 @@ public:
 	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const;
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override; // Implement IAbilitySystemInterface
 
+	void ToggleCrouch();
 
 #pragma region AActorInterface
 
@@ -123,11 +126,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Base|Character", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<ULyraCameraComponent> CameraComponent;
 
-	/*	
-		
-	
-		UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
-		FBaseReplicatedAcceleration ReplicatedAcceleration;*/
+
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_ReplicatedAcceleration)
+	FReplicatedAcceleration ReplicatedAcceleration;
 
 
 	UFUNCTION()

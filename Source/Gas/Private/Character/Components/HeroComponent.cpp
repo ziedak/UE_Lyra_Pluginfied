@@ -26,10 +26,18 @@
 #endif	// WITH_EDITOR
 
 
+#include "Character/BaseCharacter.h"
+
 #include UE_INLINE_GENERATED_CPP_BY_NAME(HeroComponent)
 
 const FName UHeroComponent::NAME_BIND_INPUTS_NOW("BindInputsNow");
 const FName UHeroComponent::NAME_ACTOR_FEATURE_NAME("Hero");
+
+namespace Hero
+{
+	static constexpr auto LookYawRate = 300.0f;
+	static constexpr auto LookPitchRate = 165.0f;
+};
 
 UHeroComponent::UHeroComponent(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer),
@@ -80,7 +88,7 @@ void UHeroComponent::AddAdditionalInputConfig(const ULyraInputConfig_DA* InputCo
 	if (!(ensureMsgf(InputComponent,
 	                 TEXT(
 		                 "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs."
-		                 " Change the input component to ULyraInputComponent or a subclass of it."
+		                 " Change the input component to UInputComponent or a subclass of it."
 	                 ))))
 		return;
 
@@ -161,7 +169,7 @@ bool UHeroComponent::CanTransitionToDataInitialized(const UGameFrameworkComponen
 bool UHeroComponent::CanTransitionToGameplayReady() const
 {
 	// TODO add ability initialization checks?
-	
+
 
 	return true;
 }
@@ -259,9 +267,9 @@ void UHeroComponent::OnRegister()
 #if WITH_EDITOR
 	if (GIsEditor)
 	{
-		static const FText Message = NSLOCTEXT("LyraHeroComponent", "NotOnPawnError",
+		static const FText Message = NSLOCTEXT("HeroComponent", "NotOnPawnError",
 		                                       "has been added to a blueprint whose base class is not a Pawn. To use this component, it MUST be placed on a Pawn Blueprint. This will cause a crash if you PIE!");
-		static const FName HeroMessageLogName = TEXT("LyraHeroComponent");
+		static const FName HeroMessageLogName = TEXT("HeroComponent");
 
 		FMessageLog(HeroMessageLogName).Error()
 		                               ->AddToken(FUObjectToken::Create(this, FText::FromString(GetNameSafe(this))))
@@ -378,7 +386,7 @@ void UHeroComponent::BindInputActions(UInputComponent* PlayerInputComponent,
 	if (!InputComponent)
 	{
 		LOG_ERROR(LogGAS, "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. "
-		          "Change the input component to ULyraInputComponent or a subclass of it.");
+		          "Change the input component to UInputComponent or a subclass of it.");
 		return;
 	}
 
@@ -434,30 +442,81 @@ void UHeroComponent::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 
 void UHeroComponent::Input_Move(const FInputActionValue& InputActionValue)
 {
-	// todo implement this function later
-	//LOG_INFO(LogGAS, "--------------- Input_Move ----------");
+	APawn* Pawn = GetPawn<APawn>();
+	AController* Controller = Pawn ? Pawn->GetController() : nullptr;
+
+	// If the player has attempted to move again then cancel auto running
+	if (ABasePlayerController* PC = Cast<ABasePlayerController>(Controller))
+		PC->SetIsAutoRunning(false);
+
+	if (Controller)
+	{
+		const FVector2D Value = InputActionValue.Get<FVector2D>();
+		const FRotator MovementRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+
+		if (Value.X != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::RightVector);
+			Pawn->AddMovementInput(MovementDirection, Value.X);
+		}
+
+		if (Value.Y != 0.0f)
+		{
+			const FVector MovementDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			Pawn->AddMovementInput(MovementDirection, Value.Y);
+		}
+	}
 }
 
 void UHeroComponent::Input_LookMouse(const FInputActionValue& InputActionValue)
 {
-	// todo implement this function later
-	//LOG_INFO(LogGAS, "--------------- Input_LookMouse ----------");
+	APawn* Pawn = GetPawn<APawn>();
+
+	if (!Pawn)
+		return;
+
+	const FVector2D Value = InputActionValue.Get<FVector2D>();
+
+	if (Value.X != 0.0f)
+		Pawn->AddControllerYawInput(Value.X);
+
+	if (Value.Y != 0.0f)
+		Pawn->AddControllerPitchInput(Value.Y);
 }
 
 void UHeroComponent::Input_LookStick(const FInputActionValue& InputActionValue)
 {
-	// todo implement this function later
-	//LOG_INFO(LogGAS, "--------------- Input_LookStick ----------");
+	APawn* Pawn = GetPawn<APawn>();
+
+	if (!Pawn)
+		return;
+
+	const FVector2D Value = InputActionValue.Get<FVector2D>();
+
+	const UWorld* World = GetWorld();
+	check(World);
+
+	if (Value.X != 0.0f)
+		Pawn->AddControllerYawInput(Value.X * Hero::LookYawRate * World->GetDeltaSeconds());
+
+	if (Value.Y != 0.0f)
+		Pawn->AddControllerPitchInput(Value.Y * Hero::LookPitchRate * World->GetDeltaSeconds());
 }
 
 void UHeroComponent::Input_Crouch(const FInputActionValue& InputActionValue)
 {
-	// todo implement this function later
-	//LOG_INFO(LogGAS, "--------------- Input_Move ----------");
+	if (ABaseCharacter* Character = GetPawn<ABaseCharacter>())
+		Character->ToggleCrouch();
 }
 
 void UHeroComponent::Input_AutoRun(const FInputActionValue& InputActionValue)
 {
-	// todo impl
-	//LOG_INFO(LogGAS, "--------------- Input_AutoRun ----------");
+	if (APawn* Pawn = GetPawn<APawn>())
+	{
+		if (ABasePlayerController* Controller = Cast<ABasePlayerController>(Pawn->GetController()))
+		{
+			// Toggle auto running
+			Controller->SetIsAutoRunning(!Controller->GetIsAutoRunning());
+		}
+	}
 }

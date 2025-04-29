@@ -23,7 +23,6 @@ public:
 
 	//~UActorComponent interface
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	//~End of UActorComponent interface
 
 	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 
@@ -64,15 +63,16 @@ public:
 	// Removes all active instances of the gameplay effect that was used to add the specified dynamic granted tag.
 	void RemoveDynamicTagGameplayEffect(const TSoftClassPtr<UGameplayEffect>&, const FGameplayTag& Tag);
 
-	/** Gets the ability target data associated with the given ability handle and activation info */
+	// Gets the ability target data associated with the given ability handle and activation info 
 	void GetAbilityTargetData(const FGameplayAbilitySpecHandle AbilityHandle,
 	                          const FGameplayAbilityActivationInfo& ActivationInfo,
 	                          FGameplayAbilityTargetDataHandle& OutTargetDataHandle) const;
 
-	///** Sets the current tag relationship mapping, if null it will clear it out */
+	// Sets the current tag relationship mapping, if null it will clear it out and use the default mapping.
+	// This is used to determine the relationship between tags when activating and canceling abilities.
 	FORCEINLINE void SetTagRelationshipMapping(UBaseAbilityTagRelationshipMapping* NewMapping) { TagRelationshipMapping = NewMapping; };
 
-	/** Looks at ability tags and gathers additional required and blocking tags */
+	// Looks at ability tags and gathers additional required and blocking tags
 	void GetAdditionalActivationTagRequirements(const FGameplayTagContainer& AbilityTags,
 	                                            FGameplayTagContainer& OutActivationRequired,
 	                                            FGameplayTagContainer& OutActivationBlocked) const;

@@ -37,6 +37,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Base|PlayerController")
 	ABaseHud* GetBaseHUD() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Lyra|Character")
+	void SetIsAutoRunning(const bool bEnabled);
+
+	UFUNCTION(BlueprintCallable, Category = "Lyra|Character")
+	bool GetIsAutoRunning() const;
+
 protected:
 	//~AController interface
 	virtual void OnPossess(APawn* InPawn) override;
@@ -57,7 +63,8 @@ protected:
 	virtual void UpdateForceFeedback(IInputInterface* InputInterface, int32 ControllerId) override;
 	virtual void UpdateHiddenComponents(const FVector& ViewLocation, TSet<FPrimitiveComponentId>& OutHiddenComponents) override;
 	virtual void PlayerTick(float DeltaTime) override;
-
+	virtual void SmoothTargetViewRotation(APawn* TargetPawn, float DeltaSeconds) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//~ILyraCameraAssistInterface interface
 	virtual void OnCameraPenetratingTarget() override
 	{
@@ -75,4 +82,12 @@ private:
 
 protected:
 	void OnSettingsChanged(const ULyraSettingsShared* InSettings);
+	void OnStartAutoRun();
+	void OnEndAutoRun();
+
+	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnStartAutoRun"))
+	void K2_OnStartAutoRun();
+
+	UFUNCTION(BlueprintImplementableEvent, meta=(DisplayName="OnEndAutoRun"))
+	void K2_OnEndAutoRun();
 };

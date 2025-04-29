@@ -56,6 +56,7 @@ namespace InputTags
 
 namespace BaseGameplayTags
 {
+	UE_DEFINE_GAMEPLAY_TAG(MOVEMENT_STOPPED, "Gameplay.MovementStopped");
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE, "Gameplay.Damage");
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_IMMUNITY, "Gameplay.DamageImmunity");
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_SELF_DESTRUCT, "Gameplay.Damage.SelfDestruct");
@@ -63,8 +64,7 @@ namespace BaseGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG(DAMAGE_MESSAGE, "Gameplay.Damage.Message");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ABILITY_INPUT_BLOCKED, "Gameplay.AbilityInputBlocked", "Clear Ability Input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ELIMINATION_MESSAGE, "Gameplay.Elimination.Message",
-	                               "Defines a native gameplay tag such that it's only available to the cpp file you define it in")
-	;
+	                               "Defines a native gameplay tag such that it's only available to the cpp file you define it in");
 }
 
 namespace GameplayCueTags
@@ -123,7 +123,7 @@ namespace PlatformTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(TRAIT_INPUT_HARDWARECURSOR, "Platform.Trait.Input.HardwareCursor");
 	UE_DEFINE_GAMEPLAY_TAG(TRAIT_BINAURAL_SETTING_CONTROLLED_BY_OS,
-							  "Platform.Trait.BinauralSettingControlledByOS");
+	                       "Platform.Trait.BinauralSettingControlledByOS");
 }
 
 namespace UITags
