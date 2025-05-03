@@ -92,18 +92,6 @@ namespace GameplayEventTags
 	;
 }
 
-namespace SetByCallerTags
-{
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(DAMAGE, "SetByCaller.Damage", "SetByCaller tag used by damage gameplay effects.");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(HEAL, "SetByCaller.Heal", "SetByCaller tag used by healing gameplay effects.");
-}
-
-namespace CheatTags
-{
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GODMODE, "Cheat.GodMode", "GodMode cheat is active on the owner.");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(UNLIMITED_HEALTH, "Cheat.UnlimitedHealth",
-	                               "UnlimitedHealth cheat is active on the owner.");
-}
 
 namespace StatusTags
 {
@@ -145,8 +133,7 @@ namespace MovementTags
 
 	// When extending Lyra, you can create your own movement modes, but you need to update GetCustomMovementModeTagMap()
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(MODE_CUSTOM, "Movement.Mode.Custom",
-	                               "This is invalid and should be replaced with custom tags.  See LyraGameplayTags::CustomMovementModeTagMap.")
-	;
+	                               "This is invalid and should be replaced with custom tags.  See LyraGameplayTags::CustomMovementModeTagMap.");
 
 
 	// Unreal Movement Modes
@@ -165,31 +152,4 @@ namespace MovementTags
 	{
 		// Fill these in with your custom modes
 	};
-}
-
-
-FGameplayTag FindTagByString(const FString& TagString, const bool bMatchPartialString)
-{
-	const UGameplayTagsManager& Manager = UGameplayTagsManager::Get();
-	FGameplayTag Tag = Manager.RequestGameplayTag(FName(*TagString), false);
-
-	if (!Tag.IsValid() && bMatchPartialString)
-	{
-		FGameplayTagContainer AllTags;
-		Manager.RequestAllGameplayTags(AllTags, true);
-
-		for (const FGameplayTag& TestTag : AllTags)
-		{
-			if (TestTag.ToString().Contains(TagString))
-			{
-				UE_LOG(LogTemp, Display,
-				       TEXT("Could not find exact match for tag [%s] but found partial match on tag [%s]."), *TagString,
-				       *TestTag.ToString());
-				Tag = TestTag;
-				break;
-			}
-		}
-	}
-
-	return Tag;
 }

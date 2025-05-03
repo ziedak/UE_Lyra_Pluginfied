@@ -1,56 +1,52 @@
-# Gas
+# UE Lyra Pluginfied Project
 
-CMD
-D:/"Program Files"/"Epic Games"/UE_5.4/Engine/Build/BatchFiles/Build.bat Gas Win64 Development -project="E:/Unreal
-Projects/ue5/zied/Gas/Gas.uproject"
+This project is based on the Lyra Game Sample from Unreal Engine. It serves as a foundation for creating games using Unreal Engine 5, with a focus on modularity and reusability.
 
-MSBuildEnableWorkloadResolver: true
+## Features
 
-## Input System:
+- **Code Cleanup**: Refactored and optimized the original Lyra Game Sample code for better readability and maintainability.
+- **Plugins**: Extracted various game logic and boilerplate code into reusable plugins to enhance usability and modularity.
+- **Unreal Engine 5.4/5.5**: Built and tested with Unreal Engine 5.4/5.5.
 
-Resources:
+## Current Status
 
-- [Input System](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/index.html)
-- [Input System Overview](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/InputSystemOverview/index.html)
-- [Input Action System](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/InputActionSystem/index.html)
-- [Input Mapping Context](https://docs.unrealengine.com/en-US/InteractiveExperiences/Input/InputMappingContext/index.html)
-- [Input Routing](https://www.exportgeometry.com/blog/input-routing-deep-dive)
-- [Introduction to Common UI](https://www.youtube.com/watch?v=TTB5y-03SnE&t=4581s)
+The project is still in development. The primary focus is on improving the codebase and creating reusable components for future projects.
 
-### Enhanced Input System:
+## How to Use
 
-- This system pushes input bindings into data assets. There are two pieces:
-- The input mapping context, which is essentially a replacement for the key binding map.
-  They map from key->input_action
-- The input actions, which define the actual events that you branch from.
+1. Clone the repository to your local machine.
+2. Open the project in Unreal Engine 5.4.
+3. Build and run the project using the provided Visual Studio Code workspace configuration.
 
-### Common UI Input Action System
+## Development Notes
 
-The common UI input action system is a half-baked collection of systems that let you do a couple different things:
-Bind user input to widget functionality
-Display icons for input keys
-That’s basically it
-CommonUI IAS consists of the following:
+- The project structure has been modified to separate game logic into plugins for better organization.
+- Additional features and improvements are planned for future updates.
 
-#### Input Action Table
+## Contributing
 
-This contains bindings from [action name]->[device specific keybinding]. This is a one-to-many relationship. So you
-could bind the “jump” action to [spacebar] on a keyboard and [A] on an xbox controller.
+Contributions are welcome! Feel free to fork the repository and submit pull requests with your improvements or suggestions.
+Please follow these steps:
 
-#### InputControllerData
+1. Fork the repository.
+2. Create a new branch:
+    ```
+    git checkout -b feature/your-feature-name
+    ```
+3. Commit your changes:
+    ```
+    git commit -m "Add your message here"
+    ```
+4. Push to the branch:
+    ```
+    git push origin feature/your-feature-name
+    ```
+5. Open a pull request.
 
-This basically just allows you to give each key on an input device (keyboard, controller, etc) an icon.
+## License
 
-#### CommonUIInputData
+This project is licensed under the terms of the Unreal Engine EULA. Please refer to the [Unreal Engine EULA](https://www.unrealengine.com/en-US/eula) for more details.
 
-Here you specify a universal “click” and “back” action. The action must link to a row in your input action table.
+## Contact
 
-#### FNavigationConfig black magic:
-
-You can actually rebind the engine definitions for basic actions like a “click”.
-
-# Strings
-
-Name = constant string
-Sting = normal string
-Text = Localizable text
+For any questions or feedback, please reach out to the project maintainer at [Zied Akremi](mailto:ziedakremi@gmail.com)

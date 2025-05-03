@@ -21,7 +21,7 @@ public class Logger : ModuleRules
 			{
 				"Engine",
 				"DeveloperSettings", // This module allows for the creation and management of developer settings.
-				"EngineSettings" // This module manages engine-specific settings.
+				"EngineSettings", "GameplayAbilities", "GameplayTags" // This module manages engine-specific settings.
 			}
 		);
 

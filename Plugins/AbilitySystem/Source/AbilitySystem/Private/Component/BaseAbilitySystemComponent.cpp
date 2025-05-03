@@ -362,6 +362,17 @@ void UBaseAbilitySystemComponent::CancelActivationGroupAbilities(EAbilityActivat
 	CancelAbilitiesByFunc(ShouldCancelFunc, bReplicateCancelAbility);
 }
 
+void UBaseAbilitySystemComponent::ToggleDynamicTagGameplayEffect(const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect,
+                                                                 const FGameplayTag& Tag)
+{
+	if (HasMatchingGameplayTag(Tag))
+	{
+		RemoveDynamicTagGameplayEffect(DynamicTagGameplayEffect, Tag);
+		return;
+	}
+	AddDynamicTagGameplayEffect(DynamicTagGameplayEffect, Tag);
+}
+
 // This function adds the dynamic tag gameplay effect with the specified tag.
 void UBaseAbilitySystemComponent::AddDynamicTagGameplayEffect(
 	const TSoftClassPtr<UGameplayEffect>& DynamicTagGameplayEffect,

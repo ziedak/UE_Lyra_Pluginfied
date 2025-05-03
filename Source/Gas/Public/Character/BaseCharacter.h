@@ -5,7 +5,9 @@
 #include "GameplayTagAssetInterface.h"
 #include "ModularCharacter.h"
 #include "ReplicatedAcceleration.h"
-#include "SharedRepMovement.h"
+#include "Interface/ISharedReplication.h"
+#include "ReplicationGraph/SharedRepMovement.h"
+
 
 #include "BaseCharacter.generated.h"
 
@@ -15,14 +17,14 @@ class ABasePlayerState;
 class UPawnExtensionComponent;
 class UBaseAbilitySystemComponent;
 class UHealthComponent;
-struct FSharedRepMovement;
 struct FReplicatedAcceleration;
 
 UCLASS(Config = Game, Meta = (ShortTooltip = "The base character pawn class used by this project."))
 class GAS_API ABaseCharacter : public AModularCharacter,
                                public IAbilitySystemInterface,
                                public IGameplayCueInterface,
-                               public IGameplayTagAssetInterface
+                               public IGameplayTagAssetInterface,
+                               public ISharedReplication
 
 {
 	GENERATED_BODY()
@@ -76,7 +78,7 @@ public:
 	// Last FSharedRepMovement we sent, to avoid sending repeatedly.
 	FSharedRepMovement LastSharedReplication;
 
-	virtual bool UpdateSharedReplication();
+	virtual bool UpdateSharedReplication() override;
 
 protected:
 	virtual void OnAbilitySystemInitialized();

@@ -5,9 +5,13 @@
 
 LOGGER_API DECLARE_LOG_CATEGORY_EXTERN(LogGAS, Log, All);
 
+LOGGER_API DECLARE_LOG_CATEGORY_EXTERN(LogCheat, Log, All);
+
 LOGGER_API DECLARE_LOG_CATEGORY_EXTERN(LogCORE, Log, All);
 
 LOGGER_API DECLARE_LOG_CATEGORY_EXTERN(LogExperience, Log, All);
+
+LOGGER_API DECLARE_LOG_CATEGORY_EXTERN(LogRepGraph, Log, All);
 
 //CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogGASAbilitySystem, Log, All);
 //CUSTOMCORE_API DECLARE_LOG_CATEGORY_EXTERN(LogGASTeams, Log, All);
@@ -31,7 +35,7 @@ char* class_func(const char* c, const char* f)
 #define __CLASS_FUNCTION__ class_func(typeid(*this).name(), __func__)
 #endif
 
- LOGGER_API FString GetClientServerContext(UObject* ContextObject);
+LOGGER_API FString GetClientServerContext(UObject* ContextObject);
 
 void PrintCallStack();
 

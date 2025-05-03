@@ -1,6 +1,7 @@
 #include "Attributes/HealthSet.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "Cheat/CheatTags.h"
 #include "MessageRuntime/GameplayMessageSubsystem.h"
 
 #include "Component/BaseAbilitySystemComponent.h"
@@ -76,7 +77,8 @@ void UHealthSet::OnRep_MaxHealth(const FGameplayAttributeData& OldValue) const
 
 bool UHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
 {
-	if (!Super::PreGameplayEffectExecute(Data)) { return false; }
+	if (!Super::PreGameplayEffectExecute(Data))
+		return false;
 
 	// Handle modifying incoming normal damage
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
@@ -94,7 +96,7 @@ bool UHealthSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
 			}
 #if !UE_BUILD_SHIPPING
 			// Check GodMode cheat, unlimited health is checked below
-			if (Data.Target.HasMatchingGameplayTag(CheatTags::GODMODE) && !bIsDamageFromSelfDestruct)
+			if (Data.Target.HasMatchingGameplayTag(CheatTags::GOD_MODE) && !bIsDamageFromSelfDestruct)
 			{
 				// Do not take away any health.
 				Data.EvaluatedData.Magnitude = 0.0f;
@@ -155,8 +157,8 @@ float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data)
 	auto MinimumHealth = 0.0f;
 
 #if !UE_BUILD_SHIPPING
-	if (!bIsDamageFromSelfDestruct && (Data.Target.HasMatchingGameplayTag(CheatTags::GODMODE) || Data.Target.
-	                                                                                                  HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH)))
+	if (!bIsDamageFromSelfDestruct &&
+		(Data.Target.HasMatchingGameplayTag(CheatTags::GOD_MODE) || Data.Target.HasMatchingGameplayTag(CheatTags::UNLIMITED_HEALTH)))
 		MinimumHealth = 1.0f;
 #endif
 
@@ -165,7 +167,8 @@ float UHealthSet::GetMinimumHealth(const FGameplayEffectModCallbackData& Data)
 
 void UHealthSet::HandleDamage(const FGameplayEffectModCallbackData& Data, const float MinimumHealth)
 {
-	if (Data.EvaluatedData.Magnitude > 0.0f) { BroadcastDamageMessage(Data); }
+	if (Data.EvaluatedData.Magnitude > 0.0f)
+		BroadcastDamageMessage(Data);
 
 	SetHealth(FMath::Clamp(GetHealth() - GetDamage(), MinimumHealth, GetMaxHealth()));
 	SetDamage(0.0f);
@@ -223,7 +226,8 @@ void UHealthSet::PostAttributeChange(const FGameplayAttribute& Attribute, float 
 		}
 	}
 
-	if (bOutOfHealth && (GetHealth() > 0.0f)) { bOutOfHealth = false; }
+	if (bOutOfHealth && (GetHealth() > 0.0f))
+		bOutOfHealth = false;
 }
 
 

@@ -18,6 +18,14 @@
 #endif
 
 
+#include "EngineUtils.h"
+#include "Character/Components/HealthComponent.h"
+#include "Character/Components/PawnExtensionComponent.h"
+#include "Cheat/CheatDeveloperSettings.h"
+#include "Cheat/CheatToRun.h"
+#include "Core/GAssetManager.h"
+#include "Data/GasGameData.h"
+#include "Log/Log.h"
 #include "Net/UnrealNetwork.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(BasePlayerController)
@@ -189,10 +197,15 @@ void ABasePlayerController::UpdateHiddenComponents(const FVector& ViewLocation, 
 
 ABasePlayerState* ABasePlayerController::GetBasePlayerState() const { return CastChecked<ABasePlayerState>(PlayerState, ECastCheckedType::NullAllowed); }
 
-UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponent() const
+UAbilitySystemComponent* ABasePlayerController::GetAbilitySystemComponent() const
 {
 	const ABasePlayerState* BasePs = GetBasePlayerState();
-	return BasePs ? BasePs->GetBaseAbilitySystemComponent() : nullptr;
+	return BasePs ? BasePs->GetAbilitySystemComponent() : nullptr;
+}
+
+UBaseAbilitySystemComponent* ABasePlayerController::GetBaseAbilitySystemComponent() const
+{
+	return Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
 }
 
 ABaseHud* ABasePlayerController::GetBaseHUD() const { return CastChecked<ABaseHud>(GetHUD(), ECastCheckedType::NullAllowed); }
@@ -208,25 +221,25 @@ void ABasePlayerController::SetIsAutoRunning(const bool bEnabled)
 bool ABasePlayerController::GetIsAutoRunning() const
 {
 	auto bIsAutoRunning = false;
-	if (const UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
-		bIsAutoRunning = LyraASC->GetTagCount(StatusTags::AUTORUNNING) > 0;
+	if (const UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
+		bIsAutoRunning = Asc->GetTagCount(StatusTags::AUTORUNNING) > 0;
 	return bIsAutoRunning;
 }
 
 void ABasePlayerController::OnStartAutoRun()
 {
-	if (UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
+	if (UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
 	{
-		LyraASC->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 1);
+		Asc->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 1);
 		K2_OnStartAutoRun();
 	}
 }
 
 void ABasePlayerController::OnEndAutoRun()
 {
-	if (UBaseAbilitySystemComponent* LyraASC = GetBaseAbilitySystemComponent())
+	if (UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
 	{
-		LyraASC->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 0);
+		Asc->SetLooseGameplayTagCount(StatusTags::AUTORUNNING, 0);
 		K2_OnEndAutoRun();
 	}
 }
@@ -242,19 +255,21 @@ void ABasePlayerController::PostProcessInput(const float DeltaTime, const bool b
 void ABasePlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	//TODO  implement this
-	// #if WITH_SERVER_CODE && WITH_EDITOR
-	// 	if (GIsEditor && (InPawn != nullptr) && (GetPawn() == InPawn))
-	// 	{
-	// 		for (const FLyraCheatToRun& CheatRow : GetDefault<ULyraDeveloperSettings>()->CheatsToRun)
-	// 		{
-	// 			if (CheatRow.Phase == ECheatExecutionTime::OnPlayerPawnPossession)
-	// 			{
-	// 				ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/ true);
-	// 			}
-	// 		}
-	// 	}
-	// #endif
+#if WITH_SERVER_CODE && WITH_EDITOR
+
+	// Run any cheats that are set to run on possession
+	// This is useful for testing things like the LyraDebugCheatManager
+	// and other cheats that need to be run on the server
+	// but only when the player is in control of the pawn)
+	if (GIsEditor && InPawn && GetPawn() == InPawn)
+	{
+		for (const FCheatToRun& CheatRow : GetDefault<UCheatDeveloperSettings>()->CheatsToRun)
+		{
+			if (CheatRow.Phase == ECheatExecutionTime::OnPlayerPawnPossession)
+				ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/ true);
+		}
+	}
+#endif
 
 	SetIsAutoRunning(false);
 }
@@ -319,4 +334,125 @@ void ABasePlayerController::UpdateForceFeedback(IInputInterface* InputInterface,
 	}
 
 	InputInterface->SetForceFeedbackChannelValues(ControllerId, FForceFeedbackValues());
+}
+
+
+void ABasePlayerController::ToggleDynamicTagGameplayEffect(const FGameplayTag& Tag)
+{
+	const auto Asc = GetBaseAbilitySystemComponent();
+	if (!Asc)
+		return;
+	const auto Ge = UGasGameData::Get().DynamicTagGameplayEffect;
+	if (!Ge)
+	{
+		LOG_WARNING(LogGAS, "ToggleDynamicTagGameplayEffect: Unable to find DynamicTagGameplayEffect [%s].",
+		            *UGasGameData::Get().DynamicTagGameplayEffect.GetAssetName());
+		return;
+	}
+	Asc->ToggleDynamicTagGameplayEffect(Ge, Tag);
+}
+
+void ABasePlayerController::ApplySetByCallerHealth(UAbilitySystemComponent* Asc, const FGameplayTag& Tag, const float Amount, const TSoftClassPtr<UGameplayEffect>& GameplayEffect_SetByCaller)
+{
+	check(Asc);
+
+	const TSubclassOf<UGameplayEffect> HealGE = UGAssetManager::GetSubclass(GameplayEffect_SetByCaller);
+	const FGameplayEffectSpecHandle SpecHandle = Asc->MakeOutgoingSpec(HealGE, 1.0f, Asc->MakeEffectContext());
+
+	if (SpecHandle.IsValid())
+	{
+		SpecHandle.Data->SetSetByCallerMagnitude(Tag, Amount);
+		Asc->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
+}
+
+void ABasePlayerController::ApplySetByCallerHeal(UAbilitySystemComponent* Asc, const FGameplayTag& Tag, const float Amount)
+{
+	ApplySetByCallerHealth(Asc, Tag, Amount, UGasGameData::Get().HealGameplayEffect_SetByCaller);
+}
+
+void ABasePlayerController::ApplySetByCallerDamage(UAbilitySystemComponent* Asc, const FGameplayTag& Tag, const float Amount)
+{
+	ApplySetByCallerHealth(Asc, Tag, Amount, UGasGameData::Get().DamageGameplayEffect_SetByCaller);
+}
+
+
+void ABasePlayerController::DamageSelfDestruct() const
+{
+	const auto CurrentPawn = GetPawn();
+	check(CurrentPawn);
+	if (const UPawnExtensionComponent* PawnExtComp = UPawnExtensionComponent::FindPawnExtensionComponent(CurrentPawn))
+	{
+		if (!PawnExtComp->IsGameplayReady())
+			return;
+		if (UHealthComponent* HealthComponent = UHealthComponent::FindHealthComponent(CurrentPawn))
+			HealthComponent->DamageSelfDestruct();
+	}
+}
+
+void ABasePlayerController::AddDynamicTagGameplayEffect(const FGameplayTag& Tag) const
+{
+	const auto Asc = GetBaseAbilitySystemComponent();
+	const auto DynamicTagGE = UGasGameData::Get().DynamicTagGameplayEffect;
+	Asc->AddDynamicTagGameplayEffect(DynamicTagGE, Tag);
+}
+
+void ABasePlayerController::RemoveDynamicTagGameplayEffect(const FGameplayTag& Tag) const
+{
+	const auto Asc = GetBaseAbilitySystemComponent();
+	const auto DynamicTagGE = UGasGameData::Get().DynamicTagGameplayEffect;
+	Asc->RemoveDynamicTagGameplayEffect(DynamicTagGE, Tag);
+}
+
+void ABasePlayerController::CancelInputActivatedAbilities(const bool bReplicateCancelAbility) const
+{
+	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
+		BaseAsc->CancelInputActivatedAbilities(bReplicateCancelAbility);
+}
+
+void ABasePlayerController::AddCheats(const bool bForce)
+{
+#if !UE_BUILD_SHIPPING
+	Super::AddCheats(true);
+#else
+	Super::AddCheats(bForce);
+#endif
+}
+
+
+void ABasePlayerController::ServerCheat_Implementation(const FString& Msg)
+{
+#if !UE_BUILD_SHIPPING
+	if (CheatManager)
+	{
+		UE_LOG(LogGAS, Warning, TEXT("ServerCheat: %s"), *Msg);
+		ClientMessage(ConsoleCommand(Msg));
+	}
+#endif
+}
+
+bool ABasePlayerController::ServerCheat_Validate(const FString& Msg)
+{
+	return true;
+}
+
+void ABasePlayerController::ServerCheatAll_Implementation(const FString& Msg)
+{
+#if !UE_BUILD_SHIPPING
+	if (!CheatManager)
+		return;
+	LOG_WARNING(LogGAS, "ServerCheatAll: %s", *Msg);
+	for (TActorIterator<APlayerController> It(GetWorld()); It; ++It)
+	{
+		APlayerController* PC = (*It);
+		if (!PC)
+			continue;
+		PC->ClientMessage(PC->ConsoleCommand(Msg));
+	}
+#endif
+}
+
+bool ABasePlayerController::ServerCheatAll_Validate(const FString& Msg)
+{
+	return true;
 }

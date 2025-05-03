@@ -82,17 +82,6 @@ namespace GameplayEventTags
 	ABILITYSYSTEM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(REQUEST_RESET);
 }
 
-namespace SetByCallerTags
-{
-	ABILITYSYSTEM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(DAMAGE);
-	ABILITYSYSTEM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(HEAL);
-}
-
-namespace CheatTags
-{
-	ABILITYSYSTEM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(GODMODE);
-	ABILITYSYSTEM_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(UNLIMITED_HEALTH);
-}
 
 namespace StatusTags
 {
@@ -149,6 +138,4 @@ namespace MovementTags
 	// These are mappings from MovementMode enums to GameplayTags associated with those enums (below)
 	ABILITYSYSTEM_API extern const TMap<uint8, FGameplayTag> MovementModeTagMap;
 	ABILITYSYSTEM_API extern const TMap<uint8, FGameplayTag> CustomMovementModeTagMap;
-
-	ABILITYSYSTEM_API FGameplayTag FindTagByString(const FString& TagString, bool bMatchPartialString = false);
 }

@@ -42,15 +42,14 @@ void UCoreDeveloperSettings::ApplySettings()
 void UCoreDeveloperSettings::OnPlayInEditorStarted() const
 {
 	// Show a notification toast to remind the user that there's an experience override set
-	if (ExperienceOverride.IsValid())
-	{
-		FNotificationInfo Info(FText::Format(
-			LOCTEXT("ExperienceOverrideActive", "Developer Settings Override\nExperience {0}"),
-			FText::FromName(ExperienceOverride.PrimaryAssetName)
-			));
-		Info.ExpireDuration = 2.0f;
-		FSlateNotificationManager::Get().AddNotification(Info);
-	}
+	if (!ExperienceOverride.IsValid())
+		return;
+	FNotificationInfo Info(FText::Format(
+		LOCTEXT("ExperienceOverrideActive", "Developer Settings Override\nExperience {0}"),
+		FText::FromName(ExperienceOverride.PrimaryAssetName)
+	));
+	Info.ExpireDuration = 2.0f;
+	FSlateNotificationManager::Get().AddNotification(Info);
 }
 #endif
 

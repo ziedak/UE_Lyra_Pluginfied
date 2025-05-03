@@ -7,32 +7,6 @@
 #include "CoreDeveloperSettings.generated.h"
 
 /**
- * 
- */
-
-UENUM()
-enum class ECheatExecutionTime
-{
-	// When the cheat manager is created
-	OnCheatManagerCreated,
-
-	// When a pawn is possessed by a player
-	OnPlayerPawnPossession
-};
-
-USTRUCT()
-struct FLyraCheatToRun
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	ECheatExecutionTime Phase = ECheatExecutionTime::OnPlayerPawnPossession;
-
-	UPROPERTY(EditAnywhere)
-	FString Cheat;
-};
-
-/**
  * Developer settings / editor cheats
  */
 UCLASS(config=EditorPerProjectUserSettings, MinimalAPI)
@@ -43,39 +17,32 @@ class UCoreDeveloperSettings : public UDeveloperSettingsBackedByCVars
 public:
 	//~UDeveloperSettings interface
 	virtual FName GetCategoryName() const override;
-	//~End of UDeveloperSettings interface
 
 	// The experience override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Lyra, meta=(AllowedTypes="ExperienceDefinition_DA"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Experience, meta=(AllowedTypes="ExperienceDefinition_DA"))
 	FPrimaryAssetId ExperienceOverride;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=LyraBots, meta=(InlineEditConditionToggle))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Bots, meta=(InlineEditConditionToggle))
 	bool bOverrideBotCount = false;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=LyraBots, meta=(EditCondition=bOverrideBotCount))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Bots, meta=(EditCondition=bOverrideBotCount))
 	int32 OverrideNumPlayerBotsToSpawn = 0;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=LyraBots)
-	bool bAllowPlayerBotsToAttack = true;
 
 	// Do the full game flow when playing in the editor, or skip 'waiting for player' / etc... game phases?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Lyra)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Game)
 	bool bTestFullGameFlowInPIE = false;
 
 	/**
 	* Should force feedback effects be played, even if the last input device was not a gamepad?
-	* The default behavior in Lyra is to only play force feedback if the most recent input device was a gamepad.
+	* The default behavior in  is to only play force feedback if the most recent input device was a gamepad.
 	*/
-	UPROPERTY(config, EditAnywhere, Category = Lyra, meta = (ConsoleVariable = "LyraPC.ShouldAlwaysPlayForceFeedback"))
+	UPROPERTY(config, EditAnywhere, Category = Game, meta = (ConsoleVariable = "PC.ShouldAlwaysPlayForceFeedback"))
 	bool bShouldAlwaysPlayForceFeedback = false;
 
 	// Should game logic load cosmetic backgrounds in the editor or skip them for iteration speed?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Lyra)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, config, Category=Game)
 	bool bSkipLoadingCosmeticBackgroundsInPIE = false;
-
-	// List of cheats to auto-run during 'play in editor'
-	UPROPERTY(config, EditAnywhere, Category=Lyra)
-	TArray<FLyraCheatToRun> CheatsToRun;
 
 	// Should messages broadcast through the gameplay message subsystem be logged?
 	UPROPERTY(config, EditAnywhere, Category=GameplayMessages,

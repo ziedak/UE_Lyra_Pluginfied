@@ -20,28 +20,80 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a72dfda1-d059-4ab9-9775-fee050a70850" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Development/ReplicationGraphSettings.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Interface/ISharedReplication.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/ReplicationGraph/BaseReplicationGraph.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/ReplicationGraph/BaseReplicationGraphNode_AlwaysRelevant_ForConnection.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/ReplicationGraph/ReplicationGraphNode_PlayerStateFrequencyLimiter.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Significance/BaseSignificanceManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Development/ReplicationGraphSettings.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Interface/ISharedReplication.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/BaseReplicationGraph.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/BaseReplicationGraphNode_AlwaysRelevant_ForConnection.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/ReplicationGraphConsole.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/ReplicationGraphNode_PlayerStateFrequencyLimiter.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Significance/BaseSignificanceManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Config/DefaultLogger.ini" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/BaseCheatManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/CheatDeveloperSettings.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/CheatTags.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/CheatToRun.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/Interfaces/CheatServer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/BaseCheatManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/CheatConsole.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/CheatDeveloperSettings.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/CheatTags.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/CheatToRun.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Cheat/Interfaces/CheatServer.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Gas/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/Android/AndroidGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/Android/AndroidGame.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/Input/ControllerData_PcKey.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/Input/ID_Game.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/Input/InputData.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/B_FrontendStateCmp.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/B_LyraUIPolicy.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_ButtonBase.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_Startup.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Menu/W_Startup.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/Screens/Settings/WSC_Setting.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/CommonUI/UI/Screens/Settings/WSC_Setting.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/CommonUI/UI/UI_MainMenu.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Core/B_DedaultExperience.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Core/B_DefaultExperience2.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Core/DA_Experience_Default.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Input/IMC_Default.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Input/IMC_Default.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Input/Actions/IA_Jump.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Input/Actions/IA_Look.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Input/Actions/IA_Move.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Input/Actions/IA_Test.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ThirdPerson/Input/IMC_Default.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/Foundation/Materials/Functions/MF_UI_CursorPosition.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/Foundation/Materials/Functions/MF_UI_Viewport_UI_Scale.uasset" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/Hud/W_LyraGameMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/Hud/W_LyraGameMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Attributes/HealthSet.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Attributes/HealthSet.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Component/BaseAbilitySystemComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Component/BaseAbilitySystemComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Tags/BaseGameplayTags.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Private/Tags/BaseGameplayTags.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Component/BaseAbilitySystemComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Component/BaseAbilitySystemComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Tags/BaseGameplayTags.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/AbilitySystem/Source/AbilitySystem/Public/Tags/BaseGameplayTags.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/CameraAssistInterface.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/CameraModeStack.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/CameraMode_ThirdPerson.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/CustomCameraMode.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/CustomCameraTypes.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/LyraCameraComponent.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/LyraPlayerCameraManager.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/PenetrationAvoidanceFeeler.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/Readme.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/CustomCamera/Documents/UICameraManagerComponent.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/CustomCore.uplugin" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/CustomCore.uplugin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/CustomCore.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/CustomCore.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Development/CoreDeveloperSettings.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/Development/CoreDeveloperSettings.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/GameState/PlayerSpawningManagerComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/GameState/PlayerSpawningManagerComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Development/CoreDeveloperSettings.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/Development/CoreDeveloperSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/GameState/PlayerSpawningManagerComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/GameState/PlayerSpawningManagerComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Logger.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Logger.Build.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Log/Log.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Log/Log.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Log/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Log/Log.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Gas.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Gas.Build.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/BaseCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HeroComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HealthComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/HealthComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/PawnExtensionComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Character/Components/PawnExtensionComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/ReplicatedAcceleration.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/RepGraphActorClassSettings.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Character/SharedRepMovement.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Private/ReplicationGraph/SharedRepMovement.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Private/Player/BasePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Death.h~" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Jump.h~" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Abilities/GameplayAbility_Reset.h~" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/BaseCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/ReplicatedAcceleration.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/ReplicatedAcceleration.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/PawnExtensionComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Character/Components/PawnExtensionComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Character/SharedRepMovement.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/CustomCore/Source/CustomCore/Public/ReplicationGraph/SharedRepMovement.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/Gas/Public/Player/BasePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/Gas/Public/Player/BasePlayerController.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -111,6 +163,7 @@
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Media/ElectraCDM/Source/ElectraCDM/Private/3rdParty/tiny-AES-c/aes.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/NNE/NNERuntimeORT/Source/NNERuntimeORT/Private/NNERuntimeORTUtils.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/CommonUI/Source/CommonUI/Private/Widgets/CommonActivatableWidgetContainer.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/Private/Abilities/GameplayAbility.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/Metasound/Source/MetasoundFrontend/Public/MetasoundFrontendTransform.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/ResonanceAudio/Source/ResonanceAudio/Private/ResonanceAudioLibrary/resonance_audio/base/audio_buffer.h" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Plugins/Runtime/ResonanceAudio/Source/ResonanceAudio/Private/ResonanceAudioLibrary/resonance_audio/dsp/gain.h" root0="SKIP_HIGHLIGHTING" />
@@ -157,6 +210,7 @@
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Private/Misc/GCObjectReferencer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Private/UObject/Class.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Private/UObject/ScriptCore.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Blueprint/BlueprintSupport.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/Casts.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/Templates/SubclassOf.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/CoreUObject/Public/UObject/Class.h" root0="FORCE_HIGHLIGHTING" />
@@ -173,6 +227,7 @@
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Engine/LocalPlayer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Engine/Player.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/Controller.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/GameModeBase.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/GameFramework/HUD.h" root0="FORCE_HIGHLIGHTING" />
@@ -181,6 +236,8 @@
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Classes/Sound/AudioSettings.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Actor.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Camera/CameraComponent.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Character.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/CheatManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Controller.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameFramework/SaveGame.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/GameInstance.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -197,9 +254,11 @@
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/Subsystems/SubsystemCollection.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/TickTaskManager.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/TimerManager.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Private/World.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Subsystems/GameInstanceSubsystem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Engine/Public/Subsystems/Subsystem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Experimental/IoStore/HttpClient/Private/Activity.inl" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagsManager.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Launch/Private/Launch.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/Launch/Private/LaunchEngineLoop.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://D:/Program Files/Epic Games/UE_5.5/Engine/Source/Runtime/PropertyPath/Private/PropertyPathHelpers.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -220,11 +279,11 @@
     <setting file="file://$PROJECT_DIR$/Plugins/CustomUI/Source/CustomUI/Public/Subsystem/LyraUIMessagingSubsystem.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/GameSettings/Intermediate/Build/Win64/UnrealEditor/Inc/GameSettings/UHT/GameSettingScreen.gen.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/GameSettings/Source/GameSettings.Build.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Logger.Build.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Log/Log.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Logger.Build.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Log/Log.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/LoggerModule.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/Log/Log.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/LoggerModule.h" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Public/LoggerModule.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/Gas.Target.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
@@ -243,26 +302,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "C/C++ Project.Gas.executor": "Debug",
-    "Rider.SolutionAnalysis.ShowPreview": "false",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "rider.code.cleanup.on.save": "true",
-    "settings.editor.selected.configurable": "preferences.sourceCode.VB.NET",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;C/C++ Project.Gas.executor&quot;: &quot;Debug&quot;,
+    &quot;Rider.SolutionAnalysis.ShowPreview&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;rider.code.cleanup.on.save&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.VB.NET&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="C/C++ Project.Gas">
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
       <deployment type="dockerfile">
@@ -466,7 +525,11 @@
       <workItem from="1745501727370" duration="15440000" />
       <workItem from="1745687576895" duration="16031000" />
       <workItem from="1745758016042" duration="14469000" />
-      <workItem from="1745883836845" duration="5483000" />
+      <workItem from="1745883836845" duration="5942000" />
+      <workItem from="1745949651952" duration="12205000" />
+      <workItem from="1746020280482" duration="21276000" />
+      <workItem from="1746190866754" duration="19794000" />
+      <workItem from="1746279265700" duration="8737000" />
     </task>
     <task id="LOCAL-00001" summary="setup GameLocalSettings plugin">
       <option name="closed" value="true" />
@@ -572,7 +635,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745786662510</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="include documentation and implement character movement">
+      <option name="closed" value="true" />
+      <created>1745890912484</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1745890912485</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -581,7 +652,6 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="UnrealLogPanelSettings">
     <option name="clearOnStart" value="true" />
-    <option name="showAllCategories" value="false" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -618,7 +688,8 @@
     <MESSAGE value="fix setting system, Modal and fixing bugs" />
     <MESSAGE value="fix settings key binding" />
     <MESSAGE value="fix camera components" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix camera components" />
+    <MESSAGE value="include documentation and implement character movement" />
+    <option name="LAST_COMMIT_MESSAGE" value="include documentation and implement character movement" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -647,6 +718,11 @@
           <url>file://$PROJECT_DIR$/Plugins/CustomCamera/Source/CustomCamera/Private/CameraModes/CameraMode_ThirdPerson.cpp</url>
           <line>338</line>
           <option name="timeStamp" value="345" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/Plugins/Logger/Source/Logger/Private/Cheat/BaseCheatManager.cpp</url>
+          <line>172</line>
+          <option name="timeStamp" value="347" />
         </line-breakpoint>
         <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
           <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />

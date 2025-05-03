@@ -4,7 +4,7 @@
 #include "SharedRepMovement.generated.h"
 
 USTRUCT()
-struct FSharedRepMovement
+struct CUSTOMCORE_API FSharedRepMovement
 {
 	GENERATED_BODY()
 	FSharedRepMovement();

@@ -2,7 +2,7 @@
 
 #include "LyraCameraComponent.h"
 #include "SignificanceManager.h"
-#include "Character/SharedRepMovement.h"
+#include "ReplicationGraph/SharedRepMovement.h"
 #include "Character/Components/BaseCharacterMovementComponent.h"
 
 #include "Character/Components/HealthComponent.h"
@@ -19,7 +19,7 @@
 static FName NAME_CharacterCollisionProfile_Capsule(TEXT("PawnCapsule"));
 static FName NAME_CharacterCollisionProfile_Mesh(TEXT("PawnMesh"));
 
-ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UMovementComponent>(CharacterMovementComponentName))
+ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UBaseCharacterMovementComponent>(CharacterMovementComponentName))
 {
 	// Avoid ticking characters if possible.
 	PrimaryActorTick.bCanEverTick = false;
@@ -28,17 +28,18 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	// Square of the max distance from the client's viewpoint that this actor is relevant and will be replicated.
 	SetNetCullDistanceSquared(900000000.0f); // 3000 * 3000
 
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	const auto CapsuleComp = GetCapsuleComponent();
 	check(CapsuleComp);
 	CapsuleComp->InitCapsuleSize(40.0f, 90.0f);
 	CapsuleComp->SetCollisionProfileName(NAME_CharacterCollisionProfile_Capsule);
 
-	USkeletalMeshComponent* MeshComp = GetMesh();
+	const auto MeshComp = GetMesh();
 	check(MeshComp);
 	MeshComp->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f)); // Rotate mesh to be X forward since it is exported as Y forward.
 	MeshComp->SetCollisionProfileName(NAME_CharacterCollisionProfile_Mesh);
 
-	UCharacterMovementComponent* MoveComp = CastChecked<UCharacterMovementComponent>(GetCharacterMovement());
+	const auto MoveComp = GetCharacterMovement();
+	check(MoveComp);
 	MoveComp->GravityScale = 1.0f;
 	MoveComp->MaxAcceleration = 2400.0f;
 	MoveComp->BrakingFrictionFactor = 1.0f;
@@ -75,9 +76,15 @@ ABaseCharacter::ABaseCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	CrouchedEyeHeight = 50.0f;
 }
 
-ABasePlayerController* ABaseCharacter::GetBasePlayerController() const { return CastChecked<ABasePlayerController>(Controller, ECastCheckedType::NullAllowed); }
+ABasePlayerController* ABaseCharacter::GetBasePlayerController() const
+{
+	return CastChecked<ABasePlayerController>(Controller, ECastCheckedType::NullAllowed);
+}
 
-ABasePlayerState* ABaseCharacter::GetBasePlayerState() const { return CastChecked<ABasePlayerState>(GetPlayerState(), ECastCheckedType::NullAllowed); }
+ABasePlayerState* ABaseCharacter::GetBasePlayerState() const
+{
+	return CastChecked<ABasePlayerState>(GetPlayerState(), ECastCheckedType::NullAllowed);
+}
 
 UBaseAbilitySystemComponent* ABaseCharacter::GetBaseAbilitySystemComponent() const { return Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); }
 
@@ -104,7 +111,7 @@ void ABaseCharacter::BeginPlay()
 
 	if (const bool bRegisterWithSignificanceManager = !IsNetMode(NM_DedicatedServer))
 	{
-		if (USignificanceManager* SignificanceManager = USignificanceManager::Get<USignificanceManager>(World))
+		if (const auto SignificanceManager = USignificanceManager::Get<USignificanceManager>(World))
 		{
 			//@TODO: SignificanceManager->RegisterObject(this, (EFortSignificanceType)SignificanceType);
 		}
@@ -140,18 +147,19 @@ void ABaseCharacter::PreReplication(IRepChangedPropertyTracker& ChangedPropertyT
 {
 	Super::PreReplication(ChangedPropertyTracker);
 
-	if (UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
-	{
-		// Compress Acceleration: XY components as direction + magnitude, Z component as direct value
-		const double MaxAccel = MovementComponent->MaxAcceleration;
-		const FVector CurrentAccel = MovementComponent->GetCurrentAcceleration();
-		double AccelXYRadians, AccelXYMagnitude;
-		FMath::CartesianToPolar(CurrentAccel.X, CurrentAccel.Y, AccelXYMagnitude, AccelXYRadians);
+	const UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
+	if (!MovementComponent)
+		return;
 
-		ReplicatedAcceleration.AccelXYRadians = FMath::FloorToInt((AccelXYRadians / TWO_PI) * 255.0); // [0, 2PI] -> [0, 255]
-		ReplicatedAcceleration.AccelXYMagnitude = FMath::FloorToInt((AccelXYMagnitude / MaxAccel) * 255.0); // [0, MaxAccel] -> [0, 255]
-		ReplicatedAcceleration.AccelZ = FMath::FloorToInt((CurrentAccel.Z / MaxAccel) * 127.0); // [-MaxAccel, MaxAccel] -> [-127, 127]
-	}
+	// Compress Acceleration: XY components as direction + magnitude, Z component as direct value
+	const double MaxAccel = MovementComponent->MaxAcceleration;
+	const FVector CurrentAccel = MovementComponent->GetCurrentAcceleration();
+	double AccelXYRadians, AccelXYMagnitude;
+	FMath::CartesianToPolar(CurrentAccel.X, CurrentAccel.Y, AccelXYMagnitude, AccelXYRadians);
+
+	ReplicatedAcceleration.AccelXYRadians = FMath::FloorToInt((AccelXYRadians / TWO_PI) * 255.0); // [0, 2PI] -> [0, 255]
+	ReplicatedAcceleration.AccelXYMagnitude = FMath::FloorToInt((AccelXYMagnitude / MaxAccel) * 255.0); // [0, MaxAccel] -> [0, 255]
+	ReplicatedAcceleration.AccelZ = FMath::FloorToInt((CurrentAccel.Z / MaxAccel) * 127.0); // [-MaxAccel, MaxAccel] -> [-127, 127]
 }
 
 void ABaseCharacter::NotifyControllerChanged()
@@ -163,32 +171,32 @@ void ABaseCharacter::NotifyControllerChanged()
 #pragma region IGameplayTagAssetInterface
 void ABaseCharacter::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
-	if (const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-		BaseAsc->GetOwnedGameplayTags(TagContainer);
+	if (const UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
+		Asc->GetOwnedGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasMatchingGameplayTag(const FGameplayTag TagToCheck) const
 {
-	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
+	const UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent();
+	if (!Asc)
 		return false;
-	return BaseAsc->HasMatchingGameplayTag(TagToCheck);
+	return Asc->HasMatchingGameplayTag(TagToCheck);
 }
 
 bool ABaseCharacter::HasAllMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
-	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
+	const UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent();
+	if (!Asc)
 		return false;
-	return BaseAsc->HasAllMatchingGameplayTags(TagContainer);
+	return Asc->HasAllMatchingGameplayTags(TagContainer);
 }
 
 bool ABaseCharacter::HasAnyMatchingGameplayTags(const FGameplayTagContainer& TagContainer) const
 {
-	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
+	const UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent();
+	if (!Asc)
 		return false;
-	return BaseAsc->HasAnyMatchingGameplayTags(TagContainer);
+	return Asc->HasAnyMatchingGameplayTags(TagContainer);
 }
 
 #pragma endregion
@@ -257,10 +265,10 @@ void ABaseCharacter::FastSharedReplication_Implementation(const FSharedRepMoveme
 
 void ABaseCharacter::OnAbilitySystemInitialized()
 {
-	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	check(BaseAsc);
+	UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent();
+	check(Asc);
 
-	HealthComponent->InitializeWithAbilitySystem(BaseAsc);
+	HealthComponent->InitializeWithAbilitySystem(Asc);
 
 	InitializeGameplayTags();
 }
@@ -270,54 +278,49 @@ void ABaseCharacter::OnAbilitySystemUninitialized() { HealthComponent->Uninitial
 void ABaseCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
 	PawnExtComponent->HandleControllerChanged();
 }
 
 void ABaseCharacter::UnPossessed()
 {
 	Super::UnPossessed();
-
 	PawnExtComponent->HandleControllerChanged();
 }
 
 void ABaseCharacter::OnRep_Controller()
 {
 	Super::OnRep_Controller();
-
 	PawnExtComponent->HandleControllerChanged();
 }
 
 void ABaseCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
 	PawnExtComponent->HandlePlayerStateReplicated();
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 	PawnExtComponent->SetupPlayerInputComponent();
 }
 
 void ABaseCharacter::InitializeGameplayTags() const
 {
-	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	check(BaseAsc);
+	UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent();
+	check(Asc);
 
 	// Clear tags that may be lingering on the ability system from the previous pawn.
 	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::MovementModeTagMap)
 	{
 		if (TagMapping.Value.IsValid())
-			BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
+			Asc->SetLooseGameplayTagCount(TagMapping.Value, 0);
 	}
 
 	for (const TPair<uint8, FGameplayTag>& TagMapping : MovementTags::CustomMovementModeTagMap)
 	{
 		if (TagMapping.Value.IsValid())
-			BaseAsc->SetLooseGameplayTagCount(TagMapping.Value, 0);
+			Asc->SetLooseGameplayTagCount(TagMapping.Value, 0);
 	}
 
 	// Set the default movement mode tag.
@@ -325,24 +328,34 @@ void ABaseCharacter::InitializeGameplayTags() const
 	SetMovementModeTag(BaseMoveComp->MovementMode, BaseMoveComp->CustomMovementMode, true);
 }
 
-void ABaseCharacter::FellOutOfWorld(const UDamageType& DmgType) { HealthComponent->DamageSelfDestruct(true); }
+void ABaseCharacter::FellOutOfWorld(const UDamageType& DmgType)
+{
+	HealthComponent->DamageSelfDestruct(true);
+}
 
-void ABaseCharacter::OnDeathStarted(AActor* OwningActor) { DisableMovementAndCollision(); }
+void ABaseCharacter::OnDeathStarted(AActor* OwningActor)
+{
+	DisableMovementAndCollision();
+}
 
-void ABaseCharacter::OnDeathFinished(AActor* OwningActor) { GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::DestroyDueToDeath); }
+void ABaseCharacter::OnDeathFinished(AActor* OwningActor)
+{
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this,
+	                                                  &ThisClass::DestroyDueToDeath);
+}
 
 void ABaseCharacter::DisableMovementAndCollision() const
 {
 	if (Controller)
 		Controller->SetIgnoreMoveInput(true);
 
-	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	const auto CapsuleComp = GetCapsuleComponent();
 	check(CapsuleComp);
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	CapsuleComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 
 	// Stop movement and disable movement.
-	UCharacterMovementComponent* BaseMoveComp = GetCharacterMovement();
+	const auto BaseMoveComp = GetCharacterMovement();
 	BaseMoveComp->StopMovementImmediately();
 	BaseMoveComp->DisableMovement();
 }
@@ -363,8 +376,8 @@ void ABaseCharacter::UninitAndDestroy()
 
 	// Uninitialize the ASC if we're still the avatar actor
 	// (otherwise another pawn already did it when they became the avatar actor)
-	const UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (BaseAsc && BaseAsc->GetAvatarActor() == this)
+	const auto Asc = GetBaseAbilitySystemComponent();
+	if (Asc && Asc->GetAvatarActor() == this)
 		PawnExtComponent->UninitializeAbilitySystem();
 
 	SetActorHiddenInGame(true);
@@ -382,8 +395,8 @@ void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode,
                                         const uint8 CustomMovementMode,
                                         const bool bTagEnabled) const
 {
-	UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent();
-	if (!BaseAsc)
+	const auto Asc = GetBaseAbilitySystemComponent();
+	if (!Asc)
 		return;
 
 	const FGameplayTag* MovementModeTag;
@@ -393,7 +406,7 @@ void ABaseCharacter::SetMovementModeTag(const EMovementMode MovementMode,
 		MovementModeTag = MovementTags::MovementModeTagMap.Find(MovementMode);
 
 	if (MovementModeTag && MovementModeTag->IsValid())
-		BaseAsc->SetLooseGameplayTagCount(*MovementModeTag, bTagEnabled ? 1 : 0);
+		Asc->SetLooseGameplayTagCount(*MovementModeTag, bTagEnabled ? 1 : 0);
 }
 
 void ABaseCharacter::ToggleCrouch()
@@ -408,16 +421,16 @@ void ABaseCharacter::ToggleCrouch()
 
 void ABaseCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-		BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 1);
+	if (UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
+		Asc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 1);
 
 	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 }
 
 void ABaseCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
 {
-	if (UBaseAbilitySystemComponent* BaseAsc = GetBaseAbilitySystemComponent())
-		BaseAsc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 0);
+	if (UBaseAbilitySystemComponent* Asc = GetBaseAbilitySystemComponent())
+		Asc->SetLooseGameplayTagCount(StatusTags::CROUCHING, 0);
 
 	Super::OnEndCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
 }
@@ -430,9 +443,10 @@ bool ABaseCharacter::CanJumpInternal_Implementation() const
 
 void ABaseCharacter::OnRep_ReplicatedAcceleration() const
 {
-	auto MovementComponent = Cast<UBaseCharacterMovementComponent>(GetCharacterMovement());
+	const auto MovementComponent = Cast<UBaseCharacterMovementComponent>(GetCharacterMovement());
 	if (!MovementComponent)
 		return;
+
 	// Decompress Acceleration
 	const double MaxAccel = MovementComponent->MaxAcceleration;
 	const double AccelXYMagnitude = static_cast<double>(ReplicatedAcceleration.AccelXYMagnitude) * MaxAccel / 255.0; // [0, 255] -> [0, MaxAccel]

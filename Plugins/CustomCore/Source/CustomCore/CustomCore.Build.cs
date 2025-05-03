@@ -38,7 +38,10 @@ public class CustomCore : ModuleRules
 				"Slate", // This module is the user interface framework for Unreal Engine, used for creating in-game and editor UI.
 				"SlateCore", // This module provides the core functionalities for the Slate UI framework.
 				"UMG", // The Unreal Motion Graphics module is used for creating complex user interfaces. 
-				"Logger" // This module provides logging functionalities.
+				"Logger", // This module provides logging functionalities.
+				"ReplicationGraph", // This module provides functionalities for replication in multiplayer games.
+				"SignificanceManager", // This module manages the significance of actors in the game world, allowing for optimization of rendering and processing.
+				"GameplayDebugger" // This module provides debugging functionalities for gameplay elements.
 			}
 		);
 

@@ -23,7 +23,7 @@ public class Gas : ModuleRules
 			"AbilitySystem",
 			"CustomCore",
 			"GameLocalSettings",
-			"CommonGame", "CustomUI", "CommonLoadingScreen"
+			"CommonGame", "CustomUI", "CommonLoadingScreen", "Logger"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[]
@@ -42,7 +42,6 @@ public class Gas : ModuleRules
 			"UMG",
 			"UIExtension", // This module allows for extending the user interface.
 			"ControlFlows", "GameSettings",
-			"Logger",
 			"CustomCamera"
 		});
 

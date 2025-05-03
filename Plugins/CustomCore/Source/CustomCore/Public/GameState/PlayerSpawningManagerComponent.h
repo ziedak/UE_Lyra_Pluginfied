@@ -54,5 +54,5 @@ private:
 
 #if WITH_EDITOR
 	APlayerStart* FindPlayFromHereStart(const AController* Player) const;
-#endif                         FActorComponentTickFunction* ThisTickFunction) override;
+#endif
 };

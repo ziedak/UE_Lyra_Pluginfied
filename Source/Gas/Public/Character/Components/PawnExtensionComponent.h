@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/GameFrameworkInitStateInterface.h"
 #include "Components/PawnComponent.h"
+#include "Tags/BaseGameplayTags.h"
 #include "PawnExtensionComponent.generated.h"
 
 namespace EEndPlayReason
@@ -37,9 +38,11 @@ public:
 
 	//~ Begin IGameFrameworkInitStateInterface interface
 	virtual FName GetFeatureName() const override { return Name_ActorFeatureName; }
-	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+	virtual bool CanChangeInitState(UGameFrameworkComponentManager* Manager,
+	                                FGameplayTag CurrentState,
 	                                FGameplayTag DesiredState) const override;
-	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager, FGameplayTag CurrentState,
+	virtual void HandleChangeInitState(UGameFrameworkComponentManager* Manager,
+	                                   FGameplayTag CurrentState,
 	                                   FGameplayTag DesiredState) override;
 	virtual void OnActorInitStateChanged(const FActorInitStateChangedParams& Params) override;
 	virtual void CheckDefaultInitialization() override;
@@ -83,6 +86,8 @@ public:
 
 	/** Register with the OnAbilitySystemUninitialized delegate fired when our pawn is removed as the ability system's avatar actor */
 	void OnAbilitySystemUninitialized_Register(const FSimpleMulticastDelegate::FDelegate& Delegate);
+
+	bool IsGameplayReady() const;
 
 protected:
 	virtual void OnRegister() override;

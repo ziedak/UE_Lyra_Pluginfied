@@ -10,6 +10,7 @@
 #include "MessageVerb/VerbMessage.h"
 #include "MessageVerb/VerbMessageHelpers.h"
 #include "AssetManager/BaseAssetManager.h"
+#include "Cheat/CheatTags.h"
 #include "Tags/BaseGameplayTags.h"
 #include "Log/Log.h"
 
@@ -113,7 +114,8 @@ float UHealthComponent::GetHealth() const { return (HealthSet ? HealthSet->GetHe
 
 float UHealthComponent::GetHealthNormalized() const
 {
-	if (!HealthSet) { return 0.0f; }
+	if (!HealthSet)
+		return 0.0f;
 
 	const float Health = GetHealth();
 	const float MaxHealth = GetMaxHealth();
@@ -125,7 +127,8 @@ float UHealthComponent::GetMaxHealth() const { return (HealthSet ? HealthSet->Ge
 
 void UHealthComponent::StartDeath()
 {
-	if (DeathState != EDeathState::NotDead) { return; }
+	if (DeathState != EDeathState::NotDead)
+		return;
 
 	DeathState = EDeathState::DeathStarted;
 
@@ -145,11 +148,13 @@ void UHealthComponent::StartDeath()
 
 void UHealthComponent::FinishDeath()
 {
-	if (DeathState != EDeathState::DeathStarted) { return; }
+	if (DeathState != EDeathState::DeathStarted)
+		return;
 
 	DeathState = EDeathState::DeathFinished;
 
-	if (AbilitySystemComponent) { AbilitySystemComponent->SetLooseGameplayTagCount(StatusTags::DEATH_DEAD, 1); }
+	if (AbilitySystemComponent)
+		AbilitySystemComponent->SetLooseGameplayTagCount(StatusTags::DEATH_DEAD, 1);
 
 	AActor* Owner = GetOwner();
 	check(Owner);
@@ -161,7 +166,8 @@ void UHealthComponent::FinishDeath()
 
 void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 {
-	if (DeathState != EDeathState::NotDead || !AbilitySystemComponent) { return; }
+	if (DeathState != EDeathState::NotDead || !AbilitySystemComponent)
+		return;
 
 	const TSubclassOf<UGameplayEffect> DamageGE = UBaseAssetManager::GetSubclass(
 		UGasGameData::Get().DamageGameplayEffect_SetByCaller);
@@ -197,7 +203,8 @@ void UHealthComponent::DamageSelfDestruct(const bool bFellOutOfWorld)
 
 	DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::DAMAGE_SELF_DESTRUCT);
 
-	if (bFellOutOfWorld) { DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::FELL_OUT_OF_WORLD); }
+	if (bFellOutOfWorld)
+		DamageEffectSpec->AddDynamicAssetTag(BaseGameplayTags::FELL_OUT_OF_WORLD);
 
 	const float DamageMagnitude = GetMaxHealth();
 	DamageEffectSpec->SetSetByCallerMagnitude(SetByCallerTags::DAMAGE, DamageMagnitude);
@@ -214,26 +221,36 @@ void UHealthComponent::ClearGameplayTags() const
 	}
 }
 
-void UHealthComponent::HandleHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
-                                           const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
-                                           const float OldValue, const float NewValue)
+void UHealthComponent::HandleHealthChanged(AActor* DamageInstigator,
+                                           AActor* DamageCauser,
+                                           const FGameplayEffectSpec* DamageEffectSpec,
+                                           float DamageMagnitude,
+                                           const float OldValue,
+                                           const float NewValue)
 {
 	OnHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
-void UHealthComponent::HandleMaxHealthChanged(AActor* DamageInstigator, AActor* DamageCauser,
-                                              const FGameplayEffectSpec* DamageEffectSpec, float DamageMagnitude,
-                                              const float OldValue, const float NewValue)
+void UHealthComponent::HandleMaxHealthChanged(AActor* DamageInstigator,
+                                              AActor* DamageCauser,
+                                              const FGameplayEffectSpec* DamageEffectSpec,
+                                              float DamageMagnitude,
+                                              const float OldValue,
+                                              const float NewValue)
 {
 	OnMaxHealthChanged.Broadcast(this, OldValue, NewValue, DamageInstigator);
 }
 
-void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator, AActor* DamageCauser,
-                                         const FGameplayEffectSpec* DamageEffectSpec, const float DamageMagnitude,
-                                         float OldValue, float NewValue)
+void UHealthComponent::HandleOutOfHealth(AActor* DamageInstigator,
+                                         AActor* DamageCauser,
+                                         const FGameplayEffectSpec* DamageEffectSpec,
+                                         const float DamageMagnitude,
+                                         float OldValue,
+                                         float NewValue)
 {
 #if WITH_SERVER_CODE
-	if (!AbilitySystemComponent || !DamageEffectSpec) { return; }
+	if (!AbilitySystemComponent || !DamageEffectSpec)
+		return;
 
 	//Send the "GameplayEvent.Death" gameplay event through the owner's ability system.  This can be used to trigger a death gameplay ability.
 	//This is done in a prediction window to ensure the event is sent in the correct order.
@@ -294,7 +311,8 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 
 	if (OldDeathState == EDeathState::NotDead)
 	{
-		if (NewDeathState == EDeathState::DeathStarted) { StartDeath(); }
+		if (NewDeathState == EDeathState::DeathStarted)
+			StartDeath();
 		else if (NewDeathState == EDeathState::DeathFinished)
 		{
 			StartDeath();
@@ -307,9 +325,7 @@ void UHealthComponent::OnRep_DeathState(EDeathState OldDeathState)
 		}
 	}
 	else if (OldDeathState == EDeathState::DeathStarted && NewDeathState == EDeathState::DeathFinished)
-	{
 		FinishDeath();
-	}
 	else
 	{
 		ULOG_ERROR(LogGAS, "HealthComponent: Invalid death transition [%d] -> [%d] for owner [%s].",

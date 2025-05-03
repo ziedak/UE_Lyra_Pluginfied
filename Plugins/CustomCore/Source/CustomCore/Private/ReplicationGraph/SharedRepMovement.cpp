@@ -1,19 +1,23 @@
-#include "Character/SharedRepMovement.h"
+#include "ReplicationGraph/SharedRepMovement.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(SharedRepMovement)
 
-FSharedRepMovement::FSharedRepMovement() { RepMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals; }
+FSharedRepMovement::FSharedRepMovement()
+{
+	RepMovement.LocationQuantizationLevel = EVectorQuantization::RoundTwoDecimals;
+}
 
 // This function is crucial for synchronizing character movement data across the network in Unreal Engine.
 bool FSharedRepMovement::FillForCharacter(const ACharacter* Character)
 {
 	const USceneComponent* PawnRootComponent = Character->GetRootComponent();
-	if (!PawnRootComponent) return false;
+	if (!PawnRootComponent)
+		return false;
 
-	const UCharacterMovementComponent* CharacterMovement = Character->GetCharacterMovement();
+	const auto CharacterMovement = Character->GetCharacterMovement();
 
 	RepMovement.Location = FRepMovement::RebaseOntoZeroOrigin(PawnRootComponent->GetComponentLocation(), Character);
 	RepMovement.Rotation = PawnRootComponent->GetComponentRotation();
@@ -24,10 +28,9 @@ bool FSharedRepMovement::FillForCharacter(const ACharacter* Character)
 
 	// Timestamp is sent as zero if unused
 	RepTimeStamp = 0.f;
-	if (CharacterMovement->NetworkSmoothingMode == ENetworkSmoothingMode::Linear || CharacterMovement->
-		bNetworkAlwaysReplicateTransformUpdateTimestamp)
+	if (CharacterMovement->NetworkSmoothingMode == ENetworkSmoothingMode::Linear ||
+		CharacterMovement->bNetworkAlwaysReplicateTransformUpdateTimestamp)
 		RepTimeStamp = CharacterMovement->GetServerLastTransformUpdateTimeStamp();
-
 
 	return true;
 }
@@ -55,8 +58,10 @@ bool FSharedRepMovement::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOut
 	uint8 bHasTimeStamp = RepTimeStamp != 0.f;
 	Ar.SerializeBits(&bHasTimeStamp, 1);
 
-	if (bHasTimeStamp) Ar << RepTimeStamp;
-	else RepTimeStamp = 0.f;
+	if (bHasTimeStamp)
+		Ar << RepTimeStamp;
+	else
+		RepTimeStamp = 0.f;
 
 	return true;
 }
